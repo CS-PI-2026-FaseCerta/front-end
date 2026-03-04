@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato</title>
+
+    <link rel="stylesheet" href="css/contato.css">
+    <link rel="stylesheet" href="css/footer.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+</head>
+<body>
+    <section id="contato">
+        <div class="conteiner-contato">
+            <div class="conteiner-contato-conteudo">
+
+                <section id="contato-enderecos">
+                    <div class="conteiner-texto">
+                        <h2 id="texto-contato">CONTATO</h2>
+                        <h1 id="texto-vamos-conversar">Vamos conversar?</h1>
+                        <p id="texto-bloco">
+                            Tem alguma dúvida ou precisa de uma demonstração personalizada? Preencha o formulário e
+                            nossa equipe entrará em
+                            contato em breve.
+                        </p>
+                    
+                        <div class="conteiner-enderecos">
+                            <div class="conteiner-cartao">
+                                <div class="conteiner-cartao-icone">
+                                    <img src="assets/img/icons/icone-email.png" alt="Ícone de email" class="cartao-icone">
+                                </div>
+                                <div class="conteiner-cartao-texto">
+                                    <h3>E-mail</h3>
+                                    <p>CS-PI-2026-GestorIntel@gmail.com</p>
+                                </div>
+                            </div>
+                            <div class="conteiner-cartao">
+                                <div class="conteiner-cartao-icone">
+                                    <img src="assets/img/icons/icone-telefone.png" alt="Ícone de telefone" class="cartao-icone">
+                                </div>
+                                <div class="conteiner-cartao-texto">
+                                    <h3>Telefone</h3>
+                                    <p>(44) 4002-8922</p>
+                                </div>
+                            </div>
+                            <div class="conteiner-cartao">
+                                <div class="conteiner-cartao-icone">
+                                    <img src="assets/img/icons/icone-endereco.png" alt="Ícone de Localização" class="cartao-icone">
+                                </div>
+                                <div class="conteiner-cartao-texto">
+                                    <h3>Localização</h3>
+                                    <p>Paranavai, PR - Brasil</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="contato-formulario">
+                    <form id="conteiner-formulario">
+                        <div class="conteiner-formulario-conteudo">
+                            <div class="conteiner-nome-email">
+                                <div class="conteiner-campo">
+                                    <label for="nome">NOME COMPLETO</label>
+                                    <input id="nome" name="from_name" type="text" placeholder="Seu nome" required>
+                                </div>
+                                <div class="conteiner-campo">
+                                    <label for="email">E-MAIL</label>
+                                    <input id="email" name="reply_to" placeholder="exemplo@email.com" required>
+                                </div>
+                            </div>
+                            <div class="conteiner-campo">
+                                <label for="assunto">ASSUNTO</label>
+                                <input id="assunto" name="subject" type="text" placeholder="Como podemos ajudar?" required>
+                            </div>
+                            <div class="conteiner-campo">
+                                <label for="mensagem">MENSAGEM</label>
+                                <textarea id="mensagem" name="message" placeholder="Descreva suas necessidades..." class="textarea" required>asdf</textarea>
+                            </div>
+                            <button type="submit" id="formulario-botao">Enviar Mensagem</button>
+                    
+                            <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+                        </div>
+                    </form>
+                </section>
+                
+            </div>
+        </div>
+    </section>
+    <script src="js/contato.js"></script>
+
+    <section id="footer">
+        <div class="conteiner-footer">
+            <div class="footer-conteudo">
+                <div class="footer-cabecalho">
+                    <div class="footer-titulo">
+                        <img src="assets/img/icons/icon.png" alt="Logo da Fase Certa" id="footer-icone">
+                        <h2>FaseCerta</h2>
+                    </div>
+                    <p>Simplificando o complexo mundo da gestão de negócios para impulsionar o seu sonho.</p>
+                </div>
+
+                <div class="footer-links">
+                    <nav id="produto">
+                        <h3>Produto</h3>
+                        <ul>
+                            <li>Recursos</li>
+                            <li>Segurança</li>
+                            <li>API</li>
+                        </ul>
+                    </nav>
+                    <nav id="empresa">
+                        <h3>Empresa</h3>
+                        <ul>
+                            <li>Sobre</li>
+                            <li>Blog</li>
+                            <li>Carreiras</li>
+                        </ul>
+                    </nav>
+                    <nav id="social">
+                        <h3>Social</h3>
+                        <ul>
+                            <li><img src="assets/img/icons/icone-link.png" alt="Ícone de link" class="links-icone"></li>
+                            <li><img src="assets/img/icons/icone-compartilhar.png" alt="Ícone de compartilhar" class="links-icone"></li>
+                            <li><img src="assets/img/icons/icone-codigo.png" alt="Ícone de código" class="links-icone"></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <div class="footer-direitos">
+                <p>© 2026 FaseCerta - Todos os direitos reservados.</p>
+                <div>
+                    <p>Política de Privacidade</p>
+                    <p>Termos de Uso</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
