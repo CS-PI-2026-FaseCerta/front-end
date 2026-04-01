@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
-import "./login.css"; // Importa o arquivo CSS
+import "./login.css";
 
 const Login = () => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
