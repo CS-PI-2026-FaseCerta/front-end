@@ -92,12 +92,6 @@ const AlterarSenha = () => {
 
   return (
     <div className="change-password-page">
-      <header className="page-header">
-        <div className="logo">FaseCerta</div>
-        <div className="theme-icon">
-          {/* <FaMoon size={20} /> */}
-        </div>
-      </header>
 
       <main className="change-password-container">
         <section className="change-password-card">
@@ -201,21 +195,13 @@ const AlterarSenha = () => {
           </form>
 
           <div className="card-footer">
-            <a href="/recuperar-senha" className="recovery-link">
+            <a href="#" className="recovery-link">
               Esqueceu sua senha? <strong>Recuperar senha</strong>
             </a>
           </div>
         </section>
       </main>
 
-      <footer className="page-footer">
-        <span className="copyright">FaseCerta © 2026</span>
-        <div className="footer-links">
-          <a href="#">Suporte</a>
-          <a href="#">Termos de Uso</a>
-          <a href="#">Política de Privacidade</a>
-        </div>
-      </footer>
     </div>
   );
 };
