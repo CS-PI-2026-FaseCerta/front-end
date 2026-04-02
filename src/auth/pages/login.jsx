@@ -8,6 +8,7 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
   const [emailOrUsernameError, setEmailOrUsernameError] = useState(false);
 
   const validateEmailOrUsername = (value) => {
@@ -20,13 +21,14 @@ const Login = () => {
       return emailRegex.test(value);
     } else {
       // Nome de usuário não pode ter espaços
-      return !value.includes(" "); // Nome de usuário não pode ter espaços
+      return !value.includes(" ");
     }
   };
 
   const handleEmailOrUsernameChange = (e) => {
     const value = e.target.value;
     setEmailOrUsername(value);
+    // Remove a borda vermelha assim que o usuário corrigir o formato
     if (emailOrUsernameError) {
       setEmailOrUsernameError(!validateEmailOrUsername(value));
     }
@@ -52,23 +54,40 @@ const Login = () => {
     e.preventDefault();
     if (isLoading) return;
 
-    // Revalida antes de submeter
     const isEmailOrUsernameValid = validateEmailOrUsername(emailOrUsername);
-    setEmailOrUsernameError(!isEmailOrUsernameValid);
 
-    if (isEmailOrUsernameValid && password.length > 0) {
+    // 1. Valida o formato primeiro
+    if (!isEmailOrUsernameValid) {
+      setEmailOrUsernameError(true);
+      setLoginError("");
+      return;
+    }
+
+    // Formato correto: tira a borda vermelha (se houver) e tenta autenticar
+    setEmailOrUsernameError(false);
+
+    // 2. Tentativa de Autenticação
+    if (password.length > 0) {
+      setLoginError("");
       setIsLoading(true);
       console.log("Credenciais:", { emailOrUsername, password, rememberMe });
 
       // Simulação de chamada de API
       setTimeout(() => {
-        alert("Login efetuado com sucesso (simulação)!");
+        //Teste de login
+        const LOGIN_SUCESSO = true;
+
+        if (LOGIN_SUCESSO) {
+          alert("Login efetuado com sucesso (simulação)!");
+          // Redirecionamento fake: window.location.href = '/dashboard';
+        } else {
+          setLoginError("E-mail/Nome de Usuário ou senha incorretos");
+        }
         setIsLoading(false);
-        // Aqui você redirecionaria para o Dashboard
-      }, 2000);
+      }, 1500);
     } else {
-      // O feedback visual já indica os erros
-      console.error("Por favor, corrija os erros no formulário.");
+      // Se a senha estiver vazia, falha e exibe o erro geral
+      setLoginError("E-mail/Nome de Usuário ou senha incorretos");
     }
   };
 
@@ -92,9 +111,7 @@ const Login = () => {
               <input
                 type="text"
                 id="emailOrUsername"
-                className={`input-field ${
-                  emailOrUsernameError ? "input-error" : ""
-                }`}
+                className={`input-field ${emailOrUsernameError ? "input-error" : ""}`}
                 placeholder="seu@email.com ou seu_usuario"
                 value={emailOrUsername}
                 onChange={handleEmailOrUsernameChange}
@@ -105,9 +122,6 @@ const Login = () => {
             <div className="input-group">
               <div className="label-group">
                 <label htmlFor="password">Senha</label>
-                {/* <a href="#" className="link">
-                  Esqueceu sua senha?
-                </a> */}
               </div>
               <div className="input-wrapper">
                 <input
@@ -121,13 +135,17 @@ const Login = () => {
                 <span
                   className="password-icon"
                   onClick={togglePasswordVisibility}
+                  role="button"
+                  aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
-              <a href="#" className="link">
-                Esqueceu sua senha?
-              </a>
+              <div style={{ textAlign: "right" }}>
+                <a href="#" className="link">
+                  Esqueceu sua senha?
+                </a>
+              </div>
             </div>
 
             <div className="form-options">
@@ -141,6 +159,8 @@ const Login = () => {
                 <label htmlFor="rememberMe">Lembre de mim</label>
               </div>
             </div>
+
+            {loginError && <p className="login-error-message">{loginError}</p>}
 
             <button type="submit" className="login-button" disabled={isLoading}>
               {isLoading ? "Entrando..." : "Entrar"}
