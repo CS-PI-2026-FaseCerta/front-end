@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 // import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
 import './alterarsenha.css';
+import { FaArrowLeft } from "react-icons/fa";
 
 const AlterarSenha = () => {
   // Estados para os valores dos inputs
@@ -100,13 +101,18 @@ const AlterarSenha = () => {
 
       <main className="change-password-container">
         <section className="change-password-card">
-          <h1>Alterar Senha</h1>
+          <div className="card-header">
+            <button className="back-button"><FaArrowLeft size={20}/></button>
+            <h1>Alterar Senha</h1>
+          </div>
+
+          <p className="card-header-p">Mantenha sua conta FaseCerta segura e atualizada.</p>
           
           <form onSubmit={handleSubmit} noValidate>
             
             {/* Senha Atual */}
             <div className="form-group">
-              <label htmlFor="currentPassword">Senha atual</label>
+              <label htmlFor="currentPassword" style={{textAlign: "left"}}>Senha atual</label>
               <div className="input-wrapper">
                 <input
                   id="currentPassword"
@@ -130,7 +136,7 @@ const AlterarSenha = () => {
 
             {/* Nova Senha */}
             <div className="form-group">
-              <label htmlFor="newPassword">Nova senha</label>
+              <label htmlFor="newPassword" style={{ textAlign: "left" }}>Nova senha</label>
               <div className="input-wrapper">
                 <input
                   id="newPassword"
@@ -159,7 +165,7 @@ const AlterarSenha = () => {
 
             {/* Confirmar Nova Senha */}
             <div className="form-group">
-              <label htmlFor="confirmPassword">Confirme a nova senha</label>
+              <label htmlFor="confirmPassword" style={{ textAlign: "left" }}>Confirme a nova senha</label>
               <div className="input-wrapper">
                 <input
                   id="confirmPassword"

@@ -21,14 +21,36 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f4f7f6; /* Cor de fundo suave para área logada */
+  background-color: #EDE9FB; /* Cor de fundo suave para área logada */
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
 }
 
 .change-password-container {
   width: 100%;
   max-width: 400px;
   padding: 20px;
+}
+
+.card-header {
+  display: flex;
+}
+
+.back-button {
+  border: none;
+  background-color: transparent;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  transition: 0.2s;
+  border-radius: 1rem;
+}
+
+.back-button:hover {
+  background-color: rgb(224, 224, 224);
+  cursor: pointer;
 }
 
 /* Estilo do Card principal */
@@ -39,12 +61,20 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.change-password-card h1 {
-  margin-top: 0;
+.card-header-p {
+  font-size: .8rem;
+  color: #5f5f5f;
+  font-weight: 600;
   margin-bottom: 1.5rem;
+}
+
+.change-password-card h1 {
   font-size: 1.5rem;
   color: #333;
   text-align: center;
+  width: 100%;
+  padding-right: 2rem;
+  margin: 0;
 }
 
 /* Grupos do formulário */
@@ -52,7 +82,9 @@
   margin-bottom: 1.2rem;
   display: flex;
   flex-direction: column;
+  /* align-items: start; */
 }
+
 
 .form-group label {
   font-size: 0.9rem;
