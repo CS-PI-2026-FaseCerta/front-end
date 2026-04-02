@@ -242,30 +242,6 @@
   text-decoration: underline;
 }
 
-/* --- Rodapé da Página --- */
-.page-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 24px 48px;
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.footer-links {
-  display: flex;
-  gap: 24px;
-}
-
-.footer-links a {
-  color: var(--text-secondary);
-  text-decoration: none;
-}
-
-.footer-links a:hover {
-  color: var(--primary-color);
-  text-decoration: underline;
-}
 
 /* --- Responsividade --- */
 @media (max-width: 768px) {

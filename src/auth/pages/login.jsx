@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
+import Footer from "../../global/components/Footer/Footer.jsx";
+import Header from "../../global/components/Header/Header.jsx";
+
 import "./login.css";
 
 const Login = () => {
@@ -75,7 +78,7 @@ const Login = () => {
       // Simulação de chamada de API
       setTimeout(() => {
         //Teste de login
-        const LOGIN_SUCESSO = true;
+        const LOGIN_SUCESSO = false;
 
         if (LOGIN_SUCESSO) {
           alert("Login efetuado com sucesso (simulação)!");
@@ -93,12 +96,7 @@ const Login = () => {
 
   return (
     <div className="page-container">
-      <header className="page-header">
-        <div className="logo">FaseCerta</div>
-        <div className="theme-icon">
-          <FaMoon size={20} />
-        </div>
-      </header>
+      <Header />
 
       <main className="login-container">
         <div className="login-card">
@@ -173,14 +171,7 @@ const Login = () => {
         </div>
       </main>
 
-      <footer className="page-footer">
-        <span className="copyright">FaseCerta © 2026</span>
-        <div className="footer-links">
-          <a href="#">Suporte</a>
-          <a href="#">Termos de Uso</a>
-          <a href="#">Política de Privacidade</a>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
