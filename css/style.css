@@ -1,73 +1,207 @@
+:root {
+    --primary-color: #433f9b;
+    --primary-hover-color: #7165ff;
+    --background-color: #f8f7ff;
+    --card-background: #ffffff;
+    --input-background: #f4f3fb;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --border-color: #e0e0e0;
+    --error-color: #e53e3e;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
-    background: #f5f5f5;
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .navbar {
-    width: 100%;
-    background: #4a148c;
-    padding: 15px 20px;
-    text-align: center;
+    padding: 20px 50px;
+    background-color: var(--card-background);
 }
 
-.navbar h1 {
-    color: white;
-    font-size: 24px;
+.logo {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.5rem;
 }
 
-.container {
+.main-content {
+    flex: 1;
     display: flex;
     justify-content: center;
-    margin-top: 50px;
+    align-items: center;
+    padding: 20px;
 }
 
 .card {
-    background: white;
-    padding: 25px;
-    border-radius: 8px;
-    width: 320px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.card h2 {
+    background-color: var(--card-background);
+    width: 100%;
+    max-width: 480px;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
     text-align: center;
-    margin-bottom: 20px;
-    color: #4a148c;
 }
 
-label {
-    margin-top: 15px;
+.card h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.input-group label {
     display: block;
-    font-weight: bold;
-    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
 input {
     width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 5px;
-    border: 1px solid #bbb;
+    padding: 14px 16px;
+    border: 1px solid transparent;
+    background-color: var(--input-background);
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
 }
 
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 20px;
-    background: #4a148c;
-    border: none;
-    color: white;
-    font-size: 16px;
-    border-radius: 6px;
+input:focus {
+    outline: none;
+    border-color: var(--primary-hover-color);
+    background-color: #fff;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    color: var(--text-secondary);
     cursor: pointer;
 }
 
-button:hover {
-    background: #6a1b9a;
+.info-text {
+    display: block;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 30px;
+
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: background 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.login-link {
+    margin-top: 25px;
+}
+
+.login-link a {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Footer */
+.footer {
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+
+}
+
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.footer-left strong {
+    color: var(--primary-color);
+    font-size: 16px;
+}
+
+.footer-left span {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.footer-right {
+    display: flex;
+    gap: 25px;
+}
+
+.footer-right a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    transition: color 0.2s ease;
+}
+
+.footer-right a:hover {
+    color: var(--primary-hover-color);
+}
+
+
+@media (max-width: 600px) {
+    .footer {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+        padding-bottom: 40px;
+    }
+
+    .footer-right {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 }
