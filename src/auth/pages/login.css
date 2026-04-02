@@ -22,26 +22,7 @@
   color: var(--text-primary);
 }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  background-color: var(--card-background);
-  align-items: center;
-  padding: 24px 48px;
-  width: 100%;
-  box-sizing: border-box;
-}
 
-.logo {
-  font-weight: 700;
-  font-size: 20px;
-  color: var(--primary-color);
-}
-
-.theme-icon {
-  cursor: pointer;
-  color: var(--text-secondary);
-}
 
 /* --- Container Principal --- */
 .login-container {
@@ -245,12 +226,6 @@
 
 /* --- Responsividade --- */
 @media (max-width: 768px) {
-  .page-header,
-  .page-footer {
-    padding: 16px 24px;
-    flex-direction: column;
-    gap: 16px;
-  }
 
   .login-card {
     padding: 32px;
