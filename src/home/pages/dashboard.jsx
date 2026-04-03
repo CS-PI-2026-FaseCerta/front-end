@@ -1,6 +1,6 @@
 import React from "react";
 import "../../index.css";
-import Header from "../../global/components/Header/Header";
+import Header from "../components/HeaderDashBoard";
 import ModuleCard from "../components/ModuleCard";
 import {
   FaUsers,
