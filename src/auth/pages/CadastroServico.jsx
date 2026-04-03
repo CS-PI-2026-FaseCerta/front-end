@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "./CadastroServico.css";
+import "./cadastroservico.css";
 import { FaArrowLeft } from "react-icons/fa";
-
+ 
 export default function CadastroServico() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState(""); 
