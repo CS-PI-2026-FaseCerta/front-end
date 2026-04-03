@@ -151,7 +151,6 @@ input:focus {
 
 /* Footer */
 .footer {
-    background-color: var(--card-background);
     padding: 20px 50px;
     display: flex;
     justify-content: space-between;
@@ -165,14 +164,6 @@ input:focus {
     flex-direction: column;
     gap: 4px;
 
-}
-
-.footer-left strong {
-    color: var(--primary-color);
-    font-size: 20px;
-    display: block;
-    margin-bottom: 4px;
-    letter-spacing: 0.5px;
 }
 
 .footer-left span {
