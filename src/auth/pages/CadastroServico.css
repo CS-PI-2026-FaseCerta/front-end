@@ -11,7 +11,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(180deg, #f5f5f5, #eaeaea);
+    background-color: #F6F2FB;
 }
 
 .service-form-card {
@@ -20,11 +20,18 @@
     background: #ffffff;
     padding: 25px;
     border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgb(230, 230, 230);
 }
 
 .card-header {
     display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.card-header h1 {
+    text-align: center;
+    width: 100%;
+    padding-right: 2rem;
 }
 
 .back-button {
@@ -52,31 +59,80 @@
 .service-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 2rem;
 }
 
 .service-form-group {
     display: flex;
     flex-direction: column;
+    gap: .6rem;
 }
 
 .service-form-label {
     margin-bottom: 5px;
     font-weight: 600;
     font-size: 14px;
+    color: #9795A0;
+}
+
+.service-form-input {
+    height: 4rem;
+    width: 100%;
 }
 
 .service-form-input,
 .service-form-textarea {
     padding: 10px;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: 8px;
     font-size: 14px;
+    background-color: #F6F2FB;
+}
+
+.service-form-input::placeholder,
+.service-form-textarea::placeholder {
+    font-size: 1rem;
+    padding: .7rem .5rem;
+    color: rgb(166, 159, 182);
+}
+
+.service-form-value-input,
+.service-form-value-input::placeholder {
+    color: black;
+    padding-left: 1.3rem;
+    font-size: 1.1rem;
+}
+
+.service-form-value-conteiner {
+    position: relative;
+}
+
+.service-form-group div {
+    display: flex;
+}
+
+.service-form-value-span {
+    position: absolute;
+    bottom: 1.35rem;
+    left: 1rem;
+    color: #322E8A;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.service-form-value-square {
+    position: absolute;
+    bottom: .5rem;
+    left: .8rem;
+
+    width: 2rem;
+    height: 3rem;
+    background-color: #F6F2FB;
 }
 
 .service-form-textarea {
     resize: none;
-    height: 80px;
+    height: 7rem;
 }
 
 .service-form-radio-group {
@@ -108,5 +164,36 @@
 
 .service-form-submit-button:disabled {
     background: #ccc;
+    cursor: not-allowed;
+}
+
+/* Botão de Envio */
+.service-form-submit-button {
+    width: 100%;
+    padding: 16px;
+    background-color: #433f9b;
+    color: white;
+    border: none;
+    border-radius: 999px;
+    /* Pill shape */
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.3s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    margin-top: 8px;
+    box-shadow: 0 4px 15px rgba(91, 75, 255, 0.2);
+}
+
+.service-form-submit-button:hover {
+    background-color: #7165ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(91, 75, 255, 0.3);
+}
+
+.service-form-submit-button:disabled {
+    background-color: #b3aaff;
     cursor: not-allowed;
 }

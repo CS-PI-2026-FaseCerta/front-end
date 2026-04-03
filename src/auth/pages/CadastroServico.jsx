@@ -4,7 +4,7 @@ import { FaArrowLeft } from "react-icons/fa";
 
 export default function CadastroServico() {
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [description, setDescription] = useState(""); 
     const [billingType, setBillingType] = useState("fixed");
     const [value, setValue] = useState("");
 
@@ -40,7 +40,7 @@ export default function CadastroServico() {
 
                 <form className="service-form">
                     <div className="service-form-group">
-                        <label className="service-form-label">NOME DO SERVIÇO</label>
+                        <label className="service-form-label" style={{ textAlign: "left" }}>NOME DO SERVIÇO</label>
                         <input
                             className="service-form-input"
                             type="text"
@@ -51,7 +51,7 @@ export default function CadastroServico() {
                     </div>
 
                     <div className="service-form-group">
-                        <label className="service-form-label">DESCRIÇÃO</label>
+                        <label className="service-form-label" style={{ textAlign: "left" }}>DESCRIÇÃO</label>
                         <textarea
                             className="service-form-textarea"
                             placeholder="Descreva os detalhes do serviço oferecido..."
@@ -61,7 +61,7 @@ export default function CadastroServico() {
                     </div>
 
                     <div className="service-form-group">
-                        <label className="service-form-label">TIPO DE COBRANÇA</label>
+                        <label className="service-form-label" style={{ textAlign: "left" }}>TIPO DE COBRANÇA</label>
 
                         <div className="service-form-radio-group">
                             <label className="service-form-radio-option">
@@ -88,17 +88,22 @@ export default function CadastroServico() {
                         </div>
                     </div>
 
-                    <div className="service-form-group">
-                        <label className="service-form-label">
+                    <div className="service-form-group service-form-value-conteiner">
+                        <label className="service-form-label" style={{ textAlign: "left" }}>
                             VALOR {billingType === "hourly" ? "(R$/h)" : "(R$)"}
                         </label>
-                        <input
-                            className="service-form-input"
-                            type="text"
-                            value={value}
-                            onChange={handleValueChange}
-                            placeholder="R$ 0,00"
-                        />
+                        <div>
+                            <div className="service-form-value-square"></div>
+                            <span className="service-form-value-span">R$</span>
+                            <input
+                                className="service-form-input service-form-value-input"
+                                type="text"
+                                value={value}
+                                onChange={handleValueChange}
+                                placeholder="0,00"
+                            />
+                        </div>
+                        
                     </div>
 
                     <button
