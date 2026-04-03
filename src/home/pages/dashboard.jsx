@@ -1,7 +1,6 @@
 import React from "react";
 import "../../index.css";
 import Header from "../../global/components/Header/Header";
-import Footer from "../../global/components/Footer/Footer";
 import ModuleCard from "../components/ModuleCard";
 import {
   FaUsers,
@@ -130,8 +129,6 @@ const Dashboard = () => {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

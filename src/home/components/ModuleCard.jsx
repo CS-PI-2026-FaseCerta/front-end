@@ -1,5 +1,6 @@
-import React from 'react';
-import './ModuleCard.css';
+import React from "react";
+import "./ModuleCard.css";
+import { FaArrowRight } from "react-icons/fa";
 
 const ModuleCard = ({ title, description, icon, path, onClick }) => {
   // O uso de 'a' é para semântica, mas o onClick controla a ação
@@ -14,6 +15,9 @@ const ModuleCard = ({ title, description, icon, path, onClick }) => {
       <div className="module-card__icon">{icon}</div>
       <h3 className="module-card__title">{title}</h3>
       <p className="module-card__description">{description}</p>
+      <h4>
+        Acessar Módulo <FaArrowRight />
+      </h4>
     </a>
   );
 };
