@@ -34,7 +34,7 @@ export default function CadastroServico() {
         <div className="service-page">
             <div className="service-form-card">
                 <div className="card-header">
-                    <button className="back-button"><FaArrowLeft size={20} /></button>
+                    <button className="back-button"><FaArrowLeft size={20} color="#433f9b"/></button>
                     <h1>Cadastro de Serviço</h1>
                 </div>
 
@@ -61,7 +61,7 @@ export default function CadastroServico() {
                     </div>
 
                     <div className="service-form-group">
-                        <label className="service-form-label">Tipo de Cobrança</label>
+                        <label className="service-form-label">TIPO DE COBRANÇA</label>
 
                         <div className="service-form-radio-group">
                             <label className="service-form-radio-option">
@@ -90,7 +90,7 @@ export default function CadastroServico() {
 
                     <div className="service-form-group">
                         <label className="service-form-label">
-                            Valor {billingType === "hourly" ? "(R$/h)" : "(R$)"}
+                            VALOR {billingType === "hourly" ? "(R$/h)" : "(R$)"}
                         </label>
                         <input
                             className="service-form-input"

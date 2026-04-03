@@ -15,7 +15,8 @@
 }
 
 .service-form-card {
-    width: 400px;
+    width: 40rem;
+    /* height: 40rem; */
     background: #ffffff;
     padding: 25px;
     border-radius: 12px;
