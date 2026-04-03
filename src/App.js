@@ -1,11 +1,15 @@
-import logo from "./logo.svg";
 import "./App.css";
-import AlterarSenha from "./auth/pages/alterarsenha";
+import Login from "./auth/pages/login";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
   return (
     <div className="App">
-      <AlterarSenha />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
