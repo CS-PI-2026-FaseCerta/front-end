@@ -151,6 +151,7 @@ input:focus {
 
 /* Footer */
 .footer {
+    background-color: var(--card-background);
     padding: 20px 50px;
     display: flex;
     justify-content: space-between;
@@ -163,16 +164,21 @@ input:focus {
     display: flex;
     flex-direction: column;
     gap: 4px;
+
 }
 
 .footer-left strong {
     color: var(--primary-color);
-    font-size: 16px;
+    font-size: 20px;
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
 }
 
 .footer-left span {
-    color: var(--text-secondary);
-    font-size: 12px;
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 400;
 }
 
 .footer-right {
@@ -182,15 +188,49 @@ input:focus {
 
 .footer-right a {
     text-decoration: none;
-    color: var(--text-secondary);
-    font-size: 12px;
+    color: var(--text-primary);
+    font-size: 14px;
     transition: color 0.2s ease;
+    font-weight: 400;
 }
 
 .footer-right a:hover {
     color: var(--primary-hover-color);
 }
 
+/* Estilo para quando o botão estiver desabilitado */
+.btn-primary:disabled {
+    background-color: var(--text-secondary);
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+/* Remove a sombra para parecer "plano" */
+}
+
+/* Quando a senha estiver errada */
+.info-text i {
+    margin-right: 5px;
+}
+
+/* Transição suave para o erro */
+#confirm-password {
+    transition: border-color 0.3s ease;
+}
+
+/* Garante que o ícone do olho fique por cima do input */
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    color: var(--text-secondary);
+}
 
 @media (max-width: 600px) {
     .footer {
