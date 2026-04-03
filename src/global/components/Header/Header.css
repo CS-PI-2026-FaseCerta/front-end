@@ -25,6 +25,24 @@
 .theme-icon {
   cursor: pointer;
   color: var(--text-secondary);
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--card-background);
+  align-items: center;
+  padding: 24px 48px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--primary-color);
+}
+
+.theme-icon {
+  cursor: pointer;
+  color: var(--text-secondary);
 }
 
 /* --- Responsividade --- */
