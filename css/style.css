@@ -1,0 +1,100 @@
+:root {
+    --primary-color: #433f9b;
+    --primary-hover-color: #7165ff;
+    --background-color: #f8f7ff;
+    --card-background: #ffffff;
+    --input-background: #f4f3fb;
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --border-color: #e0e0e0;
+    --error-color: #e53e3e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar {
+    padding: 20px 50px;
+    background-color: var(--card-background);
+}
+
+.logo {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--card-background);
+    padding: 20px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+
+}
+
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+}
+
+.footer-left strong {
+    color: var(--primary-color);
+    font-size: 20px;
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.footer-left span {
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.footer-right {
+    display: flex;
+    gap: 25px;
+}
+
+.footer-right a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: color 0.2s ease;
+    font-weight: 400;
+}
+
+.footer-right a:hover {
+    color: var(--primary-hover-color);
+}
+
+@media (max-width: 600px) {
+    .footer {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+        padding-bottom: 40px;
+    }
+
+    .footer-right {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
