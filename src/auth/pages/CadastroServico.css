@@ -1,0 +1,111 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+.service-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(180deg, #f5f5f5, #eaeaea);
+}
+
+.service-form-card {
+    width: 400px;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+}
+
+.back-button {
+    border: none;
+    background-color: transparent;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    transition: 0.2s;
+    border-radius: 1rem;
+}
+
+.back-button:hover {
+    background-color: rgb(224, 224, 224);
+    cursor: pointer;
+}
+
+.service-form-title {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.service-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.service-form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.service-form-label {
+    margin-bottom: 5px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.service-form-input,
+.service-form-textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.service-form-textarea {
+    resize: none;
+    height: 80px;
+}
+
+.service-form-radio-group {
+    display: flex;
+    gap: 20px;
+}
+
+.service-form-radio-option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+}
+
+.service-form-submit-button {
+    margin-top: 10px;
+    padding: 12px;
+    border: none;
+    background: #6c63ff;
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.service-form-submit-button:hover {
+    background: #574fd6;
+}
+
+.service-form-submit-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
