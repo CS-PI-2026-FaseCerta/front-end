@@ -1,13 +1,14 @@
 import "./App.css";
-import Login from "./auth/pages/login";
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Deshboard from "./home/pages/dashboard.jsx";
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Deshboard />} />
         </Routes>
       </BrowserRouter>
     </div>
