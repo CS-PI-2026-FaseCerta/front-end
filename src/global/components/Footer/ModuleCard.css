@@ -1,0 +1,36 @@
+.module-card {
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: left;
+    text-decoration: none;
+    color: var(--color-text-primary);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.module-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.module-card__icon {
+    color: var(--color-primary);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.module-card__title {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.module-card__description {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+    flex-grow: 1;
+}
