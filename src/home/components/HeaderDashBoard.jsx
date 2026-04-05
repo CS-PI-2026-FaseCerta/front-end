@@ -1,9 +1,24 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { FaBars, FaUserCircle } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { FaBars, FaMoon, FaSun, FaUserCircle } from "react-icons/fa";
 import "./HeaderDashBoard.css";
 
 const HeaderDashBoard = () => {
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("fasecerta-theme") || "light";
+    setTheme(savedTheme);
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  }, []);
+
+  const handleThemeToggle = () => {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    localStorage.setItem("fasecerta-theme", nextTheme);
+    document.documentElement.setAttribute("data-theme", nextTheme);
+  };
+
   return (
     <header className="dashboard-header">
       <div className="dashboard-header__brand">
@@ -23,7 +38,44 @@ const HeaderDashBoard = () => {
         </Link>
       </div>
 
+      <nav className="dashboard-header__nav" aria-label="Navegação principal">
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            `dashboard-header__nav-link${isActive ? " dashboard-header__nav-link--active" : ""}`
+          }
+        >
+          Dashboard
+        </NavLink>
+        <NavLink
+          to="/relatorios"
+          className={({ isActive }) =>
+            `dashboard-header__nav-link${isActive ? " dashboard-header__nav-link--active" : ""}`
+          }
+        >
+          Relatórios
+        </NavLink>
+        <NavLink
+          to="/configuracoes"
+          className={({ isActive }) =>
+            `dashboard-header__nav-link${isActive ? " dashboard-header__nav-link--active" : ""}`
+          }
+        >
+          Configurações
+        </NavLink>
+      </nav>
+
       <div className="dashboard-header__actions">
+        <button
+          className="dashboard-header__icon-button"
+          type="button"
+          aria-label="Alternar tema"
+          onClick={handleThemeToggle}
+        >
+          {theme === "dark" ? <FaSun size={18} /> : <FaMoon size={18} />}
+        </button>
+
         <Link
           to="/perfil"
           className="dashboard-header__profile-link"
