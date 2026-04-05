@@ -3,6 +3,7 @@ import "./App.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./home/pages/dashboard.jsx";
 import Login from "./auth/pages/login";
+import AlterarSenha from "./auth/pages/alterarsenha";
 import SectionPage from "./home/pages/SectionPage";
 import ProtectedRoute from "./home/components/ProtectedRoute";
 
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Navigate to="/" replace />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/alterarSenha" element={<AlterarSenha />} />
           <Route
             path="/perfil"
             element={
@@ -21,6 +23,30 @@ function App() {
                 eyebrow="Gerenciamento do Perfil"
                 title="Perfil e preferências de acesso"
                 description="Este é um exemplo de tela para a futura integração com perfil autenticado, preferências e troca de credenciais."
+                ctaLabel="Voltar ao painel"
+                ctaPath="/"
+              />
+            }
+          />
+          <Route
+            path="/relatorios"
+            element={
+              <SectionPage
+                eyebrow="Inteligência operacional"
+                title="Relatórios"
+                description="Visualize indicadores de desempenho, produtividade da equipe e evolução das ordens de serviço."
+                ctaLabel="Voltar ao painel"
+                ctaPath="/"
+              />
+            }
+          />
+          <Route
+            path="/configuracoes"
+            element={
+              <SectionPage
+                eyebrow="Administração do sistema"
+                title="Configurações"
+                description="Ajuste parâmetros da operação, preferências de uso e regras internas do FaseCerta."
                 ctaLabel="Voltar ao painel"
                 ctaPath="/"
               />

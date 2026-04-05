@@ -8,10 +8,10 @@
   gap: 1rem;
   min-height: 4.75rem;
   padding: 0 1.5rem;
-  border-bottom: 1px solid rgba(198, 210, 225, 0.9);
-  background: rgba(248, 251, 255, 0.9);
+  border-bottom: 1px solid var(--header-border-color);
+  background: var(--header-surface);
   backdrop-filter: blur(18px);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--header-shadow);
 }
 
 .dashboard-header__brand {
@@ -42,8 +42,8 @@
 .dashboard-header__icon-button:focus-visible,
 .dashboard-header__profile-link:hover,
 .dashboard-header__profile-link:focus-visible {
-  border-color: rgba(15, 118, 110, 0.18);
-  background: rgba(15, 118, 110, 0.08);
+  border-color: var(--control-border-hover);
+  background: var(--control-bg-hover);
   color: var(--color-primary);
 }
 
@@ -52,7 +52,7 @@
 }
 
 .dashboard-header__logo {
-  color: var(--color-text-primary);
+  color: var(--primary-color);
   font-size: 1.05rem;
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -70,9 +70,49 @@
   gap: 0.75rem;
 }
 
+.dashboard-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dashboard-header__nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.58rem 0.9rem;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.dashboard-header__nav-link:hover,
+.dashboard-header__nav-link:focus-visible {
+  color: var(--color-text-primary);
+  border-color: var(--control-border-hover);
+  background: var(--control-bg-hover);
+}
+
+.dashboard-header__nav-link--active {
+  color: var(--color-primary);
+  border-color: var(--control-border-hover);
+  background: var(--control-bg-active);
+}
+
 @media (max-width: 640px) {
   .dashboard-header {
     padding-inline: 1rem;
+  }
+
+  .dashboard-header__nav {
+    display: none;
   }
 
   .dashboard-header__profile-link span {

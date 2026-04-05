@@ -1,5 +1,13 @@
 import React from "react";
-import { FaBoxOpen, FaClipboardList, FaUsers, FaWallet } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import {
+  FaArrowRight,
+  FaBoxOpen,
+  FaChartLine,
+  FaClipboardList,
+  FaUsers,
+  FaWallet,
+} from "react-icons/fa";
 import HeaderDashBoard from "../components/HeaderDashBoard";
 import ModuleCard from "../components/ModuleCard";
 import { PERFIL_LABELS, PERFIL_USUARIO } from "../../auth/mockAuth";
@@ -115,27 +123,22 @@ const Dashboard = () => {
         </section>
 
         <section className="dashboard-summary">
-          <div>
+          <div className="dashboard-summary__content">
             <span className="dashboard-summary__eyebrow">Área de destaque</span>
             <h2 className="dashboard-summary__title">
-              Segurança de interface e controle por perfil
+              <FaChartLine aria-hidden="true" />
+              Operação em alta
             </h2>
             <p className="dashboard-summary__description">
-              A exibição dos cards é apenas uma camada de experiência. A rota de
-              Financeiro também é protegida no front-end para evitar acesso
-              indevido por URL direta. A validação definitiva deve acontecer no
-              backend.
+              Acompanhe a performance dos atendimentos e identifique rapidamente
+              os pontos de melhoria operacional com visão consolidada.
             </p>
           </div>
 
-          <div
-            className="dashboard-summary__chips"
-            aria-label="Resumo de acesso"
-          >
-            <span>Gestor vê todos os módulos</span>
-            <span>Técnico vê apenas o permitido</span>
-            <span>Financeiro exige permissão</span>
-          </div>
+          <Link to="/relatorios" className="dashboard-summary__cta">
+            Ver relatórios
+            <FaArrowRight />
+          </Link>
         </section>
       </main>
     </div>
