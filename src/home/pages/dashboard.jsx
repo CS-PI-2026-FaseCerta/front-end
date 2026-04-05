@@ -1,133 +1,142 @@
 import React from "react";
-import "../../index.css";
-import Header from "../components/HeaderDashBoard";
+import { FaBoxOpen, FaClipboardList, FaUsers, FaWallet } from "react-icons/fa";
+import HeaderDashBoard from "../components/HeaderDashBoard";
 import ModuleCard from "../components/ModuleCard";
-import {
-  FaUsers,
-  FaBoxOpen,
-  FaClipboardList,
-  FaChartLine,
-} from "react-icons/fa";
+import { PERFIL_LABELS, PERFIL_USUARIO } from "../../auth/mockAuth";
 import "./dashboard.css";
 
-// ----------------------------------------------------------------------
-// MOCK DE AUTENTICAÇÃO E PERFIS
-// Futuramente, essas informações virão de um Contexto Global (ex: AuthContext),
-// Redux ou decodificadas de um token JWT do backend.
-// ----------------------------------------------------------------------
-const ROLES = {
-  GESTOR: "Administrativo / Gestor",
-  TECNICO: "Técnico em Campo",
-};
-
-// ALTERE ESTA VARIÁVEL PARA TESTAR OS PERFIS:
-// Opções: ROLES.GESTOR | ROLES.TECNICO
-const CURRENT_USER_ROLE = ROLES.GESTOR;
-
-// Estrutura de dados dos módulos com controle de acesso (RBAC)
-const MODULES = [
+const MODULOS = [
   {
     id: "clientes",
     title: "Gestão de Clientes",
-    description: "Cadastre e gerencie a base de clientes do sistema.",
-    icon: <FaUsers size={32} color="var(--color-info)" />,
+    description:
+      "Centralize cadastros, histórico e acompanhamento comercial em um único fluxo.",
     path: "/clientes",
-    allowedRoles: [ROLES.GESTOR], // Apenas Gestor visualiza
+    icon: <FaUsers />,
+    allowedProfiles: ["gestor"],
+    order: {
+      gestor: 1,
+    },
   },
   {
-    id: "servicos",
+    id: "servicos-estoque",
     title: "Serviços e Estoque",
-    description: "Controle de peças, equipamentos e catálogos de serviços.",
-    icon: <FaBoxOpen size={32} color="var(--color-warning)" />,
-    path: "/servicos",
-    allowedRoles: [ROLES.GESTOR, ROLES.TECNICO], // Gestor e Técnico visualizam
+    description:
+      "Gerencie itens, materiais e disponibilidade operacional com visão integrada.",
+    path: "/servicos-estoque",
+    icon: <FaBoxOpen />,
+    allowedProfiles: ["gestor"],
+    order: {
+      gestor: 2,
+    },
   },
   {
     id: "pedidos",
     title: "Pedidos / Ordens de Serviço",
-    description: "Acompanhamento e execução de ordens de serviço.",
-    icon: <FaClipboardList size={32} color="var(--color-accent)" />,
+    description:
+      "Acompanhe solicitações, abertura de OS e andamento das atividades em campo.",
     path: "/pedidos",
-    allowedRoles: [ROLES.GESTOR, ROLES.TECNICO], // Gestor e Técnico visualizam
+    icon: <FaClipboardList />,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 3,
+      tecnico: 1,
+    },
   },
   {
     id: "financeiro",
     title: "Financeiro",
-    description: "Gestão de faturamento, pagamentos e relatórios financeiros.",
-    icon: <FaChartLine size={32} color="var(--color-success)" />,
+    description:
+      "Concentre recebimentos, cobranças e indicadores financeiros da operação.",
     path: "/financeiro",
-    allowedRoles: [ROLES.GESTOR], // Apenas Gestor visualiza (Técnico não tem acesso)
+    icon: <FaWallet />,
+    allowedProfiles: ["gestor"],
+    order: {
+      gestor: 4,
+    },
   },
 ];
 
+const PERFIL_ATUAL = PERFIL_USUARIO;
+
 const Dashboard = () => {
-  // Filtra os módulos que o usuário atual tem permissão para visualizar
-  const permittedModules = MODULES.filter((module) =>
-    module.allowedRoles.includes(CURRENT_USER_ROLE),
-  );
+  const visibleModules = MODULOS.filter((modulo) =>
+    modulo.allowedProfiles.includes(PERFIL_ATUAL),
+  ).sort((a, b) => {
+    const orderA = a.order[PERFIL_ATUAL] ?? 99;
+    const orderB = b.order[PERFIL_ATUAL] ?? 99;
 
-  const handleNavigation = (path) => {
-    // ----------------------------------------------------------------------
-    // PROTEÇÃO DE ROTA FRONT-END (Simulação)
-    // ----------------------------------------------------------------------
-    // Além de ocultar o card na UI, é vital ter rotas protegidas (Private Routes).
-    // Se um usuário tentar acessar a URL diretamente pela barra de endereços,
-    // o componente da rota deverá fazer esta validação e redirecionar se necessário.
-    //
-    // AVISO DE SEGURANÇA: Bloqueio visual no front-end é apenas para UX.
-    // A verdadeira segurança e validação de permissões DEVEM ocorrer no Backend!
-    const targetModule = MODULES.find((m) => m.path === path);
+    return orderA - orderB;
+  });
 
-    if (
-      targetModule &&
-      !targetModule.allowedRoles.includes(CURRENT_USER_ROLE)
-    ) {
-      alert("Acesso Negado: Você não tem permissão para acessar esta área.");
-      // Exemplo de redirecionamento futuro usando react-router-dom:
-      // navigate('/dashboard', { replace: true });
-      return;
-    }
-
-    // Exemplo de navegação permitida
-    console.log(`Navegando para a rota permitida: ${path}`);
-    alert(`Redirecionando para: ${targetModule.title}`);
-    // navigate(path);
-  };
+  const perfilLabel = PERFIL_LABELS[PERFIL_ATUAL] || "Perfil não mapeado";
 
   return (
-    <div className="page-container">
-      {/* O Header já contém o menu hambúrguer e acesso ao perfil */}
-      <Header />
+    <div className="dashboard-page">
+      <HeaderDashBoard />
 
-      <main className="dashboard-main">
-        <div className="dashboard-content">
-          <div className="dashboard-header">
-            <h2>Bem-vindo(a) ao FaseCerta</h2>
-            <p>
-              Perfil atual: <strong>{CURRENT_USER_ROLE}</strong>
+      <main className="dashboard-shell">
+        <section className="dashboard-hero">
+          <div>
+            <span className="dashboard-hero__eyebrow">Painel de Controle</span>
+            <h1 className="dashboard-hero__title">
+              Acesso rápido aos módulos operacionais
+            </h1>
+            <p className="dashboard-hero__subtitle">
+              Os módulos abaixo são filtrados de acordo com o perfil
+              autenticado. O objetivo desta tela é dar uma visão clara e direta
+              das áreas que cada função pode acessar.
             </p>
           </div>
 
-          {/* Renderização Condicional do Grid de Módulos */}
-          <div className="modules-grid">
-            {permittedModules.length > 0 ? (
-              permittedModules.map((module) => (
-                <ModuleCard
-                  key={module.id}
-                  title={module.title}
-                  description={module.description}
-                  icon={module.icon}
-                  path={module.path}
-                  onClick={handleNavigation}
-                />
-              ))
-            ) : (
-              <p className="no-modules-msg">
-                Nenhum módulo disponível para este perfil.
-              </p>
-            )}
+          <aside className="dashboard-hero__profile">
+            <span className="dashboard-hero__profile-label">Perfil atual</span>
+            <strong>{perfilLabel}</strong>
+            <small>
+              Alterne o valor de PERFIL_USUARIO no mock para testar "gestor" e
+              "tecnico".
+            </small>
+          </aside>
+        </section>
+
+        <section className="dashboard-grid" aria-label="Módulos disponíveis">
+          {visibleModules.map((modulo) => (
+            <ModuleCard
+              key={modulo.id}
+              title={modulo.title}
+              description={modulo.description}
+              icon={modulo.icon}
+              path={modulo.path}
+              ctaLabel={
+                modulo.id === "pedidos" ? "Abrir módulo" : "Acessar módulo"
+              }
+            />
+          ))}
+        </section>
+
+        <section className="dashboard-summary">
+          <div>
+            <span className="dashboard-summary__eyebrow">Área de destaque</span>
+            <h2 className="dashboard-summary__title">
+              Segurança de interface e controle por perfil
+            </h2>
+            <p className="dashboard-summary__description">
+              A exibição dos cards é apenas uma camada de experiência. A rota de
+              Financeiro também é protegida no front-end para evitar acesso
+              indevido por URL direta. A validação definitiva deve acontecer no
+              backend.
+            </p>
           </div>
-        </div>
+
+          <div
+            className="dashboard-summary__chips"
+            aria-label="Resumo de acesso"
+          >
+            <span>Gestor vê todos os módulos</span>
+            <span>Técnico vê apenas o permitido</span>
+            <span>Financeiro exige permissão</span>
+          </div>
+        </section>
       </main>
     </div>
   );

@@ -1,98 +1,69 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
 
 :root {
-  /* Cores Primárias */
-  --color-primary: #4f46e5;
-  --color-primary-hover: #4338ca;
+  --primary-color: #322e8a;
+  --primary-hover-color: #4640ae;
+  --background-color: #f3f7fb;
+  --card-background: #ffffff;
+  --input-background: #eef4fa;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border-color: #d5dee8;
+  --error-color: #e53e3e;
 
-  /* Cores de Fundo e Superfícies */
-  --color-bg: #f9fafb;
-  --color-card: #ffffff;
-
-  /* Cores de Texto */
-  --color-text: #1f2937;
-  --color-text-light: #6b7280;
-
-  /* Bordas e Divisórias */
-  --color-border: #e5e7eb;
-
-  /* Cores de Feedback / Destaque */
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
-  --color-accent: #a855f7;
+  --color-bg: var(--background-color);
+  --color-surface: var(--card-background);
+  --color-surface-muted: var(--input-background);
+  --color-primary: var(--primary-color);
+  --color-primary-hover: var(--primary-hover-color);
+  --color-accent: #f59e0b;
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border-color);
+  --color-highlight: #dff5f2;
+  --color-highlight-strong: #b7ece4;
+  --shadow-card: 0 12px 32px rgba(15, 23, 42, 0.08);
+  --shadow-card-strong: 0 16px 40px rgba(15, 23, 42, 0.12);
+  --shadow-elevated: 0 20px 60px rgba(15, 23, 42, 0.14);
 }
 
-/* Preparação estrutural para futuro Dark Mode */
-[data-theme="dark"] {
-  --color-bg: #111827;
-  --color-card: #1f2937;
-  --color-text: #f9fafb;
-  --color-text-light: #9ca3af;
-  --color-border: #374151;
+* {
+  box-sizing: border-box;
 }
 
-/* --- Layout Geral --- */
-.page-container {
-  font-family: "Inter", sans-serif;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: var(--color-bg);
-  color: var(--color-text);
+html,
+body,
+#root {
+  min-height: 100%;
 }
 
 body {
   margin: 0;
   font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Estilos Globais Padronizados com o Design System */
 a {
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: color 0.2s ease;
+  color: inherit;
 }
 
-a:hover {
-  color: var(--color-primary-hover);
+button,
+input,
+textarea,
+select {
+  font: inherit;
 }
 
 button {
-  background-color: var(--color-primary);
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-button:hover {
-  background-color: var(--color-primary-hover);
-}
-
-/* Sobrescrita de componentes padrão para consistência (Cards e Navbar) */
-.page-header {
-  background-color: var(--color-card) !important;
-  border-bottom: 1px solid var(--color-border) !important;
-  color: var(--color-text) !important;
-}
-
-.module-card {
-  background-color: var(--color-card) !important;
-  border: 1px solid var(--color-border) !important;
-  transition:
-    border-color 0.2s ease,
-    transform 0.2s ease !important;
-}
-
-.module-card:hover {
-  border-color: var(--color-primary) !important;
+  border: 0;
 }
 
 code {
