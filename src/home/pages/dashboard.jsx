@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FaArrowRight,
@@ -10,7 +10,16 @@ import {
 } from "react-icons/fa";
 import HeaderDashBoard from "../components/HeaderDashBoard";
 import ModuleCard from "../components/ModuleCard";
+import QuickActionsCarousel from "../components/QuickActionsCarousel";
+import QuickActionsModal from "../components/QuickActionsModal";
 import { PERFIL_LABELS, PERFIL_USUARIO } from "../../auth/mockAuth";
+import {
+  getQuickActionsByProfile,
+  getSelectedQuickActionsByProfile,
+  loadQuickActionSelection,
+  saveQuickActionSelection,
+  sanitizeQuickActionIdsByProfile,
+} from "../utils/quickActions";
 import "./dashboard.css";
 
 const MODULOS = [
@@ -21,9 +30,10 @@ const MODULOS = [
       "Centralize cadastros, histórico e acompanhamento comercial em um único fluxo.",
     path: "/clientes",
     icon: <FaUsers />,
-    allowedProfiles: ["gestor"],
+    allowedProfiles: ["gestor", "tecnico"],
     order: {
       gestor: 1,
+      tecnico: 2,
     },
   },
   {
@@ -33,9 +43,10 @@ const MODULOS = [
       "Gerencie itens, materiais e disponibilidade operacional com visão integrada.",
     path: "/servicos-estoque",
     icon: <FaBoxOpen />,
-    allowedProfiles: ["gestor"],
+    allowedProfiles: ["gestor", "tecnico"],
     order: {
       gestor: 2,
+      tecnico: 3,
     },
   },
   {
@@ -68,6 +79,10 @@ const MODULOS = [
 const PERFIL_ATUAL = PERFIL_USUARIO;
 
 const Dashboard = () => {
+  const [isQuickActionsModalOpen, setIsQuickActionsModalOpen] = useState(false);
+  const [selectedQuickActionIds, setSelectedQuickActionIds] = useState([]);
+  const [draftQuickActionIds, setDraftQuickActionIds] = useState([]);
+
   const visibleModules = MODULOS.filter((modulo) =>
     modulo.allowedProfiles.includes(PERFIL_ATUAL),
   ).sort((a, b) => {
@@ -76,6 +91,60 @@ const Dashboard = () => {
 
     return orderA - orderB;
   });
+
+  const allowedQuickActions = getQuickActionsByProfile(PERFIL_ATUAL);
+
+  useEffect(() => {
+    const storedSelection = loadQuickActionSelection(PERFIL_ATUAL);
+    setSelectedQuickActionIds(storedSelection);
+  }, []);
+
+  const quickActions = getSelectedQuickActionsByProfile(
+    PERFIL_ATUAL,
+    selectedQuickActionIds,
+  );
+
+  const handleOpenCustomizeQuickActions = () => {
+    const safeDraft =
+      selectedQuickActionIds.length > 0
+        ? sanitizeQuickActionIdsByProfile(PERFIL_ATUAL, selectedQuickActionIds)
+        : allowedQuickActions.map((action) => action.id);
+
+    setDraftQuickActionIds(safeDraft);
+    setIsQuickActionsModalOpen(true);
+  };
+
+  const handleToggleDraftQuickAction = (actionId) => {
+    setDraftQuickActionIds((current) => {
+      if (current.includes(actionId)) {
+        return current.filter((id) => id !== actionId);
+      }
+
+      return [...current, actionId];
+    });
+  };
+
+  const handleCancelCustomizeQuickActions = () => {
+    setIsQuickActionsModalOpen(false);
+    setDraftQuickActionIds([]);
+  };
+
+  const handleSaveCustomizeQuickActions = () => {
+    const safeSelection = sanitizeQuickActionIdsByProfile(
+      PERFIL_ATUAL,
+      draftQuickActionIds,
+    );
+
+    setSelectedQuickActionIds(safeSelection);
+    saveQuickActionSelection(PERFIL_ATUAL, safeSelection);
+    setIsQuickActionsModalOpen(false);
+    setDraftQuickActionIds([]);
+  };
+
+  const handleSeeMoreQuickActions = () => {
+    // TODO: quando o menu hambúrguer estiver disponível, abrir o painel de navegação daqui.
+    console.log("Placeholder: abrir menu hambúrguer para mais atalhos");
+  };
 
   const perfilLabel = PERFIL_LABELS[PERFIL_ATUAL] || "Perfil não mapeado";
 
@@ -121,6 +190,21 @@ const Dashboard = () => {
             />
           ))}
         </section>
+
+        <QuickActionsCarousel
+          actions={quickActions}
+          onSeeMore={handleSeeMoreQuickActions}
+          onCustomize={handleOpenCustomizeQuickActions}
+        />
+
+        <QuickActionsModal
+          isOpen={isQuickActionsModalOpen}
+          actions={allowedQuickActions}
+          selectedIds={draftQuickActionIds}
+          onToggleAction={handleToggleDraftQuickAction}
+          onSave={handleSaveCustomizeQuickActions}
+          onCancel={handleCancelCustomizeQuickActions}
+        />
 
         <section className="dashboard-summary">
           <div className="dashboard-summary__content">
