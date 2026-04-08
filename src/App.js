@@ -1,6 +1,6 @@
 import "./App.css";
 import Login from "./auth/pages/login";
-import CadastroServico from "./auth/pages/cadastroservico";
+import CadastroCidade from "./auth/pages/CadastroCidade";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
         </Routes>
       </BrowserRouter> */}
 
-      <CadastroServico />
+      <CadastroCidade />
     </div>
   );
 }
