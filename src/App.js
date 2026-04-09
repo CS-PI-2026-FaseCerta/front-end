@@ -10,7 +10,7 @@ import ProtectedRoute from "./home/components/ProtectedRoute";
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
+      {/* <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/dashboard" element={<Navigate to="/" replace />} />
@@ -104,7 +104,9 @@ function App() {
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
+      </BrowserRouter> */}
+
+      <CadastroServico />
     </div>
   );
 }
