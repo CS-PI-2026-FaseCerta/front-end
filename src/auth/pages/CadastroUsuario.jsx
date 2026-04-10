@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from 'react-router-dom';
 import "./CadastroUsuario.css";
 
 export default function CadastroUsuario() {
@@ -115,7 +116,7 @@ export default function CadastroUsuario() {
 
                     <div className="cadastro-login-link">
                         <p>
-                            Já tem conta? <a href="#">Entre Aqui</a>
+                            Já tem conta? <Link to="/login">Entre Aqui</Link>
                         </p>
                     </div>
                 </div>
