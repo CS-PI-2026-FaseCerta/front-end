@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { FaBars, FaMoon, FaSun, FaUserCircle } from "react-icons/fa";
 import "./HeaderDashBoard.css";
 
-const HeaderDashBoard = () => {
+const HeaderDashBoard = ({ onMenuToggle, isSidebarOpen = false }) => {
   const [theme, setTheme] = useState("light");
 
   useEffect(() => {
@@ -26,6 +26,9 @@ const HeaderDashBoard = () => {
           className="dashboard-header__icon-button"
           type="button"
           aria-label="Abrir menu"
+          aria-expanded={isSidebarOpen}
+          aria-controls="dashboard-sidebar"
+          onClick={onMenuToggle}
         >
           <FaBars size={20} />
         </button>
