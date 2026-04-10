@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 // import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
-import './alterarsenha.css';
+import "./alterarsenha.css";
 import { FaArrowLeft } from "react-icons/fa";
 
 const AlterarSenha = () => {
   // Estados para os valores dos inputs
   const [formData, setFormData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   // Estados para visibilidade das senhas (individual para cada campo)
@@ -33,16 +33,16 @@ const AlterarSenha = () => {
 
     // Validação: campos preenchidos
     const allFilled = currentPassword && newPassword && confirmPassword;
-    
+
     // Validação: senhas coincidem
-    const mismatch = newPassword !== confirmPassword && confirmPassword !== '';
-    
+    const mismatch = newPassword !== confirmPassword && confirmPassword !== "";
+
     // Validação: nova senha igual à atual
-    const sameAsOld = newPassword === currentPassword && newPassword !== '';
+    const sameAsOld = newPassword === currentPassword && newPassword !== "";
 
     setErrors({
       mismatch,
-      sameAsOld
+      sameAsOld,
     });
 
     // O botão só habilita se tudo estiver preenchido, coincidirem e a nova for diferente da antiga
@@ -69,13 +69,23 @@ const AlterarSenha = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert('Senha alterada com sucesso! (Simulação)');
+    alert("Senha alterada com sucesso! (Simulação)");
     // Aqui viria a integração com a API
   };
 
   // Componente interno para os ícones de Olho (SVG)
   const EyeIcon = ({ visible }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       {visible ? (
         <>
           <path d="M17.94 17.94A10.07 10.07 0 0 1 12 19c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
@@ -92,21 +102,25 @@ const AlterarSenha = () => {
 
   return (
     <div className="change-password-page">
-
       <main className="change-password-container">
         <section className="change-password-card">
           <div className="card-header">
-            <button className="back-button"><FaArrowLeft size={20}/></button>
+            <button className="back-button">
+              <FaArrowLeft size={20} />
+            </button>
             <h1>Alterar Senha</h1>
           </div>
 
-          <p className="card-header-p">Mantenha sua conta FaseCerta segura e atualizada.</p>
-          
+          <p className="card-header-p">
+            Mantenha sua conta FaseCerta segura e atualizada.
+          </p>
+
           <form onSubmit={handleSubmit} noValidate>
-            
             {/* Senha Atual */}
             <div className="form-group">
-              <label htmlFor="currentPassword" style={{textAlign: "left"}}>Senha atual</label>
+              <label htmlFor="currentPassword" style={{ textAlign: "left" }}>
+                Senha atual
+              </label>
               <div className="input-wrapper">
                 <input
                   id="currentPassword"
@@ -117,11 +131,13 @@ const AlterarSenha = () => {
                   placeholder="Digite sua senha atual"
                   required
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="toggle-password"
-                  onClick={() => toggleVisibility('current')}
-                  aria-label={showPasswords.current ? "Ocultar senha" : "Mostrar senha"}
+                  onClick={() => toggleVisibility("current")}
+                  aria-label={
+                    showPasswords.current ? "Ocultar senha" : "Mostrar senha"
+                  }
                 >
                   <EyeIcon visible={showPasswords.current} />
                 </button>
@@ -130,7 +146,9 @@ const AlterarSenha = () => {
 
             {/* Nova Senha */}
             <div className="form-group">
-              <label htmlFor="newPassword" style={{ textAlign: "left" }}>Nova senha</label>
+              <label htmlFor="newPassword" style={{ textAlign: "left" }}>
+                Nova senha
+              </label>
               <div className="input-wrapper">
                 <input
                   id="newPassword"
@@ -139,27 +157,35 @@ const AlterarSenha = () => {
                   value={formData.newPassword}
                   onChange={handleChange}
                   placeholder="Crie uma nova senha"
-                  className={errors.sameAsOld ? 'input-error' : ''}
+                  className={errors.sameAsOld ? "input-error" : ""}
                   required
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="toggle-password"
-                  onClick={() => toggleVisibility('new')}
-                  aria-label={showPasswords.new ? "Ocultar senha" : "Mostrar senha"}
+                  onClick={() => toggleVisibility("new")}
+                  aria-label={
+                    showPasswords.new ? "Ocultar senha" : "Mostrar senha"
+                  }
                 >
                   <EyeIcon visible={showPasswords.new} />
                 </button>
               </div>
-              <p className="helper-text">Dica: use letras e números pra criar uma senha forte.</p>
+              <p className="helper-text">
+                Dica: use letras e números pra criar uma senha forte.
+              </p>
               {errors.sameAsOld && (
-                <span className="error-message">A nova senha não pode ser igual à senha atual.</span>
+                <span className="error-message">
+                  A nova senha não pode ser igual à senha atual.
+                </span>
               )}
             </div>
 
             {/* Confirmar Nova Senha */}
             <div className="form-group">
-              <label htmlFor="confirmPassword" style={{ textAlign: "left" }}>Confirme a nova senha</label>
+              <label htmlFor="confirmPassword" style={{ textAlign: "left" }}>
+                Confirme a nova senha
+              </label>
               <div className="input-wrapper">
                 <input
                   id="confirmPassword"
@@ -168,14 +194,16 @@ const AlterarSenha = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Repita a nova senha"
-                  className={errors.mismatch ? 'input-error' : ''}
+                  className={errors.mismatch ? "input-error" : ""}
                   required
                 />
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="toggle-password"
-                  onClick={() => toggleVisibility('confirm')}
-                  aria-label={showPasswords.confirm ? "Ocultar senha" : "Mostrar senha"}
+                  onClick={() => toggleVisibility("confirm")}
+                  aria-label={
+                    showPasswords.confirm ? "Ocultar senha" : "Mostrar senha"
+                  }
                 >
                   <EyeIcon visible={showPasswords.confirm} />
                 </button>
@@ -185,9 +213,9 @@ const AlterarSenha = () => {
               )}
             </div>
 
-            <button 
-              type="submit" 
-              className="submit-btn" 
+            <button
+              type="submit"
+              className="submit-btn"
               disabled={isButtonDisabled}
             >
               Alterar Senha
@@ -201,7 +229,6 @@ const AlterarSenha = () => {
           </div>
         </section>
       </main>
-
     </div>
   );
 };
