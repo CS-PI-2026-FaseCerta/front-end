@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import HeaderDashBoard from "../components/HeaderDashBoard";
-import "./dashboard.css";
+import HeaderDashBoard from "../components/headerDashBoard/HeaderDashBoard";
+import "./Dashboard.css";
 
 const SectionPage = ({
   eyebrow,

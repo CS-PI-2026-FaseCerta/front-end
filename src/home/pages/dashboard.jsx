@@ -8,10 +8,11 @@ import {
   FaUsers,
   FaWallet,
 } from "react-icons/fa";
-import HeaderDashBoard from "../components/HeaderDashBoard";
-import ModuleCard from "../components/ModuleCard";
-import QuickActionsCarousel from "../components/QuickActionsCarousel";
-import QuickActionsModal from "../components/QuickActionsModal";
+import HeaderDashBoard from "../components/headerDashBoard/HeaderDashBoard";
+
+import ModuleCard from "../components/cards/ModuleCard";
+import QuickActionsCarousel from "../components/actions/QuickActionsCarousel";
+import QuickActionsModal from "../components/actions/QuickActionsModal";
 import { PERFIL_LABELS, PERFIL_USUARIO } from "../../auth/mockAuth";
 import {
   getQuickActionsByProfile,
@@ -20,7 +21,7 @@ import {
   saveQuickActionSelection,
   sanitizeQuickActionIdsByProfile,
 } from "../utils/quickActions";
-import "./dashboard.css";
+import "./Dashboard.css";
 
 const MODULOS = [
   {
@@ -206,24 +207,26 @@ const Dashboard = () => {
           onCancel={handleCancelCustomizeQuickActions}
         />
 
-        <section className="dashboard-summary">
-          <div className="dashboard-summary__content">
-            <span className="dashboard-summary__eyebrow">Área de destaque</span>
-            <h2 className="dashboard-summary__title">
-              <FaChartLine aria-hidden="true" />
-              Operação em alta
-            </h2>
-            <p className="dashboard-summary__description">
-              Acompanhe a performance dos atendimentos e identifique rapidamente
-              os pontos de melhoria operacional com visão consolidada.
-            </p>
-          </div>
+        {PERFIL_ATUAL === "gestor" && (
+          <section className="dashboard-summary">
+            <div className="dashboard-summary__content">
+              <span className="dashboard-summary__eyebrow">Área de destaque</span>
+              <h2 className="dashboard-summary__title">
+                <FaChartLine aria-hidden="true" />
+                Operação em alta
+              </h2>
+              <p className="dashboard-summary__description">
+                Acompanhe a performance dos atendimentos e identifique rapidamente
+                os pontos de melhoria operacional com visão consolidada.
+              </p>
+            </div>
 
-          <Link to="/relatorios" className="dashboard-summary__cta">
-            Ver relatórios
-            <FaArrowRight />
-          </Link>
-        </section>
+            <Link to="/relatorios" className="dashboard-summary__cta">
+              Ver relatórios
+              <FaArrowRight />
+            </Link>
+          </section>
+        )}
       </main>
     </div>
   );
