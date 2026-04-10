@@ -1,147 +1,128 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./CadastroUsuario.css";
 
 export default function CadastroUsuario() {
+    const [form, setForm] = useState({
+        email: "",
+        username: "",
+        password: "",
+        confirm: "",
+    });
 
-    const [email, setEmail] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirm, setConfirm] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
+    const [showPass, setShowPass] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
-    const [match, setMatch] = useState(true);
-    const [allFilled, setAllFilled] = useState(false);
 
-    useEffect(() => {
-        setMatch(password === confirm);
-    }, [password, confirm]);
+    const isMatch = form.password === form.confirm;
+    const allFilled =
+        form.email && form.username && form.password && form.confirm && isMatch;
 
-    useEffect(() => {
-        setAllFilled(
-            email.trim() &&
-            username.trim() &&
-            password.trim() &&
-            confirm.trim() &&
-            match
-        );
-    }, [email, username, password, confirm, match]);
-
-    function handleSubmit(e) {
-        e.preventDefault();
-        alert("Cadastro enviado com sucesso!");
+    function updateField(e) {
+        setForm({ ...form, [e.target.name]: e.target.value });
     }
 
     return (
-        <>
+        <div className="cadastro-wrapper">
             {/* NAVBAR */}
-            <nav className="navbar">
-                <div className="logo">FaseCerta</div>
+            <nav className="cadastro-navbar">
+                <div className="cadastro-logo">FaseCerta</div>
             </nav>
 
-            <main className="main-content">
-                <div className="card">
+            {/* MAIN */}
+            <main className="cadastro-main">
+                <div className="cadastro-card">
                     <h1>Crie sua conta</h1>
-                    <p className="subtitle">Insira seus dados para começar</p>
+                    <p className="cadastro-subtitle">Insira seus dados para começar</p>
 
-                    <form onSubmit={handleSubmit}>
-
+                    <form className="cadastro-form">
                         {/* EMAIL */}
-                        <div className="input-group">
-                            <label htmlFor="email">E-mail</label>
+                        <div className="cadastro-input-group">
+                            <label>E-mail</label>
                             <input
                                 type="email"
-                                id="email"
+                                name="email"
                                 placeholder="seu@email.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                value={form.email}
+                                onChange={updateField}
                             />
                         </div>
 
                         {/* USERNAME */}
-                        <div className="input-group">
-                            <label htmlFor="username">Nome de Usuário</label>
+                        <div className="cadastro-input-group">
+                            <label>Nome de Usuário</label>
                             <input
                                 type="text"
-                                id="username"
+                                name="username"
                                 placeholder="Como quer ser chamado?"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={form.username}
+                                onChange={updateField}
                             />
                         </div>
 
                         {/* SENHA */}
-                        <div className="input-group">
-                            <label htmlFor="password">Senha</label>
-                            <div className="input-wrapper">
+                        <div className="cadastro-input-group">
+                            <label>Senha</label>
+                            <div className="cadastro-input-wrapper">
                                 <input
-                                    type={showPassword ? "text" : "password"}
-                                    id="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    type={showPass ? "text" : "password"}
+                                    name="password"
+                                    value={form.password}
+                                    onChange={updateField}
                                 />
                                 <i
-                                    className={`far ${showPassword ? "fa-eye-slash" : "fa-eye"} toggle-password`}
-                                    onClick={() => setShowPassword(!showPassword)}
+                                    className={`far ${showPass ? "fa-eye-slash" : "fa-eye"} cadastro-eye`}
+                                    onClick={() => setShowPass(!showPass)}
                                 ></i>
                             </div>
                         </div>
 
                         {/* CONFIRMAR SENHA */}
-                        <div className="input-group">
-                            <label htmlFor="confirm-password">Confirme sua senha</label>
-                            <div className="input-wrapper">
+                        <div className="cadastro-input-group">
+                            <label>Confirme sua senha</label>
+                            <div className="cadastro-input-wrapper">
                                 <input
                                     type={showConfirm ? "text" : "password"}
-                                    id="confirm-password"
-                                    value={confirm}
-                                    onChange={(e) => setConfirm(e.target.value)}
+                                    name="confirm"
+                                    value={form.confirm}
+                                    onChange={updateField}
                                     style={{
-                                        border: confirm.length > 0 && !match
-                                            ? "1px solid var(--error-color)"
-                                            : "1px solid transparent"
+                                        border: form.confirm && !isMatch ? "1px solid #e53e3e" : "",
                                     }}
                                 />
                                 <i
-                                    className={`far ${showConfirm ? "fa-eye-slash" : "fa-eye"} toggle-password`}
+                                    className={`far ${showConfirm ? "fa-eye-slash" : "fa-eye"} cadastro-eye`}
                                     onClick={() => setShowConfirm(!showConfirm)}
                                 ></i>
                             </div>
 
                             <span
-                                className="info-text"
+                                className="cadastro-info-text"
                                 style={{
-                                    color: confirm.length > 0 && !match
-                                        ? "var(--error-color)"
-                                        : "var(--text-secondary)"
+                                    color: form.confirm && !isMatch ? "#e53e3e" : "var(--text-secondary)",
                                 }}
                             >
-                                {confirm.length > 0 && !match ? (
-                                    <>
-                                        <i className="fas fa-times-circle"></i>
-                                        As senhas não coincidem!
-                                    </>
-                                ) : (
-                                    <>
-                                        <i className="fas fa-info-circle"></i>
-                                        As senhas devem coincidir para prosseguir.
-                                    </>
-                                )}
+                                <i className={form.confirm && !isMatch ? "fas fa-times-circle" : "fas fa-info-circle"}></i>
+                                {form.confirm && !isMatch
+                                    ? " As senhas não coincidem!"
+                                    : " As senhas devem coincidir para prosseguir."}
                             </span>
                         </div>
 
-                        <button type="submit" className="btn-primary" disabled={!allFilled}>
+                        {/* BOTÃO */}
+                        <button className="cadastro-btn" disabled={!allFilled}>
                             Criar conta!
                         </button>
-
                     </form>
 
-                    <div className="login-link">
-                        <p>Já tem conta? <a href="#">Entre Aqui</a></p>
+                    <div className="cadastro-login-link">
+                        <p>
+                            Já tem conta? <a href="#">Entre Aqui</a>
+                        </p>
                     </div>
                 </div>
             </main>
 
-            <footer className="footer">
+            {/* FOOTER */}
+            <footer className="cadastro-footer">
                 <div className="footer-left">
                     <span>FaseCerta © 2026</span>
                 </div>
@@ -151,6 +132,6 @@ export default function CadastroUsuario() {
                     <a href="#">Política de Privacidade</a>
                 </div>
             </footer>
-        </>
+        </div>
     );
 }
