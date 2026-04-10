@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
-import Footer from "../../global/components/Footer/Footer.jsx";
-import Header from "../../global/components/Header/Header.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx";
+import Header from "../../../global/components/Header/Header.jsx";
 
-import "./login.css";
+import "./Login.css";
 
 const Login = () => {
   const [emailOrUsername, setEmailOrUsername] = useState("");

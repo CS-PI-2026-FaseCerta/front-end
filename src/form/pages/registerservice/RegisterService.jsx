@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "./CadastroServico.css";
+import "./RegisterService.css";
 import { FaArrowLeft } from "react-icons/fa";
  
-export default function CadastroServico() {
+export default function RegisterService() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState(""); 
     const [billingType, setBillingType] = useState("fixed");

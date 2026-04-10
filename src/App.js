@@ -2,9 +2,9 @@ import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./home/pages/dashboard.jsx";
-import Login from "./auth/pages/login";
-import AlterarSenha from "./auth/pages/alterarsenha";
-import CadastroServico from "./auth/pages/CadastroServico";
+import Login from "./auth/pages/login/Login.jsx";
+import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
+import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
 import SectionPage from "./home/pages/SectionPage";
 import ProtectedRoute from "./home/components/ProtectedRoute";
 
@@ -14,11 +14,12 @@ function App() {
       {
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<ChangePassword />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/alterarSenha" element={<AlterarSenha />} />
-            <Route path="/cadastroServico" element={<CadastroServico />} />
+            <Route path="/changepassword" element={<ChangePassword />} />
+            <Route path="/registerservice" element={<RegisterService />} />
             <Route
               path="/perfil"
               element={
