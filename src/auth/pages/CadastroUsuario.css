@@ -1,0 +1,129 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+/* === NAVBAR === */
+.navbar {
+    width: 100%;
+    padding: 15px 30px;
+    background: #4b0082;
+    color: #fff;
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+/* === MAIN === */
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.card {
+    background: #fff;
+    padding: 30px;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px #0003;
+}
+
+.card h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #555;
+}
+
+/* === INPUTS === */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    font-weight: 600;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    transition: 0.2s;
+}
+
+.input-group input:focus {
+    border-color: #4b0082;
+}
+
+/* === SENHA COM OLHO === */
+.input-wrapper {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+}
+
+/* === MENSAGENS === */
+.info-text {
+    font-size: 13px;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* === BOTÃO === */
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    background: #4b0082;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.btn-primary:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+/* === FOOTER === */
+.footer {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    background: #eee;
+    margin-top: 40px;
+}
+
+.footer a {
+    margin-left: 15px;
+    color: #4b0082;
+    text-decoration: none;
+}
