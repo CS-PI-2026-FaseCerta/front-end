@@ -9,10 +9,14 @@ export default function RegisterCity() {
     const [name, setName] = useState("");
     const [cep, setCep] = useState("");
     
+    const isCepValid = (cep) => {
+        const numbers = cep.replace(/\D/g, "");
+        return numbers.length === 8;
+    };
 
     const isFormValid =
         name.trim() !== "" &&
-        cep.trim() !== "";
+        isCepValid(cep);;
 
     const states = [
         { value: "ac", label: "Acre" },
@@ -58,6 +62,8 @@ export default function RegisterCity() {
 
         return value;
     };
+
+    
 
     return (
         <div className="city-page">
