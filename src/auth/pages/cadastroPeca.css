@@ -137,7 +137,6 @@ input:focus {
     pointer-events: none;
 }
 
-/* GRID DE CAMPOS (LADO A LADO) */
 .form-row {
     display: flex;
     gap: 20px;
@@ -155,7 +154,6 @@ input:focus {
     color: white;
     border: none;
     border-radius: 50px;
-    /* Bem arredondado como no print */
     font-size: 15px;
     font-weight: 700;
     cursor: pointer;
