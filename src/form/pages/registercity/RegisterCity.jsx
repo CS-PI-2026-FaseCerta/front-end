@@ -48,6 +48,17 @@ export default function RegisterCity() {
         states.find(s => s.value === "pr")
     );
 
+    const formatCep = (value) => {
+        value = value.replace(/\D/g, "");
+        value = value.slice(0, 8);
+
+        if (value.length > 5) {
+            value = value.replace(/(\d{5})(\d{0,3})/, "$1-$2");
+        }
+
+        return value;
+    };
+
     return (
         <div className="city-page">
             <Header />
@@ -72,32 +83,39 @@ export default function RegisterCity() {
                         />
                     </div>
 
-                    <div className="city-form-group">
-                        <label htmlFor="city-cep" className="city-form-label">CEP - CIDADE</label>
-                        <input
-                            id="city-cep"
-                            className="city-form-input"
-                            type="text"
-                            placeholder="Ex: 85660-000"
-                            value={cep}
-                            onChange={(e) => setCep(e.target.value)}
-                        />
+                    
+
+                    <div id="city-form-midline">
+                        <div className="city-form-group" id="city-form-cep-group">
+                            <label htmlFor="city-cep" className="city-form-label">CEP - CIDADE</label>
+                            <input
+                                id="city-cep"
+                                className="city-form-input"
+                                type="text"
+                                placeholder="Ex: 85660-000"
+                                value={cep}
+                                onChange={(e) => setCep(formatCep(e.target.value))}
+                            />
+                        </div>
+
+                        <div id="city-form-state-group" className="city-form-group">
+                            <label htmlFor="city-state" className="city-form-label">ESTADO (UF)</label>
+
+                            <Select
+                                id="city-state"
+                                options={states}
+                                value={state}
+                                onChange={setState}
+                                placeholder="Selecione um estado..."
+                                isSearchable
+                                className="city-select"
+                                classNamePrefix="city-react-select"
+                            />
+                        </div>
+
                     </div>
 
-                    <div className="city-form-group">
-                        <label htmlFor="city-state" className="city-form-label">ESTADO (UF)</label>
-
-                        <Select
-                            id="city-state"
-                            options={states}
-                            value={state}
-                            onChange={setState}
-                            placeholder="Selecione um estado..."
-                            isSearchable
-                            className="city-select"
-                            classNamePrefix="city-react-select"
-                        />
-                    </div>
+                    
 
                     <button
                         type="submit"

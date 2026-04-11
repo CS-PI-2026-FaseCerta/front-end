@@ -1,11 +1,9 @@
-* {
+.city-page {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: sans-serif;
-}
 
-.city-page {
     width: 100%;
     min-height: 100vh;
     display: flex;
@@ -69,6 +67,18 @@
     gap: .6rem;
 }
 
+#city-form-midline {
+    display: flex;
+}
+
+#city-form-cep-group, #city-form-state-group {
+    width: 50%;
+}
+
+#city-cep {
+    width: 60%;
+}
+
 .city-form-label {
     margin-bottom: 5px;
     font-weight: 600;
@@ -77,44 +87,24 @@
 }
 
 .city-form-input {
-    height: 4rem;
-    width: 100%;
-}
-
-.city-form-input,
-.city-form-textarea {
     padding: 1.3rem 1rem;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
     background-color: #F6F2FB;
+    height: 3rem;
+    width: 100%;
 }
 
-.city-form-input::placeholder,
-.city-form-textarea::placeholder {
+
+
+.city-form-input::placeholder {
     font-size: 1rem;
     /* padding: 1.3rem 1rem; */
     color: rgb(166, 159, 182);
 }
 
-.city-form-value-input,
-.city-form-value-input::placeholder {
-    color: black;
-    padding-left: 1.3rem;
-    font-size: 1.1rem;
-}
 
-.city-form-value-input::placeholder {
-    padding-left: 1.7rem;
-}
-
-.city-form-value-conteiner {
-    position: relative;
-}
-
-.city-form-group div {
-    display: flex;
-}
 
 .city-form-value-span {
     position: absolute;
@@ -125,42 +115,6 @@
     font-size: 1.1rem;
 }
 
-.city-form-value-square {
-    position: absolute;
-    bottom: .5rem;
-    left: .8rem;
-
-    width: 2rem;
-    height: 3rem;
-    background-color: #F6F2FB;
-}
-
-.city-form-textarea {
-    resize: none;
-    height: 7rem;
-}
-
-.city-form-radio-group {
-    display: flex;
-    gap: 20px;
-}
-
-.city-form-radio-option {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 14px;
-}
-
-.city-form-radio-option input {
-    accent-color: #F6F2FB;
-    width: 1rem;
-    height: 1rem;
-}
-
-.city-form-radio-option input:checked {
-    accent-color: #322E8A;
-}
 
 .city-form-submit-button {
     margin-top: 10px;
@@ -214,10 +168,12 @@
 }
 
 
+
 /* ======================= SELECT ======================= */
 
 .city-select {
-    font-size: 14px;
+    font-size: 1rem;
+    width: 80% !important;
 }
 
 /* =========================
@@ -231,6 +187,7 @@
     transition: all 0.2s ease;
     cursor: pointer;
     background-color: #F6F2FB !important;
+    width: 100% !important;
 }
 
 
@@ -252,7 +209,8 @@
 ========================= */
 .city-react-select__value-container {
     padding: 2px 12px !important;
-    
+    display: flex !important;
+    flex-wrap: nowrap !important;
 }
 
 .city-react-select__placeholder {
@@ -272,6 +230,7 @@
     margin-top: 6px !important;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
     border: 1px solid #f0f0f0;
+    max-width: 11.8rem;
 
     overflow: hidden !important;
 }
@@ -335,3 +294,6 @@
 .city-react-select__clear-indicator:hover {
     color: #ff4d4f !important;
 }   
+
+
+
