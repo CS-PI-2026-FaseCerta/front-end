@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../global/components/Header/Header.jsx";
 import { getRememberMe, login as authLogin, saveRememberMe } from "../mockAuth";
 
+import { Link } from "react-router-dom";
 import "./login.css";
 
 const Login = () => {
@@ -184,7 +185,8 @@ const Login = () => {
             </button>
 
             <p className="signup-link">
-              Ainda não tem uma conta? <a href="#">Cadastre-se</a>
+              Ainda não tem uma conta?{" "}
+              <Link to="/cadastroUsuario">Cadastre-se</Link>
             </p>
           </form>
         </div>
