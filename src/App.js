@@ -8,6 +8,7 @@ import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage";
 import ProtectedRoute from "./home/components/ProtectedRoute";
+import CadastroUsuario from "./auth/pages/CadastroUsuario.jsx";
 
 function App() {
   return (

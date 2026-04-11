@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
-import Footer from "../../../global/components/Footer/Footer.jsx";
-import Header from "../../../global/components/Header/Header.jsx";
-
-import "./Login.css";
+import Footer from "../../global/components/Footer/Footer.jsx";
+import Header from "../../global/components/Header/Header.jsx";
+import { Link } from 'react-router-dom';
+import "./login.css";
 
 const Login = () => {
   const [emailOrUsername, setEmailOrUsername] = useState("");
@@ -165,7 +165,7 @@ const Login = () => {
             </button>
 
             <p className="signup-link">
-              Ainda não tem uma conta? <a href="#">Cadastre-se</a>
+              Ainda não tem uma conta? <Link to="/cadastroUsuario">Cadastre-se</Link>
             </p>
           </form>
         </div>
