@@ -16,7 +16,7 @@ function App() {
       {
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<RegisterCity />} />
+            <Route path="/" element={<RegisterService />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
             <Route path="/login" element={<Login />} />
