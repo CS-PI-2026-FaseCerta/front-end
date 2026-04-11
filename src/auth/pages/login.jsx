@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
 import Footer from "../../global/components/Footer/Footer.jsx";
 import Header from "../../global/components/Header/Header.jsx";
+import { login as authLogin } from "../mockAuth";
 
 import "./login.css";
 
@@ -77,11 +78,11 @@ const Login = () => {
 
       // Simulação de chamada de API
       setTimeout(() => {
-        //Teste de login
-        const LOGIN_SUCESSO = false;
+        const result = authLogin(emailOrUsername, password);
 
-        if (LOGIN_SUCESSO) {
+        if (result.success) {
           alert("Login efetuado com sucesso (simulação)!");
+          console.log("Usuário autenticado:", result.user);
           // Redirecionamento fake: window.location.href = '/dashboard';
         } else {
           setLoginError("E-mail/Nome de Usuário ou senha incorretos");
