@@ -1,14 +1,12 @@
 import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import Dashboard from "./home/pages/Dashboard.jsx";
+import Dashboard from "./home/pages/Dashboard";
 import Login from "./auth/pages/login";
 import AlterarSenha from "./auth/pages/alterarsenha";
 import CadastroServico from "./auth/pages/CadastroServico";
 import SectionPage from "./home/pages/SectionPage";
 import ProtectedRoute from "./home/components/ProtectedRoute";
-
-import HamburgerMenu from "./home/components/menu/HamburgerMenu.jsx";
 
 function App() {
   return (
@@ -21,7 +19,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/alterarSenha" element={<AlterarSenha />} />
             <Route path="/cadastroServico" element={<CadastroServico />} />
-            <Route path="/menu" element={<HamburgerMenu />} />
+
             <Route
               path="/perfil"
               element={

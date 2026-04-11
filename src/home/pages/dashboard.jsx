@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  FaArrowRight,
-  FaBoxOpen,
-  FaChartLine,
-  FaClipboardList,
-  FaUsers,
-  FaWallet,
-} from "react-icons/fa";
+import { FaArrowRight, FaChartLine } from "react-icons/fa";
 import HeaderDashBoard from "../components/headerDashBoard/HeaderDashBoard";
+import Sidebar from "../components/menu/Sidebar";
 
 import ModuleCard from "../components/cards/ModuleCard";
 import QuickActionsCarousel from "../components/actions/QuickActionsCarousel";
 import QuickActionsModal from "../components/actions/QuickActionsModal";
 import { PERFIL_LABELS, PERFIL_USUARIO } from "../../auth/mockAuth";
+import { getVisibleModulesByProfile } from "../data/modules";
 import {
   getQuickActionsByProfile,
   getSelectedQuickActionsByProfile,
@@ -23,75 +18,15 @@ import {
 } from "../utils/quickActions";
 import "./Dashboard.css";
 
-const MODULOS = [
-  {
-    id: "clientes",
-    title: "Gestão de Clientes",
-    description:
-      "Centralize cadastros, histórico e acompanhamento comercial em um único fluxo.",
-    path: "/clientes",
-    icon: <FaUsers />,
-    allowedProfiles: ["gestor", "tecnico"],
-    order: {
-      gestor: 1,
-      tecnico: 2,
-    },
-  },
-  {
-    id: "servicos-estoque",
-    title: "Serviços e Estoque",
-    description:
-      "Gerencie itens, materiais e disponibilidade operacional com visão integrada.",
-    path: "/servicos-estoque",
-    icon: <FaBoxOpen />,
-    allowedProfiles: ["gestor", "tecnico"],
-    order: {
-      gestor: 2,
-      tecnico: 3,
-    },
-  },
-  {
-    id: "pedidos",
-    title: "Pedidos / Ordens de Serviço",
-    description:
-      "Acompanhe solicitações, abertura de OS e andamento das atividades em campo.",
-    path: "/pedidos",
-    icon: <FaClipboardList />,
-    allowedProfiles: ["gestor", "tecnico"],
-    order: {
-      gestor: 3,
-      tecnico: 1,
-    },
-  },
-  {
-    id: "financeiro",
-    title: "Financeiro",
-    description:
-      "Concentre recebimentos, cobranças e indicadores financeiros da operação.",
-    path: "/financeiro",
-    icon: <FaWallet />,
-    allowedProfiles: ["gestor"],
-    order: {
-      gestor: 4,
-    },
-  },
-];
-
 const PERFIL_ATUAL = PERFIL_USUARIO;
 
 const Dashboard = () => {
   const [isQuickActionsModalOpen, setIsQuickActionsModalOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedQuickActionIds, setSelectedQuickActionIds] = useState([]);
   const [draftQuickActionIds, setDraftQuickActionIds] = useState([]);
 
-  const visibleModules = MODULOS.filter((modulo) =>
-    modulo.allowedProfiles.includes(PERFIL_ATUAL),
-  ).sort((a, b) => {
-    const orderA = a.order[PERFIL_ATUAL] ?? 99;
-    const orderB = b.order[PERFIL_ATUAL] ?? 99;
-
-    return orderA - orderB;
-  });
+  const visibleModules = getVisibleModulesByProfile(PERFIL_ATUAL);
 
   const allowedQuickActions = getQuickActionsByProfile(PERFIL_ATUAL);
 
@@ -99,6 +34,27 @@ const Dashboard = () => {
     const storedSelection = loadQuickActionSelection(PERFIL_ATUAL);
     setSelectedQuickActionIds(storedSelection);
   }, []);
+
+  useEffect(() => {
+    if (!isSidebarOpen) {
+      return undefined;
+    }
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isSidebarOpen]);
 
   const quickActions = getSelectedQuickActionsByProfile(
     PERFIL_ATUAL,
@@ -143,15 +99,30 @@ const Dashboard = () => {
   };
 
   const handleSeeMoreQuickActions = () => {
-    // TODO: quando o menu hambúrguer estiver disponível, abrir o painel de navegação daqui.
-    console.log("Placeholder: abrir menu hambúrguer para mais atalhos");
+    setIsSidebarOpen(true);
+  };
+
+  const handleToggleSidebar = () => {
+    setIsSidebarOpen((current) => !current);
+  };
+
+  const handleCloseSidebar = () => {
+    setIsSidebarOpen(false);
   };
 
   const perfilLabel = PERFIL_LABELS[PERFIL_ATUAL] || "Perfil não mapeado";
 
   return (
     <div className="dashboard-page">
-      <HeaderDashBoard />
+      <HeaderDashBoard
+        onMenuToggle={handleToggleSidebar}
+        isSidebarOpen={isSidebarOpen}
+      />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={handleCloseSidebar}
+        profile={PERFIL_ATUAL}
+      />
 
       <main className="dashboard-shell">
         <section className="dashboard-hero">
@@ -210,14 +181,17 @@ const Dashboard = () => {
         {PERFIL_ATUAL === "gestor" && (
           <section className="dashboard-summary">
             <div className="dashboard-summary__content">
-              <span className="dashboard-summary__eyebrow">Área de destaque</span>
+              <span className="dashboard-summary__eyebrow">
+                Área de destaque
+              </span>
               <h2 className="dashboard-summary__title">
                 <FaChartLine aria-hidden="true" />
                 Operação em alta
               </h2>
               <p className="dashboard-summary__description">
-                Acompanhe a performance dos atendimentos e identifique rapidamente
-                os pontos de melhoria operacional com visão consolidada.
+                Acompanhe a performance dos atendimentos e identifique
+                rapidamente os pontos de melhoria operacional com visão
+                consolidada.
               </p>
             </div>
 
