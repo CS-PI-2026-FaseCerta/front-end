@@ -20,6 +20,11 @@ export default function CadastrarPeca() {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
 
+    const custoNum = parseFloat(form.custo.replace(',', '.')) || 0;
+    const vendaNum = parseFloat(form.precoVenda.replace(',', '.')) || 0;
+    const lucroNominal = vendaNum - custoNum;
+    const margemPercentual = vendaNum > 0 ? (lucroNominal / vendaNum) * 100 : 0;
+
     const updateField = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
@@ -106,6 +111,7 @@ export default function CadastrarPeca() {
                                     type="number"
                                     id="quantidade"
                                     name="quantidade"
+                                    min="0"
                                     placeholder="0"
                                     value={form.quantidade}
                                     onChange={updateField}
@@ -118,12 +124,35 @@ export default function CadastrarPeca() {
                                     type="number"
                                     id="estoqueMinimo"
                                     name="estoqueMinimo"
+                                    min="0"
                                     placeholder="5"
                                     value={form.estoqueMinimo}
                                     onChange={updateField}
                                     className="input-field"
                                 />
                             </div>
+                        </div>
+
+                        <div className="input-group" style={{ marginTop: '10px' }}>
+                            <label>MARGEM DE LUCRO ESTIMADA</label>
+                            <div className={`input-field ${lucroNominal < 0 ? 'input-error' : ''}`}
+                                style={{
+                                    backgroundColor: '#f4f4f4',
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    fontWeight: 'bold',
+                                    color: lucroNominal >= 0 ? '#28a745' : '#e53e3e'
+                                }}>
+                                <span>{margemPercentual.toFixed(2)}%</span>
+                                <span>(R$ {lucroNominal.toFixed(2)})</span>
+                            </div>
+
+                            {lucroNominal < 0 && (
+                                <p className="login-error-message" style={{ fontSize: '12px' }}>
+                                    Atenção: Preço de venda abaixo do custo!
+                                </p>
+                            )}
                         </div>
 
                         {message && (
