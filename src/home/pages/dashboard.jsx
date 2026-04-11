@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { FaArrowRight, FaChartLine } from "react-icons/fa";
+
 import HeaderDashBoard from "../components/headerDashBoard/HeaderDashBoard";
 import Sidebar from "../components/menu/Sidebar";
-
 import ModuleCard from "../components/cards/ModuleCard";
 import QuickActionsCarousel from "../components/actions/QuickActionsCarousel";
 import QuickActionsModal from "../components/actions/QuickActionsModal";
-import { PERFIL_LABELS, PERFIL_USUARIO } from "../../auth/mockAuth";
+
+import { PERFIL_LABELS, getCurrentUser } from "../../auth/mockAuth";
 import { getVisibleModulesByProfile } from "../data/modules";
 import {
   getQuickActionsByProfile,
@@ -18,22 +19,31 @@ import {
 } from "../utils/quickActions";
 import "./Dashboard.css";
 
-const PERFIL_ATUAL = PERFIL_USUARIO;
-
 const Dashboard = () => {
+  const currentUser = getCurrentUser();
+  const perfilAtual = currentUser?.perfil;
+
   const [isQuickActionsModalOpen, setIsQuickActionsModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedQuickActionIds, setSelectedQuickActionIds] = useState([]);
   const [draftQuickActionIds, setDraftQuickActionIds] = useState([]);
 
-  const visibleModules = getVisibleModulesByProfile(PERFIL_ATUAL);
+  const visibleModules = perfilAtual
+    ? getVisibleModulesByProfile(perfilAtual)
+    : [];
 
-  const allowedQuickActions = getQuickActionsByProfile(PERFIL_ATUAL);
+  const allowedQuickActions = perfilAtual
+    ? getQuickActionsByProfile(perfilAtual)
+    : [];
 
   useEffect(() => {
-    const storedSelection = loadQuickActionSelection(PERFIL_ATUAL);
+    if (!perfilAtual) {
+      return;
+    }
+
+    const storedSelection = loadQuickActionSelection(perfilAtual);
     setSelectedQuickActionIds(storedSelection);
-  }, []);
+  }, [perfilAtual]);
 
   useEffect(() => {
     if (!isSidebarOpen) {
@@ -57,14 +67,14 @@ const Dashboard = () => {
   }, [isSidebarOpen]);
 
   const quickActions = getSelectedQuickActionsByProfile(
-    PERFIL_ATUAL,
+    perfilAtual,
     selectedQuickActionIds,
   );
 
   const handleOpenCustomizeQuickActions = () => {
     const safeDraft =
       selectedQuickActionIds.length > 0
-        ? sanitizeQuickActionIdsByProfile(PERFIL_ATUAL, selectedQuickActionIds)
+        ? sanitizeQuickActionIdsByProfile(perfilAtual, selectedQuickActionIds)
         : allowedQuickActions.map((action) => action.id);
 
     setDraftQuickActionIds(safeDraft);
@@ -88,12 +98,12 @@ const Dashboard = () => {
 
   const handleSaveCustomizeQuickActions = () => {
     const safeSelection = sanitizeQuickActionIdsByProfile(
-      PERFIL_ATUAL,
+      perfilAtual,
       draftQuickActionIds,
     );
 
     setSelectedQuickActionIds(safeSelection);
-    saveQuickActionSelection(PERFIL_ATUAL, safeSelection);
+    saveQuickActionSelection(perfilAtual, safeSelection);
     setIsQuickActionsModalOpen(false);
     setDraftQuickActionIds([]);
   };
@@ -110,7 +120,11 @@ const Dashboard = () => {
     setIsSidebarOpen(false);
   };
 
-  const perfilLabel = PERFIL_LABELS[PERFIL_ATUAL] || "Perfil não mapeado";
+  const perfilLabel = PERFIL_LABELS[perfilAtual] || "Perfil não mapeado";
+
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="dashboard-page">
@@ -121,7 +135,7 @@ const Dashboard = () => {
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={handleCloseSidebar}
-        profile={PERFIL_ATUAL}
+        profile={perfilAtual}
       />
 
       <main className="dashboard-shell">
@@ -139,11 +153,15 @@ const Dashboard = () => {
           </div>
 
           <aside className="dashboard-hero__profile">
+            <span className="dashboard-hero__profile-label">
+              Usuário logado
+            </span>
+            <strong>{currentUser.nome}</strong>
+            <small>{currentUser.email}</small>
             <span className="dashboard-hero__profile-label">Perfil atual</span>
             <strong>{perfilLabel}</strong>
             <small>
-              Alterne o valor de PERFIL_USUARIO no mock para testar "gestor" e
-              "tecnico".
+              As permissões desta página seguem o perfil autenticado.
             </small>
           </aside>
         </section>
@@ -178,7 +196,7 @@ const Dashboard = () => {
           onCancel={handleCancelCustomizeQuickActions}
         />
 
-        {PERFIL_ATUAL === "gestor" && (
+        {perfilAtual === "gestor" && (
           <section className="dashboard-summary">
             <div className="dashboard-summary__content">
               <span className="dashboard-summary__eyebrow">

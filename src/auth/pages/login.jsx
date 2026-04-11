@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import Footer from "../../global/components/Footer/Footer.jsx";
 import Header from "../../global/components/Header/Header.jsx";
-import { login as authLogin } from "../mockAuth";
+import { getRememberMe, login as authLogin, saveRememberMe } from "../mockAuth";
 
 import "./login.css";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -14,6 +16,17 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [emailOrUsernameError, setEmailOrUsernameError] = useState(false);
+
+  useEffect(() => {
+    const remembered = getRememberMe();
+    if (!remembered) {
+      return;
+    }
+
+    setEmailOrUsername(remembered.emailOrUsername || "");
+    setPassword(remembered.password || "");
+    setRememberMe(true);
+  }, []);
 
   const validateEmailOrUsername = (value) => {
     if (!value) return false;
@@ -81,11 +94,17 @@ const Login = () => {
         const result = authLogin(emailOrUsername, password);
 
         if (result.success) {
-          alert("Login efetuado com sucesso (simulação)!");
+          saveRememberMe({
+            rememberMe,
+            emailOrUsername,
+            password,
+          });
           console.log("Usuário autenticado:", result.user);
-          // Redirecionamento fake: window.location.href = '/dashboard';
+          navigate("/dashboard", { replace: true });
         } else {
-          setLoginError("E-mail/Nome de Usuário ou senha incorretos");
+          setLoginError(
+            result.message || "E-mail/Nome de Usuário ou senha incorretos",
+          );
         }
         setIsLoading(false);
       }, 1500);
