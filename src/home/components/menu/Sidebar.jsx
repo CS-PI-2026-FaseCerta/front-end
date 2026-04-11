@@ -15,10 +15,19 @@ import {
   FaCalendarAlt,
   FaPlus,
 } from "react-icons/fa";
+import { clearSession } from "../../../auth/mockAuth";
 import { getModuleById } from "../../data/modules";
 import "./Sidebar.css";
 
 const Sidebar = ({ isOpen, onClose, profile }) => {
+  const handleSecondaryItemClick = (itemId) => {
+    if (itemId === "sair") {
+      clearSession();
+    }
+
+    onClose();
+  };
+
   const preferenceItems = useMemo(() => {
     const moduleConfigById = {
       pedidos: getModuleById("pedidos"),
@@ -178,7 +187,7 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
                 key={item.id}
                 to={item.path}
                 className="sidebar-drawer__link"
-                onClick={onClose}
+                onClick={() => handleSecondaryItemClick(item.id)}
               >
                 <span className="sidebar-drawer__link-main">
                   {item.icon}

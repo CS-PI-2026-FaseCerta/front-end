@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Footer from "../../global/components/Footer/Footer.jsx";
 import Header from "../../global/components/Header/Header.jsx";
 import { getRememberMe, login as authLogin, saveRememberMe } from "../mockAuth";
 
@@ -190,8 +189,6 @@ const Login = () => {
           </form>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };
