@@ -5,6 +5,7 @@ import Dashboard from "./home/pages/dashboard.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
+import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage";
 import ProtectedRoute from "./home/components/ProtectedRoute";
 
@@ -14,12 +15,13 @@ function App() {
       {
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<ChangePassword />} />
+            <Route path="/" element={<RegisterCity />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/changepassword" element={<ChangePassword />} />
             <Route path="/registerservice" element={<RegisterService />} />
+            <Route path="/registercity" element={<RegisterCity />} />
             <Route
               path="/perfil"
               element={

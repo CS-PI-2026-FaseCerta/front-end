@@ -1,120 +1,114 @@
 import React, { useState } from "react";
+import Select from "react-select";
 import "./RegisterCity.css";
 import { FaArrowLeft } from "react-icons/fa";
- 
+import Header from "../../../global/components/Header/Header";
+import Footer from "../../../global/components/Footer/Footer";
+
 export default function RegisterCity() {
     const [name, setName] = useState("");
-    const [description, setDescription] = useState(""); 
-    const [billingType, setBillingType] = useState("fixed");
-    const [value, setValue] = useState("");
-
-    const formatCurrency = (value) => {
-        const number = value.replace(/\D/g, "");
-        const float = (Number(number) / 100).toFixed(2);
-
-        return Number(float).toLocaleString("pt-BR", {
-            style: "currency",
-            currency: "BRL",
-        });
-    };
-
-    const handleValueChange = (e) => {
-        const raw = e.target.value;
-        const formatted = formatCurrency(raw);
-        setValue(formatted);
-    };
+    const [cep, setCep] = useState("");
+    
 
     const isFormValid =
         name.trim() !== "" &&
-        description.trim() !== "" &&
-        value !== "" &&
-        value !== "R$ 0,00";
+        cep.trim() !== "";
+
+    const states = [
+        { value: "ac", label: "Acre" },
+        { value: "al", label: "Alagoas" },
+        { value: "ap", label: "Amapá" },
+        { value: "am", label: "Amazonas" },
+        { value: "ba", label: "Bahia" },
+        { value: "ce", label: "Ceará" },
+        { value: "df", label: "Distrito Federal" },
+        { value: "es", label: "Espírito Santo" },
+        { value: "go", label: "Goiás" },
+        { value: "ma", label: "Maranhão" },
+        { value: "mt", label: "Mato Grosso" },
+        { value: "ms", label: "Mato Grosso do Sul" },
+        { value: "mg", label: "Minas Gerais" },
+        { value: "pa", label: "Pará" },
+        { value: "pb", label: "Paraíba" },
+        { value: "pe", label: "Pernambuco" },
+        { value: "pi", label: "Piauí" },
+        { value: "pr", label: "Paraná" },
+        { value: "rj", label: "Rio de Janeiro" },
+        { value: "rn", label: "Rio Grande do Norte" },
+        { value: "rs", label: "Rio Grande do Sul" },
+        { value: "ro", label: "Rondônia" },
+        { value: "rr", label: "Roraima" },
+        { value: "sc", label: "Santa Catarina" },
+        { value: "sp", label: "São Paulo" },
+        { value: "se", label: "Sergipe" },
+        { value: "to", label: "Tocantins" }
+    ];
+
+    const [state, setState] = useState(
+        states.find(s => s.value === "pr")
+    );
 
     return (
-        <div className="service-page">
-            <div className="service-form-card">
+        <div className="city-page">
+            <Header />
+            <div className="city-form-card">
                 <div className="card-header">
-                    <button className="back-button"><FaArrowLeft size={20} color="#433f9b"/></button>
-                    <h1>Cadastro de Serviço</h1>
+                    <button className="back-button">
+                        <FaArrowLeft size={20} color="#433f9b" />
+                    </button>
+                    <h1>Cadastro de Cidade</h1>
                 </div>
 
-                <form className="service-form">
-                    <div className="service-form-group">
-                        <label className="service-form-label" style={{ textAlign: "left" }}>NOME DO SERVIÇO</label>
+                <form className="city-form">
+                    <div className="city-form-group">
+                        <label htmlFor="city-name" className="city-form-label">NOME DA CIDADE</label>
                         <input
-                            className="service-form-input"
+                            id="city-name"
+                            className="city-form-input"
                             type="text"
-                            placeholder="Ex: Manutenção Elétrica"
+                            placeholder="Ex: Dois Vizinhos"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
                     </div>
 
-                    <div className="service-form-group">
-                        <label className="service-form-label" style={{ textAlign: "left" }}>DESCRIÇÃO</label>
-                        <textarea
-                            className="service-form-textarea"
-                            placeholder="Descreva os detalhes do serviço oferecido..."
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
+                    <div className="city-form-group">
+                        <label htmlFor="city-cep" className="city-form-label">CEP - CIDADE</label>
+                        <input
+                            id="city-cep"
+                            className="city-form-input"
+                            type="text"
+                            placeholder="Ex: 85660-000"
+                            value={cep}
+                            onChange={(e) => setCep(e.target.value)}
                         />
                     </div>
 
-                    <div className="service-form-group">
-                        <label className="service-form-label" style={{ textAlign: "left" }}>TIPO DE COBRANÇA</label>
+                    <div className="city-form-group">
+                        <label htmlFor="city-state" className="city-form-label">ESTADO (UF)</label>
 
-                        <div className="service-form-radio-group">
-                            <label className="service-form-radio-option">
-                                <input
-                                    type="radio"
-                                    name="billing"
-                                    value="fixed"
-                                    checked={billingType === "fixed"}
-                                    onChange={() => setBillingType("fixed")}
-                                />
-                                Preço Fixo
-                            </label>
-
-                            <label className="service-form-radio-option">
-                                <input
-                                    type="radio"
-                                    name="billing"
-                                    value="hourly"
-                                    checked={billingType === "hourly"}
-                                    onChange={() => setBillingType("hourly")}
-                                />
-                                Por Hora
-                            </label>
-                        </div>
-                    </div>
-
-                    <div className="service-form-group service-form-value-conteiner">
-                        <label className="service-form-label" style={{ textAlign: "left" }}>
-                            VALOR {billingType === "hourly" ? "(R$/h)" : "(R$)"}
-                        </label>
-                        <div>
-                            <div className="service-form-value-square"></div>
-                            <span className="service-form-value-span">R$</span>
-                            <input
-                                className="service-form-input service-form-value-input"
-                                type="text"
-                                value={value}
-                                onChange={handleValueChange}
-                                placeholder="0,00"
-                            />
-                        </div>
-                        
+                        <Select
+                            id="city-state"
+                            options={states}
+                            value={state}
+                            onChange={setState}
+                            placeholder="Selecione um estado..."
+                            isSearchable
+                            className="city-select"
+                            classNamePrefix="city-react-select"
+                        />
                     </div>
 
                     <button
                         type="submit"
-                        className="service-form-submit-button"
+                        className="city-form-submit-button"
                         disabled={!isFormValid}
                     >
                         Salvar Serviço
                     </button>
                 </form>
             </div>
+            <Footer />
         </div>
     );
 }

@@ -9,9 +9,10 @@
     width: 100%;
     min-height: 100vh;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     background-color: #F6F2FB;
+    flex-direction: column;
 }
 
 .service-form-card {

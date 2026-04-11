@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./RegisterService.css";
 import { FaArrowLeft } from "react-icons/fa";
+import Header from "../../../global/components/Header/Header";
+import Footer from "../../../global/components/Footer/Footer";
  
 export default function RegisterService() {
     const [name, setName] = useState("");
@@ -32,6 +34,7 @@ export default function RegisterService() {
 
     return (
         <div className="service-page">
+            <Header/>
             <div className="service-form-card">
                 <div className="card-header">
                     <button className="back-button"><FaArrowLeft size={20} color="#433f9b"/></button>
@@ -115,6 +118,7 @@ export default function RegisterService() {
                     </button>
                 </form>
             </div>
+            <Footer/>
         </div>
     );
 }
