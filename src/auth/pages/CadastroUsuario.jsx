@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link } from 'react-router-dom';
-import "./CadastroUsuario.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import Footer from "../../global/components/Footer/Footer.jsx";
+import Header from "../../global/components/Header/Header.jsx";
+import "./login.css";
 
 export default function CadastroUsuario() {
     const [form, setForm] = useState({
@@ -13,126 +16,164 @@ export default function CadastroUsuario() {
     const [showPass, setShowPass] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
 
+    const [emailError, setEmailError] = useState(false);
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const validateEmail = (value) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(value);
+    };
+
     const isMatch = form.password === form.confirm;
-    const allFilled =
-        form.email && form.username && form.password && form.confirm && isMatch;
+
+    const allFilled = form.email && form.username && form.password && form.confirm && isMatch && !emailError && !isLoading;
 
     function updateField(e) {
         setForm({ ...form, [e.target.name]: e.target.value });
+
+        if (e.target.name === "email" && emailError) {
+            setEmailError(!validateEmail(e.target.value));
+        }
     }
 
+    const handleEmailBlur = () => {
+        if (form.email) {
+            setEmailError(!validateEmail(form.email));
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (allFilled) {
+            setIsLoading(true); // Começa o carregamento
+            setSuccessMessage("");
+
+            console.log("Iniciando cadastro...", form);
+
+            // Simulação de chamada de API (2 segundos)
+            setTimeout(() => {
+                setIsLoading(false); // Para o carregamento
+                setSuccessMessage("Cadastro realizado com sucesso!");
+
+            }, 2000);
+        }
+    };
+
     return (
-        <div className="cadastro-wrapper">
-            {/* NAVBAR */}
-            <nav className="cadastro-navbar">
-                <div className="cadastro-logo">FaseCerta</div>
-            </nav>
+        <div className="page-container">
+            <Header />
 
-            {/* MAIN */}
-            <main className="cadastro-main">
-                <div className="cadastro-card">
-                    <h1>Crie sua conta</h1>
-                    <p className="cadastro-subtitle">Insira seus dados para começar</p>
+            <main className="login-container">
+                <div className="login-card">
+                    <h2 className="login-card__title">Crie sua conta</h2>
+                    <p className="login-card__subtitle">Insira seus dados para começar</p>
 
-                    <form className="cadastro-form">
-                        {/* EMAIL */}
-                        <div className="cadastro-input-group">
-                            <label>E-mail</label>
+                    <form onSubmit={handleSubmit} noValidate>
+
+                        <div className="input-group">
+                            <label htmlFor="email">E-mail</label>
                             <input
                                 type="email"
+                                id="email"
                                 name="email"
+                                className={`input-field ${emailError ? "input-error" : ""}`}
                                 placeholder="seu@email.com"
                                 value={form.email}
                                 onChange={updateField}
+                                onBlur={handleEmailBlur}
+                                disabled={isLoading}
                             />
+                            {emailError && (
+                                <p className="login-error-message" style={{ marginTop: "8px", textAlign: "left" }}>
+                                    E-mail inválido!
+                                </p>
+                            )}
                         </div>
 
-                        {/* USERNAME */}
-                        <div className="cadastro-input-group">
-                            <label>Nome de Usuário</label>
+                        <div className="input-group">
+                            <label htmlFor="username">Nome de Usuário</label>
                             <input
                                 type="text"
+                                id="username"
                                 name="username"
+                                className="input-field"
                                 placeholder="Como quer ser chamado?"
                                 value={form.username}
                                 onChange={updateField}
+                                disabled={isLoading}
                             />
                         </div>
 
-                        {/* SENHA */}
-                        <div className="cadastro-input-group">
-                            <label>Senha</label>
-                            <div className="cadastro-input-wrapper">
+                        <div className="input-group">
+                            <label htmlFor="password">Senha</label>
+                            <div className="input-wrapper">
                                 <input
                                     type={showPass ? "text" : "password"}
+                                    id="password"
                                     name="password"
+                                    className="input-field"
+                                    placeholder="••••••••••"
                                     value={form.password}
                                     onChange={updateField}
+                                    disabled={isLoading}
                                 />
-                                <i
-                                    className={`far ${showPass ? "fa-eye-slash" : "fa-eye"} cadastro-eye`}
-                                    onClick={() => setShowPass(!showPass)}
-                                ></i>
+                                <span className="password-icon" onClick={() => !isLoading && setShowPass(!showPass)}>
+                                    {showPass ? <FaEyeSlash /> : <FaEye />}
+                                </span>
                             </div>
                         </div>
 
-                        {/* CONFIRMAR SENHA */}
-                        <div className="cadastro-input-group">
-                            <label>Confirme sua senha</label>
-                            <div className="cadastro-input-wrapper">
+                        <div className="input-group">
+                            <label htmlFor="confirm">Confirme sua senha</label>
+                            <div className="input-wrapper">
                                 <input
                                     type={showConfirm ? "text" : "password"}
+                                    id="confirm"
                                     name="confirm"
+                                    className={`input-field ${form.confirm && !isMatch ? "input-error" : ""}`}
+                                    placeholder="••••••••••"
                                     value={form.confirm}
                                     onChange={updateField}
-                                    style={{
-                                        border: form.confirm && !isMatch ? "1px solid #e53e3e" : "",
-                                    }}
+                                    disabled={isLoading}
                                 />
-                                <i
-                                    className={`far ${showConfirm ? "fa-eye-slash" : "fa-eye"} cadastro-eye`}
-                                    onClick={() => setShowConfirm(!showConfirm)}
-                                ></i>
+                                <span className="password-icon" onClick={() => !isLoading && setShowConfirm(!showConfirm)}>
+                                    {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                                </span>
                             </div>
 
-                            <span
-                                className="cadastro-info-text"
-                                style={{
-                                    color: form.confirm && !isMatch ? "#e53e3e" : "var(--text-secondary)",
-                                }}
-                            >
-                                <i className={form.confirm && !isMatch ? "fas fa-times-circle" : "fas fa-info-circle"}></i>
-                                {form.confirm && !isMatch
-                                    ? " As senhas não coincidem!"
-                                    : " As senhas devem coincidir para prosseguir."}
-                            </span>
+                            {form.confirm && !isMatch && (
+                                <p className="login-error-message" style={{ marginTop: "8px", textAlign: "left" }}>
+                                    As senhas não coincidem!
+                                </p>
+                            )}
                         </div>
 
-                        {/* BOTÃO */}
-                        <button className="cadastro-btn" disabled={!allFilled}>
-                            Criar conta!
-                        </button>
-                    </form>
+                        {/* MENSAGEM DE SUCESSO */}
+                        {successMessage && (
+                            <p style={{ color: "#28a745", marginTop: "10px", textAlign: "center", fontWeight: "bold" }}>
+                                {successMessage}
+                            </p>
+                        )}
 
-                    <div className="cadastro-login-link">
-                        <p>
-                            Já tem conta? <Link to="/login">Entre Aqui</Link>
+                        <button
+                            type="submit"
+                            className="login-button"
+                            disabled={!allFilled}
+                            style={{ marginTop: "1rem" }}
+                        >
+                            {isLoading ? "Cadastrando..." : "Criar conta!"}
+                        </button>
+
+                        <p className="signup-link">
+                            Já tem conta? <Link to="/login" style={{ pointerEvents: isLoading ? "none" : "auto" }}>Entre Aqui</Link>
                         </p>
-                    </div>
+                    </form>
                 </div>
             </main>
 
-            {/* FOOTER */}
-            <footer className="cadastro-footer">
-                <div className="footer-left">
-                    <span>FaseCerta © 2026</span>
-                </div>
-                <div className="footer-right">
-                    <a href="#">Suporte</a>
-                    <a href="#">Termos de Uso</a>
-                    <a href="#">Política de Privacidade</a>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }
