@@ -7,6 +7,7 @@ import AlterarSenha from "./auth/pages/alterarsenha";
 import CadastroServico from "./auth/pages/CadastroServico";
 import SectionPage from "./home/pages/SectionPage";
 import ProtectedRoute from "./home/components/ProtectedRoute";
+import CadastroUsuario from "./auth/pages/CadastroUsuario.jsx";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/cadastroUsuario" element={<CadastroUsuario />} />
             <Route path="/alterarSenha" element={<AlterarSenha />} />
             <Route path="/cadastroServico" element={<CadastroServico />} />
             <Route
