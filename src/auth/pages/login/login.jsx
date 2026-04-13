@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Header from "../../global/components/Header/Header.jsx";
-import { getRememberMe, login as authLogin, saveRememberMe } from "../mockAuth";
-
 import { Link } from "react-router-dom";
+import Header from "../../../global/components/Header/Header.jsx";
+import {
+  getRememberMe,
+  login as authLogin,
+  saveRememberMe,
+} from "../../mockAuth";
 import "./login.css";
 
 const Login = () => {
@@ -160,9 +163,9 @@ const Login = () => {
                 </span>
               </div>
               <div style={{ textAlign: "right" }}>
-                <a href="#" className="link">
+                <Link to="/alterarSenha" className="link">
                   Esqueceu sua senha?
-                </a>
+                </Link>
               </div>
             </div>
 
