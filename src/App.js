@@ -19,16 +19,9 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastroUsuario" element={<CadastroUsuario />} />
-            <Route path="/cadastro-usuario" element={<CadastroUsuario />} />
             <Route path="/alterarSenha" element={<ChangePassword />} />
-            <Route path="/alterar-senha" element={<ChangePassword />} />
             <Route path="/cadastroServico" element={<RegisterService />} />
-            <Route path="/cadastro-servico" element={<RegisterService />} />
             <Route path="/clientes/novo" element={<CadastroUsuario />} />
-            <Route
-              path="/servicos-estoque/novo-servico"
-              element={<RegisterService />}
-            />
 
             {/* Fallbacks temporarios para areas do dashboard que ainda nao possuem telas dedicadas. */}
             <Route
