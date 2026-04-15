@@ -3,6 +3,8 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./RegisterService.css";
 
+import Header from "../../../global/components/Header/Header.jsx";
+
 export default function RegisterService() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -34,6 +36,7 @@ export default function RegisterService() {
 
   return (
     <div className="service-page">
+      <Header />
       <div className="service-form-card">
         <div className="card-header">
           <button
@@ -41,7 +44,7 @@ export default function RegisterService() {
             className="back-button"
             onClick={() => navigate("/dashboard")}
           >
-            <FaArrowLeft size={20} color="#433f9b" />
+            <FaArrowLeft size={20} className="back-button-icon" />
           </button>
           <h1>Cadastro de Serviço</h1>
         </div>
