@@ -1,23 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import { FaBars, FaMoon, FaSun, FaUserCircle } from "react-icons/fa";
+import useTheme from "../../../global/hooks/useTheme";
 import "./HeaderDashBoard.css";
 
-const HeaderDashBoard = () => {
-  const [theme, setTheme] = useState("light");
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("fasecerta-theme") || "light";
-    setTheme(savedTheme);
-    document.documentElement.setAttribute("data-theme", savedTheme);
-  }, []);
-
-  const handleThemeToggle = () => {
-    const nextTheme = theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
-    localStorage.setItem("fasecerta-theme", nextTheme);
-    document.documentElement.setAttribute("data-theme", nextTheme);
-  };
+const HeaderDashBoard = ({ onMenuToggle, isSidebarOpen = false }) => {
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <header className="dashboard-header">
@@ -26,11 +14,14 @@ const HeaderDashBoard = () => {
           className="dashboard-header__icon-button"
           type="button"
           aria-label="Abrir menu"
+          aria-expanded={isSidebarOpen}
+          aria-controls="dashboard-sidebar"
+          onClick={onMenuToggle}
         >
           <FaBars size={20} />
         </button>
         <Link
-          to="/"
+          to="/dashboard"
           className="dashboard-header__logo"
           aria-label="Ir para o painel inicial"
         >
@@ -40,7 +31,7 @@ const HeaderDashBoard = () => {
 
       <nav className="dashboard-header__nav" aria-label="Navegação principal">
         <NavLink
-          to="/"
+          to="/dashboard"
           end
           className={({ isActive }) =>
             `dashboard-header__nav-link${isActive ? " dashboard-header__nav-link--active" : ""}`
@@ -71,7 +62,7 @@ const HeaderDashBoard = () => {
           className="dashboard-header__icon-button"
           type="button"
           aria-label="Alternar tema"
-          onClick={handleThemeToggle}
+          onClick={toggleTheme}
         >
           {theme === "dark" ? <FaSun size={18} /> : <FaMoon size={18} />}
         </button>

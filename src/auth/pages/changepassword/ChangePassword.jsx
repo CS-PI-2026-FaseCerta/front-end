@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 // import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
-import "./alterarsenha.css";
+import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import "./ChangePassword.css";
+import Header from "../../../global/components/Header/Header.jsx";
 
 const AlterarSenha = () => {
+  const navigate = useNavigate();
+
   // Estados para os valores dos inputs
   const [formData, setFormData] = useState({
     currentPassword: "",
@@ -102,11 +106,16 @@ const AlterarSenha = () => {
 
   return (
     <div className="change-password-page">
+      <Header />
       <main className="change-password-container">
         <section className="change-password-card">
           <div className="card-header">
-            <button className="back-button">
-              <FaArrowLeft size={20} />
+            <button
+              type="button"
+              className="back-button"
+              onClick={() => navigate("/dashboard")}
+            >
+              <FaArrowLeft className="arrowLeft" size={20} />
             </button>
             <h1>Alterar Senha</h1>
           </div>
@@ -223,9 +232,9 @@ const AlterarSenha = () => {
           </form>
 
           <div className="card-footer">
-            <a href="#" className="recovery-link">
+            <Link to="/login" className="recovery-link">
               Esqueceu sua senha? <strong>Recuperar senha</strong>
-            </a>
+            </Link>
           </div>
         </section>
       </main>

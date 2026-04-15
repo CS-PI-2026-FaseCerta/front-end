@@ -55,7 +55,7 @@ export const QUICK_ACTIONS = [
   {
     id: "novo-servico",
     nome: "Novo Serviço",
-    rota: "/servicos-estoque/novo-servico",
+    rota: "/cadastroServico",
     icon: FaTools,
     allowedProfiles: ["gestor", "tecnico"],
     order: {
