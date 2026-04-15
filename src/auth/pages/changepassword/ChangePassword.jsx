@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import "./ChangePassword.css";
+import Header from "../../../global/components/Header/Header.jsx";
 
 const AlterarSenha = () => {
   const navigate = useNavigate();
@@ -105,6 +106,7 @@ const AlterarSenha = () => {
 
   return (
     <div className="change-password-page">
+      <Header />
       <main className="change-password-container">
         <section className="change-password-card">
           <div className="card-header">
@@ -113,7 +115,7 @@ const AlterarSenha = () => {
               className="back-button"
               onClick={() => navigate("/dashboard")}
             >
-              <FaArrowLeft size={20} />
+              <FaArrowLeft className="arrowLeft" size={20} />
             </button>
             <h1>Alterar Senha</h1>
           </div>
