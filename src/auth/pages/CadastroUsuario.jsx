@@ -4,6 +4,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Header from "../../global/components/Header/Header.jsx";
 import "./login/login.css";
 
+import * as AppRoutes from "../../routes/AppRoutes.jsx";
+
 export default function CadastroUsuario() {
   const [form, setForm] = useState({
     email: "",
@@ -192,7 +194,7 @@ export default function CadastroUsuario() {
             <p className="signup-link">
               Já tem conta?{" "}
               <Link
-                to="/login"
+                to={AppRoutes.Login}
                 style={{ pointerEvents: isLoading ? "none" : "auto" }}
               >
                 Entre Aqui

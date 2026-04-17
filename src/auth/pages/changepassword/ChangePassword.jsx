@@ -5,6 +5,8 @@ import { FaArrowLeft } from "react-icons/fa";
 import "./ChangePassword.css";
 import Header from "../../../global/components/Header/Header.jsx";
 
+import * as AppRoutes from "../../../routes/AppRoutes.jsx";
+
 const AlterarSenha = () => {
   const navigate = useNavigate();
 
@@ -113,7 +115,7 @@ const AlterarSenha = () => {
             <button
               type="button"
               className="back-button"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate(AppRoutes.Dashboard)}
             >
               <FaArrowLeft className="arrowLeft" size={20} />
             </button>
@@ -232,7 +234,7 @@ const AlterarSenha = () => {
           </form>
 
           <div className="card-footer">
-            <Link to="/login" className="recovery-link">
+            <Link to={AppRoutes.Login} className="recovery-link">
               Esqueceu sua senha? <strong>Recuperar senha</strong>
             </Link>
           </div>

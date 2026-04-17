@@ -9,6 +9,7 @@ import {
   saveRememberMe,
 } from "../../mockAuth";
 import "./login.css";
+import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -103,7 +104,7 @@ const Login = () => {
             password,
           });
           console.log("Usuário autenticado:", result.user);
-          navigate("/dashboard", { replace: true });
+          navigate(AppRoutes.Dashboard, { replace: true });
         } else {
           setLoginError(
             result.message || "E-mail/Nome de Usuário ou senha incorretos",
@@ -163,7 +164,7 @@ const Login = () => {
                 </span>
               </div>
               <div style={{ textAlign: "right" }}>
-                <Link to="/alterarSenha" className="link">
+                <Link to={AppRoutes.ChangePassword} className="link">
                   Esqueceu sua senha?
                 </Link>
               </div>
@@ -189,7 +190,7 @@ const Login = () => {
 
             <p className="signup-link">
               Ainda não tem uma conta?{" "}
-              <Link to="/cadastroUsuario">Cadastre-se</Link>
+              <Link to={AppRoutes.CadastroUsuario}>Cadastre-se</Link>
             </p>
           </form>
         </div>
