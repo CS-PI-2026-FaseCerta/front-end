@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './recuperarsenha.css';
+import './RecoverPassword.css';
 import { FaArrowLeft } from "react-icons/fa";
 
 const RecuperarSenha = () => {
