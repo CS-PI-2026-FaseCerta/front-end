@@ -1,14 +1,14 @@
 import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import CadastroPeca from "./auth/pages/register/cadastroPeca.jsx";
+import MaterialRegistration from "./auth/pages/register/MaterialRegistration.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
 import Login from "./auth/pages/login/login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
-import CadastroUsuario from "./auth/pages/register/CadastroUsuario.jsx";
+import UserRegistration from "./auth/pages/register/UserRegistration.jsx";
 
 function App() {
   return (
@@ -19,8 +19,8 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/cadastroUsuario" element={<CadastroUsuario />} />
-            <Route path="/cadastroPeca" element={<CadastroPeca />} />
+            <Route path="/cadastroUsuario" element={<UserRegistration />} />
+            <Route path="/cadastroMaterial" element={<MaterialRegistration />} />
             <Route path="/alterarSenha" element={<ChangePassword />} />
             <Route path="/cadastroServico" element={<RegisterService />} />
             <Route path="/clientes/novo" element={<CadastroUsuario />} />

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/Header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
-import "./cadastroPeca.css";
+import "./MaterialRegistration.css";
 
 export default function CadastrarPeca() {
     const navigate = useNavigate();
