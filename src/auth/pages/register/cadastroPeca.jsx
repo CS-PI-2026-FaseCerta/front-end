@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
-import Header from "../../global/components/Header/Header.jsx";
-import Footer from "../../global/components/Footer/Footer.jsx";
+import Header from "../../../global/components/Header/Header.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx";
 import "./cadastroPeca.css";
 
 export default function CadastrarPeca() {
     const navigate = useNavigate();
 
-    // Estados do formulário
     const [form, setForm] = useState({
         nome: "",
         custo: "",
@@ -142,7 +141,7 @@ export default function CadastrarPeca() {
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
                                     fontWeight: 'bold',
-                                    color: lucroNominal >= 0 ? '#28a745' : '#e53e3e'
+                                    color: lucroNominal >= 0 ? '#28a745' : lucroNominal === 0 ? '#f1c40f' : '#e53e3e'
                                 }}>
                                 <span>{margemPercentual.toFixed(2)}%</span>
                                 <span>(R$ {lucroNominal.toFixed(2)})</span>
@@ -151,6 +150,12 @@ export default function CadastrarPeca() {
                             {lucroNominal < 0 && (
                                 <p className="login-error-message" style={{ fontSize: '12px' }}>
                                     Atenção: Preço de venda abaixo do custo!
+                                </p>
+                            )}
+
+                            {lucroNominal === 0 && vendaNum > 0 && (
+                                <p style={{ fontSize: '12px', color: '#f1c40f', marginTop: '5px' }}>
+                                    <i className="fas fa-exclamation-triangle"></i> Cuidado: Você não terá margem de lucro.
                                 </p>
                             )}
                         </div>

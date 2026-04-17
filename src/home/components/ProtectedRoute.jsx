@@ -1,14 +1,21 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { PERFIL_USUARIO } from "../../auth/mockAuth";
+import { getCurrentUser } from "../../auth/mockAuth";
 
 const ProtectedRoute = ({
   allowedProfiles = [],
   redirectTo = "/",
   children,
 }) => {
+  const currentUser = getCurrentUser();
+  const currentProfile = currentUser?.perfil;
+
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+
   const hasAccess =
-    allowedProfiles.length === 0 || allowedProfiles.includes(PERFIL_USUARIO);
+    allowedProfiles.length === 0 || allowedProfiles.includes(currentProfile);
 
   if (!hasAccess) {
     return <Navigate to={redirectTo} replace />;

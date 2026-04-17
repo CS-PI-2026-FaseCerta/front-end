@@ -1,11 +1,17 @@
-import React, { useState } from "react";
-import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
-import Footer from "../../global/components/Footer/Footer.jsx";
-import Header from "../../global/components/Header/Header.jsx";
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import Header from "../../../global/components/Header/Header.jsx";
+import {
+  getRememberMe,
+  login as authLogin,
+  saveRememberMe,
+} from "../../mockAuth";
 import "./login.css";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -13,6 +19,17 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [emailOrUsernameError, setEmailOrUsernameError] = useState(false);
+
+  useEffect(() => {
+    const remembered = getRememberMe();
+    if (!remembered) {
+      return;
+    }
+
+    setEmailOrUsername(remembered.emailOrUsername || "");
+    setPassword(remembered.password || "");
+    setRememberMe(true);
+  }, []);
 
   const validateEmailOrUsername = (value) => {
     if (!value) return false;
@@ -77,14 +94,20 @@ const Login = () => {
 
       // Simulação de chamada de API
       setTimeout(() => {
-        //Teste de login
-        const LOGIN_SUCESSO = false;
+        const result = authLogin(emailOrUsername, password);
 
-        if (LOGIN_SUCESSO) {
-          alert("Login efetuado com sucesso (simulação)!");
-          // Redirecionamento fake: window.location.href = '/dashboard';
+        if (result.success) {
+          saveRememberMe({
+            rememberMe,
+            emailOrUsername,
+            password,
+          });
+          console.log("Usuário autenticado:", result.user);
+          navigate("/dashboard", { replace: true });
         } else {
-          setLoginError("E-mail/Nome de Usuário ou senha incorretos");
+          setLoginError(
+            result.message || "E-mail/Nome de Usuário ou senha incorretos",
+          );
         }
         setIsLoading(false);
       }, 1500);
@@ -140,9 +163,9 @@ const Login = () => {
                 </span>
               </div>
               <div style={{ textAlign: "right" }}>
-                <a href="#" className="link">
+                <Link to="/alterarSenha" className="link">
                   Esqueceu sua senha?
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -165,13 +188,12 @@ const Login = () => {
             </button>
 
             <p className="signup-link">
-              Ainda não tem uma conta? <Link to="/cadastroUsuario">Cadastre-se</Link>
+              Ainda não tem uma conta?{" "}
+              <Link to="/cadastroUsuario">Cadastre-se</Link>
             </p>
           </form>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };
