@@ -7,8 +7,8 @@ import {
   getRememberMe,
   login as authLogin,
   saveRememberMe,
-} from "../../mockAuth";
-import "./login.css";
+} from "../../mockAuth.js";
+import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
