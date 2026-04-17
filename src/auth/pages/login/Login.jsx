@@ -7,9 +7,9 @@ import Header from "../../../global/components/Header/Header.jsx";
 import {
   getRememberMe,
   login as authLogin,
-  saveRememberMe,
-} from "../../mockAuth";
-import "./login.css";
+  saveRememberMe
+} from "../../mockAuth.js";
+import "./Login.css";
 
 
 const Login = () => {
