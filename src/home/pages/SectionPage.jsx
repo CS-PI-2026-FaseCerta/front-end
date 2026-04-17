@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import HeaderDashBoard from "../components/HeaderDashBoard";
-import "./dashboard.css";
+import Header from "../../global/components/Header/Header.jsx";
+
+import "./Dashboard.css";
 
 const SectionPage = ({
   eyebrow,
@@ -12,7 +13,7 @@ const SectionPage = ({
 }) => {
   return (
     <div className="dashboard-page">
-      <HeaderDashBoard />
+      <Header />
 
       <main className="dashboard-shell dashboard-shell--section">
         <section className="section-card">

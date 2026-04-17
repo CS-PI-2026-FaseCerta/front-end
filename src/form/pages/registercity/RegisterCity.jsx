@@ -3,9 +3,11 @@ import Select from "react-select";
 import "./RegisterCity.css";
 import { FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/Header/Header";
-import Footer from "../../../global/components/Footer/Footer";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterCity() {
+    const navigate = useNavigate();
+    
     const [name, setName] = useState("");
     const [cep, setCep] = useState("");
     
@@ -68,71 +70,72 @@ export default function RegisterCity() {
     return (
         <div className="city-page">
             <Header />
-            <div className="city-form-card">
-                <div className="card-header">
-                    <button className="back-button">
-                        <FaArrowLeft size={20} color="#433f9b" />
-                    </button>
-                    <h1>Cadastro de Cidade</h1>
-                </div>
-
-                <form className="city-form">
-                    <div className="city-form-group">
-                        <label htmlFor="city-name" className="city-form-label">NOME DA CIDADE</label>
-                        <input
-                            id="city-name"
-                            className="city-form-input"
-                            type="text"
-                            placeholder="Ex: Dois Vizinhos"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
+            <div className="city-page-content">
+                <div className="city-form-card">
+                    <div className="card-header">
+                        <button className="back-button" onClick={() => navigate("/dashboard")}>
+                            <FaArrowLeft size={20} color="#433f9b" />
+                        </button>
+                        <h1>Cadastro de Cidade</h1>
                     </div>
 
-                    
-
-                    <div id="city-form-midline">
-                        <div className="city-form-group" id="city-form-cep-group">
-                            <label htmlFor="city-cep" className="city-form-label">CEP - CIDADE</label>
+                    <form className="city-form">
+                        <div className="city-form-group">
+                            <label htmlFor="city-name" className="city-form-label">NOME DA CIDADE</label>
                             <input
-                                id="city-cep"
+                                id="city-name"
                                 className="city-form-input"
                                 type="text"
-                                placeholder="Ex: 85660-000"
-                                value={cep}
-                                onChange={(e) => setCep(formatCep(e.target.value))}
+                                placeholder="Ex: Dois Vizinhos"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                             />
                         </div>
 
-                        <div id="city-form-state-group" className="city-form-group">
-                            <label htmlFor="city-state" className="city-form-label">ESTADO (UF)</label>
+                        
 
-                            <Select
-                                id="city-state"
-                                options={states}
-                                value={state}
-                                onChange={setState}
-                                placeholder="Selecione um estado..."
-                                isSearchable
-                                className="city-select"
-                                classNamePrefix="city-react-select"
-                            />
+                        <div id="city-form-midline">
+                            <div className="city-form-group" id="city-form-cep-group">
+                                <label htmlFor="city-cep" className="city-form-label">CEP - CIDADE</label>
+                                <input
+                                    id="city-cep"
+                                    className="city-form-input"
+                                    type="text"
+                                    placeholder="Ex: 85660-000"
+                                    value={cep}
+                                    onChange={(e) => setCep(formatCep(e.target.value))}
+                                />
+                            </div>
+
+                            <div id="city-form-state-group" className="city-form-group">
+                                <label htmlFor="city-state" className="city-form-label">ESTADO (UF)</label>
+
+                                <Select
+                                    id="city-state"
+                                    options={states}
+                                    value={state}
+                                    onChange={setState}
+                                    placeholder="Selecione um estado..."
+                                    isSearchable
+                                    className="city-select"
+                                    classNamePrefix="city-react-select"
+                                />
+                            </div>
+
                         </div>
 
-                    </div>
+                        
 
-                    
-
-                    <button
-                        type="submit"
-                        className="city-form-submit-button"
-                        disabled={!isFormValid}
-                    >
-                        Salvar Serviço
-                    </button>
-                </form>
+                        <button
+                            type="submit"
+                            className="city-form-submit-button"
+                            disabled={!isFormValid}
+                        >
+                            Salvar Serviço
+                        </button>
+                    </form>
+                </div>
             </div>
-            <Footer />
         </div>
     );
 }

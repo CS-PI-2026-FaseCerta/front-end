@@ -5,12 +5,18 @@
     font-family: sans-serif;
 
     width: 100%;
-    min-height: 100vh;
     display: flex;
     justify-content: space-between;
     align-items: center;
     background-color: #F6F2FB;
     flex-direction: column;
+}
+
+.city-page-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: calc(100vh - 4.75rem);
 }
 
 .city-form-card {
