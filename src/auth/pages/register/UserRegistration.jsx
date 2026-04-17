@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Header from "../../../global/components/Header/Header.jsx";
-import "../login/Login.css";
+import "../login/login.css";
 
 export default function CadastroUsuario() {
   const [form, setForm] = useState({

@@ -3,7 +3,7 @@ import "./App.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import MaterialRegistration from "./auth/pages/register/MaterialRegistration.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
-import Login from "./auth/pages/login/Login.jsx";
+import Login from "./auth/pages/login/login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
@@ -16,13 +16,14 @@ function App() {
       {
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/cadastroUsuario" element={<UserRegistration />} />
             <Route path="/cadastroMaterial" element={<MaterialRegistration />} />
             <Route path="/alterarSenha" element={<ChangePassword />} />
             <Route path="/cadastroServico" element={<RegisterService />} />
-            <Route path="/clientes/novo" element={<CadastroUsuario />} />
+            <Route path="/clientes/novo" element={<UserRegistration />} />
 
             {/* Fallbacks temporarios para areas do dashboard que ainda nao possuem telas dedicadas. */}
             <Route
