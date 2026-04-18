@@ -1,0 +1,51 @@
+/* reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* page */
+
+.page{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg #EDE9FB 0%, #f3f1ff 100%);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* header */
+
+.page-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 48px;
+}
+
+.logo{
+    font-weight: 700;
+    font-size: 20px;
+    color: #433f9b;
+}
+
+/* main content */
+
+.main-content{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* card */
+
+.card{
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 720px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
