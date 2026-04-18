@@ -1,38 +1,33 @@
-.footer {
-    padding: 30px 50px;
+/* --- Rodapé da Página --- */
+.page-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto;
-}
-
-.footer-left span {
-    color: var(--text-secondary);
+    padding: 24px 48px;
     font-size: 14px;
-    font-weight: 500;
-}
-
-.footer-right {
-    display: flex;
-    gap: 25px;
-}
-
-.footer-right a {
-    text-decoration: none;
     color: var(--text-secondary);
-    font-size: 13px;
-    font-weight: 600;
-    transition: color 0.2s ease;
 }
 
-.footer-right a:hover {
+.footer-links {
+    display: flex;
+    gap: 24px;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.footer-links a:hover {
     color: var(--primary-color);
+    text-decoration: underline;
 }
 
+/* --- Responsividade --- */
 @media (max-width: 768px) {
-    .footer {
+    .page-footer {
+        padding: 16px 24px;
         flex-direction: column;
-        gap: 20px;
-        text-align: center;
+        gap: 16px;
     }
 }

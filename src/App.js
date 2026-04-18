@@ -5,7 +5,7 @@ import MaterialRegistration from "./auth/pages/register/MaterialRegistration.jsx
 import Dashboard from "./home/pages/Dashboard.jsx";
 import Login from "./auth/pages/login/login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
-import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
+import RegisterService from "./auth/pages/register/RegisterService.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 import UserRegistration from "./auth/pages/register/UserRegistration.jsx";

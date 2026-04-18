@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./RegisterService.css";
 
 import Header from "../../../global/components/Header/Header.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx";
 
 export default function RegisterService() {
   const navigate = useNavigate();
@@ -131,6 +132,7 @@ export default function RegisterService() {
           </button>
         </form>
       </div>
+      <Footer />
     </div>
   );
 }
