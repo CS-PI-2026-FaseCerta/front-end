@@ -49,3 +49,11 @@
     max-width: 720px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
+
+/* card header */
+.card-header{
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 8px;
+};
