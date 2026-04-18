@@ -2,6 +2,7 @@ export const Login = "/login";
 export const CadastroUsuario = "/cadastroUsuario";
 export const ChangePassword = "/alterarSenha";
 export const RegisterService = "/cadastroServico";
+export const RegisterCity = "/cadastrar-cidade";
 export const Dashboard = "/dashboard";
 
 //Não implementados ainda, mas já mapeados para facilitar futuras integrações.

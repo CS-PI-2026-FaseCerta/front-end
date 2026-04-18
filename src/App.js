@@ -37,7 +37,7 @@ function App() {
               path={AppRoutes.CadastroUsuario}
               element={<CadastroUsuario />}
             />
-
+            <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
             {/* Fallbacks temporarios para areas do dashboard que ainda nao possuem telas dedicadas. */}
             <Route
               path={AppRoutes.Perfil}
