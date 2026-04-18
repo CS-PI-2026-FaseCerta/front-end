@@ -67,7 +67,7 @@ export const QUICK_ACTIONS = [
   {
     id: "cadastrar-cidade",
     nome: "Cadastrar Cidade",
-    rota: "/RegisterCity",
+    rota: "/cadastrar-cidade",
     icon: FaCity,
     allowedProfiles: ["gestor", "tecnico"],
     order: {

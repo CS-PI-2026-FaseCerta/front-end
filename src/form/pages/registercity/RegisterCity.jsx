@@ -131,7 +131,7 @@ export default function RegisterCity() {
                             className="city-form-submit-button"
                             disabled={!isFormValid}
                         >
-                            Salvar Serviço
+                            Salvar Cidade
                         </button>
                     </form>
                 </div>

@@ -23,7 +23,7 @@ function App() {
             <Route path="/alterarSenha" element={<ChangePassword />} />
             <Route path="/cadastroServico" element={<RegisterService />} />
             <Route path="/clientes/novo" element={<CadastroUsuario />} />
-            <Route path="/registercity" element={<RegisterCity />} />
+            <Route path="/cadastrar-cidade" element={<RegisterCity />} />
 
             {/* Fallbacks temporarios para areas do dashboard que ainda nao possuem telas dedicadas. */}
             <Route
