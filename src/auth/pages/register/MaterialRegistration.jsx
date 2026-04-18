@@ -134,15 +134,12 @@ export default function CadastrarPeca() {
 
                         <div className="input-group" style={{ marginTop: '10px' }}>
                             <label>MARGEM DE LUCRO ESTIMADA</label>
-                            <div className={`input-field ${lucroNominal < 0 ? 'input-error' : ''}`}
+                            <div
+                                className="margin-display-field"
                                 style={{
-                                    backgroundColor: '#f4f4f4',
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    fontWeight: 'bold',
-                                    color: lucroNominal >= 0 ? '#28a745' : lucroNominal === 0 ? '#f1c40f' : '#e53e3e'
-                                }}>
+                                    color: lucroNominal > 0 ? '#28a745' : lucroNominal === 0 ? '#f1c40f' : '#e53e3e'
+                                }}
+                            >
                                 <span>{margemPercentual.toFixed(2)}%</span>
                                 <span>(R$ {lucroNominal.toFixed(2)})</span>
                             </div>
