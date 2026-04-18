@@ -38,7 +38,7 @@ export default function RegisterService() {
     <div className="service-page">
       <Header />
       <div className="service-form-card">
-        <div className="card-header">
+        <div className="card-header"> 
           <button
             type="button"
             className="back-button"
