@@ -1,11 +1,6 @@
 /* --- Layout Geral --- */
 .page-container {
   font-family: "Inter", sans-serif;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: var(--dashboard-page-bg);
-  color: var(--text-primary);
 }
 
 /* --- Container Principal --- */

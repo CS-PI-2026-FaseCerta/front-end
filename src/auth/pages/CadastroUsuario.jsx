@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Header from "../../global/components/Header/Header.jsx";
 import "./login/login.css";
+import "./Auth.css";
 
 import * as AppRoutes from "../../routes/AppRoutes.jsx";
 

@@ -9,6 +9,7 @@ import {
   saveRememberMe,
 } from "../../mockAuth";
 import "./login.css";
+import "./../Auth.css";
 import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 const Login = () => {
@@ -119,10 +120,10 @@ const Login = () => {
   };
 
   return (
-    <div className="page-container">
+    <div className="auth-page page-container">
       <Header />
 
-      <main className="login-container">
+      <main className="form-container login-container">
         <div className="login-card">
           <h2 className="login-card__title">Acesse sua conta</h2>
           <p className="login-card__subtitle">Insira seus dados para entrar</p>
