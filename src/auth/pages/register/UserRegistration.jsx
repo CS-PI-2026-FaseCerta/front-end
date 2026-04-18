@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Header from "../../../global/components/Header/Header.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx";
 import "../login/login.css";
 
 export default function CadastroUsuario() {
@@ -201,6 +202,7 @@ export default function CadastroUsuario() {
           </form>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import "./ChangePassword.css";
 import Header from "../../../global/components/Header/Header.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx";
 
 const AlterarSenha = () => {
   const navigate = useNavigate();
@@ -238,6 +239,7 @@ const AlterarSenha = () => {
           </div>
         </section>
       </main>
+      <Footer />
     </div>
   );
 };
