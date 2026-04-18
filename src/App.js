@@ -1,14 +1,15 @@
 import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import MaterialRegistration from "./form/pages/MaterialRegistration/MaterialRegistration.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
-import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
+import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
-import CadastroUsuario from "./auth/pages/CadastroUsuario.jsx";
+import UserRegistration from "./form/pages/UserRegistration/UserRegistration.jsx";
 
 function App() {
   return (
@@ -19,11 +20,12 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/cadastroUsuario" element={<CadastroUsuario />} />
+            <Route path="/cadastroUsuario" element={<UserRegistration />} />
+            <Route path="/cadastroMaterial" element={<MaterialRegistration />} />
             <Route path="/alterarSenha" element={<ChangePassword />} />
             <Route path="/cadastroServico" element={<RegisterService />} />
-            <Route path="/clientes/novo" element={<CadastroUsuario />} />
-            <Route path="/cadastrar-cidade" element={<RegisterCity />} />
+            <Route path="/clientes/novo" element={<UserRegistration />} />
+            <Route path="/cadastroCidade" element={<RegisterCity />} />
 
             {/* Fallbacks temporarios para areas do dashboard que ainda nao possuem telas dedicadas. */}
             <Route

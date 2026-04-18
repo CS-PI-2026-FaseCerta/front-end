@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router-dom";
 import { FaArrowRight, FaChartLine } from "react-icons/fa";
 
 import HeaderDashBoard from "../components/headerDashBoard/HeaderDashBoard";
+import Footer from "../../global/components/Footer/Footer";
 import Sidebar from "../components/menu/Sidebar";
 import ModuleCard from "../components/cards/ModuleCard";
 import QuickActionsCarousel from "../components/actions/QuickActionsCarousel";
@@ -220,6 +221,7 @@ const Dashboard = () => {
           </section>
         )}
       </main>
+      <Footer />
     </div>
   );
 };
