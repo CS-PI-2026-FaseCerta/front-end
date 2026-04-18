@@ -135,6 +135,7 @@
   scroll-snap-align: start;
   cursor: pointer;
   box-shadow: var(--shadow-card);
+  margin-top: 1rem;
   transition:
     transform 180ms ease,
     border-color 180ms ease,
