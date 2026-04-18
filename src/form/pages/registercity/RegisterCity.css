@@ -2,13 +2,12 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: sans-serif;
 
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #F6F2FB;
+    background-color: var(--background-color);
     flex-direction: column;
 }
 
@@ -89,7 +88,7 @@
     margin-bottom: 5px;
     font-weight: 600;
     font-size: 14px;
-    color: #9795A0;
+    color: var(--color-text-secondary);
 }
 
 .city-form-input {
@@ -97,7 +96,7 @@
     border: none;
     border-radius: 8px;
     font-size: 1rem;
-    background-color: #F6F2FB;
+    background-color: var(--color-surface-muted);
     height: 3rem;
     width: 100%;
 }
@@ -107,7 +106,7 @@
 .city-form-input::placeholder {
     font-size: 1rem;
     /* padding: 1.3rem 1rem; */
-    color: rgb(166, 159, 182);
+    color: var(--color-text-secondary);
 }
 
 
@@ -126,7 +125,7 @@
     margin-top: 10px;
     padding: 12px;
     border: none;
-    background: #6c63ff;
+    background: var(--color-primary);
     color: white;
     border-radius: 8px;
     font-size: 16px;
@@ -134,11 +133,11 @@
 }
 
 .city-form-submit-button:hover {
-    background: #574fd6;
+    background: var(--color-primary-hover);
 }
 
 .city-form-submit-button:disabled {
-    background: #ccc;
+    background: var(--control-bg-active);
     cursor: not-allowed;
 }
 
@@ -146,8 +145,8 @@
 .city-form-submit-button {
     width: 100%;
     padding: 16px;
-    background-color: #433f9b;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--color-surface);
     border: none;
     border-radius: 999px;
     /* Pill shape */
@@ -159,17 +158,17 @@
         transform 0.2s ease,
         box-shadow 0.2s ease;
     margin-top: 8px;
-    box-shadow: 0 4px 15px rgba(91, 75, 255, 0.2);
+    box-shadow: none;
 }
 
 .city-form-submit-button:hover {
-    background-color: #7165ff;
+    background-color: var(--color-primary-hover);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(91, 75, 255, 0.3);
 }
 
 .city-form-submit-button:disabled {
-    background-color: #b3aaff;
+    background-color: var(--control-bg-active);
     cursor: not-allowed;
 }
 
@@ -192,19 +191,19 @@
     box-shadow: none !important;
     transition: all 0.2s ease;
     cursor: pointer;
-    background-color: #F6F2FB !important;
+    background-color: var(--color-surface-muted) !important;
     width: 100% !important;
 }
 
 
 /* hover */
 .city-react-select__control:hover {
-    border-color: #433f9b !important;
+    border-color: var(--primary-color) !important;
 }
 
 /* focus */
 .city-react-select__control--is-focused {
-    border: 2px solid#433f9b !important;
+    border: 2px solid var(--primary-color) !important;
     outline: none !important;
 }
 
@@ -269,8 +268,8 @@
 
 /* selecionado */
 .city-react-select__option--is-selected {
-    background-color: #433f9b !important;
-    color: #fff !important;
+    background-color: var(--color-primary) !important;
+    color: var(--color-surface) !important;
 }
 
 /* =========================
@@ -282,7 +281,7 @@
 }
 
 .city-react-select__dropdown-indicator:hover {
-    color: #433f9b !important;
+    color: var(--color-primary) !important;
 }
 
 /* separador da seta */
