@@ -70,22 +70,26 @@ export default function CadastroUsuario() {
   };
 
   return (
-    <div className="page-container">
+    <div className="auth-page page-container">
       <Header />
 
-      <main className="login-container">
-        <div className="login-card">
-          <h2 className="login-card__title">Crie sua conta</h2>
-          <p className="login-card__subtitle">Insira seus dados para começar</p>
+      <main className="auth-container login-container">
+        <div className="auth-card login-card">
+          <h2 className="auth-title login-card__title">Crie sua conta</h2>
+          <p className="auth-subtitle login-card__subtitle">
+            Insira seus dados para começar
+          </p>
 
-          <form onSubmit={handleSubmit} noValidate>
-            <div className="input-group">
-              <label htmlFor="email">E-mail</label>
+          <form className="auth-form" onSubmit={handleSubmit} noValidate>
+            <div className="auth-form-group input-group">
+              <label className="auth-label" htmlFor="email">
+                E-mail
+              </label>
               <input
                 type="email"
                 id="email"
                 name="email"
-                className={`input-field ${emailError ? "input-error" : ""}`}
+                className={`auth-input input-field ${emailError ? "input-error" : ""}`}
                 placeholder="seu@email.com"
                 value={form.email}
                 onChange={updateField}
@@ -93,22 +97,19 @@ export default function CadastroUsuario() {
                 disabled={isLoading}
               />
               {emailError && (
-                <p
-                  className="login-error-message"
-                  style={{ marginTop: "8px", textAlign: "left" }}
-                >
-                  E-mail inválido!
-                </p>
+                <p className="auth-error-inline">E-mail inválido!</p>
               )}
             </div>
 
-            <div className="input-group">
-              <label htmlFor="username">Nome de Usuário</label>
+            <div className="auth-form-group input-group">
+              <label className="auth-label" htmlFor="username">
+                Nome de Usuário
+              </label>
               <input
                 type="text"
                 id="username"
                 name="username"
-                className="input-field"
+                className="auth-input input-field"
                 placeholder="Como quer ser chamado?"
                 value={form.username}
                 onChange={updateField}
@@ -116,21 +117,23 @@ export default function CadastroUsuario() {
               />
             </div>
 
-            <div className="input-group">
-              <label htmlFor="password">Senha</label>
-              <div className="input-wrapper">
+            <div className="auth-form-group input-group">
+              <label className="auth-label" htmlFor="password">
+                Senha
+              </label>
+              <div className="auth-input-wrapper input-wrapper">
                 <input
                   type={showPass ? "text" : "password"}
                   id="password"
                   name="password"
-                  className="input-field"
+                  className="auth-input input-field"
                   placeholder="••••••••••"
                   value={form.password}
                   onChange={updateField}
                   disabled={isLoading}
                 />
                 <span
-                  className="password-icon"
+                  className="auth-password-toggle password-icon"
                   onClick={() => !isLoading && setShowPass(!showPass)}
                 >
                   {showPass ? <FaEyeSlash /> : <FaEye />}
@@ -138,21 +141,23 @@ export default function CadastroUsuario() {
               </div>
             </div>
 
-            <div className="input-group">
-              <label htmlFor="confirm">Confirme sua senha</label>
-              <div className="input-wrapper">
+            <div className="auth-form-group input-group">
+              <label className="auth-label" htmlFor="confirm">
+                Confirme sua senha
+              </label>
+              <div className="auth-input-wrapper input-wrapper">
                 <input
                   type={showConfirm ? "text" : "password"}
                   id="confirm"
                   name="confirm"
-                  className={`input-field ${form.confirm && !isMatch ? "input-error" : ""}`}
+                  className={`auth-input input-field ${form.confirm && !isMatch ? "input-error" : ""}`}
                   placeholder="••••••••••"
                   value={form.confirm}
                   onChange={updateField}
                   disabled={isLoading}
                 />
                 <span
-                  className="password-icon"
+                  className="auth-password-toggle password-icon"
                   onClick={() => !isLoading && setShowConfirm(!showConfirm)}
                 >
                   {showConfirm ? <FaEyeSlash /> : <FaEye />}
@@ -160,42 +165,26 @@ export default function CadastroUsuario() {
               </div>
 
               {form.confirm && !isMatch && (
-                <p
-                  className="login-error-message"
-                  style={{ marginTop: "8px", textAlign: "left" }}
-                >
-                  As senhas não coincidem!
-                </p>
+                <p className="auth-error-inline">As senhas não coincidem!</p>
               )}
             </div>
 
             {/* MENSAGEM DE SUCESSO */}
-            {successMessage && (
-              <p
-                style={{
-                  color: "#28a745",
-                  marginTop: "10px",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                {successMessage}
-              </p>
-            )}
+            {successMessage && <p className="auth-success">{successMessage}</p>}
 
             <button
               type="submit"
-              className="login-button"
+              className="auth-button login-button"
               disabled={!allFilled}
-              style={{ marginTop: "1rem" }}
             >
               {isLoading ? "Cadastrando..." : "Criar conta!"}
             </button>
 
-            <p className="signup-link">
+            <p className="auth-footer-text signup-link">
               Já tem conta?{" "}
               <Link
                 to={AppRoutes.Login}
+                className="auth-link"
                 style={{ pointerEvents: isLoading ? "none" : "auto" }}
               >
                 Entre Aqui

@@ -123,18 +123,22 @@ const Login = () => {
     <div className="auth-page page-container">
       <Header />
 
-      <main className="form-container login-container">
-        <div className="login-card">
-          <h2 className="login-card__title">Acesse sua conta</h2>
-          <p className="login-card__subtitle">Insira seus dados para entrar</p>
+      <main className="auth-container login-container">
+        <div className="auth-card login-card">
+          <h2 className="auth-title login-card__title">Acesse sua conta</h2>
+          <p className="auth-subtitle login-card__subtitle">
+            Insira seus dados para entrar
+          </p>
 
-          <form onSubmit={handleSubmit} noValidate>
-            <div className="input-group">
-              <label htmlFor="emailOrUsername">E-mail ou Usuário</label>
+          <form className="auth-form" onSubmit={handleSubmit} noValidate>
+            <div className="auth-form-group input-group">
+              <label className="auth-label" htmlFor="emailOrUsername">
+                E-mail ou Usuário
+              </label>
               <input
                 type="text"
                 id="emailOrUsername"
-                className={`input-field ${emailOrUsernameError ? "input-error" : ""}`}
+                className={`auth-input input-field ${emailOrUsernameError ? "input-error" : ""}`}
                 placeholder="seu@email.com ou seu_usuario"
                 value={emailOrUsername}
                 onChange={handleEmailOrUsernameChange}
@@ -142,21 +146,23 @@ const Login = () => {
               />
             </div>
 
-            <div className="input-group">
+            <div className="auth-form-group input-group">
               <div className="label-group">
-                <label htmlFor="password">Senha</label>
+                <label className="auth-label" htmlFor="password">
+                  Senha
+                </label>
               </div>
-              <div className="input-wrapper">
+              <div className="auth-input-wrapper input-wrapper">
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
-                  className="input-field"
+                  className="auth-input input-field"
                   placeholder="••••••••••"
                   value={password}
                   onChange={handlePasswordChange}
                 />
                 <span
-                  className="password-icon"
+                  className="auth-password-toggle password-icon"
                   onClick={togglePasswordVisibility}
                   role="button"
                   aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
@@ -164,34 +170,44 @@ const Login = () => {
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
-              <div style={{ textAlign: "right" }}>
-                <Link to={AppRoutes.ChangePassword} className="link">
+              <div className="auth-align-right">
+                <Link to={AppRoutes.ChangePassword} className="auth-link link">
                   Esqueceu sua senha?
                 </Link>
               </div>
             </div>
 
-            <div className="form-options">
-              <div className="checkbox-group">
+            <div className="auth-options form-options">
+              <div className="auth-checkbox-group checkbox-group">
                 <input
                   type="checkbox"
                   id="rememberMe"
                   checked={rememberMe}
                   onChange={handleRememberMeChange}
                 />
-                <label htmlFor="rememberMe">Lembre de mim</label>
+                <label className="auth-label" htmlFor="rememberMe">
+                  Lembre de mim
+                </label>
               </div>
             </div>
 
-            {loginError && <p className="login-error-message">{loginError}</p>}
+            {loginError && (
+              <p className="auth-error login-error-message">{loginError}</p>
+            )}
 
-            <button type="submit" className="login-button" disabled={isLoading}>
+            <button
+              type="submit"
+              className="auth-button login-button"
+              disabled={isLoading}
+            >
               {isLoading ? "Entrando..." : "Entrar"}
             </button>
 
-            <p className="signup-link">
+            <p className="auth-footer-text signup-link">
               Ainda não tem uma conta?{" "}
-              <Link to={AppRoutes.CadastroUsuario}>Cadastre-se</Link>
+              <Link className="auth-link" to={AppRoutes.CadastroUsuario}>
+                Cadastre-se
+              </Link>
             </p>
           </form>
         </div>

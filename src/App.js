@@ -7,7 +7,7 @@ import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
-import CadastroUsuario from "./auth/pages/CadastroUsuario.jsx";
+import CadastroUsuario from "./auth/pages/RegisterUser.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 

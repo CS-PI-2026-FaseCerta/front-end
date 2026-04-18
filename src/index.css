@@ -10,6 +10,9 @@
   --text-secondary: #475569;
   --border-color: #d5dee8;
   --error-color: #e53e3e;
+  --error-bg: #fee2e2;
+  --error-border-color: #fca5a5;
+  --success-color: #2f9e44;
 
   --color-bg: var(--background-color);
   --color-surface: var(--card-background);
@@ -70,6 +73,9 @@
   --primary-color: #7c83ff;
   --primary-hover-color: #9ea3ff;
   --color-accent: #fbbf24;
+  --error-bg: rgba(229, 62, 62, 0.16);
+  --error-border-color: rgba(229, 62, 62, 0.5);
+  --success-color: #7ddf97;
 
   --header-surface: rgba(15, 23, 42, 0.88);
   --header-border-color: rgba(148, 163, 184, 0.2);

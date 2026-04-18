@@ -110,136 +110,139 @@ const ChangePassword = () => {
   return (
     <div className="auth-page change-password-page">
       <Header />
-      <main className="form-container change-password-container">
-        {/* <section className="change-password-card"> */}
-        <div className="card-header">
-          <button
-            type="button"
-            className="back-button"
-            onClick={() => navigate(AppRoutes.Dashboard)}
-          >
-            <FaArrowLeft className="arrowLeft" size={20} />
-          </button>
-          <h1>Alterar Senha</h1>
+      <main className="auth-container change-password-container">
+        <div className="auth-card form-container">
+          <div className="card-header">
+            <button
+              type="button"
+              className="back-button"
+              onClick={() => navigate(AppRoutes.Dashboard)}
+            >
+              <FaArrowLeft className="arrowLeft" size={20} />
+            </button>
+            <h1>Alterar Senha</h1>
+          </div>
+
+          <p className="card-header-p">
+            Mantenha sua conta FaseCerta segura e atualizada.
+          </p>
+
+          <form className="auth-form" onSubmit={handleSubmit} noValidate>
+            {/* Senha Atual */}
+            <div className="auth-form-group form-group">
+              <label className="auth-label" htmlFor="currentPassword">
+                Senha atual
+              </label>
+              <div className="auth-input-wrapper input-wrapper">
+                <input
+                  id="currentPassword"
+                  name="currentPassword"
+                  type={showPasswords.current ? "text" : "password"}
+                  className="auth-input"
+                  value={formData.currentPassword}
+                  onChange={handleChange}
+                  placeholder="Digite sua senha atual"
+                  required
+                />
+                <button
+                  type="button"
+                  className="auth-password-toggle toggle-password"
+                  onClick={() => toggleVisibility("current")}
+                  aria-label={
+                    showPasswords.current ? "Ocultar senha" : "Mostrar senha"
+                  }
+                >
+                  <EyeIcon visible={showPasswords.current} />
+                </button>
+              </div>
+            </div>
+
+            {/* Nova Senha */}
+            <div className="auth-form-group form-group">
+              <label className="auth-label" htmlFor="newPassword">
+                Nova senha
+              </label>
+              <div className="auth-input-wrapper input-wrapper">
+                <input
+                  id="newPassword"
+                  name="newPassword"
+                  type={showPasswords.new ? "text" : "password"}
+                  value={formData.newPassword}
+                  onChange={handleChange}
+                  placeholder="Crie uma nova senha"
+                  className={`auth-input ${errors.sameAsOld ? "input-error" : ""}`}
+                  required
+                />
+                <button
+                  type="button"
+                  className="auth-password-toggle toggle-password"
+                  onClick={() => toggleVisibility("new")}
+                  aria-label={
+                    showPasswords.new ? "Ocultar senha" : "Mostrar senha"
+                  }
+                >
+                  <EyeIcon visible={showPasswords.new} />
+                </button>
+              </div>
+              <p className="auth-helper-text helper-text">
+                Dica: use letras e números pra criar uma senha forte.
+              </p>
+              {errors.sameAsOld && (
+                <span className="auth-error-inline error-message">
+                  A nova senha não pode ser igual à senha atual.
+                </span>
+              )}
+            </div>
+
+            {/* Confirmar Nova Senha */}
+            <div className="auth-form-group form-group">
+              <label className="auth-label" htmlFor="confirmPassword">
+                Confirme a nova senha
+              </label>
+              <div className="auth-input-wrapper input-wrapper">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showPasswords.confirm ? "text" : "password"}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Repita a nova senha"
+                  className={`auth-input ${errors.mismatch ? "input-error" : ""}`}
+                  required
+                />
+                <button
+                  type="button"
+                  className="auth-password-toggle toggle-password"
+                  onClick={() => toggleVisibility("confirm")}
+                  aria-label={
+                    showPasswords.confirm ? "Ocultar senha" : "Mostrar senha"
+                  }
+                >
+                  <EyeIcon visible={showPasswords.confirm} />
+                </button>
+              </div>
+              {errors.mismatch && (
+                <span className="auth-error-inline error-message">
+                  As senhas não coincidem.
+                </span>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="auth-button submit-btn"
+              disabled={isButtonDisabled}
+            >
+              Alterar Senha
+            </button>
+          </form>
+
+          <div className="auth-footer-text card-footer">
+            <Link to={AppRoutes.Login} className="auth-link recovery-link">
+              Esqueceu sua senha? <strong>Recuperar senha</strong>
+            </Link>
+          </div>
         </div>
-
-        <p className="card-header-p">
-          Mantenha sua conta FaseCerta segura e atualizada.
-        </p>
-
-        <form onSubmit={handleSubmit} noValidate>
-          {/* Senha Atual */}
-          <div className="form-group">
-            <label htmlFor="currentPassword" style={{ textAlign: "left" }}>
-              Senha atual
-            </label>
-            <div className="input-wrapper">
-              <input
-                id="currentPassword"
-                name="currentPassword"
-                type={showPasswords.current ? "text" : "password"}
-                value={formData.currentPassword}
-                onChange={handleChange}
-                placeholder="Digite sua senha atual"
-                required
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => toggleVisibility("current")}
-                aria-label={
-                  showPasswords.current ? "Ocultar senha" : "Mostrar senha"
-                }
-              >
-                <EyeIcon visible={showPasswords.current} />
-              </button>
-            </div>
-          </div>
-
-          {/* Nova Senha */}
-          <div className="form-group">
-            <label htmlFor="newPassword" style={{ textAlign: "left" }}>
-              Nova senha
-            </label>
-            <div className="input-wrapper">
-              <input
-                id="newPassword"
-                name="newPassword"
-                type={showPasswords.new ? "text" : "password"}
-                value={formData.newPassword}
-                onChange={handleChange}
-                placeholder="Crie uma nova senha"
-                className={errors.sameAsOld ? "input-error" : ""}
-                required
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => toggleVisibility("new")}
-                aria-label={
-                  showPasswords.new ? "Ocultar senha" : "Mostrar senha"
-                }
-              >
-                <EyeIcon visible={showPasswords.new} />
-              </button>
-            </div>
-            <p className="helper-text">
-              Dica: use letras e números pra criar uma senha forte.
-            </p>
-            {errors.sameAsOld && (
-              <span className="error-message">
-                A nova senha não pode ser igual à senha atual.
-              </span>
-            )}
-          </div>
-
-          {/* Confirmar Nova Senha */}
-          <div className="form-group">
-            <label htmlFor="confirmPassword" style={{ textAlign: "left" }}>
-              Confirme a nova senha
-            </label>
-            <div className="input-wrapper">
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showPasswords.confirm ? "text" : "password"}
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="Repita a nova senha"
-                className={errors.mismatch ? "input-error" : ""}
-                required
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => toggleVisibility("confirm")}
-                aria-label={
-                  showPasswords.confirm ? "Ocultar senha" : "Mostrar senha"
-                }
-              >
-                <EyeIcon visible={showPasswords.confirm} />
-              </button>
-            </div>
-            {errors.mismatch && (
-              <span className="error-message">As senhas não coincidem.</span>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            className="submit-btn"
-            disabled={isButtonDisabled}
-          >
-            Alterar Senha
-          </button>
-        </form>
-
-        <div className="card-footer">
-          <Link to={AppRoutes.Login} className="recovery-link">
-            Esqueceu sua senha? <strong>Recuperar senha</strong>
-          </Link>
-        </div>
-        {/* </section> */}
       </main>
     </div>
   );
