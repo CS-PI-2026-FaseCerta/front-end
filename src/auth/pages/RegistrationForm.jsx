@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./cadastrarcliente.css";
+import "./RegistrationForm.css";
 import { FaArrowLeft } from "react-icons/fa";
 
 const CadastrarCliente = () => {
