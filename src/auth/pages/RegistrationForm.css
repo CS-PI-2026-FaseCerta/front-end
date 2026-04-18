@@ -20,8 +20,11 @@
 .page-header{
     display: flex;
     justify-content: space-between;
+     background-color: var(--primary-color);
     align-items: center;
     padding: 24px 48px;
+     width: 100%;
+    box-sizing: border-box;
 }
 
 .logo{
