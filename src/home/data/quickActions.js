@@ -4,6 +4,7 @@ import {
   FaMoneyBillWave,
   FaTools,
   FaUserPlus,
+  FaCity,
 } from "react-icons/fa";
 
 // TODO: Integrar com backend para carregar atalhos personalizados do usuário logado.
@@ -61,6 +62,17 @@ export const QUICK_ACTIONS = [
     order: {
       gestor: 5,
       tecnico: 4,
+    },
+  },
+  {
+    id: "cadastrar-cidade",
+    nome: "Cadastrar Cidade",
+    rota: "/cadastrar-cidade",
+    icon: FaCity,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 6,
+      tecnico: 5,
     },
   },
 ];

@@ -5,6 +5,7 @@ import Dashboard from "./home/pages/Dashboard.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
+import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 import CadastroUsuario from "./auth/pages/RegisterUser.jsx";

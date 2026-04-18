@@ -19,33 +19,26 @@ const ChangePassword = () => {
     confirmPassword: "",
   });
 
-  // Estados para visibilidade das senhas (individual para cada campo)
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
     confirm: false,
   });
 
-  // Estado para mensagens de erro
   const [errors, setErrors] = useState({
     mismatch: false,
     sameAsOld: false,
   });
 
-  // Estado para controlar se o botão está habilitado
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  // Efeito para validar o formulário sempre que os dados mudarem
   useEffect(() => {
     const { currentPassword, newPassword, confirmPassword } = formData;
 
-    // Validação: campos preenchidos
     const allFilled = currentPassword && newPassword && confirmPassword;
 
-    // Validação: senhas coincidem
     const mismatch = newPassword !== confirmPassword && confirmPassword !== "";
 
-    // Validação: nova senha igual à atual
     const sameAsOld = newPassword === currentPassword && newPassword !== "";
 
     setErrors({
@@ -53,12 +46,10 @@ const ChangePassword = () => {
       sameAsOld,
     });
 
-    // O botão só habilita se tudo estiver preenchido, coincidirem e a nova for diferente da antiga
     const canSubmit = allFilled && !mismatch && !sameAsOld;
     setIsButtonDisabled(!canSubmit);
   }, [formData]);
 
-  // Manipulador de mudança nos inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -67,7 +58,6 @@ const ChangePassword = () => {
     }));
   };
 
-  // Alternar visibilidade da senha
   const toggleVisibility = (field) => {
     setShowPasswords((prev) => ({
       ...prev,
@@ -78,10 +68,8 @@ const ChangePassword = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     alert("Senha alterada com sucesso! (Simulação)");
-    // Aqui viria a integração com a API
   };
 
-  // Componente interno para os ícones de Olho (SVG)
   const EyeIcon = ({ visible }) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
