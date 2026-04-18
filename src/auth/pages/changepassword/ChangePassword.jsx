@@ -6,7 +6,7 @@ import "./ChangePassword.css";
 import Header from "../../../global/components/Header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
 
-const AlterarSenha = () => {
+const ChangePassword = () => {
   const navigate = useNavigate();
 
   // Estados para os valores dos inputs
@@ -16,33 +16,26 @@ const AlterarSenha = () => {
     confirmPassword: "",
   });
 
-  // Estados para visibilidade das senhas (individual para cada campo)
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
     confirm: false,
   });
 
-  // Estado para mensagens de erro
   const [errors, setErrors] = useState({
     mismatch: false,
     sameAsOld: false,
   });
 
-  // Estado para controlar se o botão está habilitado
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  // Efeito para validar o formulário sempre que os dados mudarem
   useEffect(() => {
     const { currentPassword, newPassword, confirmPassword } = formData;
 
-    // Validação: campos preenchidos
     const allFilled = currentPassword && newPassword && confirmPassword;
 
-    // Validação: senhas coincidem
     const mismatch = newPassword !== confirmPassword && confirmPassword !== "";
 
-    // Validação: nova senha igual à atual
     const sameAsOld = newPassword === currentPassword && newPassword !== "";
 
     setErrors({
@@ -50,12 +43,10 @@ const AlterarSenha = () => {
       sameAsOld,
     });
 
-    // O botão só habilita se tudo estiver preenchido, coincidirem e a nova for diferente da antiga
     const canSubmit = allFilled && !mismatch && !sameAsOld;
     setIsButtonDisabled(!canSubmit);
   }, [formData]);
 
-  // Manipulador de mudança nos inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -64,7 +55,6 @@ const AlterarSenha = () => {
     }));
   };
 
-  // Alternar visibilidade da senha
   const toggleVisibility = (field) => {
     setShowPasswords((prev) => ({
       ...prev,
@@ -75,10 +65,8 @@ const AlterarSenha = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     alert("Senha alterada com sucesso! (Simulação)");
-    // Aqui viria a integração com a API
   };
 
-  // Componente interno para os ícones de Olho (SVG)
   const EyeIcon = ({ visible }) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -154,7 +142,7 @@ const AlterarSenha = () => {
               </div>
             </div>
 
-            {/* Nova Senha */}
+            {}
             <div className="form-group">
               <label htmlFor="newPassword" style={{ textAlign: "left" }}>
                 Nova senha
@@ -191,7 +179,7 @@ const AlterarSenha = () => {
               )}
             </div>
 
-            {/* Confirmar Nova Senha */}
+            {}
             <div className="form-group">
               <label htmlFor="confirmPassword" style={{ textAlign: "left" }}>
                 Confirme a nova senha
@@ -244,4 +232,4 @@ const AlterarSenha = () => {
   );
 };
 
-export default AlterarSenha;
+export default ChangePassword;

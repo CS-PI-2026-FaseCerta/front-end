@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -7,9 +8,10 @@ import Footer from "../../../global/components/Footer/Footer.jsx";
 import {
   getRememberMe,
   login as authLogin,
-  saveRememberMe,
+  saveRememberMe
 } from "../../mockAuth.js";
-import "./login.css";
+import "./Login.css";
+
 
 const Login = () => {
   const navigate = useNavigate();
