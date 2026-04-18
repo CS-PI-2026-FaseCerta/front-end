@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./RegisterService.css";
+import "../../../global/components/form/Form.css";
 
-import Header from "../../../global/components/Header/Header.jsx";
+import Header from "../../../global/components/header/Header.jsx";
 
 export default function RegisterService() {
   const navigate = useNavigate();
@@ -49,13 +50,11 @@ export default function RegisterService() {
           <h1>Cadastro de Serviço</h1>
         </div>
 
-        <form className="service-form">
-          <div className="service-form-group">
-            <label className="service-form-label" style={{ textAlign: "left" }}>
-              NOME DO SERVIÇO
-            </label>
+        <form className="form">
+          <div className="input-group">
+            <label className="form-label">NOME DO SERVIÇO</label>
             <input
-              className="service-form-input"
+              className="form-input"
               type="text"
               placeholder="Ex: Manutenção Elétrica"
               value={name}
@@ -63,25 +62,21 @@ export default function RegisterService() {
             />
           </div>
 
-          <div className="service-form-group">
-            <label className="service-form-label" style={{ textAlign: "left" }}>
-              DESCRIÇÃO
-            </label>
+          <div className="input-group">
+            <label className="form-label">DESCRIÇÃO</label>
             <textarea
-              className="service-form-textarea"
+              className="form-textarea"
               placeholder="Descreva os detalhes do serviço oferecido..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
-          <div className="service-form-group">
-            <label className="service-form-label" style={{ textAlign: "left" }}>
-              TIPO DE COBRANÇA
-            </label>
+          <div className="input-group">
+            <label className="form-label">TIPO DE COBRANÇA</label>
 
-            <div className="service-form-radio-group">
-              <label className="service-form-radio-option">
+            <div className="form-radio-group">
+              <label className="form-radio-option">
                 <input
                   type="radio"
                   name="billing"
@@ -92,7 +87,7 @@ export default function RegisterService() {
                 Preço Fixo
               </label>
 
-              <label className="service-form-radio-option">
+              <label className="form-radio-option">
                 <input
                   type="radio"
                   name="billing"
@@ -105,28 +100,20 @@ export default function RegisterService() {
             </div>
           </div>
 
-          <div className="service-form-group service-form-value-conteiner">
-            <label className="service-form-label" style={{ textAlign: "left" }}>
+          <div className="input-group">
+            <label className="form-label">
               VALOR {billingType === "hourly" ? "(R$/h)" : "(R$)"}
             </label>
-            <div>
-              <div className="service-form-value-square"></div>
-              <span className="service-form-value-span">R$</span>
-              <input
-                className="service-form-input service-form-value-input"
-                type="text"
-                value={value}
-                onChange={handleValueChange}
-                placeholder="0,00"
-              />
-            </div>
+            <input
+              className="form-input"
+              type="text"
+              value={value}
+              onChange={handleValueChange}
+              placeholder="R$ 0,00"
+            />
           </div>
 
-          <button
-            type="submit"
-            className="service-form-submit-button"
-            disabled={!isFormValid}
-          >
+          <button type="submit" className="form-button" disabled={!isFormValid}>
             Salvar Serviço
           </button>
         </form>

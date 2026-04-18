@@ -2,14 +2,15 @@ import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import Header from "../../../global/components/Header/Header.jsx";
+import Header from "../../../global/components/header/Header.jsx";
 import {
   getRememberMe,
   login as authLogin,
   saveRememberMe,
-} from "../../mockAuth";
-import "./login.css";
+} from "../../mockAuth.js";
+import "./Login.css";
 import "./../Auth.css";
+import "../../../global/components/form/Form.css";
 import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 const Login = () => {
@@ -130,15 +131,15 @@ const Login = () => {
             Insira seus dados para entrar
           </p>
 
-          <form className="auth-form" onSubmit={handleSubmit} noValidate>
-            <div className="auth-form-group input-group">
-              <label className="auth-label" htmlFor="emailOrUsername">
+          <form className="form" onSubmit={handleSubmit} noValidate>
+            <div className="input-group">
+              <label className="form-label" htmlFor="emailOrUsername">
                 E-mail ou Usuário
               </label>
               <input
                 type="text"
                 id="emailOrUsername"
-                className={`auth-input input-field ${emailOrUsernameError ? "input-error" : ""}`}
+                className={`form-input ${emailOrUsernameError ? "input-error" : ""}`}
                 placeholder="seu@email.com ou seu_usuario"
                 value={emailOrUsername}
                 onChange={handleEmailOrUsernameChange}
@@ -146,23 +147,23 @@ const Login = () => {
               />
             </div>
 
-            <div className="auth-form-group input-group">
+            <div className="input-group">
               <div className="label-group">
-                <label className="auth-label" htmlFor="password">
+                <label className="form-label" htmlFor="password">
                   Senha
                 </label>
               </div>
-              <div className="auth-input-wrapper input-wrapper">
+              <div className="form-input-wrapper">
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
-                  className="auth-input input-field"
+                  className="form-input"
                   placeholder="••••••••••"
                   value={password}
                   onChange={handlePasswordChange}
                 />
                 <span
-                  className="auth-password-toggle password-icon"
+                  className="form-password-toggle"
                   onClick={togglePasswordVisibility}
                   role="button"
                   aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
@@ -177,29 +178,23 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="auth-options form-options">
-              <div className="auth-checkbox-group checkbox-group">
+            <div className="form-options">
+              <div className="form-checkbox-group">
                 <input
                   type="checkbox"
                   id="rememberMe"
                   checked={rememberMe}
                   onChange={handleRememberMeChange}
                 />
-                <label className="auth-label" htmlFor="rememberMe">
+                <label className="form-label" htmlFor="rememberMe">
                   Lembre de mim
                 </label>
               </div>
             </div>
 
-            {loginError && (
-              <p className="auth-error login-error-message">{loginError}</p>
-            )}
+            {loginError && <p className="form-error">{loginError}</p>}
 
-            <button
-              type="submit"
-              className="auth-button login-button"
-              disabled={isLoading}
-            >
+            <button type="submit" className="form-button" disabled={isLoading}>
               {isLoading ? "Entrando..." : "Entrar"}
             </button>
 

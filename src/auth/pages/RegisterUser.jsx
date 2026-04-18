@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Header from "../../global/components/Header/Header.jsx";
-import "./login/login.css";
+import Header from "../../global/components/header/Header.jsx";
+import "./login/Login.css";
 import "./Auth.css";
+import "../../global/components/form/Form.css";
 
 import * as AppRoutes from "../../routes/AppRoutes.jsx";
 
@@ -80,16 +81,16 @@ export default function CadastroUsuario() {
             Insira seus dados para começar
           </p>
 
-          <form className="auth-form" onSubmit={handleSubmit} noValidate>
-            <div className="auth-form-group input-group">
-              <label className="auth-label" htmlFor="email">
+          <form className="form" onSubmit={handleSubmit} noValidate>
+            <div className="input-group">
+              <label className="form-label" htmlFor="email">
                 E-mail
               </label>
               <input
                 type="email"
                 id="email"
                 name="email"
-                className={`auth-input input-field ${emailError ? "input-error" : ""}`}
+                className={`form-input ${emailError ? "input-error" : ""}`}
                 placeholder="seu@email.com"
                 value={form.email}
                 onChange={updateField}
@@ -97,19 +98,19 @@ export default function CadastroUsuario() {
                 disabled={isLoading}
               />
               {emailError && (
-                <p className="auth-error-inline">E-mail inválido!</p>
+                <p className="form-error-inline">E-mail inválido!</p>
               )}
             </div>
 
-            <div className="auth-form-group input-group">
-              <label className="auth-label" htmlFor="username">
+            <div className="input-group">
+              <label className="form-label" htmlFor="username">
                 Nome de Usuário
               </label>
               <input
                 type="text"
                 id="username"
                 name="username"
-                className="auth-input input-field"
+                className="form-input"
                 placeholder="Como quer ser chamado?"
                 value={form.username}
                 onChange={updateField}
@@ -117,23 +118,23 @@ export default function CadastroUsuario() {
               />
             </div>
 
-            <div className="auth-form-group input-group">
-              <label className="auth-label" htmlFor="password">
+            <div className="input-group">
+              <label className="form-label" htmlFor="password">
                 Senha
               </label>
-              <div className="auth-input-wrapper input-wrapper">
+              <div className="form-input-wrapper">
                 <input
                   type={showPass ? "text" : "password"}
                   id="password"
                   name="password"
-                  className="auth-input input-field"
+                  className="form-input"
                   placeholder="••••••••••"
                   value={form.password}
                   onChange={updateField}
                   disabled={isLoading}
                 />
                 <span
-                  className="auth-password-toggle password-icon"
+                  className="form-password-toggle"
                   onClick={() => !isLoading && setShowPass(!showPass)}
                 >
                   {showPass ? <FaEyeSlash /> : <FaEye />}
@@ -141,23 +142,23 @@ export default function CadastroUsuario() {
               </div>
             </div>
 
-            <div className="auth-form-group input-group">
-              <label className="auth-label" htmlFor="confirm">
+            <div className="input-group">
+              <label className="form-label" htmlFor="confirm">
                 Confirme sua senha
               </label>
-              <div className="auth-input-wrapper input-wrapper">
+              <div className="form-input-wrapper">
                 <input
                   type={showConfirm ? "text" : "password"}
                   id="confirm"
                   name="confirm"
-                  className={`auth-input input-field ${form.confirm && !isMatch ? "input-error" : ""}`}
+                  className={`form-input ${form.confirm && !isMatch ? "input-error" : ""}`}
                   placeholder="••••••••••"
                   value={form.confirm}
                   onChange={updateField}
                   disabled={isLoading}
                 />
                 <span
-                  className="auth-password-toggle password-icon"
+                  className="form-password-toggle"
                   onClick={() => !isLoading && setShowConfirm(!showConfirm)}
                 >
                   {showConfirm ? <FaEyeSlash /> : <FaEye />}
@@ -165,18 +166,14 @@ export default function CadastroUsuario() {
               </div>
 
               {form.confirm && !isMatch && (
-                <p className="auth-error-inline">As senhas não coincidem!</p>
+                <p className="form-error-inline">As senhas não coincidem!</p>
               )}
             </div>
 
             {/* MENSAGEM DE SUCESSO */}
-            {successMessage && <p className="auth-success">{successMessage}</p>}
+            {successMessage && <p className="form-success">{successMessage}</p>}
 
-            <button
-              type="submit"
-              className="auth-button login-button"
-              disabled={!allFilled}
-            >
+            <button type="submit" className="form-button" disabled={!allFilled}>
               {isLoading ? "Cadastrando..." : "Criar conta!"}
             </button>
 

@@ -2,7 +2,7 @@ import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Dashboard from "./home/pages/Dashboard.jsx";
-import Login from "./auth/pages/login/login.jsx";
+import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";

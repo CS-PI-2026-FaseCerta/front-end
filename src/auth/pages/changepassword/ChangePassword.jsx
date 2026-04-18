@@ -4,7 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import "./ChangePassword.css";
 import "./../Auth.css";
-import Header from "../../../global/components/Header/Header.jsx";
+import "../../../global/components/form/Form.css";
+import Header from "../../../global/components/header/Header.jsx";
 
 import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
@@ -127,18 +128,18 @@ const ChangePassword = () => {
             Mantenha sua conta FaseCerta segura e atualizada.
           </p>
 
-          <form className="auth-form" onSubmit={handleSubmit} noValidate>
+          <form className="form" onSubmit={handleSubmit} noValidate>
             {/* Senha Atual */}
-            <div className="auth-form-group form-group">
-              <label className="auth-label" htmlFor="currentPassword">
+            <div className="input-group">
+              <label className="form-label" htmlFor="currentPassword">
                 Senha atual
               </label>
-              <div className="auth-input-wrapper input-wrapper">
+              <div className="form-input-wrapper">
                 <input
                   id="currentPassword"
                   name="currentPassword"
                   type={showPasswords.current ? "text" : "password"}
-                  className="auth-input"
+                  className="form-input"
                   value={formData.currentPassword}
                   onChange={handleChange}
                   placeholder="Digite sua senha atual"
@@ -146,7 +147,7 @@ const ChangePassword = () => {
                 />
                 <button
                   type="button"
-                  className="auth-password-toggle toggle-password"
+                  className="form-password-toggle"
                   onClick={() => toggleVisibility("current")}
                   aria-label={
                     showPasswords.current ? "Ocultar senha" : "Mostrar senha"
@@ -158,11 +159,11 @@ const ChangePassword = () => {
             </div>
 
             {/* Nova Senha */}
-            <div className="auth-form-group form-group">
-              <label className="auth-label" htmlFor="newPassword">
+            <div className="input-group">
+              <label className="form-label" htmlFor="newPassword">
                 Nova senha
               </label>
-              <div className="auth-input-wrapper input-wrapper">
+              <div className="form-input-wrapper">
                 <input
                   id="newPassword"
                   name="newPassword"
@@ -170,12 +171,12 @@ const ChangePassword = () => {
                   value={formData.newPassword}
                   onChange={handleChange}
                   placeholder="Crie uma nova senha"
-                  className={`auth-input ${errors.sameAsOld ? "input-error" : ""}`}
+                  className={`form-input ${errors.sameAsOld ? "input-error" : ""}`}
                   required
                 />
                 <button
                   type="button"
-                  className="auth-password-toggle toggle-password"
+                  className="form-password-toggle"
                   onClick={() => toggleVisibility("new")}
                   aria-label={
                     showPasswords.new ? "Ocultar senha" : "Mostrar senha"
@@ -184,22 +185,22 @@ const ChangePassword = () => {
                   <EyeIcon visible={showPasswords.new} />
                 </button>
               </div>
-              <p className="auth-helper-text helper-text">
+              <p className="form-text">
                 Dica: use letras e números pra criar uma senha forte.
               </p>
               {errors.sameAsOld && (
-                <span className="auth-error-inline error-message">
+                <span className="form-error-inline">
                   A nova senha não pode ser igual à senha atual.
                 </span>
               )}
             </div>
 
             {/* Confirmar Nova Senha */}
-            <div className="auth-form-group form-group">
-              <label className="auth-label" htmlFor="confirmPassword">
+            <div className="input-group">
+              <label className="form-label" htmlFor="confirmPassword">
                 Confirme a nova senha
               </label>
-              <div className="auth-input-wrapper input-wrapper">
+              <div className="form-input-wrapper">
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -207,12 +208,12 @@ const ChangePassword = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Repita a nova senha"
-                  className={`auth-input ${errors.mismatch ? "input-error" : ""}`}
+                  className={`form-input ${errors.mismatch ? "input-error" : ""}`}
                   required
                 />
                 <button
                   type="button"
-                  className="auth-password-toggle toggle-password"
+                  className="form-password-toggle"
                   onClick={() => toggleVisibility("confirm")}
                   aria-label={
                     showPasswords.confirm ? "Ocultar senha" : "Mostrar senha"
@@ -222,7 +223,7 @@ const ChangePassword = () => {
                 </button>
               </div>
               {errors.mismatch && (
-                <span className="auth-error-inline error-message">
+                <span className="form-error-inline">
                   As senhas não coincidem.
                 </span>
               )}
@@ -230,7 +231,7 @@ const ChangePassword = () => {
 
             <button
               type="submit"
-              className="auth-button submit-btn"
+              className="form-button"
               disabled={isButtonDisabled}
             >
               Alterar Senha
