@@ -10,8 +10,8 @@ export default function CadastrarPeca() {
 
     const [form, setForm] = useState({
         nome: "",
-        custo: "",
-        precoVenda: "",
+        custo: "0,00",
+        precoVenda: "0,00",
         quantidade: "",
         estoqueMinimo: "",
     });
@@ -19,13 +19,26 @@ export default function CadastrarPeca() {
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
 
+    const formatCurrency = (value) => {
+        const number = value.replace(/\D/g, "");
+        const float = (Number(number) / 100).toFixed(2);
+        return float.replace(".", ",");
+    };
+
     const custoNum = parseFloat(form.custo.replace(',', '.')) || 0;
     const vendaNum = parseFloat(form.precoVenda.replace(',', '.')) || 0;
     const lucroNominal = vendaNum - custoNum;
     const margemPercentual = vendaNum > 0 ? (lucroNominal / vendaNum) * 100 : 0;
 
     const updateField = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+
+        if (name === "custo" || name === "precoVenda") {
+            const formatted = formatCurrency(value);
+            setForm({ ...form, [name]: formatted });
+        } else {
+            setForm({ ...form, [name]: value });
+        }
     };
 
     const handleSubmit = (e) => {
