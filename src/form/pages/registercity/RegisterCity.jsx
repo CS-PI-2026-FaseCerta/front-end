@@ -10,6 +10,8 @@ export default function RegisterCity() {
     
     const [name, setName] = useState("");
     const [cep, setCep] = useState("");
+
+    const [successMessage, setSuccessMessage] = useState("");
     
     const isCepValid = (cep) => {
         const numbers = cep.replace(/\D/g, "");
@@ -65,7 +67,19 @@ export default function RegisterCity() {
         return value;
     };
 
-    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        setSuccessMessage("Cadastro realizado com sucesso!");
+
+        setState(states.find(s => s.value === "pr"));
+        setName("");
+        setCep("");
+
+        setTimeout(() => {
+            setSuccessMessage("");
+        }, 2000);
+    };
 
     return (
         <div className="city-page">
@@ -79,7 +93,7 @@ export default function RegisterCity() {
                         <h1>Cadastro de Cidade</h1>
                     </div>
 
-                    <form className="city-form">
+                    <form className="city-form" onSubmit={handleSubmit}>
                         <div className="city-form-group">
                             <label htmlFor="city-name" className="city-form-label">NOME DA CIDADE</label>
                             <input
@@ -124,7 +138,19 @@ export default function RegisterCity() {
 
                         </div>
 
-                        
+                        {/* MENSAGEM DE SUCESSO */}
+                        {successMessage && (
+                            <p
+                                style={{
+                                    color: "#28a745",
+                                    marginTop: "10px",
+                                    textAlign: "center",
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {successMessage}
+                            </p>
+                        )}
 
                         <button
                             type="submit"
