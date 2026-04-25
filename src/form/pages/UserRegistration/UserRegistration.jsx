@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Header from "../../global/components/header/Header.jsx";
+import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
-import "./login/Login.css";
-import "./Auth.css";
-import "../../global/components/form/Form.css";
+import "../../../auth/pages/login/Login.css";
+import "../../../auth/pages/Auth.css";
+import "../../../global/components/form/Form.css";
 
-import * as AppRoutes from "../../routes/AppRoutes.jsx";
+import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 export default function CadastroUsuario() {
   const [form, setForm] = useState({

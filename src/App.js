@@ -9,7 +9,6 @@ import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
-import CadastroUsuario from "./auth/pages/RegisterUser.jsx";
 import UserRegistration from "./form/pages/UserRegistration/UserRegistration.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
@@ -25,7 +24,7 @@ function App() {
             <Route path={AppRoutes.Dashboard} element={<Dashboard />} />
             <Route
               path={AppRoutes.CadastroUsuario}
-              element={<CadastroUsuario />}
+              element={<UserRegistration />}
             />
             <Route
               path={AppRoutes.ChangePassword}
@@ -37,7 +36,7 @@ function App() {
             />
             <Route
               path={AppRoutes.CadastroUsuario}
-              element={<CadastroUsuario />}
+              element={<UserRegistration />}
             />
             <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
             {/* Fallbacks temporarios para areas do dashboard que ainda nao possuem telas dedicadas. */}
