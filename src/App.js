@@ -35,10 +35,15 @@ function App() {
               element={<RegisterService />}
             />
             <Route
+              path={AppRoutes.MaterialRegistration}
+              element={<MaterialRegistration />}
+            />
+            <Route
               path={AppRoutes.CadastroUsuario}
               element={<UserRegistration />}
             />
             <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
+
             {/* Fallbacks temporarios para areas do dashboard que ainda nao possuem telas dedicadas. */}
             <Route
               path={AppRoutes.Perfil}
