@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Header from "../../../global/components/Header/Header.jsx";
+import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
 import "../../../auth/pages/login/Login.css";
+import "../../../auth/pages/Auth.css";
+import "../../../global/components/form/Form.css";
+
+import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 export default function CadastroUsuario() {
   const [form, setForm] = useState({
@@ -68,22 +72,26 @@ export default function CadastroUsuario() {
   };
 
   return (
-    <div className="page-container">
+    <div className="auth-page page-container">
       <Header />
 
-      <main className="login-container">
-        <div className="login-card">
-          <h2 className="login-card__title">Crie sua conta</h2>
-          <p className="login-card__subtitle">Insira seus dados para começar</p>
+      <main className="auth-container login-container">
+        <div className="auth-card login-card">
+          <h2 className="auth-title login-card__title">Crie sua conta</h2>
+          <p className="auth-subtitle login-card__subtitle">
+            Insira seus dados para começar
+          </p>
 
-          <form onSubmit={handleSubmit} noValidate>
+          <form className="form" onSubmit={handleSubmit} noValidate>
             <div className="input-group">
-              <label htmlFor="email">E-mail</label>
+              <label className="form-label" htmlFor="email">
+                E-mail
+              </label>
               <input
                 type="email"
                 id="email"
                 name="email"
-                className={`input-field ${emailError ? "input-error" : ""}`}
+                className={`form-input ${emailError ? "input-error" : ""}`}
                 placeholder="seu@email.com"
                 value={form.email}
                 onChange={updateField}
@@ -91,22 +99,19 @@ export default function CadastroUsuario() {
                 disabled={isLoading}
               />
               {emailError && (
-                <p
-                  className="login-error-message"
-                  style={{ marginTop: "8px", textAlign: "left" }}
-                >
-                  E-mail inválido!
-                </p>
+                <p className="form-error-inline">E-mail inválido!</p>
               )}
             </div>
 
             <div className="input-group">
-              <label htmlFor="username">Nome de Usuário</label>
+              <label className="form-label" htmlFor="username">
+                Nome de Usuário
+              </label>
               <input
                 type="text"
                 id="username"
                 name="username"
-                className="input-field"
+                className="form-input"
                 placeholder="Como quer ser chamado?"
                 value={form.username}
                 onChange={updateField}
@@ -115,20 +120,22 @@ export default function CadastroUsuario() {
             </div>
 
             <div className="input-group">
-              <label htmlFor="password">Senha</label>
-              <div className="input-wrapper">
+              <label className="form-label" htmlFor="password">
+                Senha
+              </label>
+              <div className="form-input-wrapper">
                 <input
                   type={showPass ? "text" : "password"}
                   id="password"
                   name="password"
-                  className="input-field"
+                  className="form-input"
                   placeholder="••••••••••"
                   value={form.password}
                   onChange={updateField}
                   disabled={isLoading}
                 />
                 <span
-                  className="password-icon"
+                  className="form-password-toggle"
                   onClick={() => !isLoading && setShowPass(!showPass)}
                 >
                   {showPass ? <FaEyeSlash /> : <FaEye />}
@@ -137,20 +144,22 @@ export default function CadastroUsuario() {
             </div>
 
             <div className="input-group">
-              <label htmlFor="confirm">Confirme sua senha</label>
-              <div className="input-wrapper">
+              <label className="form-label" htmlFor="confirm">
+                Confirme sua senha
+              </label>
+              <div className="form-input-wrapper">
                 <input
                   type={showConfirm ? "text" : "password"}
                   id="confirm"
                   name="confirm"
-                  className={`input-field ${form.confirm && !isMatch ? "input-error" : ""}`}
+                  className={`form-input ${form.confirm && !isMatch ? "input-error" : ""}`}
                   placeholder="••••••••••"
                   value={form.confirm}
                   onChange={updateField}
                   disabled={isLoading}
                 />
                 <span
-                  className="password-icon"
+                  className="form-password-toggle"
                   onClick={() => !isLoading && setShowConfirm(!showConfirm)}
                 >
                   {showConfirm ? <FaEyeSlash /> : <FaEye />}
@@ -158,42 +167,22 @@ export default function CadastroUsuario() {
               </div>
 
               {form.confirm && !isMatch && (
-                <p
-                  className="login-error-message"
-                  style={{ marginTop: "8px", textAlign: "left" }}
-                >
-                  As senhas não coincidem!
-                </p>
+                <p className="form-error-inline">As senhas não coincidem!</p>
               )}
             </div>
 
             {/* MENSAGEM DE SUCESSO */}
-            {successMessage && (
-              <p
-                style={{
-                  color: "#28a745",
-                  marginTop: "10px",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                {successMessage}
-              </p>
-            )}
+            {successMessage && <p className="form-success">{successMessage}</p>}
 
-            <button
-              type="submit"
-              className="login-button"
-              disabled={!allFilled}
-              style={{ marginTop: "1rem" }}
-            >
+            <button type="submit" className="form-button" disabled={!allFilled}>
               {isLoading ? "Cadastrando..." : "Criar conta!"}
             </button>
 
-            <p className="signup-link">
+            <p className="auth-footer-text signup-link">
               Já tem conta?{" "}
               <Link
-                to="/login"
+                to={AppRoutes.Login}
+                className="auth-link"
                 style={{ pointerEvents: isLoading ? "none" : "auto" }}
               >
                 Entre Aqui
