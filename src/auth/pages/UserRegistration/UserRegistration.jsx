@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/Header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
-import "../../../auth/pages/login/Login.css";
+import "../login/Login.css";
 
 export default function CadastroUsuario() {
   const navigate = useNavigate();

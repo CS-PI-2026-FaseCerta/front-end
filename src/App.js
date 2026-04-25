@@ -9,7 +9,7 @@ import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
-import UserRegistration from "./form/pages/UserRegistration/UserRegistration.jsx";
+import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 
 function App() {
   return (
