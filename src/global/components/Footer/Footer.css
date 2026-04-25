@@ -26,8 +26,21 @@
 /* --- Responsividade --- */
 @media (max-width: 768px) {
     .page-footer {
-        padding: 16px 24px;
+        padding: 10px 16px 30px 16px;
         flex-direction: column;
-        gap: 16px;
+        gap: 24px;
+        text-align: center;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 12px;
+        order: 1;
+    }
+
+    .copyright {
+        order: 2;
+        font-size: 15px;
+        opacity: 0.8;
     }
 }
