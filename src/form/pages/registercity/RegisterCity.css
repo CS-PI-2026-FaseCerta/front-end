@@ -345,6 +345,16 @@
     }
 }
 
+@media (max-width: 360px) {
+    .city-page-content {
+        width: 100%;
+    }
+
+    .card-header h1 {
+        font-size: 1.2rem;
+    }
+}
+
 @media (min-height: 720px) {
     .city-page-content {
         height: calc(100vh - 8.75rem);
