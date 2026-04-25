@@ -75,6 +75,7 @@
   align-items: center;
   gap: 0.4rem;
 }
+
 .dashboard-header__nav-link {
   position: relative;
   /* IMPORTANTE */

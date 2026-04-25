@@ -1,14 +1,16 @@
 import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import MaterialRegistration from "./form/pages/MaterialRegistration/MaterialRegistration.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
-import RegisterService from "./form/pages/registerservice/RegisterService.jsx";
+import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 import CadastroUsuario from "./auth/pages/RegisterUser.jsx";
+import UserRegistration from "./form/pages/UserRegistration/UserRegistration.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 

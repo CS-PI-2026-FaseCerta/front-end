@@ -6,8 +6,8 @@ import "./ChangePassword.css";
 import "./../Auth.css";
 import "../../../global/components/form/Form.css";
 import Header from "../../../global/components/header/Header.jsx";
-
 import * as AppRoutes from "../../../routes/AppRoutes.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx";
 
 const ChangePassword = () => {
   const navigate = useNavigate();
@@ -233,6 +233,7 @@ const ChangePassword = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

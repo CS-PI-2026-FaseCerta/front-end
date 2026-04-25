@@ -5,6 +5,7 @@ import "./RegisterService.css";
 import "../../../global/components/form/Form.css";
 
 import Header from "../../../global/components/header/Header.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx";
 
 export default function RegisterService() {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export default function RegisterService() {
     <div className="service-page">
       <Header />
       <div className="service-form-card">
-        <div className="card-header"> 
+        <div className="card-header">
           <button
             type="button"
             className="back-button"
@@ -118,6 +119,7 @@ export default function RegisterService() {
           </button>
         </form>
       </div>
+      <Footer />
     </div>
   );
 }
