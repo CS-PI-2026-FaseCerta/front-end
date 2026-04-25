@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Header from "../../../global/components/Header/Header.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx";
 import {
   getRememberMe,
   login as authLogin,
@@ -196,6 +197,7 @@ const Login = () => {
           </form>
         </div>
       </main>
+      <Footer />
     </div>
   );
 };

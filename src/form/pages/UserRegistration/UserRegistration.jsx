@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import Header from "../../global/components/Header/Header.jsx";
-import "./login/Login.css";
+import Header from "../../../global/components/Header/Header.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx";
+import "../../../auth/pages/login/Login.css";
 
 export default function CadastroUsuario() {
   const [form, setForm] = useState({
@@ -53,14 +54,14 @@ export default function CadastroUsuario() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (allFilled) {
-      setIsLoading(true); // Começa o carregamento
+      setIsLoading(true);
       setSuccessMessage("");
 
       console.log("Iniciando cadastro...", form);
 
-      // Simulação de chamada de API (2 segundos)
+      // -- Simulação de chamada de API (2 segundos)
       setTimeout(() => {
-        setIsLoading(false); // Para o carregamento
+        setIsLoading(false);
         setSuccessMessage("Cadastro realizado com sucesso!");
       }, 2000);
     }
@@ -201,6 +202,7 @@ export default function CadastroUsuario() {
           </form>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
