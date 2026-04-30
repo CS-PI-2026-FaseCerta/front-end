@@ -11,25 +11,42 @@ import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 
+import * as AppRoutes from "./routes/AppRoutes.jsx";
+
 function App() {
   return (
     <div className="App">
       {
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/cadastroUsuario" element={<UserRegistration />} />
-            <Route path="/cadastroMaterial" element={<MaterialRegistration />} />
-            <Route path="/alterarSenha" element={<ChangePassword />} />
-            <Route path="/cadastroServico" element={<RegisterService />} />
-            <Route path="/clientes/novo" element={<UserRegistration />} />
-            <Route path="/cadastroCidade" element={<RegisterCity />} />
+            <Route path="/" element={<Navigate to={AppRoutes.Login} />} />
+            <Route path={AppRoutes.Login} element={<Login />} />
+            <Route path={AppRoutes.Dashboard} element={<Dashboard />} />
+            <Route
+              path={AppRoutes.UserRegistration}
+              element={<UserRegistration />}
+            />
+            <Route
+              path={AppRoutes.ChangePassword}
+              element={<ChangePassword />}
+            />
+            <Route
+              path={AppRoutes.RegisterService}
+              element={<RegisterService />}
+            />
+            <Route
+              path={AppRoutes.MaterialRegistration}
+              element={<MaterialRegistration />}
+            />
+            <Route
+              path={AppRoutes.UserRegistration}
+              element={<UserRegistration />}
+            />
+            <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
 
             {/* Fallbacks temporarios para areas do dashboard que ainda nao possuem telas dedicadas. */}
             <Route
-              path="/perfil"
+              path={AppRoutes.Perfil}
               element={
                 <SectionPage
                   eyebrow="Gerenciamento do Perfil"
@@ -41,7 +58,7 @@ function App() {
               }
             />
             <Route
-              path="/relatorios"
+              path={AppRoutes.Relatorios}
               element={
                 <SectionPage
                   eyebrow="Inteligência operacional"
@@ -53,7 +70,7 @@ function App() {
               }
             />
             <Route
-              path="/configuracoes"
+              path={AppRoutes.Configuracoes}
               element={
                 <SectionPage
                   eyebrow="Administração do sistema"
@@ -65,7 +82,7 @@ function App() {
               }
             />
             <Route
-              path="/clientes"
+              path={AppRoutes.Clientes}
               element={
                 <SectionPage
                   eyebrow="Módulo operacional"
@@ -77,7 +94,7 @@ function App() {
               }
             />
             <Route
-              path="/servicos-estoque"
+              path={AppRoutes.ServicosEstoque}
               element={
                 <SectionPage
                   eyebrow="Módulo operacional"
@@ -89,7 +106,7 @@ function App() {
               }
             />
             <Route
-              path="/servicos-estoque/novo-item"
+              path={AppRoutes.ServicosEstoqueNovoItem}
               element={
                 <SectionPage
                   eyebrow="Fallback temporário"
@@ -101,7 +118,7 @@ function App() {
               }
             />
             <Route
-              path="/pedidos"
+              path={AppRoutes.Pedidos}
               element={
                 <SectionPage
                   eyebrow="Módulo operacional"
@@ -113,7 +130,7 @@ function App() {
               }
             />
             <Route
-              path="/os/novo"
+              path={AppRoutes.OrdensServicoNovo}
               element={
                 <SectionPage
                   eyebrow="Fallback temporário"
@@ -125,7 +142,7 @@ function App() {
               }
             />
             <Route
-              path="/financeiro"
+              path={AppRoutes.Financeiro}
               element={
                 <ProtectedRoute allowedProfiles={["gestor"]} redirectTo="/">
                   <SectionPage
@@ -139,7 +156,7 @@ function App() {
               }
             />
             <Route
-              path="/financeiro/despesas/nova"
+              path={AppRoutes.FinanceiroDespesasNova}
               element={
                 <SectionPage
                   eyebrow="Fallback temporário"
