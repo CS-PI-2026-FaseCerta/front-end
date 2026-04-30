@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import Select from "react-select";
 import "./RegisterCity.css";
 import { FaArrowLeft } from "react-icons/fa";
-import Header from "../../../global/components/Header/Header";
+import Header from "../../../global/components/Header/Header.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx"
 import { useNavigate } from "react-router-dom";
 
 export default function RegisterCity() {
@@ -70,7 +71,7 @@ export default function RegisterCity() {
     return (
         <div className="city-page">
             <Header />
-            <div className="city-page-content">
+            <main className="city-page-content">
                 <div className="city-form-card">
                     <div className="card-header">
                         <button className="back-button" onClick={() => navigate("/dashboard")}>
@@ -135,7 +136,8 @@ export default function RegisterCity() {
                         </button>
                     </form>
                 </div>
-            </div>
+            </main>
+            <Footer />
         </div>
     );
 }
