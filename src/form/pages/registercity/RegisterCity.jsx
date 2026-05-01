@@ -72,7 +72,7 @@ export default function RegisterCity() {
               className="back-button"
               onClick={() => navigate("/dashboard")}
             >
-              <FaArrowLeft size={20} color="#433f9b" />
+              <FaArrowLeft size={20}/>
             </button>
             <h1>Cadastro de Cidade</h1>
           </div>
