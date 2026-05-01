@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
 import "../../../auth/pages/login/Login.css";
@@ -10,6 +11,8 @@ import "../../../global/components/form/Form.css";
 import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 export default function CadastroUsuario() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     email: "",
     username: "",
@@ -75,12 +78,13 @@ export default function CadastroUsuario() {
     <div className="auth-page page-container">
       <Header />
 
-      <main className="auth-container login-container">
-        <div className="auth-card login-card">
-          <h2 className="auth-title login-card__title">Crie sua conta</h2>
-          <p className="auth-subtitle login-card__subtitle">
-            Insira seus dados para começar
-          </p>
+      <main className="login-container">
+        <div className="login-card">
+          <button onClick={() => navigate(-1)} className="back-button" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+            <FaArrowLeft />
+          </button>
+          <h2 className="login-card__title">Crie sua conta</h2>
+          <p className="login-card__subtitle">Insira seus dados para começar</p>
 
           <form className="form" onSubmit={handleSubmit} noValidate>
             <div className="input-group">

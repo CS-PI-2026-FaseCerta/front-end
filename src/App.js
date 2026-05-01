@@ -9,7 +9,7 @@ import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
-import UserRegistration from "./form/pages/UserRegistration/UserRegistration.jsx";
+import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
@@ -23,7 +23,7 @@ function App() {
             <Route path={AppRoutes.Login} element={<Login />} />
             <Route path={AppRoutes.Dashboard} element={<Dashboard />} />
             <Route
-              path={AppRoutes.CadastroUsuario}
+              path={AppRoutes.UserRegistration}
               element={<UserRegistration />}
             />
             <Route
@@ -39,7 +39,7 @@ function App() {
               element={<MaterialRegistration />}
             />
             <Route
-              path={AppRoutes.CadastroUsuario}
+              path={AppRoutes.UserRegistration}
               element={<UserRegistration />}
             />
             <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />

@@ -201,7 +201,7 @@ const Login = () => {
 
             <p className="auth-footer-text signup-link">
               Ainda não tem uma conta?{" "}
-              <Link className="auth-link" to={AppRoutes.CadastroUsuario}>
+              <Link className="auth-link" to={AppRoutes.UserRegistration}>
                 Cadastre-se
               </Link>
             </p>

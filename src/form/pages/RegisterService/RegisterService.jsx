@@ -39,8 +39,8 @@ export default function RegisterService() {
   return (
     <div className="service-page">
       <Header />
-      <div className="service-form-card">
-        <div className="card-header">
+      <main className="service-form-card">
+        <div className="card-header"> 
           <button
             type="button"
             className="back-button"
@@ -118,7 +118,7 @@ export default function RegisterService() {
             Salvar Serviço
           </button>
         </form>
-      </div>
+      </main>
       <Footer />
     </div>
   );

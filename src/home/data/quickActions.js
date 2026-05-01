@@ -24,7 +24,7 @@ export const QUICK_ACTIONS = [
   {
     id: "cadastrar-cliente",
     nome: "Cadastrar Cliente",
-    rota: "/clientes/novo",
+    rota: "/cadastroUsuario",
     icon: FaUserPlus,
     allowedProfiles: ["gestor", "tecnico"],
     order: {

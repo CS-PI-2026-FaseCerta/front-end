@@ -1,5 +1,5 @@
 export const Login = "/login";
-export const CadastroUsuario = "/cadastroUsuario";
+export const UserRegistration = "/cadastroUsuario";
 export const ChangePassword = "/alterarSenha";
 export const RegisterService = "/cadastroServico";
 export const RegisterCity = "/cadastroCidade";
