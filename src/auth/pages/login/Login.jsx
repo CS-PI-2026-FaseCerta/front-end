@@ -1,17 +1,18 @@
-
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import Header from "../../../global/components/Header/Header.jsx";
+import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
 import {
   getRememberMe,
   login as authLogin,
-  saveRememberMe
+  saveRememberMe,
 } from "../../mockAuth.js";
 import "./Login.css";
-
+import "./../Auth.css";
+import "../../../global/components/form/Form.css";
+import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -106,7 +107,7 @@ const Login = () => {
             password,
           });
           console.log("Usuário autenticado:", result.user);
-          navigate("/dashboard", { replace: true });
+          navigate(AppRoutes.Dashboard, { replace: true });
         } else {
           setLoginError(
             result.message || "E-mail/Nome de Usuário ou senha incorretos",
@@ -121,21 +122,25 @@ const Login = () => {
   };
 
   return (
-    <div className="page-container">
+    <div className="auth-page page-container">
       <Header />
 
-      <main className="login-container">
-        <div className="login-card">
-          <h2 className="login-card__title">Acesse sua conta</h2>
-          <p className="login-card__subtitle">Insira seus dados para entrar</p>
+      <main className="auth-container login-container">
+        <div className="auth-card login-card">
+          <h2 className="auth-title login-card__title">Acesse sua conta</h2>
+          <p className="auth-subtitle login-card__subtitle">
+            Insira seus dados para entrar
+          </p>
 
-          <form onSubmit={handleSubmit} noValidate>
+          <form className="form" onSubmit={handleSubmit} noValidate>
             <div className="input-group">
-              <label htmlFor="emailOrUsername">E-mail ou Usuário</label>
+              <label className="form-label" htmlFor="emailOrUsername">
+                E-mail ou Usuário
+              </label>
               <input
                 type="text"
                 id="emailOrUsername"
-                className={`input-field ${emailOrUsernameError ? "input-error" : ""}`}
+                className={`form-input ${emailOrUsernameError ? "input-error" : ""}`}
                 placeholder="seu@email.com ou seu_usuario"
                 value={emailOrUsername}
                 onChange={handleEmailOrUsernameChange}
@@ -145,19 +150,21 @@ const Login = () => {
 
             <div className="input-group">
               <div className="label-group">
-                <label htmlFor="password">Senha</label>
+                <label className="form-label" htmlFor="password">
+                  Senha
+                </label>
               </div>
-              <div className="input-wrapper">
+              <div className="form-input-wrapper">
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
-                  className="input-field"
+                  className="form-input"
                   placeholder="••••••••••"
                   value={password}
                   onChange={handlePasswordChange}
                 />
                 <span
-                  className="password-icon"
+                  className="form-password-toggle"
                   onClick={togglePasswordVisibility}
                   role="button"
                   aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
@@ -165,34 +172,38 @@ const Login = () => {
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </span>
               </div>
-              <div style={{ textAlign: "right" }}>
-                <Link to="/alterarSenha" className="link">
+              <div className="auth-align-right">
+                <Link to={AppRoutes.ChangePassword} className="auth-link link">
                   Esqueceu sua senha?
                 </Link>
               </div>
             </div>
 
             <div className="form-options">
-              <div className="checkbox-group">
+              <div className="form-checkbox-group">
                 <input
                   type="checkbox"
                   id="rememberMe"
                   checked={rememberMe}
                   onChange={handleRememberMeChange}
                 />
-                <label htmlFor="rememberMe">Lembre de mim</label>
+                <label className="form-label" htmlFor="rememberMe">
+                  Lembre de mim
+                </label>
               </div>
             </div>
 
-            {loginError && <p className="login-error-message">{loginError}</p>}
+            {loginError && <p className="form-error">{loginError}</p>}
 
-            <button type="submit" className="login-button" disabled={isLoading}>
+            <button type="submit" className="form-button" disabled={isLoading}>
               {isLoading ? "Entrando..." : "Entrar"}
             </button>
 
-            <p className="signup-link">
+            <p className="auth-footer-text signup-link">
               Ainda não tem uma conta?{" "}
-              <Link to="/cadastroUsuario">Cadastre-se</Link>
+              <Link className="auth-link" to={AppRoutes.UserRegistration}>
+                Cadastre-se
+              </Link>
             </p>
           </form>
         </div>
