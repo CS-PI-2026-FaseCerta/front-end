@@ -9,6 +9,8 @@
     width: 100%;
     box-sizing: border-box;
     flex-shrink: 0;
+    align-self: stretch;
+    margin-top: auto;
 }
 
 .footer-links {
