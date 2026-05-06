@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-// import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import "./ChangePassword.css";
@@ -141,7 +141,7 @@ const ChangePassword = () => {
                     showPasswords.current ? "Ocultar senha" : "Mostrar senha"
                   }
                 >
-                  <EyeIcon visible={showPasswords.current} />
+                  {showPasswords.current ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
             </div>
@@ -170,7 +170,7 @@ const ChangePassword = () => {
                     showPasswords.new ? "Ocultar senha" : "Mostrar senha"
                   }
                 >
-                  <EyeIcon visible={showPasswords.new} />
+                  {showPasswords.new ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
               <p className="form-text">
@@ -203,11 +203,11 @@ const ChangePassword = () => {
                   type="button"
                   className="form-password-toggle"
                   onClick={() => toggleVisibility("confirm")}
-                  aria-label={
+                  aria-label={ 
                     showPasswords.confirm ? "Ocultar senha" : "Mostrar senha"
                   }
                 >
-                  <EyeIcon visible={showPasswords.confirm} />
+                  {showPasswords.confirm ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
               {errors.mismatch && (
