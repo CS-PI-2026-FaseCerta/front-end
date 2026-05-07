@@ -75,6 +75,10 @@
   text-align: right;
 }
 
+.login-card .back-button:hover {
+  background-color: var(--control-bg-hover);
+}
+
 @media (max-width: 768px) {
   .auth-card,
   .login-card,

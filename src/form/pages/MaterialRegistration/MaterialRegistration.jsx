@@ -56,14 +56,14 @@ export default function CadastrarPeca() {
 
   return (
     <div className="page-container">
-      <Header />
+      <Header /> 
 
       <main className="main-content">
         <div className="card wide-card">
           <div className="card-header">
             {/* Botão de voltar */}
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/dashboard")}
               className="back-button"
               style={{ background: "none", border: "none", cursor: "pointer" }}
             >
