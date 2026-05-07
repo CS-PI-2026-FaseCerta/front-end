@@ -6,6 +6,7 @@ import MaterialRegistration from "./form/pages/MaterialRegistration/MaterialRegi
 import Dashboard from "./home/pages/Dashboard.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
+import RecoverPassword from "./auth/pages/recoverpassword/RecoverPassword.jsx";
 import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
@@ -32,6 +33,10 @@ function App() {
             <Route
               path={AppRoutes.ChangePassword}
               element={<ChangePassword />}
+            />
+            <Route
+              path={AppRoutes.RecoverPassword}
+              element={<RecoverPassword />}
             />
             <Route
               path={AppRoutes.RegisterService}

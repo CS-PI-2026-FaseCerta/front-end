@@ -1,6 +1,7 @@
 export const Login = "/login";
 export const UserRegistration = "/cadastroUsuario";
 export const ChangePassword = "/alterarSenha";
+export const RecoverPassword = "/recuperarSenha";
 export const RegisterService = "/cadastroServico";
 export const RegisterCity = "/cadastroCidade";
 export const MaterialRegistration = "/cadastroMaterial";

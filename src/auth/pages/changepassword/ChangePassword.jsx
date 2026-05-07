@@ -101,18 +101,18 @@ const ChangePassword = () => {
       <Header />
       <main className="auth-container change-password-container">
         <div className="auth-card form-container">
-          <div className="card-header">
+          <div className="auth-card-header">
             <button
               type="button"
-              className="back-button"
+              className="auth-back-button"
               onClick={() => navigate(AppRoutes.Dashboard)}
             >
-              <FaArrowLeft className="arrowLeft" size={20} />
+              <FaArrowLeft size={18} />
             </button>
-            <h1>Alterar Senha</h1>
+            <h1 className="auth-title">Alterar Senha</h1>
           </div>
 
-          <p className="card-header-p">
+          <p className="auth-subtitle">
             Mantenha sua conta FaseCerta segura e atualizada.
           </p>
 
@@ -203,7 +203,7 @@ const ChangePassword = () => {
                   type="button"
                   className="form-password-toggle"
                   onClick={() => toggleVisibility("confirm")}
-                  aria-label={ 
+                  aria-label={
                     showPasswords.confirm ? "Ocultar senha" : "Mostrar senha"
                   }
                 >
