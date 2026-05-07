@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Header from "../../global/components/Header/Header.jsx";
+import Header from "../../global/components/header/Header.jsx";
 
 import "./Dashboard.css";
 

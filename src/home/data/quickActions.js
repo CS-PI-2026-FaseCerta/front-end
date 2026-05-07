@@ -24,7 +24,7 @@ export const QUICK_ACTIONS = [
   {
     id: "cadastrar-cliente",
     nome: "Cadastrar Cliente",
-    rota: "/clientes/novo",
+    rota: "/cadastroUsuario",
     icon: FaUserPlus,
     allowedProfiles: ["gestor", "tecnico"],
     order: {
@@ -67,12 +67,23 @@ export const QUICK_ACTIONS = [
   {
     id: "cadastrar-cidade",
     nome: "Cadastrar Cidade",
-    rota: "/cadastrar-cidade",
+    rota: "/cadastroCidade",
     icon: FaCity,
     allowedProfiles: ["gestor", "tecnico"],
     order: {
       gestor: 6,
       tecnico: 5,
+    },
+  },
+  {
+    id: "cadastrar-peca",
+    nome: "Cadastrar Peça",
+    rota: "/cadastroMaterial",
+    icon: FaBoxOpen,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 7,
+      tecnico: 6,
     },
   },
 ];
