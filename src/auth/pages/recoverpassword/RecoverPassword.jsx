@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/header/Header.jsx";
+import Footer from "../../../global/components/Footer/Footer.jsx";
 import "./../Auth.css";
 import "../../../global/components/form/Form.css";
 import * as AppRoutes from "../../../routes/AppRoutes.jsx";
@@ -169,6 +170,7 @@ const RecoverPassword = () => {
           </form>
         </section>
       </main>
+      <Footer />
     </div>
   );
 };

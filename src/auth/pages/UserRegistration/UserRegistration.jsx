@@ -4,7 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
-import "../../../auth/pages/login/Login.css";
+import "./UserRegistration.css";
 import "../../../auth/pages/Auth.css";
 import "../../../global/components/form/Form.css";
 
