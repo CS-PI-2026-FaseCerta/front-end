@@ -8,7 +8,7 @@ import {
   getRememberMe,
   login as authLogin,
   saveRememberMe,
-} from "../../mockAuth.js";
+} from "../../mockAuth.js"; 
 import "./Login.css";
 import "./../Auth.css";
 import "../../../global/components/form/Form.css";
