@@ -75,7 +75,7 @@ export default function RegisterCity() {
 
     setTimeout(() => {
       setSuccessMessage("");
-    }, 2000);
+    }, 2000); 
   };
 
   return (
