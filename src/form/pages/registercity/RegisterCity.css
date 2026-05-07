@@ -60,10 +60,10 @@
     border-radius: 1rem;
 }
 
-.back-button:hover {
+/* .back-button:hover {
     background-color: rgb(224, 224, 224);
     cursor: pointer;
-}
+} */
 
 .city-form-title {
     margin-bottom: 20px;

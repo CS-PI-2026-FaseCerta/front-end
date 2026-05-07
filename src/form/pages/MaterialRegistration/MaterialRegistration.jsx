@@ -19,6 +19,9 @@ export default function CadastrarPeca() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  const isFormValid = form.nome.trim() !== "" && form.custo.trim() !== "0,00" && form.precoVenda.trim() !== "0,00" &&
+  form.quantidade.trim() !== "" && form.estoqueMinimo.trim() !== "";
+
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
     const float = (Number(number) / 100).toFixed(2);
@@ -54,16 +57,17 @@ export default function CadastrarPeca() {
     }, 1500);
   };
 
+
   return (
     <div className="page-container">
-      <Header />
+      <Header /> 
 
       <main className="main-content">
         <div className="card wide-card">
-          <div className="card-header">
+          <div className="card-header"> 
             {/* Botão de voltar */}
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/dashboard")}
               className="back-button"
               style={{ background: "none", border: "none", cursor: "pointer" }}
             >
@@ -202,7 +206,7 @@ export default function CadastrarPeca() {
             <button
               type="submit"
               className="btn-primary btn-submit"
-              disabled={isLoading}
+              disabled={isLoading || !isFormValid}
             >
               {isLoading ? "CADASTRANDO..." : "CADASTRAR PEÇA/MATERIAL"}
             </button>
