@@ -7,24 +7,26 @@ const ESTADOS_BR = [
 ];
 
 export default function RegistrationForm({ onBack, onSubmit }) {
-  const [tipo, setTipo] = useState("PF"); // "PF" ou "PJ"
+  const [tipo, setTipo] = useState("PF");
 
   return (
-    <div className="reg-page">
-      <header className="reg-header">
-        <span className="reg-brand">FaseCerta</span>
-        <button className="reg-theme-toggle" aria-label="Alternar tema">🌙</button>
+    <div className="App">
+      {/* Header — usa classe do App.css */}
+      <header className="page-header">
+        <span className="logo">FaseCerta</span>
+        <button className="theme-toggle" aria-label="Alternar tema">🌙</button>
       </header>
 
-      <main className="reg-main">
-        <div className="reg-card">
-          <div className="reg-card-header">
-            <button className="reg-back-btn" onClick={onBack} aria-label="Voltar">←</button>
+      {/* Conteúdo central — usa classe do App.css */}
+      <main className="main-content">
+        <div className="form-card">
+          <div className="form-card-header">
+            <button className="back-btn" onClick={onBack} aria-label="Voltar">←</button>
             <div>
-              <h1 className="reg-title">
+              <h1 className="form-title">
                 Cadastrar Cliente ({tipo === "PF" ? "PF" : "PJ"})
               </h1>
-              <p className="reg-subtitle">
+              <p className="form-subtitle">
                 {tipo === "PF"
                   ? "Insira as informações do cliente para registro no sistema."
                   : "Insira as informações da empresa para registro no sistema."}
@@ -32,15 +34,15 @@ export default function RegistrationForm({ onBack, onSubmit }) {
             </div>
           </div>
 
-          <div className="reg-toggle-group">
+          <div className="toggle-group">
             <button
-              className={`reg-toggle-btn ${tipo === "PF" ? "active" : ""}`}
+              className={`toggle-btn ${tipo === "PF" ? "active" : ""}`}
               onClick={() => setTipo("PF")}
             >
               Pessoa Física
             </button>
             <button
-              className={`reg-toggle-btn ${tipo === "PJ" ? "active" : ""}`}
+              className={`toggle-btn ${tipo === "PJ" ? "active" : ""}`}
               onClick={() => setTipo("PJ")}
             >
               Pessoa Jurídica
@@ -55,10 +57,13 @@ export default function RegistrationForm({ onBack, onSubmit }) {
         </div>
       </main>
 
-      <footer className="reg-footer">
-        <span className="reg-brand">FaseCerta</span>
-        <p className="reg-footer-copy">© 2024 FaseCerta.</p>
-        <nav className="reg-footer-links">
+      {/* Footer — usa classes do App.css */}
+      <footer className="page-footer">
+        <div>
+          <div className="logo">FaseCerta</div>
+          <div>© 2024 FaseCerta.</div>
+        </div>
+        <nav className="footer-links">
           <a href="#">Suporte</a>
           <a href="#">Termos de Uso</a>
           <a href="#">Política de Privacidade</a>
@@ -99,83 +104,79 @@ function PessoaFisicaForm({ onSubmit }) {
     setLoadingCep(false);
   };
 
-  const handleSubmit = () => {
-    onSubmit?.({ tipo: "PF", ...form });
-  };
-
   return (
-    <div className="reg-form">
-      <div className="reg-field">
-        <label className="reg-label">Nome Completo</label>
-        <input className="reg-input" placeholder="Digite o nome completo"
+    <div className="form-fields">
+      <div className="field">
+        <label className="field-label">Nome Completo</label>
+        <input className="field-input" placeholder="Digite o nome completo"
           value={form.nomeCompleto} onChange={set("nomeCompleto")} />
       </div>
 
-      <div className="reg-row">
-        <div className="reg-field">
-          <label className="reg-label">CPF</label>
-          <input className="reg-input" placeholder="000.000.000-00"
+      <div className="field-row">
+        <div className="field">
+          <label className="field-label">CPF</label>
+          <input className="field-input" placeholder="000.000.000-00"
             value={form.cpf} onChange={set("cpf")} maxLength={14} />
         </div>
-        <div className="reg-field">
-          <label className="reg-label">Telefone/WhatsApp</label>
-          <input className="reg-input" placeholder="(00) 00000-0000"
+        <div className="field">
+          <label className="field-label">Telefone/WhatsApp</label>
+          <input className="field-input" placeholder="(00) 00000-0000"
             value={form.telefone} onChange={set("telefone")} maxLength={15} />
         </div>
       </div>
 
-      <div className="reg-field">
-        <label className="reg-label">CEP</label>
-        <div className="reg-input-with-btn">
-          <input className="reg-input" placeholder="00000-000"
+      <div className="field">
+        <label className="field-label">CEP</label>
+        <div className="field-with-btn">
+          <input className="field-input" placeholder="00000-000"
             value={form.cep} onChange={set("cep")} maxLength={9} />
-          <button className="reg-buscar-btn" onClick={buscarCep} disabled={loadingCep}>
+          <button className="buscar-btn" onClick={buscarCep} disabled={loadingCep}>
             {loadingCep ? "..." : "Buscar"}
           </button>
         </div>
       </div>
 
-      <div className="reg-field">
-        <label className="reg-label">Endereço (Rua)</label>
-        <input className="reg-input" placeholder="Nome da rua ou avenida"
+      <div className="field">
+        <label className="field-label">Endereço (Rua)</label>
+        <input className="field-input" placeholder="Nome da rua ou avenida"
           value={form.endereco} onChange={set("endereco")} />
       </div>
 
-      <div className="reg-row">
-        <div className="reg-field reg-field--small">
-          <label className="reg-label">Número</label>
-          <input className="reg-input" placeholder="123"
+      <div className="field-row">
+        <div className="field field--small">
+          <label className="field-label">Número</label>
+          <input className="field-input" placeholder="123"
             value={form.numero} onChange={set("numero")} />
         </div>
-        <div className="reg-field">
-          <label className="reg-label">Complemento</label>
-          <input className="reg-input" placeholder="Apto, Bloco, etc."
+        <div className="field">
+          <label className="field-label">Complemento</label>
+          <input className="field-input" placeholder="Apto, Bloco, etc."
             value={form.complemento} onChange={set("complemento")} />
         </div>
       </div>
 
-      <div className="reg-field">
-        <label className="reg-label">Bairro</label>
-        <input className="reg-input" placeholder="Nome do bairro"
+      <div className="field">
+        <label className="field-label">Bairro</label>
+        <input className="field-input" placeholder="Nome do bairro"
           value={form.bairro} onChange={set("bairro")} />
       </div>
 
-      <div className="reg-row">
-        <div className="reg-field">
-          <label className="reg-label">Cidade</label>
-          <input className="reg-input" placeholder="Ex: São Paulo"
+      <div className="field-row">
+        <div className="field">
+          <label className="field-label">Cidade</label>
+          <input className="field-input" placeholder="Ex: São Paulo"
             value={form.cidade} onChange={set("cidade")} />
         </div>
-        <div className="reg-field reg-field--estado">
-          <label className="reg-label">Estado</label>
-          <select className="reg-input reg-select" value={form.estado} onChange={set("estado")}>
+        <div className="field field--estado">
+          <label className="field-label">Estado</label>
+          <select className="field-input field-select" value={form.estado} onChange={set("estado")}>
             <option value="">UF</option>
             {ESTADOS_BR.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
           </select>
         </div>
       </div>
 
-      <button className="reg-submit-btn" onClick={handleSubmit}>
+      <button className="submit-btn" onClick={() => onSubmit?.({ tipo: "PF", ...form })}>
         CADASTRAR CLIENTE
       </button>
     </div>
@@ -213,89 +214,85 @@ function PessoaJuridicaForm({ onSubmit }) {
     setLoadingCep(false);
   };
 
-  const handleSubmit = () => {
-    onSubmit?.({ tipo: "PJ", ...form });
-  };
-
   return (
-    <div className="reg-form">
-      <div className="reg-field">
-        <label className="reg-label">Razão Social</label>
-        <input className="reg-input" placeholder="Nome empresarial completo"
+    <div className="form-fields">
+      <div className="field">
+        <label className="field-label">Razão Social</label>
+        <input className="field-input" placeholder="Nome empresarial completo"
           value={form.razaoSocial} onChange={set("razaoSocial")} />
       </div>
 
-      <div className="reg-row">
-        <div className="reg-field">
-          <label className="reg-label">CNPJ</label>
-          <input className="reg-input" placeholder="00.000.000/0000-00"
+      <div className="field-row">
+        <div className="field">
+          <label className="field-label">CNPJ</label>
+          <input className="field-input" placeholder="00.000.000/0000-00"
             value={form.cnpj} onChange={set("cnpj")} maxLength={18} />
         </div>
-        <div className="reg-field">
-          <label className="reg-label">CEP</label>
-          <div className="reg-input-with-btn">
-            <input className="reg-input" placeholder="00000-000"
+        <div className="field">
+          <label className="field-label">CEP</label>
+          <div className="field-with-btn">
+            <input className="field-input" placeholder="00000-000"
               value={form.cep} onChange={set("cep")} maxLength={9} />
-            <button className="reg-buscar-btn" onClick={buscarCep} disabled={loadingCep}>
+            <button className="buscar-btn" onClick={buscarCep} disabled={loadingCep}>
               {loadingCep ? "..." : "Buscar"}
             </button>
           </div>
         </div>
       </div>
 
-      <div className="reg-field">
-        <label className="reg-label">Endereço</label>
-        <input className="reg-input" placeholder="Rua, número e complemento"
+      <div className="field">
+        <label className="field-label">Endereço</label>
+        <input className="field-input" placeholder="Rua, número e complemento"
           value={form.endereco} onChange={set("endereco")} />
       </div>
 
-      <div className="reg-row">
-        <div className="reg-field">
-          <label className="reg-label">Bairro</label>
-          <input className="reg-input" placeholder="Ex: Centro"
+      <div className="field-row">
+        <div className="field">
+          <label className="field-label">Bairro</label>
+          <input className="field-input" placeholder="Ex: Centro"
             value={form.bairro} onChange={set("bairro")} />
         </div>
-        <div className="reg-field">
-          <label className="reg-label">Cidade</label>
-          <input className="reg-input" placeholder="Cidade"
+        <div className="field">
+          <label className="field-label">Cidade</label>
+          <input className="field-input" placeholder="Cidade"
             value={form.cidade} onChange={set("cidade")} />
         </div>
-        <div className="reg-field reg-field--estado">
-          <label className="reg-label">Estado</label>
-          <select className="reg-input reg-select" value={form.estado} onChange={set("estado")}>
+        <div className="field field--estado">
+          <label className="field-label">Estado</label>
+          <select className="field-input field-select" value={form.estado} onChange={set("estado")}>
             <option value="">UF</option>
             {ESTADOS_BR.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
           </select>
         </div>
       </div>
 
-      <div className="reg-row">
-        <div className="reg-field">
-          <label className="reg-label">Telefone/WhatsApp</label>
-          <input className="reg-input" placeholder="(00) 00000-0000"
+      <div className="field-row">
+        <div className="field">
+          <label className="field-label">Telefone/WhatsApp</label>
+          <input className="field-input" placeholder="(00) 00000-0000"
             value={form.telefone} onChange={set("telefone")} maxLength={15} />
         </div>
-        <div className="reg-field">
-          <label className="reg-label">Inscrição Estadual</label>
-          <input className="reg-input" placeholder="Isento ou Número"
+        <div className="field">
+          <label className="field-label">Inscrição Estadual</label>
+          <input className="field-input" placeholder="Isento ou Número"
             value={form.inscricaoEstadual} onChange={set("inscricaoEstadual")} />
         </div>
       </div>
 
-      <div className="reg-field">
-        <label className="reg-label">Inscrição Municipal</label>
-        <input className="reg-input" placeholder="Número da inscrição"
+      <div className="field">
+        <label className="field-label">Inscrição Municipal</label>
+        <input className="field-input" placeholder="Número da inscrição"
           value={form.inscricaoMunicipal} onChange={set("inscricaoMunicipal")} />
       </div>
 
-      <div className="reg-field">
-        <label className="reg-label">Anotações</label>
-        <textarea className="reg-input reg-textarea"
+      <div className="field">
+        <label className="field-label">Anotações</label>
+        <textarea className="field-input field-textarea"
           placeholder="Informações adicionais relevantes..."
           value={form.anotacoes} onChange={set("anotacoes")} rows={4} />
       </div>
 
-      <button className="reg-submit-btn" onClick={handleSubmit}>
+      <button className="submit-btn" onClick={() => onSubmit?.({ tipo: "PJ", ...form })}>
         CADASTRAR EMPRESA
       </button>
     </div>
