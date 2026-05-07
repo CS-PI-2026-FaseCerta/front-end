@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-// import { FaEye, FaEyeSlash, FaMoon } from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import "./ChangePassword.css";
@@ -101,18 +101,18 @@ const ChangePassword = () => {
       <Header />
       <main className="auth-container change-password-container">
         <div className="auth-card form-container">
-          <div className="card-header">
+          <div className="auth-card-header">
             <button
               type="button"
-              className="back-button"
+              className="auth-back-button"
               onClick={() => navigate(AppRoutes.Dashboard)}
             >
-              <FaArrowLeft className="arrowLeft" size={20} />
+              <FaArrowLeft size={18} />
             </button>
-            <h1>Alterar Senha</h1>
+            <h1 className="auth-title">Alterar Senha</h1>
           </div>
 
-          <p className="card-header-p">
+          <p className="auth-subtitle">
             Mantenha sua conta FaseCerta segura e atualizada.
           </p>
 
@@ -141,7 +141,7 @@ const ChangePassword = () => {
                     showPasswords.current ? "Ocultar senha" : "Mostrar senha"
                   }
                 >
-                  <EyeIcon visible={showPasswords.current} />
+                  {showPasswords.current ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
             </div>
@@ -170,7 +170,7 @@ const ChangePassword = () => {
                     showPasswords.new ? "Ocultar senha" : "Mostrar senha"
                   }
                 >
-                  <EyeIcon visible={showPasswords.new} />
+                  {showPasswords.new ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
               <p className="form-text">
@@ -207,7 +207,7 @@ const ChangePassword = () => {
                     showPasswords.confirm ? "Ocultar senha" : "Mostrar senha"
                   }
                 >
-                  <EyeIcon visible={showPasswords.confirm} />
+                  {showPasswords.confirm ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
               {errors.mismatch && (

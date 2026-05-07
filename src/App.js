@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
@@ -5,6 +6,7 @@ import MaterialRegistration from "./form/pages/MaterialRegistration/MaterialRegi
 import Dashboard from "./home/pages/Dashboard.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
+import RecoverPassword from "./auth/pages/recoverpassword/RecoverPassword.jsx";
 import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
@@ -14,6 +16,8 @@ import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
 function App() {
+  const [tela, setTela] = useState("recuperar");
+
   return (
     <div className="App">
       {
@@ -31,6 +35,10 @@ function App() {
               element={<ChangePassword />}
             />
             <Route
+              path={AppRoutes.RecoverPassword}
+              element={<RecoverPassword />}
+            />
+            <Route
               path={AppRoutes.RegisterService}
               element={<RegisterService />}
             />
@@ -43,8 +51,8 @@ function App() {
               element={<UserRegistration />}
             />
             <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
-
-            {/* Fallbacks temporarios para areas do dashboard que ainda nao possuem telas dedicadas. */}
+            /* Fallbacks temporarios para areas do dashboard que ainda nao
+            possuem telas dedicadas. */
             <Route
               path={AppRoutes.Perfil}
               element={

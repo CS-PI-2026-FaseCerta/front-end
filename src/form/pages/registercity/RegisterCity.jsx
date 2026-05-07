@@ -12,6 +12,8 @@ export default function RegisterCity() {
   const [name, setName] = useState("");
   const [cep, setCep] = useState("");
 
+  const [successMessage, setSuccessMessage] = useState("");
+
   const isCepValid = (cep) => {
     const numbers = cep.replace(/\D/g, "");
     return numbers.length === 8;
@@ -35,9 +37,9 @@ export default function RegisterCity() {
     { value: "mg", label: "Minas Gerais" },
     { value: "pa", label: "Pará" },
     { value: "pb", label: "Paraíba" },
+    { value: "pr", label: "Paraná" },
     { value: "pe", label: "Pernambuco" },
     { value: "pi", label: "Piauí" },
-    { value: "pr", label: "Paraná" },
     { value: "rj", label: "Rio de Janeiro" },
     { value: "rn", label: "Rio Grande do Norte" },
     { value: "rs", label: "Rio Grande do Sul" },
@@ -62,6 +64,20 @@ export default function RegisterCity() {
     return value;
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    setSuccessMessage("Cadastro realizado com sucesso!");
+
+    setState(states.find(s => s.value === "pr"));
+    setName("");
+    setCep("");
+
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 2000);
+  };
+
   return (
     <div className="city-page">
       <Header />
@@ -72,12 +88,12 @@ export default function RegisterCity() {
               className="back-button"
               onClick={() => navigate("/dashboard")}
             >
-              <FaArrowLeft size={20} color="#433f9b" />
+              <FaArrowLeft size={20}/>
             </button>
             <h1>Cadastro de Cidade</h1>
           </div>
 
-          <form className="city-form">
+          <form className="city-form" onSubmit={handleSubmit}>
             <div className="city-form-group">
               <label htmlFor="city-name" className="city-form-label">
                 NOME DA CIDADE
@@ -124,6 +140,20 @@ export default function RegisterCity() {
                 />
               </div>
             </div>
+
+            {/* MENSAGEM DE SUCESSO */}
+            {successMessage && (
+              <p
+                style={{
+                  color: "#28a745",
+                  marginTop: "10px",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                {successMessage}
+              </p>
+            )}
 
             <button
               type="submit"

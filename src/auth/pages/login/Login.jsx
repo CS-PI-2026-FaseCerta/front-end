@@ -173,7 +173,7 @@ const Login = () => {
                 </span>
               </div>
               <div className="auth-align-right">
-                <Link to={AppRoutes.ChangePassword} className="auth-link link">
+                <Link to={AppRoutes.RecoverPassword} className="auth-link link">
                   Esqueceu sua senha?
                 </Link>
               </div>

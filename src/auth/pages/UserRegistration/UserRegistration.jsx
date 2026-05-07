@@ -80,11 +80,19 @@ export default function CadastroUsuario() {
 
       <main className="login-container">
         <div className="login-card">
-          <button onClick={() => navigate(-1)} className="back-button" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
-            <FaArrowLeft />
-          </button>
-          <h2 className="login-card__title">Crie sua conta</h2>
-          <p className="login-card__subtitle">Insira seus dados para começar</p>
+          <div className="auth-card-header">
+            <button
+              onClick={() => navigate(-1)}
+              className="auth-back-button"
+              aria-label="Voltar"
+            >
+              <FaArrowLeft size={18} />
+            </button>
+            <h2 className="auth-title login-card__title">Crie sua conta</h2>
+          </div>
+          <p className="auth-subtitle login-card__subtitle">
+            Insira seus dados para começar
+          </p>
 
           <form className="form" onSubmit={handleSubmit} noValidate>
             <div className="input-group">
