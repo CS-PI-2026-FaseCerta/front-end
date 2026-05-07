@@ -29,7 +29,7 @@ export default function RegisterCity() {
     { value: "ba", label: "Bahia" },
     { value: "ce", label: "Ceará" },
     { value: "df", label: "Distrito Federal" },
-    { value: "es", label: "Espírito Santo" },
+    { value: "es", label: "Espírito Santo" }, 
     { value: "go", label: "Goiás" },
     { value: "ma", label: "Maranhão" },
     { value: "mt", label: "Mato Grosso" },

@@ -13,7 +13,7 @@ export default function RegisterService() {
   const [description, setDescription] = useState("");
   const [billingType, setBillingType] = useState("fixed");
   const [value, setValue] = useState("");
-
+ 
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
     const float = (Number(number) / 100).toFixed(2);
@@ -36,6 +36,23 @@ export default function RegisterService() {
     value !== "" &&
     value !== "R$ 0,00";
 
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    setSuccessMessage("Cadastro realizado com sucesso!");
+
+    setName("");
+    setDescription("");
+    setValue("");
+    setBillingType("fixed");
+
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 2000); 
+  };
+
   return (
     <div className="service-page">
       <Header />
@@ -51,7 +68,7 @@ export default function RegisterService() {
           <h1>Cadastro de Serviço</h1>
         </div>
 
-        <form className="form">
+        <form className="form" onSubmit={handleSubmit}>
           <div className="input-group">
             <label className="form-label">NOME DO SERVIÇO</label>
             <input
@@ -113,6 +130,20 @@ export default function RegisterService() {
               placeholder="R$ 0,00"
             />
           </div>
+
+          {/* MENSAGEM DE SUCESSO */}
+            {successMessage && (
+              <p
+                style={{
+                  color: "#28a745",
+                  marginTop: "10px",
+                  textAlign: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                {successMessage}
+              </p>
+            )}
 
           <button type="submit" className="form-button" disabled={!isFormValid}>
             Salvar Serviço
