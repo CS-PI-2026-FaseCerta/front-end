@@ -157,6 +157,7 @@
 
 .form-button:disabled {
   background: var(--control-bg-active);
+  opacity: 0.72;
   cursor: not-allowed;
   box-shadow: none;
 }
