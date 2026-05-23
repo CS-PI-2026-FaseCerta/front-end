@@ -124,6 +124,10 @@ const GenericTable = ({
                           {actionsForRow.map((action) => {
                             const ActionIcon = action.icon;
                             const actionKey = action.key ?? action.label;
+                            const iconOnly =
+                              action.iconOnly ?? Boolean(ActionIcon);
+                            const actionLabel =
+                              action.title ?? action.label ?? "Ação";
 
                             if (action.href) {
                               const resolvedHref =
@@ -134,14 +138,17 @@ const GenericTable = ({
                               return (
                                 <Link
                                   key={actionKey}
-                                  className={`generic-table__action generic-table__action--${action.variant ?? "ghost"}`}
+                                  className={`generic-table__action generic-table__action--${action.variant ?? "ghost"} ${iconOnly ? "generic-table__action--icon-only" : ""}`.trim()}
                                   to={resolvedHref}
-                                  title={action.title ?? action.label}
+                                  title={actionLabel}
+                                  aria-label={actionLabel}
                                 >
                                   {ActionIcon ? (
                                     <ActionIcon aria-hidden="true" />
                                   ) : null}
-                                  <span>{action.label}</span>
+                                  {iconOnly ? null : (
+                                    <span>{action.label}</span>
+                                  )}
                                 </Link>
                               );
                             }
@@ -150,14 +157,15 @@ const GenericTable = ({
                               <button
                                 key={actionKey}
                                 type="button"
-                                className={`generic-table__action generic-table__action--${action.variant ?? "ghost"}`}
+                                className={`generic-table__action generic-table__action--${action.variant ?? "ghost"} ${iconOnly ? "generic-table__action--icon-only" : ""}`.trim()}
                                 onClick={() => action.onClick?.(row, rowIndex)}
-                                title={action.title ?? action.label}
+                                title={actionLabel}
+                                aria-label={actionLabel}
                               >
                                 {ActionIcon ? (
                                   <ActionIcon aria-hidden="true" />
                                 ) : null}
-                                <span>{action.label}</span>
+                                {iconOnly ? null : <span>{action.label}</span>}
                               </button>
                             );
                           })}

@@ -10,6 +10,7 @@
   border-radius: 24px;
   background: var(--list-shell-surface);
   box-shadow: var(--shadow-card);
+  min-height: 19rem;
 }
 
 .generic-table__table {
@@ -111,17 +112,17 @@
   display: inline-flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 .generic-table__action {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  min-height: 2.4rem;
-  padding: 0.55rem 0.9rem;
+  min-height: 2.45rem;
+  padding: 0.55rem 0.8rem;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: 14px;
   background: transparent;
   color: var(--color-text-secondary);
   font: inherit;
@@ -158,6 +159,17 @@
   background: var(--list-card-muted-surface);
 }
 
+.generic-table__action--icon-only {
+  min-width: 2.45rem;
+  justify-content: center;
+  padding-inline: 0.55rem;
+}
+
+.generic-table__cell--actions {
+  width: 1%;
+  white-space: nowrap;
+}
+
 @media (max-width: 640px) {
   .generic-table__head-cell,
   .generic-table__cell {
@@ -166,5 +178,9 @@
 
   .generic-table__actions {
     justify-content: flex-start;
+  }
+
+  .generic-table__scroll {
+    min-height: 17rem;
   }
 }

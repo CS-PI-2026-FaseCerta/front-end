@@ -12,17 +12,12 @@ export const pedidosColumns = [
     searchable: true,
   },
   {
-    key: "categoria",
-    header: "Categoria",
-    accessor: "categoria",
-    searchable: true,
-  },
-  {
     key: "dataAbertura",
     header: "Abertura",
     accessor: (row) =>
       new Date(`${row.dataAbertura}T00:00:00`).toLocaleDateString("pt-BR"),
     searchable: false,
+    width: "132px",
   },
   {
     key: "status",
@@ -31,14 +26,7 @@ export const pedidosColumns = [
     type: "badge",
     defaultBadgeVariant: "neutral",
     searchable: true,
-  },
-  {
-    key: "prioridade",
-    header: "Prioridade",
-    accessor: "prioridade",
-    type: "badge",
-    defaultBadgeVariant: "neutral",
-    searchable: true,
+    width: "160px",
   },
   {
     key: "responsavel",
@@ -52,5 +40,6 @@ export const pedidosColumns = [
     accessor: "valor",
     align: "right",
     searchable: false,
+    width: "120px",
   },
 ];

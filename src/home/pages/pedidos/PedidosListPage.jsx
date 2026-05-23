@@ -1,21 +1,17 @@
-import React, { useState } from "react";
-import { FaPlus, FaSyncAlt } from "react-icons/fa";
+import React from "react";
+import { FaPen, FaPlus, FaTrash } from "react-icons/fa";
 import GenericListPage from "../../../global/components/lists/GenericListPage";
 import { pedidosMockData } from "./pedidos.mock";
 import { pedidosColumns } from "./pedidos.columns";
 import { pedidosFilters } from "./pedidos.filters";
 
 const PedidosListPage = () => {
-  const [items, setItems] = useState(pedidosMockData);
-
-  const handleRefresh = () => {
-    setItems([...pedidosMockData]);
-  };
+  const items = pedidosMockData;
 
   return (
     <GenericListPage
       title="Ordens de Serviço"
-      description="Monitore pedidos, acompanhe o andamento operacional e prepare a base para integração com o backend futuramente."
+      description="Gerencie e acompanhe todas as ordens de serviço em tempo real."
       columns={pedidosColumns}
       data={items}
       filters={pedidosFilters}
@@ -27,24 +23,21 @@ const PedidosListPage = () => {
           href: "/os/novo",
           variant: "primary",
         },
-        {
-          key: "atualizar",
-          label: "Atualizar",
-          icon: FaSyncAlt,
-          onClick: handleRefresh,
-          variant: "secondary",
-        },
       ]}
       rowActions={[
         {
           key: "visualizar",
-          label: "Abrir",
+          title: "Editar",
+          icon: FaPen,
+          iconOnly: true,
           onClick: () => {},
           variant: "ghost",
         },
         {
-          key: "editar",
-          label: "Editar",
+          key: "excluir",
+          title: "Excluir",
+          icon: FaTrash,
+          iconOnly: true,
           onClick: () => {},
           variant: "ghost",
         },
@@ -56,11 +49,8 @@ const PedidosListPage = () => {
         actionLabel: "Criar nova OS",
         actionHref: "/os/novo",
       }}
-      search={{
-        placeholder: "Buscar por cliente, OS, responsável ou categoria",
-      }}
+      search={{ placeholder: "Buscar por OS, cliente ou responsável" }}
       footerNote="TODO: integrar com backend futuramente usando paginação, filtros e busca server-side."
-      onRetry={handleRefresh}
     />
   );
 };

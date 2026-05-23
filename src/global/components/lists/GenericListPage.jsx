@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useId, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaArrowLeft, FaExclamationTriangle, FaSearch } from "react-icons/fa";
 import Header from "../header/Header.jsx";
@@ -11,6 +11,24 @@ import {
   paginateRows,
 } from "./listHelpers";
 import "./GenericListPage.css";
+
+const getVisiblePageNumbers = (currentPage, totalPages) => {
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
+
+  const pages = new Set([
+    1,
+    totalPages,
+    currentPage - 1,
+    currentPage,
+    currentPage + 1,
+  ]);
+
+  return Array.from(pages)
+    .filter((pageNumber) => pageNumber >= 1 && pageNumber <= totalPages)
+    .sort((left, right) => left - right);
+};
 
 const GenericListPage = ({
   title,
@@ -38,6 +56,7 @@ const GenericListPage = ({
   search = {},
   footerNote,
 }) => {
+  const titleTooltipId = useId();
   const [searchTerm, setSearchTerm] = useState(search.defaultValue ?? "");
   const [filterValues, setFilterValues] = useState(() =>
     filters.reduce((accumulator, filter) => {
@@ -102,6 +121,13 @@ const GenericListPage = ({
     resolvedTotalItems === 0
       ? 0
       : Math.min(startItem + currentRows.length - 1, resolvedTotalItems);
+  const visiblePages = getVisiblePageNumbers(currentPage, totalPages);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const searchPlaceholder = search.placeholder ?? "Buscar registros";
   const isEmpty = !loading && !error && currentRows.length === 0;
@@ -144,223 +170,271 @@ const GenericListPage = ({
 
       <main className="generic-list-page__main">
         <section className="generic-list-page__hero">
-          <div className="generic-list-page__hero-copy">
-            <span className="generic-list-page__eyebrow">Listagem</span>
-            <h1 className="generic-list-page__title">{title}</h1>
-            {description ? (
-              <p className="generic-list-page__description">{description}</p>
-            ) : null}
-          </div>
+          <div className="generic-list-page__hero-top">
+            <div
+              className="generic-list-page__title-group"
+              tabIndex={0}
+              aria-describedby={description ? titleTooltipId : undefined}
+            >
+              <span className="generic-list-page__eyebrow">Listagem</span>
+              <h1 className="generic-list-page__title">{title}</h1>
+              {description ? (
+                <span
+                  className="generic-list-page__title-tooltip"
+                  id={titleTooltipId}
+                  role="tooltip"
+                >
+                  {description}
+                </span>
+              ) : null}
+            </div>
 
-          <div className="generic-list-page__hero-actions">
-            {actions.map((action) => {
-              const ActionIcon = action.icon;
-              const actionKey = action.key ?? action.label;
+            <div className="generic-list-page__hero-actions">
+              {actions.map((action) => {
+                const ActionIcon = action.icon;
+                const actionKey = action.key ?? action.label;
 
-              if (action.href) {
-                const resolvedHref =
-                  typeof action.href === "function"
-                    ? action.href()
-                    : action.href;
+                if (action.href) {
+                  const resolvedHref =
+                    typeof action.href === "function"
+                      ? action.href()
+                      : action.href;
+
+                  return (
+                    <Link
+                      key={actionKey}
+                      to={resolvedHref}
+                      className={`generic-list-page__action generic-list-page__action--${action.variant ?? "primary"}`}
+                    >
+                      {ActionIcon ? <ActionIcon aria-hidden="true" /> : null}
+                      <span>{action.label}</span>
+                    </Link>
+                  );
+                }
 
                 return (
-                  <Link
+                  <button
                     key={actionKey}
-                    to={resolvedHref}
+                    type="button"
                     className={`generic-list-page__action generic-list-page__action--${action.variant ?? "primary"}`}
+                    onClick={action.onClick}
                   >
                     {ActionIcon ? <ActionIcon aria-hidden="true" /> : null}
                     <span>{action.label}</span>
-                  </Link>
+                  </button>
                 );
-              }
-
-              return (
-                <button
-                  key={actionKey}
-                  type="button"
-                  className={`generic-list-page__action generic-list-page__action--${action.variant ?? "primary"}`}
-                  onClick={action.onClick}
-                >
-                  {ActionIcon ? <ActionIcon aria-hidden="true" /> : null}
-                  <span>{action.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        <section className="generic-list-page__panel">
-          <div className="generic-list-page__toolbar">
-            <label className="generic-list-page__search">
-              <span className="generic-list-page__field-label">Busca</span>
-              <div className="generic-list-page__search-control">
-                <FaSearch aria-hidden="true" />
-                <input
-                  type="search"
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  placeholder={searchPlaceholder}
-                />
-              </div>
-            </label>
-
-            {filters.length > 0 ? (
-              <div
-                className="generic-list-page__filters"
-                aria-label="Filtros da listagem"
-              >
-                {filters.map((filter) => {
-                  const value = filterValues[filter.key] ?? "";
-
-                  return (
-                    <label
-                      key={filter.key}
-                      className="generic-list-page__filter"
-                    >
-                      <span className="generic-list-page__field-label">
-                        {filter.label}
-                      </span>
-                      {filter.type === "select" ? (
-                        <select
-                          value={value}
-                          onChange={(event) =>
-                            handleFilterChange(filter.key, event.target.value)
-                          }
-                        >
-                          <option value="">
-                            {filter.placeholder ?? "Todos"}
-                          </option>
-                          {filter.options?.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      ) : filter.type === "date" ? (
-                        <input
-                          type="date"
-                          value={value}
-                          onChange={(event) =>
-                            handleFilterChange(filter.key, event.target.value)
-                          }
-                        />
-                      ) : (
-                        <input
-                          type="text"
-                          value={value}
-                          onChange={(event) =>
-                            handleFilterChange(filter.key, event.target.value)
-                          }
-                          placeholder={filter.placeholder ?? filter.label}
-                        />
-                      )}
-                    </label>
-                  );
-                })}
-              </div>
-            ) : null}
+              })}
+            </div>
           </div>
 
-          {error ? (
-            <EmptyState
-              icon={FaExclamationTriangle}
-              title={error.title ?? "Não foi possível carregar os dados"}
-              description={
-                error.message ??
-                "Tente novamente em instantes ou revise a integração com a API."
-              }
-              actionLabel={error.actionLabel ?? "Tentar novamente"}
-              onAction={onRetry}
-              secondaryActionLabel={error.secondaryActionLabel}
-              onSecondaryAction={error.onSecondaryAction}
-            />
-          ) : loading ? (
-            <div className="generic-list-page__loading" aria-live="polite">
-              <div className="generic-list-page__loading-header" />
-              <div className="generic-list-page__loading-row" />
-              <div className="generic-list-page__loading-row" />
-              <div className="generic-list-page__loading-row" />
-            </div>
-          ) : isEmpty ? (
-            <EmptyState
-              icon={emptyState.icon}
-              title={emptyState.title ?? "Nenhum registro encontrado"}
-              description={
-                emptyState.description ??
-                "Quando houver registros disponíveis, eles aparecerão nesta tabela."
-              }
-              actionLabel={emptyState.actionLabel}
-              actionHref={emptyState.actionHref}
-              onAction={emptyState.onAction}
-            />
-          ) : (
-            <GenericTable
-              columns={columns}
-              data={currentRows}
-              rowKey={rowKey}
-              rowActions={rowActions}
-            />
-          )}
-
-          <div className="generic-list-page__footer">
-            <div className="generic-list-page__footer-summary">
-              <span className="generic-list-page__footer-label">Mostrando</span>
-              <strong>
-                {resolvedTotalItems === 0 ? 0 : startItem} - {endItem}
-              </strong>
-              <span>de</span>
-              <strong>{resolvedTotalItems}</strong>
-              <span>itens</span>
-            </div>
-
-            <div className="generic-list-page__footer-controls">
-              <label className="generic-list-page__page-size">
-                <span className="generic-list-page__field-label">
-                  Itens por página
-                </span>
-                <select value={currentPageSize} onChange={handlePageSizeChange}>
-                  {pageSizeOptions.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
+          <div className="generic-list-page__panel">
+            <div className="generic-list-page__toolbar">
+              <label className="generic-list-page__search">
+                <span className="generic-list-page__field-label">Busca</span>
+                <div className="generic-list-page__search-control">
+                  <FaSearch aria-hidden="true" />
+                  <input
+                    type="search"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    placeholder={searchPlaceholder}
+                  />
+                </div>
               </label>
 
-              <div
-                className="generic-list-page__pagination"
-                aria-label="Paginação da listagem"
-              >
-                <button
-                  type="button"
-                  className="generic-list-page__pagination-button"
-                  onClick={handlePreviousPage}
-                  disabled={currentPage <= 1}
+              {filters.length > 0 ? (
+                <div
+                  className="generic-list-page__filters"
+                  aria-label="Filtros da listagem"
                 >
-                  <FaArrowLeft aria-hidden="true" />
-                  <span>Anterior</span>
-                </button>
+                  {filters.map((filter) => {
+                    const value = filterValues[filter.key] ?? "";
 
-                <span className="generic-list-page__pagination-status">
-                  Página {currentPage} de {totalPages}
+                    return (
+                      <label
+                        key={filter.key}
+                        className="generic-list-page__filter"
+                      >
+                        <span className="generic-list-page__field-label">
+                          {filter.label}
+                        </span>
+                        {filter.type === "select" ? (
+                          <select
+                            value={value}
+                            onChange={(event) =>
+                              handleFilterChange(filter.key, event.target.value)
+                            }
+                          >
+                            <option value="">
+                              {filter.placeholder ?? "Todos"}
+                            </option>
+                            {filter.options?.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        ) : filter.type === "date" ? (
+                          <input
+                            type="date"
+                            value={value}
+                            onChange={(event) =>
+                              handleFilterChange(filter.key, event.target.value)
+                            }
+                          />
+                        ) : (
+                          <input
+                            type="text"
+                            value={value}
+                            onChange={(event) =>
+                              handleFilterChange(filter.key, event.target.value)
+                            }
+                            placeholder={filter.placeholder ?? filter.label}
+                          />
+                        )}
+                      </label>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
+
+            {error ? (
+              <EmptyState
+                icon={FaExclamationTriangle}
+                title={error.title ?? "Não foi possível carregar os dados"}
+                description={
+                  error.message ??
+                  "Tente novamente em instantes ou revise a integração com a API."
+                }
+                actionLabel={error.actionLabel ?? "Tentar novamente"}
+                onAction={onRetry}
+                secondaryActionLabel={error.secondaryActionLabel}
+                onSecondaryAction={error.onSecondaryAction}
+              />
+            ) : loading ? (
+              <div className="generic-list-page__loading" aria-live="polite">
+                <div className="generic-list-page__loading-header" />
+                <div className="generic-list-page__loading-row" />
+                <div className="generic-list-page__loading-row" />
+                <div className="generic-list-page__loading-row" />
+              </div>
+            ) : isEmpty ? (
+              <EmptyState
+                icon={emptyState.icon}
+                title={emptyState.title ?? "Nenhum registro encontrado"}
+                description={
+                  emptyState.description ??
+                  "Quando houver registros disponíveis, eles aparecerão nesta tabela."
+                }
+                actionLabel={emptyState.actionLabel}
+                actionHref={emptyState.actionHref}
+                onAction={emptyState.onAction}
+              />
+            ) : (
+              <GenericTable
+                columns={columns}
+                data={currentRows}
+                rowKey={rowKey}
+                rowActions={rowActions}
+              />
+            )}
+
+            <div className="generic-list-page__footer">
+              <div className="generic-list-page__footer-summary">
+                <span className="generic-list-page__footer-label">
+                  Mostrando
                 </span>
+                <strong>
+                  {resolvedTotalItems === 0 ? 0 : startItem} - {endItem}
+                </strong>
+                <span>de</span>
+                <strong>{resolvedTotalItems}</strong>
+                <span>itens</span>
+              </div>
 
-                <button
-                  type="button"
-                  className="generic-list-page__pagination-button generic-list-page__pagination-button--next"
-                  onClick={handleNextPage}
-                  disabled={currentPage >= totalPages}
+              <div className="generic-list-page__footer-controls">
+                <label className="generic-list-page__page-size">
+                  <span className="generic-list-page__field-label">
+                    Itens por página
+                  </span>
+                  <select
+                    value={currentPageSize}
+                    onChange={handlePageSizeChange}
+                  >
+                    {pageSizeOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <div
+                  className="generic-list-page__pagination"
+                  aria-label="Paginação da listagem"
                 >
-                  <span>Próxima</span>
-                </button>
+                  <button
+                    type="button"
+                    className="generic-list-page__pagination-arrow"
+                    onClick={handlePreviousPage}
+                    disabled={currentPage <= 1}
+                    aria-label="Página anterior"
+                    title="Página anterior"
+                  >
+                    <FaArrowLeft aria-hidden="true" />
+                  </button>
+
+                  <div className="generic-list-page__pagination-pages">
+                    {visiblePages.map((pageNumber, index) => {
+                      const previousPage = visiblePages[index - 1];
+                      const needsGap =
+                        previousPage && pageNumber - previousPage > 1;
+
+                      return (
+                        <React.Fragment key={pageNumber}>
+                          {needsGap ? (
+                            <span className="generic-list-page__pagination-ellipsis">
+                              ...
+                            </span>
+                          ) : null}
+                          <button
+                            type="button"
+                            className={`generic-list-page__pagination-page ${pageNumber === currentPage ? "generic-list-page__pagination-page--active" : ""}`.trim()}
+                            onClick={() => {
+                              setPage(pageNumber);
+                              onPageChange?.(pageNumber);
+                            }}
+                            aria-current={
+                              pageNumber === currentPage ? "page" : undefined
+                            }
+                            aria-label={`Página ${pageNumber}`}
+                          >
+                            {pageNumber}
+                          </button>
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
+
+                  <button
+                    type="button"
+                    className="generic-list-page__pagination-arrow"
+                    onClick={handleNextPage}
+                    disabled={currentPage >= totalPages}
+                    aria-label="Próxima página"
+                    title="Próxima página"
+                  >
+                    ›
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
 
-          {footerNote ? (
-            <p className="generic-list-page__note">{footerNote}</p>
-          ) : null}
+            {footerNote ? (
+              <p className="generic-list-page__note">{footerNote}</p>
+            ) : null}
+          </div>
         </section>
       </main>
     </div>
