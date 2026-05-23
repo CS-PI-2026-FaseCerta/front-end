@@ -1,0 +1,170 @@
+.generic-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.generic-table__scroll {
+  overflow-x: auto;
+  border: 1px solid var(--list-shell-border);
+  border-radius: 24px;
+  background: var(--list-shell-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.generic-table__table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+}
+
+.generic-table__head-cell,
+.generic-table__cell {
+  padding: 1rem 1rem;
+  border-bottom: 1px solid var(--list-border-soft);
+  vertical-align: middle;
+}
+
+.generic-table__head-cell {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+  background: var(--list-card-muted-surface);
+}
+
+.generic-table__head-cell--center,
+.generic-table__cell--center {
+  text-align: center;
+}
+
+.generic-table__head-cell--right,
+.generic-table__cell--right {
+  text-align: right;
+}
+
+.generic-table__row {
+  transition: background-color 160ms ease;
+}
+
+.generic-table__row:hover {
+  background: var(--list-hover-surface);
+}
+
+.generic-table__cell {
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+}
+
+.generic-table__empty-cell {
+  padding: 2rem 1rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+
+.generic-table__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.generic-table__badge--success {
+  background: var(--list-badge-success-bg);
+  color: var(--list-badge-success-text);
+}
+
+.generic-table__badge--info {
+  background: var(--list-badge-info-bg);
+  color: var(--list-badge-info-text);
+}
+
+.generic-table__badge--warning {
+  background: var(--list-badge-warning-bg);
+  color: var(--list-badge-warning-text);
+}
+
+.generic-table__badge--danger {
+  background: var(--list-badge-danger-bg);
+  color: var(--list-badge-danger-text);
+}
+
+.generic-table__badge--neutral {
+  background: var(--list-badge-neutral-bg);
+  color: var(--list-badge-neutral-text);
+}
+
+.generic-table__badge--surface {
+  background: var(--list-badge-surface-bg);
+  color: var(--list-badge-surface-text);
+  border: 1px solid var(--list-border-soft);
+}
+
+.generic-table__actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.generic-table__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.4rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.generic-table__action:hover,
+.generic-table__action:focus-visible {
+  background: var(--list-card-muted-surface);
+  border-color: var(--list-border-soft);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.generic-table__action--primary {
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.generic-table__action--primary:hover,
+.generic-table__action--primary:focus-visible {
+  background: var(--color-primary-hover);
+  color: var(--color-surface);
+}
+
+.generic-table__action--ghost {
+  background: var(--list-card-muted-surface);
+}
+
+@media (max-width: 640px) {
+  .generic-table__head-cell,
+  .generic-table__cell {
+    padding-inline: 0.85rem;
+  }
+
+  .generic-table__actions {
+    justify-content: flex-start;
+  }
+}
