@@ -14,6 +14,12 @@
     padding: 40px 20px;
 }
 
+h3{
+    padding: 10px;
+    font-weight: 700;
+    margin-top: 20px;
+}
+
 .card.wide-card {
     background-color: var(--card-background);
     width: 100%;
@@ -30,31 +36,107 @@
     margin-bottom: 30px;
 }
 
-.toggle-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.toggle-button {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid #e2e8f0;
-    background-color: #fff;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    color: #64748b;
-    transition: all 0.2s ease;
-}
-
 .toggle-button.active {
     border: 2px solid #433f9b;
     background-color: #eaeced;
     color: #433f9b;
-    font-weight: 900;
 }
 
 .toggle-button:hover:not(.active) {
     background-color: #f1f5f9;
+}
+
+.toggle-container {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.toggle-button {
+    flex: 1;
+    padding: 14px;
+    border: 2px solid #e2e8f0;
+    background-color: #ffffff;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    color: #94a3b8;
+    transition: all 0.2s ease-in-out;
+}
+
+.input-area {
+    margin-top: 15px;
+    animation: fadeIn 0.3s ease;
+}
+
+.options-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.opt-btn {
+    padding: 10px 20px;
+    border: 1px solid #cbd5e1;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    color: #433f9b;
+    transition: background 0.2s;
+}
+
+.opt-btn:hover {
+    background-color: #f0f0ff;
+}
+
+.small-input,
+.full-input {
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.small-input {
+    flex: 1;
+}
+
+.full-input {
+    width: 100%;
+}
+
+.small-input:focus,
+.full-input:focus {
+    border-color: #433f9b;
+    box-shadow: 0 0 0 2px rgba(67, 63, 155, 0.1);
+}
+
+.opt-btn.active {
+    background-color: #433f9b;
+    color: #ffffff;
+    border-color: #433f9b;
+    box-shadow: 0 4px 10px rgba(67, 63, 155, 0.2);
+}
+
+.opt-btn:hover:not(.active) {
+    background-color: #f0f0ff;
+    border-color: #433f9b;
+}
+
+/* Animação para a troca de conteúdo não ser brusca */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
