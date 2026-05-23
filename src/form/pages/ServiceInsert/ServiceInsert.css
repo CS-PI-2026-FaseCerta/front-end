@@ -54,6 +54,10 @@
     font-weight: 600;
 }
 
+.service-insert-form .add-text-button:hover {
+    cursor: pointer;
+}
+
 .service-insert-form .header {
     display: flex;
     align-items: center;
@@ -92,20 +96,33 @@
     background-color: rgba(0, 0, 0, 0.062);
 }
 
+.service-insert-form .list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    height: 20rem;
+}
+
 .service-insert-form .list .description {
     display: flex;
     gap: 1rem;
 }
 
-.service-insert-form .create-service-line
-
-.service-insert-form .add-text-button.create {
-    color: var(--color-primary);
-    border: none;
-    background-color: transparent;
-    font-size: 1rem;
-    font-weight: 600;
+.service-insert-form .create-service-line {
+    display: flex;
+    justify-content: end;
 }
+
+.service-insert-form .value-line {
+    display: flex;
+    justify-content: space-between;
+}
+
+.service-insert-form .value-line span {
+    color: ;
+}
+
 
 .back-button {
     border: none;

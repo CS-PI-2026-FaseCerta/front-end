@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 export default function ServiceInsert() {
   const navigate = useNavigate();
 
+  const [valorTotal, setValorTotal] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,7 +24,31 @@ export default function ServiceInsert() {
       qntd: 1,
       preco: 350,
       obs: "Altura de 20 metros."
-    }
+    },
+    {
+      descricao: "Instalar Lâmpada",
+      qntd: 1,
+      preco: 350,
+      obs: "Altura de 20 metros."
+    },
+    {
+      descricao: "Instalar Lâmpada",
+      qntd: 1,
+      preco: 350,
+      obs: "Altura de 20 metros."
+    },
+    {
+      descricao: "Instalar Lâmpada",
+      qntd: 1,
+      preco: 350,
+      obs: "Altura de 20 metros."
+    },
+    {
+      descricao: "Instalar Lâmpada",
+      qntd: 1,
+      preco: 350,
+      obs: "Altura de 20 metros."
+    },
   ]
 
   return (
@@ -59,10 +84,13 @@ export default function ServiceInsert() {
             </div>
 
             <div className="create-service-line">
-              <button className="add-text-button create">+ Criar Serviço</button>
+              <button className="add-text-button">+ Criar Serviço</button>
             </div>
 
-            
+            <div className="value-line">
+              <p>Valor Total:</p>
+              <span>R$</span>
+            </div>
 
             <button
               type="submit"
