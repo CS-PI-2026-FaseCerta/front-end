@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 export default function ServiceInsert() {
   const navigate = useNavigate();
 
-  const [valorTotal, setValorTotal] = useState("");
+  const [valorTotal, setValorTotal] = useState(0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -72,24 +72,33 @@ export default function ServiceInsert() {
               <button className="add-text-button">+ Adicionar Serviço</button>
             </div>
 
-            <div className="list">
-              {servicos.map((servico) => (
-                <Card
-                  descricao={servico.descricao}
-                  qntd={servico.qntd}
-                  preco={servico.preco}
-                  obs={servico.obs}
-                />
-              ))}
-            </div>
+            
+            {servicos.length === 0 ? (
+              <div>
+
+              </div>
+            ) : (
+              <div className="list">
+                {servicos.map((servico) => (
+                  <Card
+                    descricao={servico.descricao}
+                    qntd={servico.qntd}
+                    preco={servico.preco}
+                    obs={servico.obs}
+                  />
+                ))}
+              </div>
+            )}
+
+            
 
             <div className="create-service-line">
               <button className="add-text-button">+ Criar Serviço</button>
             </div>
 
             <div className="value-line">
-              <p>Valor Total:</p>
-              <span>R$</span>
+              <p className="title">Valor Total:</p>
+              <span>R$ {valorTotal}</span>
             </div>
 
             <button

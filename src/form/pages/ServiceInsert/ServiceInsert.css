@@ -117,10 +117,19 @@
 .service-insert-form .value-line {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+
+.service-insert-form .value-line .title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: rgb(53, 53, 53);
 }
 
 .service-insert-form .value-line span {
-    color: ;
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 2rem;
 }
 
 
