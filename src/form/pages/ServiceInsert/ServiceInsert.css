@@ -51,6 +51,7 @@
     border: none;
     background-color: transparent;
     font-size: 1rem;
+    font-weight: 600;
 }
 
 .service-insert-form .header {
@@ -58,6 +59,52 @@
     align-items: center;
     justify-content: space-between;
     flex-direction: row;
+}
+
+.service-insert-form .card {
+    display: flex;
+    background-color: var(--color-surface-muted);
+    padding: 1rem 1rem;
+    border-radius: .7rem;
+}
+
+.service-insert-form .card .text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.service-insert-form .card .buttons {
+    display: flex;
+    padding: 0 1rem;
+}
+
+.service-insert-form .card .buttons button {
+    border: none;
+    background-color: transparent;
+    padding: .5rem .8rem;
+    transition: .2s;
+    border-radius: 1rem;
+}
+
+.service-insert-form .card .buttons button:hover {
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.062);
+}
+
+.service-insert-form .list .description {
+    display: flex;
+    gap: 1rem;
+}
+
+.service-insert-form .create-service-line
+
+.service-insert-form .add-text-button.create {
+    color: var(--color-primary);
+    border: none;
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .back-button {
