@@ -2,12 +2,30 @@ import React, { useState } from "react";
 import "./ApplyDiscounts.css";
 
 export default function AplicarDesconto() {
+    const subtotalServico = 350;
+
     const [tipoDescontoServico, setTipoDescontoServico] = useState("percentual");
     const [valorServico, setValorServico] = useState("");
 
     const handleQuickValue = (valor) => {
         setValorServico(valor);
     };
+
+    const calcularDescontoServico = () => {
+        const valor = Number(valorServico);
+
+        if (!valor || valor <= 0) {
+            return 0;
+        }
+
+        if (tipoDescontoServico === "percentual") {
+            return (subtotalServico * valor) / 100;
+        }
+
+        return valor;
+    };
+
+    const descontoServico = calcularDescontoServico();
 
     return (
         <div className="page-container">
@@ -28,7 +46,7 @@ export default function AplicarDesconto() {
                                 className={`toggle-button ${tipoDescontoServico === "percentual" ? "active" : ""}`}
                                 onClick={() => {
                                     setTipoDescontoServico("percentual");
-                                    setValorServico(""); //reseta o valor ao trocar o tipo
+                                    setValorServico("");
                                 }}
                             >
                                 %
@@ -173,6 +191,14 @@ export default function AplicarDesconto() {
                                 />
                             )}
                         </div>
+                    </div>
+
+                    <div className="discount-footer">
+                        <span>Desconto total</span>
+
+                        <strong>
+                            -R$ {descontoServico.toFixed(2)}
+                        </strong>
                     </div>
                 </div>
             </main>
