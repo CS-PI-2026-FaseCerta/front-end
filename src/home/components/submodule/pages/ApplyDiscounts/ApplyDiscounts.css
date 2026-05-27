@@ -1,32 +1,25 @@
 .page-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background: var(--dashboard-page-bg);
-    color: var(--text-primary);
+    background: transparent;
+    min-height: auto;
+}
+
+.page-container {
+    background: transparent;
+    min-height: auto;
+    width: 100%;
 }
 
 .main-content {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
-}
-
-h3{
-    padding: 10px;
-    font-weight: 700;
-    margin-top: 20px;
+    padding: 0;
+    display: block;
 }
 
 .card.wide-card {
-    background-color: var(--card-background);
     width: 100%;
-    max-width: 700px;
+    max-width: 100%;
+    background: transparent;
+    box-shadow: none;
     padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
@@ -75,6 +68,7 @@ h3{
     display: flex;
     gap: 10px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .opt-btn {
@@ -86,10 +80,6 @@ h3{
     font-weight: 700;
     color: #433f9b;
     transition: background 0.2s;
-}
-
-.opt-btn:hover {
-    background-color: #f0f0ff;
 }
 
 .small-input,
@@ -128,7 +118,6 @@ h3{
     border-color: #433f9b;
 }
 
-/* Animação para a troca de conteúdo não ser brusca */
 @keyframes fadeIn {
     from {
         opacity: 0;

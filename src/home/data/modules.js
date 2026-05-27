@@ -52,6 +52,19 @@ export const MODULES = [
       gestor: 4,
     },
   },
+  {
+    id: "aplicar-desconto",
+    title: "Aplicar Desconto",
+    description:
+      "Configure descontos para serviços e peças de forma rápida.",
+    path: "#",
+    icon: <FaWallet />,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 5,
+      tecnico: 4,
+    },
+  },
 ];
 
 export const getVisibleModulesByProfile = (profile) =>

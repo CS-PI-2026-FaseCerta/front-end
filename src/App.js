@@ -12,7 +12,6 @@ import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
-import ApplyDiscounts from "./submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
@@ -46,10 +45,6 @@ function App() {
             <Route
               path={AppRoutes.MaterialRegistration}
               element={<MaterialRegistration />}
-            />
-            <Route
-              path={AppRoutes.ApplyDiscounts}
-              element={<ApplyDiscounts />}
             />
             <Route
               path={AppRoutes.UserRegistration}

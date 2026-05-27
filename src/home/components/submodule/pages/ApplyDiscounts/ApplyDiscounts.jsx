@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import "./ApplyDiscounts.css";
-import Header from "../../../global/components/header/Header.jsx";
-import Footer from "../../../global/components/Footer/Footer.jsx";
 
 export default function AplicarDesconto() {
     const [tipoDescontoServico, setTipoDescontoServico] = useState("percentual");
-    // Novo estado para o valor do desconto de serviço
     const [valorServico, setValorServico] = useState("");
 
     const handleQuickValue = (valor) => {
@@ -14,28 +11,31 @@ export default function AplicarDesconto() {
 
     return (
         <div className="page-container">
-            <Header />
-
             <main className="main-content">
                 <div className="card wide-card">
                     <div className="card-header">
                         <h1>Aplicar Desconto</h1>
                     </div>
+
                     <div className="discount-card">
                         <h3>Serviço</h3>
+
                         <p>Desconto em percentual ou valor?</p>
 
                         <div className="toggle-container">
                             <button
+                                type="button"
                                 className={`toggle-button ${tipoDescontoServico === "percentual" ? "active" : ""}`}
                                 onClick={() => {
                                     setTipoDescontoServico("percentual");
-                                    setValorServico(""); // Reseta valor ao trocar tipo
+                                    setValorServico(""); //reseta o valor ao trocar o tipo
                                 }}
                             >
                                 %
                             </button>
+
                             <button
+                                type="button"
                                 className={`toggle-button ${tipoDescontoServico === "valor" ? "active" : ""}`}
                                 onClick={() => {
                                     setTipoDescontoServico("valor");
@@ -45,55 +45,76 @@ export default function AplicarDesconto() {
                                 R$
                             </button>
                         </div>
+
                         <p>Quanto de desconto?</p>
+
                         <div className="input-area">
                             {tipoDescontoServico === "percentual" ? (
                                 <div className="options-row">
                                     <button
+                                        type="button"
                                         className={`opt-btn ${valorServico === "5" ? "active" : ""}`}
                                         onClick={() => handleQuickValue("5")}
                                     >
                                         5%
                                     </button>
+
                                     <button
+                                        type="button"
                                         className={`opt-btn ${valorServico === "10" ? "active" : ""}`}
                                         onClick={() => handleQuickValue("10")}
                                     >
                                         10%
                                     </button>
+
                                     <input
-                                        type="text"
+                                        type="number"
                                         placeholder="Outros (%)"
                                         className="small-input"
-                                        value={(valorServico !== "5" && valorServico !== "10") ? valorServico : ""}
-                                        onChange={(e) => setValorServico(e.target.value)}
+                                        value={
+                                            valorServico !== "5" &&
+                                                valorServico !== "10"
+                                                ? valorServico
+                                                : ""
+                                        }
+                                        onChange={(e) =>
+                                            setValorServico(e.target.value)
+                                        }
                                     />
                                 </div>
                             ) : (
                                 <input
-                                    type="text"
+                                    type="number"
                                     placeholder="Insira o valor em R$"
                                     className="full-input"
                                     value={valorServico}
-                                    onChange={(e) => setValorServico(e.target.value)}
+                                    onChange={(e) =>
+                                        setValorServico(e.target.value)
+                                    }
                                 />
                             )}
                         </div>
                     </div>
+
+                    <div className="discount-card">
                         <h3>Peça</h3>
+
                         <p>Desconto em percentual ou valor?</p>
 
                         <div className="toggle-container">
                             <button
+                                type="button"
                                 className={`toggle-button ${tipoDescontoServico === "percentual" ? "active" : ""}`}
                                 onClick={() => {
                                     setTipoDescontoServico("percentual");
-                                    setValorServico(""); // Reseta valor ao trocar tipo
+                                    setValorServico("");
                                 }}
                             >
                                 %
                             </button>
+
                             <button
+                                type="button"
                                 className={`toggle-button ${tipoDescontoServico === "valor" ? "active" : ""}`}
                                 onClick={() => {
                                     setTipoDescontoServico("valor");
@@ -103,43 +124,58 @@ export default function AplicarDesconto() {
                                 R$
                             </button>
                         </div>
+
                         <p>Quanto de desconto?</p>
+
                         <div className="input-area">
                             {tipoDescontoServico === "percentual" ? (
                                 <div className="options-row">
                                     <button
+                                        type="button"
                                         className={`opt-btn ${valorServico === "5" ? "active" : ""}`}
                                         onClick={() => handleQuickValue("5")}
                                     >
                                         5%
                                     </button>
+
                                     <button
+                                        type="button"
                                         className={`opt-btn ${valorServico === "10" ? "active" : ""}`}
                                         onClick={() => handleQuickValue("10")}
                                     >
                                         10%
                                     </button>
+
                                     <input
-                                        type="text"
+                                        type="number"
                                         placeholder="Outros (%)"
                                         className="small-input"
-                                        value={(valorServico !== "5" && valorServico !== "10") ? valorServico : ""}
-                                        onChange={(e) => setValorServico(e.target.value)}
+                                        value={
+                                            valorServico !== "5" &&
+                                                valorServico !== "10"
+                                                ? valorServico
+                                                : ""
+                                        }
+                                        onChange={(e) =>
+                                            setValorServico(e.target.value)
+                                        }
                                     />
                                 </div>
                             ) : (
                                 <input
-                                    type="text"
+                                    type="number"
                                     placeholder="Insira o valor em R$"
                                     className="full-input"
                                     value={valorServico}
-                                    onChange={(e) => setValorServico(e.target.value)}
+                                    onChange={(e) =>
+                                        setValorServico(e.target.value)
+                                    }
                                 />
                             )}
                         </div>
+                    </div>
                 </div>
             </main>
-            <Footer />
         </div>
     );
 }

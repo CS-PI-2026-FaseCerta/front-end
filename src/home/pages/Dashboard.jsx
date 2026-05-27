@@ -18,15 +18,24 @@ import {
   saveQuickActionSelection,
   sanitizeQuickActionIdsByProfile,
 } from "../utils/quickActions";
+
 import "./Dashboard.css";
+
+import ApplyDiscounts from "../components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
 
 const Dashboard = () => {
   const currentUser = getCurrentUser();
   const perfilAtual = currentUser?.perfil;
 
-  const [isQuickActionsModalOpen, setIsQuickActionsModalOpen] = useState(false);
+  const [isQuickActionsModalOpen, setIsQuickActionsModalOpen] =
+    useState(false);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
+
   const [selectedQuickActionIds, setSelectedQuickActionIds] = useState([]);
+
   const [draftQuickActionIds, setDraftQuickActionIds] = useState([]);
 
   const visibleModules = perfilAtual
@@ -43,6 +52,7 @@ const Dashboard = () => {
     }
 
     const storedSelection = loadQuickActionSelection(perfilAtual);
+
     setSelectedQuickActionIds(storedSelection);
   }, [perfilAtual]);
 
@@ -58,7 +68,9 @@ const Dashboard = () => {
     };
 
     const previousOverflow = document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
+
     window.addEventListener("keydown", handleEscape);
 
     return () => {
@@ -75,10 +87,14 @@ const Dashboard = () => {
   const handleOpenCustomizeQuickActions = () => {
     const safeDraft =
       selectedQuickActionIds.length > 0
-        ? sanitizeQuickActionIdsByProfile(perfilAtual, selectedQuickActionIds)
+        ? sanitizeQuickActionIdsByProfile(
+          perfilAtual,
+          selectedQuickActionIds,
+        )
         : allowedQuickActions.map((action) => action.id);
 
     setDraftQuickActionIds(safeDraft);
+
     setIsQuickActionsModalOpen(true);
   };
 
@@ -104,8 +120,11 @@ const Dashboard = () => {
     );
 
     setSelectedQuickActionIds(safeSelection);
+
     saveQuickActionSelection(perfilAtual, safeSelection);
+
     setIsQuickActionsModalOpen(false);
+
     setDraftQuickActionIds([]);
   };
 
@@ -133,6 +152,7 @@ const Dashboard = () => {
         onMenuToggle={handleToggleSidebar}
         isSidebarOpen={isSidebarOpen}
       />
+
       <Sidebar
         isOpen={isSidebarOpen}
         onClose={handleCloseSidebar}
@@ -142,10 +162,14 @@ const Dashboard = () => {
       <main className="dashboard-shell">
         <section className="dashboard-hero">
           <div>
-            <span className="dashboard-hero__eyebrow">Painel de Controle</span>
+            <span className="dashboard-hero__eyebrow">
+              Painel de Controle
+            </span>
+
             <h1 className="dashboard-hero__title">
               Acesso rápido aos módulos operacionais
             </h1>
+
             <p className="dashboard-hero__subtitle">
               Os módulos abaixo são filtrados de acordo com o perfil
               autenticado. O objetivo desta tela é dar uma visão clara e direta
@@ -157,10 +181,17 @@ const Dashboard = () => {
             <span className="dashboard-hero__profile-label">
               Usuário logado
             </span>
+
             <strong>{currentUser.nome}</strong>
+
             <small>{currentUser.email}</small>
-            <span className="dashboard-hero__profile-label">Perfil atual</span>
+
+            <span className="dashboard-hero__profile-label">
+              Perfil atual
+            </span>
+
             <strong>{perfilLabel}</strong>
+
             <small>
               As permissões desta página seguem o perfil autenticado.
             </small>
@@ -169,18 +200,49 @@ const Dashboard = () => {
 
         <section className="dashboard-grid" aria-label="Módulos disponíveis">
           {visibleModules.map((modulo) => (
-            <ModuleCard
+            <div
               key={modulo.id}
-              title={modulo.title}
-              description={modulo.description}
-              icon={modulo.icon}
-              path={modulo.path}
-              ctaLabel={
-                modulo.id === "pedidos" ? "Abrir módulo" : "Acessar módulo"
-              }
-            />
+              onClick={() => {
+                if (modulo.id === "aplicar-desconto") {
+                  setIsDiscountModalOpen(true);
+                }
+              }}
+            >
+              <ModuleCard
+                title={modulo.title}
+                description={modulo.description}
+                icon={modulo.icon}
+                path="#"
+                ctaLabel={
+                  modulo.id === "pedidos"
+                    ? "Abrir módulo"
+                    : "Acessar módulo"
+                }
+              />
+            </div>
           ))}
         </section>
+
+        {isDiscountModalOpen && (
+          <div
+            className="dashboard-modal-overlay"
+            onClick={() => setIsDiscountModalOpen(false)}
+          >
+            <div
+              className="dashboard-modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="dashboard-modal-close"
+                onClick={() => setIsDiscountModalOpen(false)}
+              >
+                ×
+              </button>
+
+              <ApplyDiscounts />
+            </div>
+          </div>
+        )}
 
         <QuickActionsCarousel
           actions={quickActions}
@@ -203,10 +265,12 @@ const Dashboard = () => {
               <span className="dashboard-summary__eyebrow">
                 Área de destaque
               </span>
+
               <h2 className="dashboard-summary__title">
                 <FaChartLine aria-hidden="true" />
                 Operação em alta
               </h2>
+
               <p className="dashboard-summary__description">
                 Acompanhe a performance dos atendimentos e identifique
                 rapidamente os pontos de melhoria operacional com visão
@@ -221,6 +285,7 @@ const Dashboard = () => {
           </section>
         )}
       </main>
+
       <Footer />
     </div>
   );
