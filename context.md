@@ -147,3 +147,114 @@ Contém a saída gerada da aplicação já compilada.
 ## 8. Observação Final
 
 O código atual já entrega uma base consistente de navegação, identidade visual, controle de tema e organização por perfil. A evolução natural do projeto é conectar essa estrutura a serviços reais de autenticação, autorização e persistência de dados.
+
+## 9. Listagens Genéricas (GenericListPage, GenericTable, EmptyState)
+
+Esta seção documenta a implementação recente de uma estrutura reutilizável de listagens que centraliza paginação, filtros, ordenação e apresentação de estados vazios. A intenção é fornecer um padrão consistente para tabelas de Ordens de Serviço, Clientes, Serviços, Estoque, Peças e futuras entidades.
+
+### Componentes principais
+
+- `GenericListPage` (src/global/components/lists/GenericListPage.jsx): componente de alto nível que compõe toolbar, filtros, busca, paginação e provê o estado compartilhado de consulta (search, filters, page, pageSize, sort). É responsável por aplicar filtros, ordenação (client-side por enquanto) e paginação antes de renderizar a tabela.
+- `GenericTable` (src/global/components/lists/GenericTable.jsx): renderiza a tabela HTML a partir de `columns` e `rows`. Lida com apresentação (badges, ações por linha, responsividade) e emite interações do usuário (clique para ordenar). Mantém-se agnóstico sobre fonte de dados.
+- `EmptyState` (src/global/components/lists/EmptyState.jsx): componente reutilizável para exibir estado vazio ou erros com ação primária/secundária.
+
+### Objetivo da arquitetura
+
+- Reutilização: uma única implementação para atender listagens de diferentes domínios (OS, Clientes, Serviços, Peças, etc.).
+- Evitar duplicação: concentra lógica comum (filtros, paginação, ordenação) em helpers e componentes compartilhados.
+- Facilitar integração futura com backend: a API de `GenericListPage` já expõe metadados de ordenação (`sort`, `sortKey`, `sortDirection`, `sortParams`) e aceita configuração por `defaultSort` para facilitar migração para ordenação/paginação server-side.
+
+### Funcionalidades implementadas
+
+- Paginação client-side (helpers em `src/global/components/lists/listHelpers.js`).
+- Ordenação dinâmica por coluna (client-side), com suporte a `sortType` por coluna: `string`, `number`, `date`, `status` e `currency`.
+- Filtros e busca integrados (`filterRows` em `listHelpers.js`).
+- Empty State com mensagem, ícone e ação.
+- Ações por linha com suporte a ícones e `iconOnly`.
+- Tooltips e atributos ARIA para acessibilidade.
+- Filtro de status com ordem configurável via `sortOrder` nas colunas.
+- `defaultSort` para definir coluna e direção iniciais.
+- Responsividade e preservação do alinhamento de headers e ícones.
+- Suporte a tema (dark/light) por variáveis CSS no `:root`.
+
+### Como criar uma nova listagem usando a estrutura
+
+1. Defina `columns` (ex.: `src/home/pages/<module>/<module>.columns.js`):
+
+```js
+export const columns = [
+  {
+    key: "id",
+    header: "ID",
+    accessor: "id",
+    sortable: true,
+    sortType: "number",
+  },
+  {
+    key: "name",
+    header: "Nome",
+    accessor: "name",
+    sortable: true,
+    sortType: "string",
+  },
+  {
+    key: "createdAt",
+    header: "Criado em",
+    accessor: (r) => new Date(r.createdAt).toLocaleDateString(),
+    sortAccessor: (r) => r.createdAt,
+    sortable: true,
+    sortType: "date",
+  },
+];
+```
+
+2. Prepare `mockData` ou fonte de dados (array de objetos). Use keys compatíveis com `accessor`/`sortAccessor`.
+
+3. Defina `filters` (opcionais) em um arquivo auxiliar e passe para `GenericListPage`.
+
+4. Defina `rowActions` se desejar ações por linha (editar, excluir, visualizar). Exemplo de ação com ícone e `iconOnly`:
+
+```js
+rowActions = [
+  {
+    key: "edit",
+    label: "Editar",
+    icon: FaPen,
+    iconOnly: true,
+    onClick: (row) => {},
+  },
+];
+```
+
+5. Instancie `GenericListPage` na página:
+
+```jsx
+<GenericListPage
+  title="Minha Lista"
+  columns={columns}
+  data={myRows}
+  filters={myFilters}
+  rowActions={rowActions}
+  defaultSort={{ key: "createdAt", direction: "desc" }}
+/>
+```
+
+### Onde ficam os componentes e responsabilidades
+
+- `src/global/components/lists/listHelpers.js`: funções utilitárias — `filterRows`, `paginateRows`, `sortRows`, helpers de normalização e ordenação.
+- `src/global/components/lists/GenericListPage.jsx`: composição, estado da query (search/filters/page/pageSize/sort), chamada de `onQueryChange` e integração com `GenericTable`.
+- `src/global/components/lists/GenericTable.jsx`: renderização da tabela, cabeçalhos ordenáveis, ícones de sort, ações por linha.
+- `src/global/components/lists/GenericTable.css`: estilos do componente e variáveis CSS.
+- `src/global/components/lists/EmptyState.jsx`: componente de estado vazio/erro.
+- Exemplos de uso estão em `src/home/pages/*` (ex.: `pedidos/`).
+
+### Pontos preparados para futura integração backend/API
+
+- `GenericListPage` já emite `onQueryChange` com payload que inclui `searchTerm`, `filters`, `page`, `pageSize`, `sort` e `sortParams` prontos para montar query string (ex.: `?sort=name&order=desc`).
+- `listHelpers.sortRows` e `filterRows` são utilizados apenas para client-side por enquanto; ao migrar para backend, basta aplicar filtros e ordenação na API e injetar os resultados em `data` (desabilitar `clientSide`).
+- Colunas suportam `sortAccessor` e `sortOrder` para mapear valores exibidos para valores usados pela API.
+- Há comentários `TODO` indicando onde reaproveitar `sortParams` para consultas remotas.
+
+---
+
+> Observação: mantivemos toda a documentação anterior — essa seção complementa o contexto com a implementação de listagens genéricas e como usá-las.
