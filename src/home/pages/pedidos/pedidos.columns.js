@@ -1,14 +1,28 @@
+const parseCurrencyValue = (value) => {
+  const text = String(value ?? "")
+    .replace(/\s/g, "")
+    .replace(/[^\d,.-]/g, "")
+    .replace(/\./g, "")
+    .replace(/,/g, ".");
+
+  return Number(text) || 0;
+};
+
 export const pedidosColumns = [
   {
     key: "numero",
     header: "OS",
     accessor: "numero",
+    sortable: true,
+    sortType: "number",
     width: "92px",
   },
   {
     key: "cliente",
     header: "Cliente",
     accessor: "cliente",
+    sortable: true,
+    sortType: "string",
     searchable: true,
   },
   {
@@ -16,7 +30,10 @@ export const pedidosColumns = [
     header: "Abertura",
     accessor: (row) =>
       new Date(`${row.dataAbertura}T00:00:00`).toLocaleDateString("pt-BR"),
-    searchable: false,
+    sortAccessor: (row) => row.dataAbertura,
+    sortable: true,
+    sortType: "date",
+    searchable: true,
     width: "132px",
   },
   {
@@ -25,6 +42,9 @@ export const pedidosColumns = [
     accessor: "status",
     type: "badge",
     defaultBadgeVariant: "neutral",
+    sortable: true,
+    sortType: "status",
+    sortOrder: ["Aberto", "Em execução", "Finalizado"],
     searchable: true,
     width: "160px",
   },
@@ -32,6 +52,8 @@ export const pedidosColumns = [
     key: "responsavel",
     header: "Responsável",
     accessor: "responsavel",
+    sortable: true,
+    sortType: "string",
     searchable: true,
   },
   {
@@ -39,6 +61,9 @@ export const pedidosColumns = [
     header: "Valor",
     accessor: "valor",
     align: "right",
+    sortable: true,
+    sortType: "number",
+    sortAccessor: (row) => parseCurrencyValue(row.valor),
     searchable: false,
     width: "120px",
   },

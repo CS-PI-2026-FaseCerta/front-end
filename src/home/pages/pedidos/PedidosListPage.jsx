@@ -1,5 +1,5 @@
 import React from "react";
-import { FaPen, FaPlus, FaTrash } from "react-icons/fa";
+import { FaPen, FaClipboardList, FaPlus, FaTrash } from "react-icons/fa";
 import GenericListPage from "../../../global/components/lists/GenericListPage";
 import { pedidosMockData } from "./pedidos.mock";
 import { pedidosColumns } from "./pedidos.columns";
@@ -15,6 +15,10 @@ const PedidosListPage = () => {
       columns={pedidosColumns}
       data={items}
       filters={pedidosFilters}
+      defaultSort={{
+        key: "dataAbertura",
+        direction: "desc",
+      }}
       actions={[
         {
           key: "nova-os",
@@ -43,6 +47,7 @@ const PedidosListPage = () => {
         },
       ]}
       emptyState={{
+        icon: FaClipboardList,
         title: "Nenhuma ordem de serviço encontrada",
         description:
           "Use filtros, busca ou crie uma nova OS para começar a alimentar a listagem.",
@@ -50,7 +55,6 @@ const PedidosListPage = () => {
         actionHref: "/os/novo",
       }}
       search={{ placeholder: "Buscar por OS, cliente ou responsável" }}
-      footerNote="TODO: integrar com backend futuramente usando paginação, filtros e busca server-side."
     />
   );
 };

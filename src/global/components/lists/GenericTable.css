@@ -34,6 +34,67 @@
   text-align: left;
   text-transform: uppercase;
   background: var(--list-card-muted-surface);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.generic-table__head-cell--sortable {
+  cursor: pointer;
+}
+
+.generic-table__head-cell--sortable:hover,
+.generic-table__head-cell--sortable:focus-within {
+  background: var(--list-hover-surface);
+  color: var(--color-text-primary);
+}
+
+.generic-table__head-cell--sorted {
+  color: var(--color-text-primary);
+}
+
+.generic-table__head-cell--sorted .generic-table__head-icon {
+  color: var(--color-primary);
+}
+
+.generic-table__head-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: inherit;
+}
+
+.generic-table__head-button:focus-visible {
+  outline: none;
+}
+
+.generic-table__head-icon {
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  opacity: 0.7;
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease,
+    color 160ms ease;
+}
+
+.generic-table__head-cell--sortable:hover .generic-table__head-icon,
+.generic-table__head-cell--sortable:focus-within .generic-table__head-icon {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.generic-table__head-icon--active {
+  opacity: 1;
 }
 
 .generic-table__head-cell--center,
@@ -110,7 +171,6 @@
 
 .generic-table__actions {
   display: inline-flex;
-  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 0.4rem;
 }
@@ -136,12 +196,24 @@
     transform 160ms ease;
 }
 
+[title="Editar"] {
+  color: var(--color-primary);
+}
+[title="Excluir"] {
+  color: var(--error-color);
+}
+
 .generic-table__action:hover,
 .generic-table__action:focus-visible {
   background: var(--list-card-muted-surface);
   border-color: var(--list-border-soft);
   color: var(--color-primary);
   transform: translateY(-1px);
+}
+
+[title="Excluir"]:hover,
+[title="Excluir"]:focus-visible {
+  color: var(--error-color-hover);
 }
 
 .generic-table__action--primary {

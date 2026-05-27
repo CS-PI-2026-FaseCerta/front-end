@@ -40,6 +40,22 @@ export const getColumnValue = (row, column, rowIndex) => {
   return undefined;
 };
 
+const getRawSortValue = (row, column, rowIndex) => {
+  if (!column) {
+    return undefined;
+  }
+
+  if (typeof column.sortAccessor === "function") {
+    return column.sortAccessor(row, rowIndex);
+  }
+
+  if (typeof column.sortAccessor === "string" && row) {
+    return row[column.sortAccessor];
+  }
+
+  return getColumnValue(row, column, rowIndex);
+};
+
 const flattenValue = (value) => {
   if (value == null) {
     return "";
@@ -65,6 +81,170 @@ const flattenValue = (value) => {
   }
 
   return String(value);
+};
+
+const toComparableNumber = (value) => {
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : Number.NEGATIVE_INFINITY;
+  }
+
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime())
+      ? Number.NEGATIVE_INFINITY
+      : value.getTime();
+  }
+
+  const text = flattenValue(value).trim();
+
+  if (!text) {
+    return Number.NEGATIVE_INFINITY;
+  }
+
+  const compactText = text.replace(/\s/g, "");
+  const hasComma = compactText.includes(",");
+  const hasDot = compactText.includes(".");
+
+  let normalizedText = compactText.replace(/[^\d,.-]/g, "");
+
+  if (hasComma && hasDot) {
+    normalizedText = normalizedText.replace(/\./g, "").replace(/,/g, ".");
+  } else if (hasComma) {
+    normalizedText = normalizedText.replace(/,/g, ".");
+  }
+
+  const numericValue = Number(normalizedText);
+
+  return Number.isNaN(numericValue) ? Number.NEGATIVE_INFINITY : numericValue;
+};
+
+const toComparableDate = (value) => {
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime())
+      ? Number.NEGATIVE_INFINITY
+      : value.getTime();
+  }
+
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : Number.NEGATIVE_INFINITY;
+  }
+
+  const timestamp = Date.parse(flattenValue(value));
+  return Number.isNaN(timestamp) ? Number.NEGATIVE_INFINITY : timestamp;
+};
+
+const resolveStatusOrder = (column = {}) => {
+  const { sortOrder } = column;
+
+  if (Array.isArray(sortOrder)) {
+    return new Map(
+      sortOrder.map((entry, index) => [
+        normalizeText(flattenValue(entry)),
+        index,
+      ]),
+    );
+  }
+
+  if (sortOrder && typeof sortOrder === "object") {
+    return new Map(
+      Object.entries(sortOrder).map(([entry, index]) => [
+        normalizeText(entry),
+        index,
+      ]),
+    );
+  }
+
+  return null;
+};
+
+const compareComparableValues = (leftValue, rightValue, sortType, column) => {
+  const leftEmpty = leftValue == null || leftValue === "";
+  const rightEmpty = rightValue == null || rightValue === "";
+
+  if (leftEmpty && rightEmpty) {
+    return 0;
+  }
+
+  if (leftEmpty) {
+    return 1;
+  }
+
+  if (rightEmpty) {
+    return -1;
+  }
+
+  if (sortType === "number" || sortType === "currency") {
+    return toComparableNumber(leftValue) - toComparableNumber(rightValue);
+  }
+
+  if (sortType === "date") {
+    return toComparableDate(leftValue) - toComparableDate(rightValue);
+  }
+
+  if (sortType === "status") {
+    const statusOrder = resolveStatusOrder(column);
+
+    if (statusOrder) {
+      const leftKey = normalizeText(flattenValue(leftValue));
+      const rightKey = normalizeText(flattenValue(rightValue));
+      const leftIndex = statusOrder.has(leftKey)
+        ? statusOrder.get(leftKey)
+        : Number.POSITIVE_INFINITY;
+      const rightIndex = statusOrder.has(rightKey)
+        ? statusOrder.get(rightKey)
+        : Number.POSITIVE_INFINITY;
+
+      if (leftIndex !== rightIndex) {
+        return leftIndex - rightIndex;
+      }
+    }
+  }
+
+  const leftText = normalizeText(flattenValue(leftValue));
+  const rightText = normalizeText(flattenValue(rightValue));
+
+  return leftText.localeCompare(rightText, "pt-BR", {
+    sensitivity: "base",
+    numeric: true,
+  });
+};
+
+export const sortRows = (rows, columns, sortConfig) => {
+  if (!Array.isArray(rows) || rows.length <= 1) {
+    return Array.isArray(rows) ? [...rows] : [];
+  }
+
+  if (!sortConfig?.key || !sortConfig.direction) {
+    return [...rows];
+  }
+
+  const column = columns.find((item) => item.key === sortConfig.key);
+
+  if (!column?.sortable) {
+    return [...rows];
+  }
+
+  const sortType = column.sortType ?? "string";
+  const directionMultiplier = sortConfig.direction === "desc" ? -1 : 1;
+
+  return rows
+    .map((row, index) => ({ row, index }))
+    .sort((left, right) => {
+      const leftValue = getRawSortValue(left.row, column, left.index);
+      const rightValue = getRawSortValue(right.row, column, right.index);
+      const comparison = compareComparableValues(
+        leftValue,
+        rightValue,
+        sortType,
+        column,
+      );
+
+      if (comparison !== 0) {
+        return comparison * directionMultiplier;
+      }
+
+      return left.index - right.index;
+    })
+    .map(({ row }) => row);
 };
 
 export const resolveBadge = (value, column = {}) => {

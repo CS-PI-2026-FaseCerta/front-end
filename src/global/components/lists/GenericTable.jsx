@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FaSort, FaSortDown, FaSortUp } from "react-icons/fa";
 import { resolveBadge, getColumnValue, getRowKey } from "./listHelpers";
 import "./GenericTable.css";
 
@@ -17,6 +18,9 @@ const GenericTable = ({
   data = [],
   rowKey = "id",
   rowActions = [],
+  styleActions = [],
+  sortConfig = null,
+  onSortChange,
   className = "",
   emptyLabel = "Sem dados para exibir.",
 }) => {
@@ -25,6 +29,38 @@ const GenericTable = ({
   const showActionsColumn = Array.isArray(rowActions)
     ? rowActions.length > 0
     : typeof rowActions === "function";
+
+  const handleSortToggle = (column) => {
+    if (!column?.sortable || typeof onSortChange !== "function") {
+      return;
+    }
+
+    onSortChange(column);
+  };
+
+  const resolveSortIcon = (column) => {
+    if (!column?.sortable) {
+      return null;
+    }
+
+    const isActive = sortConfig?.key === column.key;
+
+    if (!isActive) {
+      return <FaSort aria-hidden="true" className="generic-table__head-icon" />;
+    }
+
+    return sortConfig.direction === "desc" ? (
+      <FaSortDown
+        aria-hidden="true"
+        className="generic-table__head-icon generic-table__head-icon--active"
+      />
+    ) : (
+      <FaSortUp
+        aria-hidden="true"
+        className="generic-table__head-icon generic-table__head-icon--active"
+      />
+    );
+  };
 
   return (
     <div className={`generic-table ${className}`.trim()}>
@@ -37,6 +73,18 @@ const GenericTable = ({
                   key={column.key}
                   className={[
                     "generic-table__head-cell",
+                    column.sortable ? "generic-table__head-cell--sortable" : "",
+                    sortConfig?.key === column.key
+                      ? "generic-table__head-cell--sorted"
+                      : "",
+                    sortConfig?.key === column.key &&
+                    sortConfig?.direction === "asc"
+                      ? "generic-table__head-cell--sorted-asc"
+                      : "",
+                    sortConfig?.key === column.key &&
+                    sortConfig?.direction === "desc"
+                      ? "generic-table__head-cell--sorted-desc"
+                      : "",
                     column.align
                       ? `generic-table__head-cell--${column.align}`
                       : "",
@@ -46,8 +94,36 @@ const GenericTable = ({
                     .join(" ")}
                   style={column.width ? { width: column.width } : undefined}
                   scope="col"
+                  aria-sort={
+                    sortConfig?.key === column.key
+                      ? sortConfig.direction === "desc"
+                        ? "descending"
+                        : "ascending"
+                      : "none"
+                  }
                 >
-                  {column.header}
+                  {column.sortable ? (
+                    <button
+                      type="button"
+                      className="generic-table__head-button"
+                      onClick={() => handleSortToggle(column)}
+                      aria-label={`Ordenar por ${column.header ?? column.label ?? column.key}`}
+                      title={`Ordenar por ${column.header ?? column.label ?? column.key}`}
+                      style={{
+                        justifyContent:
+                          column.align === "center"
+                            ? "center"
+                            : column.align === "right"
+                              ? "flex-end"
+                              : "flex-start",
+                      }}
+                    >
+                      <span>{column.header ?? column.label}</span>
+                      {resolveSortIcon(column)}
+                    </button>
+                  ) : (
+                    (column.header ?? column.label)
+                  )}
                 </th>
               ))}
               {showActionsColumn ? (

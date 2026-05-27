@@ -1,6 +1,11 @@
 import React, { useEffect, useId, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaArrowLeft, FaExclamationTriangle, FaSearch } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaArrowRight,
+  FaExclamationTriangle,
+  FaSearch,
+} from "react-icons/fa";
 import Header from "../header/Header.jsx";
 import EmptyState from "./EmptyState";
 import GenericTable from "./GenericTable";
@@ -9,6 +14,7 @@ import {
   DEFAULT_PAGE_SIZE_OPTIONS,
   filterRows,
   paginateRows,
+  sortRows,
 } from "./listHelpers";
 import "./GenericListPage.css";
 
@@ -30,7 +36,45 @@ const getVisiblePageNumbers = (currentPage, totalPages) => {
     .sort((left, right) => left - right);
 };
 
+const normalizeSortConfig = (sortConfig, columns) => {
+  if (!sortConfig?.key || !sortConfig.direction) {
+    return null;
+  }
+
+  const column = columns.find((item) => item.key === sortConfig.key);
+
+  if (!column?.sortable) {
+    return null;
+  }
+
+  if (sortConfig.direction !== "asc" && sortConfig.direction !== "desc") {
+    return null;
+  }
+
+  return {
+    key: sortConfig.key,
+    direction: sortConfig.direction,
+  };
+};
+
+const getNextSortConfig = (currentSort, column) => {
+  const isActiveColumn = currentSort?.key === column.key;
+
+  if (!isActiveColumn) {
+    return {
+      key: column.key,
+      direction: "asc",
+    };
+  }
+
+  return {
+    key: column.key,
+    direction: currentSort.direction === "asc" ? "desc" : "asc",
+  };
+};
+
 const GenericListPage = ({
+  icon: Icon,
   title,
   description,
   columns = [],
@@ -42,6 +86,7 @@ const GenericListPage = ({
   loading = false,
   error = null,
   totalItems,
+  defaultSort = null,
   pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
   initialPageSize = DEFAULT_PAGE_SIZE,
   clientSide = true,
@@ -54,10 +99,12 @@ const GenericListPage = ({
   className = "",
   rowKey = "id",
   search = {},
-  footerNote,
 }) => {
   const titleTooltipId = useId();
   const [searchTerm, setSearchTerm] = useState(search.defaultValue ?? "");
+  const [sortConfig, setSortConfig] = useState(() =>
+    normalizeSortConfig(defaultSort, columns),
+  );
   const [filterValues, setFilterValues] = useState(() =>
     filters.reduce((accumulator, filter) => {
       if (filter.defaultValue != null) {
@@ -71,13 +118,27 @@ const GenericListPage = ({
   const [pageSize, setPageSize] = useState(initialPageSize);
 
   useEffect(() => {
+    // TODO: quando o backend suportar ordenação remota, reaproveitar sortParams para query string.
     onQueryChange?.({
       searchTerm,
       filters: filterValues,
       page,
       pageSize,
+      sort: sortConfig,
+      sortKey: sortConfig?.key ?? null,
+      sortDirection: sortConfig?.direction ?? null,
+      sortParams: sortConfig
+        ? {
+            sort: sortConfig.key,
+            order: sortConfig.direction,
+          }
+        : null,
     });
-  }, [filterValues, onQueryChange, page, pageSize, searchTerm]);
+  }, [filterValues, onQueryChange, page, pageSize, searchTerm, sortConfig]);
+
+  useEffect(() => {
+    setSortConfig(normalizeSortConfig(defaultSort, columns));
+  }, [defaultSort, columns]);
 
   useEffect(() => {
     setPage(1);
@@ -98,7 +159,9 @@ const GenericListPage = ({
     }
 
     const filteredRows = filterRows(data, columns, searchTerm, filterValues);
-    return paginateRows(filteredRows, page, pageSize);
+    const sortedRows = sortRows(filteredRows, columns, sortConfig);
+
+    return paginateRows(sortedRows, page, pageSize);
   }, [
     clientSide,
     columns,
@@ -106,6 +169,7 @@ const GenericListPage = ({
     filterValues,
     page,
     pageSize,
+    sortConfig,
     searchTerm,
     totalItems,
   ]);
@@ -142,6 +206,13 @@ const GenericListPage = ({
       ...current,
       [filterKey]: value,
     }));
+    setPage(1);
+  };
+
+  const handleSortChange = (column) => {
+    const nextSortConfig = getNextSortConfig(sortConfig, column);
+
+    setSortConfig(nextSortConfig);
     setPage(1);
   };
 
@@ -301,7 +372,7 @@ const GenericListPage = ({
 
             {error ? (
               <EmptyState
-                icon={FaExclamationTriangle}
+                icon={Icon ?? FaExclamationTriangle}
                 title={error.title ?? "Não foi possível carregar os dados"}
                 description={
                   error.message ??
@@ -337,6 +408,8 @@ const GenericListPage = ({
                 data={currentRows}
                 rowKey={rowKey}
                 rowActions={rowActions}
+                sortConfig={sortConfig}
+                onSortChange={handleSortChange}
               />
             )}
 
@@ -425,15 +498,11 @@ const GenericListPage = ({
                     aria-label="Próxima página"
                     title="Próxima página"
                   >
-                    ›
+                    <FaArrowRight aria-hidden="true" />
                   </button>
                 </div>
               </div>
             </div>
-
-            {footerNote ? (
-              <p className="generic-list-page__note">{footerNote}</p>
-            ) : null}
           </div>
         </section>
       </main>
