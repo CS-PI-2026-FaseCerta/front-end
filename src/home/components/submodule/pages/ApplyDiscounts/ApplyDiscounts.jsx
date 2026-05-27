@@ -7,6 +7,8 @@ export default function AplicarDesconto() {
     const [tipoDescontoServico, setTipoDescontoServico] = useState("percentual");
     const [valorServico, setValorServico] = useState("");
 
+    const [isSaving, setIsSaving] = useState(false);
+
     const handleQuickValue = (valor) => {
         setValorServico(valor);
     };
@@ -26,6 +28,50 @@ export default function AplicarDesconto() {
     };
 
     const descontoServico = calcularDescontoServico();
+
+    let mensagemErroAtual = "";
+
+    if (tipoDescontoServico === "percentual") {
+        if (Number(valorServico) > 100) {
+            mensagemErroAtual =
+                "O percentual não pode ser maior que 100%.";
+        }
+    }
+
+    if (descontoServico > subtotalServico) {
+        mensagemErroAtual =
+            "O desconto não pode ser maior que o valor total do serviço.";
+    }
+
+    const isFormValid =
+        valorServico !== "" &&
+        descontoServico > 0 &&
+        descontoServico <= subtotalServico &&
+        mensagemErroAtual === "";
+
+
+    const handleSalvarDesconto = () => {
+        if (!isFormValid) {
+            return;
+        }
+
+        setIsSaving(true);
+
+        setTimeout(() => {
+            console.log("Desconto salvo com sucesso!");
+
+            setIsSaving(false);
+
+            // fecha o modal
+            if (window.history.length > 0) {
+                const modalOverlay = document.querySelector(".dashboard-modal-overlay");
+
+                if (modalOverlay) {
+                    modalOverlay.click();
+                }
+            }
+        }, 1500);
+    };
 
     return (
         <div className="page-container">
@@ -207,14 +253,38 @@ export default function AplicarDesconto() {
                         </label>
 
                         <div className="discount-total-box">
-                            <span className="discount-total-value">
-                                -R$ {descontoServico.toFixed(2)}
+                            <span
+                                className={`discount-total-value ${mensagemErroAtual ? "error" : ""
+                                    }`}
+                            >
+                                -R${" "}
+                                {descontoServico.toLocaleString("pt-BR", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
                             </span>
 
                             <span className="discount-total-description">
                                 Valor total aplicado na ordem de serviço
                             </span>
+
+                            {mensagemErroAtual && (
+                                <p className="discount-error-message">
+                                    {mensagemErroAtual}
+                                </p>
+                            )}
                         </div>
+
+                        <button
+                            type="button"
+                            className="save-discount-btn"
+                            disabled={!isFormValid || isSaving}
+                            onClick={handleSalvarDesconto}
+                        >
+                            {isSaving
+                                ? "SALVANDO..."
+                                : "SALVAR DESCONTO"}
+                        </button>
                     </div>
                 </div>
             </main>

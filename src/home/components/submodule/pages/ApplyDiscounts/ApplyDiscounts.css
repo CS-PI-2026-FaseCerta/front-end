@@ -175,6 +175,41 @@
     color: #64748b;
 }
 
+.discount-total-value.error {
+    color: #dc2626;
+}
+
+.discount-error-message {
+    margin-top: 10px;
+    color: #dc2626;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.save-discount-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    background: #433f9b;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.save-discount-btn:hover:not(:disabled) {
+    background: #3730a3;
+}
+
+.save-discount-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
