@@ -3,15 +3,18 @@
     min-height: auto;
 }
 
-.page-container {
-    background: transparent;
-    min-height: auto;
-    width: 100%;
-}
-
 .main-content {
     padding: 0;
-    display: block;
+}
+
+.discount-card h3 {
+    padding: 10px;
+    font-weight: 700;
+    margin-top: 20px;
+}
+
+.discount-card+.discount-card {
+    margin-top: 35px;
 }
 
 .card.wide-card {
@@ -116,6 +119,60 @@
 .opt-btn:hover:not(.active) {
     background-color: #f0f0ff;
     border-color: #433f9b;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper.prefix input {
+    padding-left: 48px !important;
+}
+
+.currency-prefix {
+    position: absolute;
+    left: 14px;
+    font-weight: 700;
+    color: #433f9b;
+    font-size: 14px;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.discount-total-container {
+    margin-top: 40px;
+}
+
+.discount-total-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.discount-total-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+}
+
+.discount-total-value {
+    display: block;
+    font-size: 32px;
+    font-weight: 800;
+    color: #e53e3e;
+    margin-bottom: 8px;
+}
+
+.discount-total-description {
+    font-size: 14px;
+    color: #64748b;
 }
 
 @keyframes fadeIn {

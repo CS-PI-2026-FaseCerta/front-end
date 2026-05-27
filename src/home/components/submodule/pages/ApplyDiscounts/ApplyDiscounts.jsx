@@ -101,15 +101,19 @@ export default function AplicarDesconto() {
                                     />
                                 </div>
                             ) : (
-                                <input
-                                    type="number"
-                                    placeholder="Insira o valor em R$"
-                                    className="full-input"
-                                    value={valorServico}
-                                    onChange={(e) =>
-                                        setValorServico(e.target.value)
-                                    }
-                                />
+                                <div className="input-wrapper prefix">
+                                    <span className="currency-prefix">R$</span>
+
+                                    <input
+                                        type="number"
+                                        placeholder="0,00"
+                                        className="full-input"
+                                        value={valorServico}
+                                        onChange={(e) =>
+                                            setValorServico(e.target.value)
+                                        }
+                                    />
+                                </div>
                             )}
                         </div>
                     </div>
@@ -180,25 +184,37 @@ export default function AplicarDesconto() {
                                     />
                                 </div>
                             ) : (
-                                <input
-                                    type="number"
-                                    placeholder="Insira o valor em R$"
-                                    className="full-input"
-                                    value={valorServico}
-                                    onChange={(e) =>
-                                        setValorServico(e.target.value)
-                                    }
-                                />
+                                <div className="input-wrapper prefix">
+                                    <span className="currency-prefix">R$</span>
+
+                                    <input
+                                        type="number"
+                                        placeholder="0,00"
+                                        className="full-input"
+                                        value={valorServico}
+                                        onChange={(e) =>
+                                            setValorServico(e.target.value)
+                                        }
+                                    />
+                                </div>
                             )}
                         </div>
                     </div>
 
-                    <div className="discount-footer">
-                        <span>Desconto total</span>
+                    <div className="discount-total-container">
+                        <label className="discount-total-label">
+                            DESCONTO TOTAL
+                        </label>
 
-                        <strong>
-                            -R$ {descontoServico.toFixed(2)}
-                        </strong>
+                        <div className="discount-total-box">
+                            <span className="discount-total-value">
+                                -R$ {descontoServico.toFixed(2)}
+                            </span>
+
+                            <span className="discount-total-description">
+                                Valor total aplicado na ordem de serviço
+                            </span>
+                        </div>
                     </div>
                 </div>
             </main>
