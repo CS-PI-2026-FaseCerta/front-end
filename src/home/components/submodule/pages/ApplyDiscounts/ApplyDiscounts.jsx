@@ -8,9 +8,16 @@ export default function AplicarDesconto() {
     const [valorServico, setValorServico] = useState("");
 
     const [isSaving, setIsSaving] = useState(false);
+    const [quickSelected, setQuickSelected] = useState("");
 
     const handleQuickValue = (valor) => {
+        setQuickSelected(valor);
         setValorServico(valor);
+    };
+
+    const handleInputChange = (e) => {
+        setQuickSelected("");
+        setValorServico(e.target.value);
     };
 
     const calcularDescontoServico = () => {
@@ -49,7 +56,6 @@ export default function AplicarDesconto() {
         descontoServico <= subtotalServico &&
         mensagemErroAtual === "";
 
-
     const handleSalvarDesconto = () => {
         if (!isFormValid) {
             return;
@@ -62,13 +68,12 @@ export default function AplicarDesconto() {
 
             setIsSaving(false);
 
-            // fecha o modal
-            if (window.history.length > 0) {
-                const modalOverlay = document.querySelector(".dashboard-modal-overlay");
+            const modalOverlay = document.querySelector(
+                ".dashboard-modal-overlay"
+            );
 
-                if (modalOverlay) {
-                    modalOverlay.click();
-                }
+            if (modalOverlay) {
+                modalOverlay.click();
             }
         }, 1500);
     };
@@ -89,10 +94,14 @@ export default function AplicarDesconto() {
                         <div className="toggle-container">
                             <button
                                 type="button"
-                                className={`toggle-button ${tipoDescontoServico === "percentual" ? "active" : ""}`}
+                                className={`toggle-button ${tipoDescontoServico === "percentual"
+                                        ? "active"
+                                        : ""
+                                    }`}
                                 onClick={() => {
                                     setTipoDescontoServico("percentual");
                                     setValorServico("");
+                                    setQuickSelected("");
                                 }}
                             >
                                 %
@@ -100,10 +109,14 @@ export default function AplicarDesconto() {
 
                             <button
                                 type="button"
-                                className={`toggle-button ${tipoDescontoServico === "valor" ? "active" : ""}`}
+                                className={`toggle-button ${tipoDescontoServico === "valor"
+                                        ? "active"
+                                        : ""
+                                    }`}
                                 onClick={() => {
                                     setTipoDescontoServico("valor");
                                     setValorServico("");
+                                    setQuickSelected("");
                                 }}
                             >
                                 R$
@@ -117,16 +130,26 @@ export default function AplicarDesconto() {
                                 <div className="options-row">
                                     <button
                                         type="button"
-                                        className={`opt-btn ${valorServico === "5" ? "active" : ""}`}
-                                        onClick={() => handleQuickValue("5")}
+                                        className={`opt-btn ${quickSelected === "5"
+                                                ? "active"
+                                                : ""
+                                            }`}
+                                        onClick={() =>
+                                            handleQuickValue("5")
+                                        }
                                     >
                                         5%
                                     </button>
 
                                     <button
                                         type="button"
-                                        className={`opt-btn ${valorServico === "10" ? "active" : ""}`}
-                                        onClick={() => handleQuickValue("10")}
+                                        className={`opt-btn ${quickSelected === "10"
+                                                ? "active"
+                                                : ""
+                                            }`}
+                                        onClick={() =>
+                                            handleQuickValue("10")
+                                        }
                                     >
                                         10%
                                     </button>
@@ -135,36 +158,29 @@ export default function AplicarDesconto() {
                                         type="number"
                                         placeholder="Outros (%)"
                                         className="small-input"
-                                        value={
-                                            valorServico !== "5" &&
-                                                valorServico !== "10"
-                                                ? valorServico
-                                                : ""
-                                        }
-                                        onChange={(e) =>
-                                            setValorServico(e.target.value)
-                                        }
+                                        value={valorServico}
+                                        onChange={handleInputChange}
                                     />
                                 </div>
                             ) : (
                                 <div className="input-wrapper prefix">
-                                    <span className="currency-prefix">R$</span>
+                                    <span className="currency-prefix">
+                                        R$
+                                    </span>
 
                                     <input
                                         type="number"
                                         placeholder="0,00"
                                         className="full-input"
                                         value={valorServico}
-                                        onChange={(e) =>
-                                            setValorServico(e.target.value)
-                                        }
+                                        onChange={handleInputChange}
                                     />
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    <div className="discount-card">
+                    <div className="discount-card piece-section">
                         <h3>Peça</h3>
 
                         <p>Desconto em percentual ou valor?</p>
@@ -172,10 +188,14 @@ export default function AplicarDesconto() {
                         <div className="toggle-container">
                             <button
                                 type="button"
-                                className={`toggle-button ${tipoDescontoServico === "percentual" ? "active" : ""}`}
+                                className={`toggle-button ${tipoDescontoServico === "percentual"
+                                        ? "active"
+                                        : ""
+                                    }`}
                                 onClick={() => {
                                     setTipoDescontoServico("percentual");
                                     setValorServico("");
+                                    setQuickSelected("");
                                 }}
                             >
                                 %
@@ -183,10 +203,14 @@ export default function AplicarDesconto() {
 
                             <button
                                 type="button"
-                                className={`toggle-button ${tipoDescontoServico === "valor" ? "active" : ""}`}
+                                className={`toggle-button ${tipoDescontoServico === "valor"
+                                        ? "active"
+                                        : ""
+                                    }`}
                                 onClick={() => {
                                     setTipoDescontoServico("valor");
                                     setValorServico("");
+                                    setQuickSelected("");
                                 }}
                             >
                                 R$
@@ -200,7 +224,10 @@ export default function AplicarDesconto() {
                                 <div className="options-row">
                                     <button
                                         type="button"
-                                        className={`opt-btn ${valorServico === "5" ? "active" : ""}`}
+                                        className={`opt-btn ${quickSelected === "5"
+                                                ? "active"
+                                                : ""
+                                            }`}
                                         onClick={() => handleQuickValue("5")}
                                     >
                                         5%
@@ -208,7 +235,10 @@ export default function AplicarDesconto() {
 
                                     <button
                                         type="button"
-                                        className={`opt-btn ${valorServico === "10" ? "active" : ""}`}
+                                        className={`opt-btn ${quickSelected === "10"
+                                                ? "active"
+                                                : ""
+                                            }`}
                                         onClick={() => handleQuickValue("10")}
                                     >
                                         10%
@@ -218,29 +248,22 @@ export default function AplicarDesconto() {
                                         type="number"
                                         placeholder="Outros (%)"
                                         className="small-input"
-                                        value={
-                                            valorServico !== "5" &&
-                                                valorServico !== "10"
-                                                ? valorServico
-                                                : ""
-                                        }
-                                        onChange={(e) =>
-                                            setValorServico(e.target.value)
-                                        }
+                                        value={valorServico}
+                                        onChange={handleInputChange}
                                     />
                                 </div>
                             ) : (
                                 <div className="input-wrapper prefix">
-                                    <span className="currency-prefix">R$</span>
+                                    <span className="currency-prefix">
+                                        R$
+                                    </span>
 
                                     <input
                                         type="number"
                                         placeholder="0,00"
                                         className="full-input"
                                         value={valorServico}
-                                        onChange={(e) =>
-                                            setValorServico(e.target.value)
-                                        }
+                                        onChange={handleInputChange}
                                     />
                                 </div>
                             )}
