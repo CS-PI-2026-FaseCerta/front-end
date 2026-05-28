@@ -54,7 +54,6 @@ const PedidosListPage = () => {
         actionLabel: "Criar nova OS",
         actionHref: "/os/novo",
       }}
-      search={{ placeholder: "Buscar por OS, cliente ou responsável" }}
     />
   );
 };

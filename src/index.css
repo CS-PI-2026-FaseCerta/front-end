@@ -26,6 +26,7 @@
   --color-border: var(--border-color);
   --color-highlight: #dff5f2;
   --color-highlight-strong: #b7ece4;
+  --color-focus: #2563eb;
 
   --header-surface: rgba(248, 251, 255, 0.92);
   --header-border-color: rgba(148, 163, 184, 0.35);
@@ -147,6 +148,7 @@
   --error-bg: rgba(229, 62, 62, 0.16);
   --error-border-color: rgba(229, 62, 62, 0.5);
   --success-color: #7ddf97;
+  --color-focus: #93c5fd;
 
   --header-surface: rgba(15, 23, 42, 0.88);
   --header-border-color: rgba(148, 163, 184, 0.2);
@@ -291,4 +293,19 @@ input[type="password"]::-ms-clear {
 
 .back-button:hover {
   cursor: pointer;
+}
+
+:where(
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  summary,
+  [role="button"],
+  [role="link"],
+  [tabindex]:not([tabindex="-1"])
+):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }

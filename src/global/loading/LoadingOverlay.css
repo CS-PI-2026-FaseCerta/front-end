@@ -1,0 +1,82 @@
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.loading-overlay--fullscreen {
+  position: fixed;
+}
+
+.loading-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--color-bg) 45%, transparent);
+  backdrop-filter: blur(4px);
+}
+
+.loading-overlay__panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  max-width: 20rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--list-shell-border);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-elevated);
+  text-align: center;
+}
+
+.loading-overlay__dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 1.5rem;
+}
+
+.loading-overlay__dots span {
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+  animation: loading-overlay-wave 1.05s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.loading-overlay__dots span:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.loading-overlay__dots span:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+.loading-overlay__label {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.loading-overlay__description {
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+@keyframes loading-overlay-wave {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+
+  40% {
+    transform: translateY(-0.28rem);
+    opacity: 1;
+  }
+}

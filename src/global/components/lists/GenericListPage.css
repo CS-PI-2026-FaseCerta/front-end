@@ -51,7 +51,9 @@
   position: relative;
   display: grid;
   gap: 0.25rem;
-  outline: none;
+  border-radius: 18px;
+  outline: 2px solid transparent;
+  outline-offset: 4px;
 }
 
 .generic-list-page__title-group:hover .generic-list-page__title-tooltip,
@@ -60,6 +62,10 @@
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
+}
+
+.generic-list-page__title-group:focus-visible {
+  outline-color: var(--color-focus);
 }
 
 .generic-list-page__title {
@@ -114,6 +120,8 @@
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
   transition:
     transform 180ms ease,
     background-color 180ms ease,
@@ -124,6 +132,10 @@
 .generic-list-page__action:hover,
 .generic-list-page__action:focus-visible {
   transform: translateY(-1px);
+}
+
+.generic-list-page__action:focus-visible {
+  outline-color: var(--color-focus);
 }
 
 .generic-list-page__action--primary {
@@ -148,14 +160,35 @@
 
 .generic-list-page__panel {
   padding: 1.1rem;
-  min-height: 28rem;
+  min-height: 24rem;
+}
+
+.generic-list-page__panel--empty {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 22rem;
+  padding-block: 1rem 1.25rem;
+}
+
+.generic-list-page__panel--empty .empty-state {
+  margin-block: auto;
+  min-height: 15rem;
 }
 
 .generic-list-page__toolbar {
   display: flex;
-  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 0.85rem;
   margin-bottom: 1rem;
+}
+
+.generic-list-page__toolbar-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 3rem;
 }
 
 .generic-list-page__search,
@@ -166,12 +199,16 @@
 }
 
 .generic-list-page__search {
-  flex: 1 1 22rem;
+  flex: 0 1 17rem;
+
+  width: min(100%, 17rem);
 }
 
 .generic-list-page__filters {
   display: flex;
-  flex: 0 1 17rem;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .generic-list-page__filter,
@@ -183,41 +220,83 @@
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  min-height: 3rem;
-  padding: 0 1rem;
+  min-height: 2.9rem;
+  padding: 0 0.95rem;
   border: 1px solid var(--list-border-soft);
   border-radius: 18px;
   background: var(--list-card-muted-surface);
   color: var(--color-text-secondary);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    outline-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
-.generic-list-page__search-control input,
+.generic-list-page__search-control:focus-within {
+  border-color: var(--color-focus);
+  outline-color: var(--color-focus);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-focus) 14%, transparent);
+}
+
+.generic-list-page__search-control input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+}
 .generic-list-page__filter input,
 .generic-list-page__filter select,
 .generic-list-page__page-size select {
   width: 100%;
   border: 0;
-  outline: 0;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
   background: transparent;
   color: var(--color-text-primary);
   font: inherit;
 }
 
+.generic-list-page__search-control input:focus-visible,
+.generic-list-page__filter input:focus-visible,
+.generic-list-page__filter select:focus-visible,
+.generic-list-page__page-size select:focus-visible {
+  outline-color: var(--color-focus);
+}
+
 .generic-list-page__filter input,
 .generic-list-page__filter select,
 .generic-list-page__page-size select {
-  min-height: 3rem;
-  padding: 0 0.95rem;
+  min-height: 2.9rem;
+  padding: 0 0.9rem;
   border: 1px solid var(--list-border-soft);
   border-radius: 16px;
   background: var(--list-card-muted-surface);
 }
 
+.generic-list-page__export-button {
+  white-space: nowrap;
+}
+
+.generic-list-page__export-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.generic-list-page__export-button:disabled:hover {
+  transform: none;
+}
+
 .generic-list-page__loading {
   display: grid;
   gap: 0.75rem;
-  min-height: 18rem;
-  padding: 1rem 0 1.35rem;
+  min-height: 14rem;
+  padding: 0.75rem 0 1rem;
 }
 
 .generic-list-page__loading-header,
@@ -246,7 +325,7 @@
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 1rem;
   align-items: end;
-  margin-top: 1.1rem;
+  margin-top: 0.9rem;
 }
 
 .generic-list-page__footer-summary {
@@ -267,14 +346,14 @@
   flex-wrap: nowrap;
   flex-direction: row;
   justify-content: flex-end;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .generic-list-page__pagination {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem;
+  gap: 0.35rem;
+  padding: 0.3rem;
   border: 1px solid var(--list-border-soft);
   border-radius: 999px;
   background: var(--list-card-muted-surface);
@@ -285,9 +364,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.55rem;
-  min-width: 2.55rem;
-  padding: 0.55rem 0.85rem;
+  min-height: 2.35rem;
+  min-width: 2.35rem;
+  padding: 0.45rem 0.75rem;
   border: 1px solid transparent;
   border-radius: 14px;
   background: transparent;
@@ -295,6 +374,8 @@
   font: inherit;
   font-weight: 700;
   cursor: pointer;
+  outline: 2px solid transparent;
+  outline-offset: 2px;
   transition:
     background-color 180ms ease,
     color 180ms ease,
@@ -307,6 +388,12 @@
 .generic-list-page__pagination-page:focus-visible:not(:disabled) {
   background: var(--list-hover-surface);
   transform: translateY(-1px);
+}
+
+.generic-list-page__pagination-arrow:focus-visible:not(:disabled),
+.generic-list-page__pagination-page:focus-visible:not(:disabled) {
+  outline-color: var(--color-focus);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-focus) 14%, transparent);
 }
 
 .generic-list-page__pagination-arrow:disabled,
@@ -322,7 +409,7 @@
 }
 
 .generic-list-page__pagination-page {
-  min-width: 2.6rem;
+  min-width: 2.35rem;
   background: var(--color-surface);
   color: var(--color-text-secondary);
 }
@@ -369,8 +456,22 @@
     justify-content: flex-start;
   }
 
+  .generic-list-page__toolbar {
+    align-items: stretch;
+  }
+
+  .generic-list-page__search {
+    margin-left: 0;
+    width: 100%;
+    flex-basis: 100%;
+  }
+
   .generic-list-page__footer-controls {
     justify-content: flex-start;
+  }
+
+  .generic-list-page__panel--empty {
+    min-height: 20rem;
   }
 }
 
@@ -396,5 +497,18 @@
     width: 100%;
     justify-content: space-between;
     overflow-x: auto;
+  }
+
+  .generic-list-page__toolbar {
+    flex-direction: column;
+  }
+  .generic-list-page__toolbar-group {
+    flex-wrap: nowrap;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .generic-list-page__filters {
+    width: 100%;
   }
 }

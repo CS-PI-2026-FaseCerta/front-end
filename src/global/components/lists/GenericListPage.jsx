@@ -4,6 +4,7 @@ import {
   FaArrowLeft,
   FaArrowRight,
   FaExclamationTriangle,
+  FaDownload,
   FaSearch,
 } from "react-icons/fa";
 import Header from "../header/Header.jsx";
@@ -16,6 +17,8 @@ import {
   paginateRows,
   sortRows,
 } from "./listHelpers";
+import LoadingOverlay from "../../loading/LoadingOverlay";
+import { exportCsv } from "../../utils/exportCsv";
 import "./GenericListPage.css";
 
 const getVisiblePageNumbers = (currentPage, totalPages) => {
@@ -73,6 +76,17 @@ const getNextSortConfig = (currentSort, column) => {
   };
 };
 
+const buildExportFileName = (value) => {
+  const normalizedValue = String(value ?? "exportacao")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return normalizedValue || "exportacao";
+};
+
 const GenericListPage = ({
   icon: Icon,
   title,
@@ -93,6 +107,7 @@ const GenericListPage = ({
   showHeader = true,
   HeaderComponent = Header,
   onRetry,
+  onExport,
   onQueryChange,
   onPageChange,
   onPageSizeChange,
@@ -116,6 +131,7 @@ const GenericListPage = ({
   );
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     // TODO: quando o backend suportar ordenação remota, reaproveitar sortParams para query string.
@@ -144,6 +160,15 @@ const GenericListPage = ({
     setPage(1);
   }, [searchTerm, filterValues, pageSize]);
 
+  const filteredSortedRows = useMemo(() => {
+    if (!clientSide) {
+      return data;
+    }
+
+    const filteredRows = filterRows(data, columns, searchTerm, filterValues);
+    return sortRows(filteredRows, columns, sortConfig);
+  }, [clientSide, columns, data, filterValues, searchTerm, sortConfig]);
+
   const processedRows = useMemo(() => {
     if (!clientSide) {
       const safeTotalItems = Number(totalItems ?? data.length) || 0;
@@ -158,27 +183,19 @@ const GenericListPage = ({
       };
     }
 
-    const filteredRows = filterRows(data, columns, searchTerm, filterValues);
-    const sortedRows = sortRows(filteredRows, columns, sortConfig);
-
-    return paginateRows(sortedRows, page, pageSize);
-  }, [
-    clientSide,
-    columns,
-    data,
-    filterValues,
-    page,
-    pageSize,
-    sortConfig,
-    searchTerm,
-    totalItems,
-  ]);
+    return paginateRows(filteredSortedRows, page, pageSize);
+  }, [clientSide, data, filteredSortedRows, page, pageSize, totalItems]);
 
   const currentRows = processedRows.rows ?? [];
   const resolvedTotalItems = processedRows.totalItems ?? currentRows.length;
   const totalPages = processedRows.totalPages ?? 1;
   const currentPage = processedRows.page ?? 1;
   const currentPageSize = processedRows.pageSize ?? pageSize;
+  const exportRows = clientSide ? filteredSortedRows : data;
+  const exportFileName = `${buildExportFileName(title)}.csv`;
+  const hasRealData = clientSide
+    ? data.length > 0
+    : Number(totalItems ?? data.length) > 0;
   const startItem =
     resolvedTotalItems === 0 ? 0 : (currentPage - 1) * currentPageSize + 1;
   const endItem =
@@ -193,8 +210,53 @@ const GenericListPage = ({
     }
   }, [currentPage, totalPages]);
 
-  const searchPlaceholder = search.placeholder ?? "Buscar registros";
-  const isEmpty = !loading && !error && currentRows.length === 0;
+  const searchPlaceholder = search.placeholder ?? "Buscar por ID ou nome...";
+  const hasQuery =
+    Boolean(searchTerm) ||
+    Object.values(filterValues).some((value) => {
+      if (Array.isArray(value)) {
+        return value.length > 0;
+      }
+
+      return value != null && value !== "";
+    });
+  const isRealEmpty = !loading && !error && !hasRealData;
+  const showTableState = !loading && !error && hasRealData;
+  const showFooter = showTableState;
+  const showToolbar = !loading && !error && !isRealEmpty;
+  const tableEmptyLabel = hasQuery
+    ? "Nenhum resultado encontrado"
+    : "Sem dados para exibir.";
+
+  const handleExport = async () => {
+    if (!exportRows.length || isExporting) {
+      return;
+    }
+
+    setIsExporting(true);
+
+    try {
+      if (typeof onExport === "function") {
+        // TODO: quando a exportação vier do backend, a página pode delegar o download sem mudar a estrutura da listagem.
+        await onExport({
+          rows: exportRows,
+          columns,
+          searchTerm,
+          filters: filterValues,
+          sort: sortConfig,
+          fileName: exportFileName,
+        });
+        return;
+      }
+
+      exportCsv(exportRows, {
+        columns,
+        filename: exportFileName,
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -239,7 +301,18 @@ const GenericListPage = ({
     <div className={`generic-list-page ${className}`.trim()}>
       {showHeader ? <HeaderComponent /> : null}
 
-      <main className="generic-list-page__main">
+      {isExporting ? (
+        <LoadingOverlay
+          label="Exportando CSV"
+          description="Preparando o arquivo para download."
+        />
+      ) : null}
+
+      <main
+        className="generic-list-page__main"
+        aria-busy={isExporting}
+        inert={isExporting ? "" : undefined}
+      >
         <section className="generic-list-page__hero">
           <div className="generic-list-page__hero-top">
             <div
@@ -260,115 +333,147 @@ const GenericListPage = ({
               ) : null}
             </div>
 
-            <div className="generic-list-page__hero-actions">
-              {actions.map((action) => {
-                const ActionIcon = action.icon;
-                const actionKey = action.key ?? action.label;
+            {actions.length > 0 ? (
+              <div className="generic-list-page__hero-actions">
+                {actions.map((action) => {
+                  const ActionIcon = action.icon;
+                  const actionKey = action.key ?? action.label;
 
-                if (action.href) {
-                  const resolvedHref =
-                    typeof action.href === "function"
-                      ? action.href()
-                      : action.href;
+                  if (action.href) {
+                    const resolvedHref =
+                      typeof action.href === "function"
+                        ? action.href()
+                        : action.href;
+
+                    return (
+                      <Link
+                        key={actionKey}
+                        to={resolvedHref}
+                        className={`generic-list-page__action generic-list-page__action--${action.variant ?? "primary"}`}
+                      >
+                        {ActionIcon ? <ActionIcon aria-hidden="true" /> : null}
+                        <span>{action.label}</span>
+                      </Link>
+                    );
+                  }
 
                   return (
-                    <Link
+                    <button
                       key={actionKey}
-                      to={resolvedHref}
+                      type="button"
                       className={`generic-list-page__action generic-list-page__action--${action.variant ?? "primary"}`}
+                      onClick={action.onClick}
                     >
                       {ActionIcon ? <ActionIcon aria-hidden="true" /> : null}
                       <span>{action.label}</span>
-                    </Link>
+                    </button>
                   );
-                }
-
-                return (
-                  <button
-                    key={actionKey}
-                    type="button"
-                    className={`generic-list-page__action generic-list-page__action--${action.variant ?? "primary"}`}
-                    onClick={action.onClick}
-                  >
-                    {ActionIcon ? <ActionIcon aria-hidden="true" /> : null}
-                    <span>{action.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+                })}
+              </div>
+            ) : null}
           </div>
 
-          <div className="generic-list-page__panel">
-            <div className="generic-list-page__toolbar">
-              <label className="generic-list-page__search">
-                <span className="generic-list-page__field-label">Busca</span>
-                <div className="generic-list-page__search-control">
-                  <FaSearch aria-hidden="true" />
-                  <input
-                    type="search"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    placeholder={searchPlaceholder}
-                  />
-                </div>
-              </label>
+          <div
+            className={`generic-list-page__panel ${isRealEmpty ? "generic-list-page__panel--empty" : ""}`.trim()}
+          >
+            {showToolbar ? (
+              <div className="generic-list-page__toolbar">
+                <label className="generic-list-page__search">
+                  <span className="generic-list-page__field-label">Busca</span>
+                  <div className="generic-list-page__search-control">
+                    <FaSearch aria-hidden="true" />
+                    <input
+                      type="search"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                      placeholder={searchPlaceholder}
+                    />
+                  </div>
+                </label>
+                <div className="generic-list-page__toolbar-group">
+                  {filters.length > 0 ? (
+                    <div
+                      className="generic-list-page__filters"
+                      aria-label="Filtros da listagem"
+                    >
+                      {filters.map((filter) => {
+                        const value = filterValues[filter.key] ?? "";
 
-              {filters.length > 0 ? (
-                <div
-                  className="generic-list-page__filters"
-                  aria-label="Filtros da listagem"
-                >
-                  {filters.map((filter) => {
-                    const value = filterValues[filter.key] ?? "";
-
-                    return (
-                      <label
-                        key={filter.key}
-                        className="generic-list-page__filter"
-                      >
-                        <span className="generic-list-page__field-label">
-                          {filter.label}
-                        </span>
-                        {filter.type === "select" ? (
-                          <select
-                            value={value}
-                            onChange={(event) =>
-                              handleFilterChange(filter.key, event.target.value)
-                            }
+                        return (
+                          <label
+                            key={filter.key}
+                            className="generic-list-page__filter"
                           >
-                            <option value="">
-                              {filter.placeholder ?? "Todos"}
-                            </option>
-                            {filter.options?.map((option) => (
-                              <option key={option.value} value={option.value}>
-                                {option.label}
-                              </option>
-                            ))}
-                          </select>
-                        ) : filter.type === "date" ? (
-                          <input
-                            type="date"
-                            value={value}
-                            onChange={(event) =>
-                              handleFilterChange(filter.key, event.target.value)
-                            }
-                          />
-                        ) : (
-                          <input
-                            type="text"
-                            value={value}
-                            onChange={(event) =>
-                              handleFilterChange(filter.key, event.target.value)
-                            }
-                            placeholder={filter.placeholder ?? filter.label}
-                          />
-                        )}
-                      </label>
-                    );
-                  })}
+                            <span className="generic-list-page__field-label">
+                              {filter.label}
+                            </span>
+                            {filter.type === "select" ? (
+                              <select
+                                value={value}
+                                onChange={(event) =>
+                                  handleFilterChange(
+                                    filter.key,
+                                    event.target.value,
+                                  )
+                                }
+                              >
+                                <option value="">
+                                  {filter.placeholder ?? "Todos"}
+                                </option>
+                                {filter.options?.map((option) => (
+                                  <option
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : filter.type === "date" ? (
+                              <input
+                                type="date"
+                                value={value}
+                                onChange={(event) =>
+                                  handleFilterChange(
+                                    filter.key,
+                                    event.target.value,
+                                  )
+                                }
+                              />
+                            ) : (
+                              <input
+                                type="text"
+                                value={value}
+                                onChange={(event) =>
+                                  handleFilterChange(
+                                    filter.key,
+                                    event.target.value,
+                                  )
+                                }
+                                placeholder={filter.placeholder ?? filter.label}
+                              />
+                            )}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+
+                  <button
+                    type="button"
+                    className="generic-list-page__action generic-list-page__action--secondary generic-list-page__export-button"
+                    onClick={handleExport}
+                    disabled={isExporting || exportRows.length === 0}
+                    aria-label={isExporting ? "Exportando CSV" : "Exportar CSV"}
+                    title={isExporting ? "Exportando CSV" : "Exportar CSV"}
+                    aria-busy={isExporting}
+                  >
+                    <FaDownload aria-hidden="true" />
+                    <span>{isExporting ? "Exportando..." : "Exportar"}</span>
+                  </button>
                 </div>
-              ) : null}
-            </div>
+              </div>
+            ) : null}
 
             {error ? (
               <EmptyState
@@ -390,7 +495,7 @@ const GenericListPage = ({
                 <div className="generic-list-page__loading-row" />
                 <div className="generic-list-page__loading-row" />
               </div>
-            ) : isEmpty ? (
+            ) : isRealEmpty ? (
               <EmptyState
                 icon={emptyState.icon}
                 title={emptyState.title ?? "Nenhum registro encontrado"}
@@ -402,7 +507,7 @@ const GenericListPage = ({
                 actionHref={emptyState.actionHref}
                 onAction={emptyState.onAction}
               />
-            ) : (
+            ) : showTableState ? (
               <GenericTable
                 columns={columns}
                 data={currentRows}
@@ -410,99 +515,102 @@ const GenericListPage = ({
                 rowActions={rowActions}
                 sortConfig={sortConfig}
                 onSortChange={handleSortChange}
+                emptyLabel={tableEmptyLabel}
               />
-            )}
+            ) : null}
 
-            <div className="generic-list-page__footer">
-              <div className="generic-list-page__footer-summary">
-                <span className="generic-list-page__footer-label">
-                  Mostrando
-                </span>
-                <strong>
-                  {resolvedTotalItems === 0 ? 0 : startItem} - {endItem}
-                </strong>
-                <span>de</span>
-                <strong>{resolvedTotalItems}</strong>
-                <span>itens</span>
-              </div>
-
-              <div className="generic-list-page__footer-controls">
-                <label className="generic-list-page__page-size">
-                  <span className="generic-list-page__field-label">
-                    Itens por página
+            {showFooter ? (
+              <div className="generic-list-page__footer">
+                <div className="generic-list-page__footer-summary">
+                  <span className="generic-list-page__footer-label">
+                    Mostrando
                   </span>
-                  <select
-                    value={currentPageSize}
-                    onChange={handlePageSizeChange}
+                  <strong>
+                    {resolvedTotalItems === 0 ? 0 : startItem} - {endItem}
+                  </strong>
+                  <span>de</span>
+                  <strong>{resolvedTotalItems}</strong>
+                  <span>itens</span>
+                </div>
+
+                <div className="generic-list-page__footer-controls">
+                  <label className="generic-list-page__page-size">
+                    <span className="generic-list-page__field-label">
+                      Itens por página
+                    </span>
+                    <select
+                      value={currentPageSize}
+                      onChange={handlePageSizeChange}
+                    >
+                      {pageSizeOptions.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <div
+                    className="generic-list-page__pagination"
+                    aria-label="Paginação da listagem"
                   >
-                    {pageSizeOptions.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                    <button
+                      type="button"
+                      className="generic-list-page__pagination-arrow"
+                      onClick={handlePreviousPage}
+                      disabled={currentPage <= 1}
+                      aria-label="Página anterior"
+                      title="Página anterior"
+                    >
+                      <FaArrowLeft aria-hidden="true" />
+                    </button>
 
-                <div
-                  className="generic-list-page__pagination"
-                  aria-label="Paginação da listagem"
-                >
-                  <button
-                    type="button"
-                    className="generic-list-page__pagination-arrow"
-                    onClick={handlePreviousPage}
-                    disabled={currentPage <= 1}
-                    aria-label="Página anterior"
-                    title="Página anterior"
-                  >
-                    <FaArrowLeft aria-hidden="true" />
-                  </button>
+                    <div className="generic-list-page__pagination-pages">
+                      {visiblePages.map((pageNumber, index) => {
+                        const previousPage = visiblePages[index - 1];
+                        const needsGap =
+                          previousPage && pageNumber - previousPage > 1;
 
-                  <div className="generic-list-page__pagination-pages">
-                    {visiblePages.map((pageNumber, index) => {
-                      const previousPage = visiblePages[index - 1];
-                      const needsGap =
-                        previousPage && pageNumber - previousPage > 1;
+                        return (
+                          <React.Fragment key={pageNumber}>
+                            {needsGap ? (
+                              <span className="generic-list-page__pagination-ellipsis">
+                                ...
+                              </span>
+                            ) : null}
+                            <button
+                              type="button"
+                              className={`generic-list-page__pagination-page ${pageNumber === currentPage ? "generic-list-page__pagination-page--active" : ""}`.trim()}
+                              onClick={() => {
+                                setPage(pageNumber);
+                                onPageChange?.(pageNumber);
+                              }}
+                              aria-current={
+                                pageNumber === currentPage ? "page" : undefined
+                              }
+                              aria-label={`Página ${pageNumber}`}
+                            >
+                              {pageNumber}
+                            </button>
+                          </React.Fragment>
+                        );
+                      })}
+                    </div>
 
-                      return (
-                        <React.Fragment key={pageNumber}>
-                          {needsGap ? (
-                            <span className="generic-list-page__pagination-ellipsis">
-                              ...
-                            </span>
-                          ) : null}
-                          <button
-                            type="button"
-                            className={`generic-list-page__pagination-page ${pageNumber === currentPage ? "generic-list-page__pagination-page--active" : ""}`.trim()}
-                            onClick={() => {
-                              setPage(pageNumber);
-                              onPageChange?.(pageNumber);
-                            }}
-                            aria-current={
-                              pageNumber === currentPage ? "page" : undefined
-                            }
-                            aria-label={`Página ${pageNumber}`}
-                          >
-                            {pageNumber}
-                          </button>
-                        </React.Fragment>
-                      );
-                    })}
+                    <button
+                      type="button"
+                      className="generic-list-page__pagination-arrow"
+                      onClick={handleNextPage}
+                      disabled={currentPage >= totalPages}
+                      aria-label="Próxima página"
+                      title="Próxima página"
+                    >
+                      <FaArrowRight aria-hidden="true" />
+                    </button>
                   </div>
-
-                  <button
-                    type="button"
-                    className="generic-list-page__pagination-arrow"
-                    onClick={handleNextPage}
-                    disabled={currentPage >= totalPages}
-                    aria-label="Próxima página"
-                    title="Próxima página"
-                  >
-                    <FaArrowRight aria-hidden="true" />
-                  </button>
                 </div>
               </div>
-            </div>
+            ) : null}
           </div>
         </section>
       </main>
