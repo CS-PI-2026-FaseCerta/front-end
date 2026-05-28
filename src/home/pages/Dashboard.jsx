@@ -200,26 +200,16 @@ const Dashboard = () => {
 
         <section className="dashboard-grid" aria-label="Módulos disponíveis">
           {visibleModules.map((modulo) => (
-            <div
+            <ModuleCard
               key={modulo.id}
-              onClick={() => {
-                if (modulo.id === "aplicar-desconto") {
-                  setIsDiscountModalOpen(true);
-                }
-              }}
-            >
-              <ModuleCard
-                title={modulo.title}
-                description={modulo.description}
-                icon={modulo.icon}
-                path="#"
-                ctaLabel={
-                  modulo.id === "pedidos"
-                    ? "Abrir módulo"
-                    : "Acessar módulo"
-                }
-              />
-            </div>
+              title={modulo.title}
+              description={modulo.description}
+              icon={modulo.icon}
+              // Se for desconto, não passa path, passa o onClick
+              path={modulo.id === "aplicar-desconto" ? null : modulo.path}
+              onClick={modulo.id === "aplicar-desconto" ? () => setIsDiscountModalOpen(true) : null}
+              ctaLabel={modulo.id === "aplicar-desconto" ? "Abrir" : "Acessar"}
+            />
           ))}
         </section>
 
@@ -239,7 +229,7 @@ const Dashboard = () => {
                 ×
               </button>
 
-              <ApplyDiscounts />
+              <ApplyDiscounts onClose={() => setIsDiscountModalOpen(false)} />
             </div>
           </div>
         )}
