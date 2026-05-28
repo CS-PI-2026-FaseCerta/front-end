@@ -17,7 +17,7 @@ import {
   paginateRows,
   sortRows,
 } from "./listHelpers";
-import LoadingOverlay from "../../loading/LoadingOverlay";
+import LoadingOverlay from "../loading/LoadingOverlay.jsx";
 import { exportCsv } from "../../utils/exportCsv";
 import "./GenericListPage.css";
 

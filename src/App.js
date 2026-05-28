@@ -12,6 +12,7 @@ import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
+import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
@@ -163,6 +164,7 @@ function App() {
               }
             />
             <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path={AppRoutes.Loading} element={<LoadingOverlay />} />
           </Routes>
         </BrowserRouter>
       }
