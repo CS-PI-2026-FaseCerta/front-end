@@ -76,9 +76,9 @@ export const QUICK_ACTIONS = [
     },
   },
   {
-    id: "cadastrar-peca",
-    nome: "Cadastrar Peça",
-    rota: "/cadastroMaterial",
+    id: "cadastrar-produto",
+    nome: "Cadastrar Produto",
+    rota: "/cadastroProduto",
     icon: FaBoxOpen,
     allowedProfiles: ["gestor", "tecnico"],
     order: {

@@ -308,7 +308,7 @@ export default function AplicarDesconto() {
                             >
                                 {isSaving
                                     ? "SALVANDO..."
-                                    : "SALVAR DESCONTO"}
+                                    : "Salvar Desconto"}
                             </button>
                         </div>
                     </div>
