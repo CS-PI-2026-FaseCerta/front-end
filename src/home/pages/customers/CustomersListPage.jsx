@@ -1,30 +1,28 @@
 import React from "react";
 import { FaPen, FaClipboardList, FaPlus, FaTrash } from "react-icons/fa";
 import GenericListPage from "../../../global/components/lists/GenericListPage";
-import { pedidosMockData } from "./pedidos.mock";
-import { pedidosColumns } from "./pedidos.columns";
-import { pedidosFilters } from "./pedidos.filters";
+import { customersMockData } from "./Customers.mock";
+import { customersColumns } from "./Customers.columns";
 
-const PedidosListPage = () => {
-  const items = pedidosMockData;
+const CustomersListPage = () => {
+  const items = customersMockData;
 
   return (
     <GenericListPage
-      title="Ordens de Serviço"
-      description="Gerencie e acompanhe todas as ordens de serviço em tempo real."
-      columns={pedidosColumns}
+      title="Clientes"
+      description="Gerencie e acompanhe todos os clientes em tempo real."
+      columns={customersColumns}
       data={items}
-      filters={pedidosFilters}
       defaultSort={{
-        key: "dataAbertura",
-        direction: "desc",
+        key: "id",
+        direction: "asc",
       }}
       actions={[
         {
-          key: "nova-os",
-          label: "Nova OS",
+          key: "novo-cliente",
+          label: "Novo Cliente",
           icon: FaPlus,
-          href: "/os/novo",
+          href: "/clientes/novo",
           variant: "primary",
         },
       ]}
@@ -48,14 +46,14 @@ const PedidosListPage = () => {
       ]}
       emptyState={{
         icon: FaClipboardList,
-        title: "Nenhuma ordem de serviço encontrada",
+        title: "Nenhum cliente encontrado",
         description:
-          "Use filtros, busca ou crie uma nova OS para começar a alimentar a listagem.",
-        actionLabel: "Criar nova OS",
-        actionHref: "/os/novo",
+          "Use filtros, busca ou crie um novo cliente para começar a alimentar a listagem.",
+        actionLabel: "Criar novo cliente",
+        actionHref: "/clientes/novo",
       }}
     />
   );
 };
 
-export default PedidosListPage;
+export default CustomersListPage;

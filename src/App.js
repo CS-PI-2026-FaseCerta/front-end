@@ -3,7 +3,7 @@ import "./App.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import MaterialRegistration from "./form/pages/MaterialRegistration/MaterialRegistration.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
-import PedidosListPage from "./home/pages/pedidos/PedidosListPage.jsx";
+import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RecoverPassword from "./auth/pages/recoverpassword/RecoverPassword.jsx";
@@ -13,6 +13,7 @@ import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
+import CustomersListPage from "./home/pages/customers/CustomersListPage.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
@@ -52,6 +53,7 @@ function App() {
             <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
             {/* Fallbacks temporarios para areas do dashboard que ainda nao
             possuem telas dedicadas. */}
+            <Route path={AppRoutes.Clientes} element={<CustomersListPage />} />
             <Route
               path={AppRoutes.Perfil}
               element={
@@ -88,18 +90,7 @@ function App() {
                 />
               }
             />
-            <Route
-              path={AppRoutes.Clientes}
-              element={
-                <SectionPage
-                  eyebrow="Módulo operacional"
-                  title="Gestão de Clientes"
-                  description="Área demonstrativa para a futura navegação do módulo de clientes."
-                  ctaLabel="Voltar ao painel"
-                  ctaPath="/dashboard"
-                />
-              }
-            />
+
             <Route
               path={AppRoutes.ServicosEstoque}
               element={
@@ -124,7 +115,7 @@ function App() {
                 />
               }
             />
-            <Route path={AppRoutes.Pedidos} element={<PedidosListPage />} />
+            <Route path={AppRoutes.Pedidos} element={<OrdersListPage />} />
             <Route
               path={AppRoutes.OrdensServicoNovo}
               element={

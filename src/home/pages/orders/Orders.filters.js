@@ -1,4 +1,4 @@
-export const pedidosFilters = [
+export const ordersFilters = [
   {
     key: "status",
     label: "Status",
