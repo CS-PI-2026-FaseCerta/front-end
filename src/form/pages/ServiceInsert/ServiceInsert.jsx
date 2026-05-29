@@ -7,6 +7,7 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx"
 import { useNavigate } from "react-router-dom";
+import { PiToolboxBold } from "react-icons/pi";
 
 export default function ServiceInsert() {
   const navigate = useNavigate();
@@ -86,7 +87,8 @@ export default function ServiceInsert() {
             
             {servicos.length === 0 ? (
               <div className="list empty-state">
-
+                <PiToolboxBold size={40} color="var(--color-primary)"/>
+                <p>Comece inserindo um Novo Serviço</p>
               </div>
             ) : (
               <div className="list">

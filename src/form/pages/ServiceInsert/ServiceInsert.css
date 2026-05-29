@@ -111,6 +111,10 @@
     align-items: center;
 }
 
+.service-insert-form .list.empty-state p {
+    color: rgb(125, 115, 134);
+}
+
 .service-insert-form .list .description {
     display: flex;
     gap: 1rem;
