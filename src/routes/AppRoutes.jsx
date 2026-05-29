@@ -7,6 +7,7 @@ export const RegisterCity = "/cadastroCidade";
 export const MaterialRegistration = "/cadastroMaterial";
 export const Dashboard = "/dashboard";
 export const ApplyDiscounts = "/aplicarDesconto";
+export const Loading = "/loading";
 
 //Não implementados ainda, mas já mapeados para facilitar futuras integrações.
 export const Perfil = "/perfil";

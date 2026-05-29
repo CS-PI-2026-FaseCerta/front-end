@@ -182,7 +182,7 @@ export default function AplicarDesconto() {
                         </div>
 
                         <div className="discount-card piece-section">
-                            <h3>Peça</h3>
+                            <h3>Produto</h3>
 
                             <p>Desconto em percentual ou valor?</p>
 
