@@ -101,6 +101,7 @@ export default function ServiceInsert() {
               <div className="list">
                 {servicos.map((servico) => (
                   <Card
+                    key={servico.id}
                     id={servico.id}
                     descricao={servico.descricao}
                     qntd={servico.qntd}

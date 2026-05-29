@@ -105,6 +105,36 @@
     height: 20rem;
 }
 
+
+
+
+
+/* ===================== SCROLL BAR ========================== */
+
+.service-insert-form .list::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+.service-insert-form .list::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 10px;
+}
+
+/* fundo da scrollbar */
+.service-insert-form .list::-webkit-scrollbar-track {
+  background: var(--color-primary-dark);
+  border-radius: 10px;
+}
+
+.service-insert-form .list::-webkit-scrollbar {
+  width: 8px;
+}
+
+
+
+
+
+
 .service-insert-form .list.empty-state {
     display: flex;
     flex-direction: row;
