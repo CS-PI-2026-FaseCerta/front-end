@@ -18,38 +18,49 @@ export default function ServiceInsert() {
 
   };
 
-  const servicos = [
+  const [servicos, setServicos] = useState([
     {
+      id: 1,
       descricao: "Instalar Lâmpada",
       qntd: 1,
       preco: 350,
       obs: "Altura de 20 metros."
     },
     {
+      id: 2,
       descricao: "Instalar Lâmpada",
       qntd: 1,
       preco: 350,
       obs: "Altura de 20 metros."
     },
     {
+      id: 3,
       descricao: "Instalar Lâmpada",
       qntd: 1,
       preco: 350,
       obs: "Altura de 20 metros."
     },
     {
+      id: 4,
       descricao: "Instalar Lâmpada",
       qntd: 1,
       preco: 350,
       obs: "Altura de 20 metros."
     },
     {
+      id: 5,
       descricao: "Instalar Lâmpada",
       qntd: 1,
       preco: 350,
       obs: "Altura de 20 metros."
     },
-  ]
+  ])
+
+  function handleDelete(id) {
+    const novaLista = servicos.filter((servico) => servico.id !== id);
+
+    setServicos(novaLista);
+  }
 
   return (
     <div className="service-insert-page">
@@ -74,17 +85,19 @@ export default function ServiceInsert() {
 
             
             {servicos.length === 0 ? (
-              <div>
+              <div className="list empty-state">
 
               </div>
             ) : (
               <div className="list">
                 {servicos.map((servico) => (
                   <Card
+                    id={servico.id}
                     descricao={servico.descricao}
                     qntd={servico.qntd}
                     preco={servico.preco}
                     obs={servico.obs}
+                    handleDelete={handleDelete}
                   />
                 ))}
               </div>
@@ -116,7 +129,7 @@ export default function ServiceInsert() {
   );
 }
 
-function Card({descricao, qntd, preco, obs}) {
+function Card({id, descricao, qntd, preco, obs, handleDelete}) {
   return (
     <div className="card">
       <div className="text">
@@ -131,7 +144,12 @@ function Card({descricao, qntd, preco, obs}) {
       </div>
       <div className="buttons">
         <button><HiOutlinePencil size={20} color="var(--color-primary)" className="pencil-icon" /></button>
-        <button><FaRegTrashCan size={20} color="red" className="trash-icon" /></button>
+
+        <button
+          onClick={() => handleDelete(id)}
+        >
+          <FaRegTrashCan size={20} color="red" className="trash-icon" />
+        </button>
       </div>
     </div>
   )

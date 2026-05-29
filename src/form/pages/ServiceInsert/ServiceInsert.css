@@ -104,6 +104,13 @@
     height: 20rem;
 }
 
+.service-insert-form .list.empty-state {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
 .service-insert-form .list .description {
     display: flex;
     gap: 1rem;
