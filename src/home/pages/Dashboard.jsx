@@ -22,6 +22,7 @@ import {
 import "./Dashboard.css";
 
 import ApplyDiscounts from "../components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
+import FocusTrap from "focus-trap-react";
 
 const Dashboard = () => {
   const currentUser = getCurrentUser();
@@ -218,6 +219,7 @@ const Dashboard = () => {
             className="dashboard-modal-overlay"
             onClick={() => setIsDiscountModalOpen(false)}
           >
+            <FocusTrap>
             <div
               className="dashboard-modal-content"
               onClick={(e) => e.stopPropagation()}
@@ -231,6 +233,7 @@ const Dashboard = () => {
 
               <ApplyDiscounts onClose={() => setIsDiscountModalOpen(false)} />
             </div>
+            </FocusTrap>
           </div>
         )}
 

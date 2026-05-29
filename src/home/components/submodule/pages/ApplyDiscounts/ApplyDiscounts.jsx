@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./ApplyDiscounts.css";
 
+
 export default function AplicarDesconto() {
     const subtotalServico = 350;
 
