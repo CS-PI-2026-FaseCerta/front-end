@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import "./ServiceInsert.css";
 import { FaArrowLeft } from "react-icons/fa";
@@ -11,8 +11,6 @@ import { PiToolboxBold } from "react-icons/pi";
 
 export default function ServiceInsert() {
   const navigate = useNavigate();
-
-  const [valorTotal, setValorTotal] = useState(0);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -57,11 +55,20 @@ export default function ServiceInsert() {
     },
   ])
 
+  const valorTotal = servicos.reduce((total, servico) => total + servico.preco, 0);
+
   function handleDelete(id) {
     const novaLista = servicos.filter((servico) => servico.id !== id);
 
     setServicos(novaLista);
   }
+
+  const formatCurrency = (value) => {
+    return Number(value).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
+  };
 
   return (
     <div className="service-insert-page">
@@ -113,7 +120,7 @@ export default function ServiceInsert() {
 
             <div className="value-line">
               <p className="title">Valor Total:</p>
-              <span>R$ {valorTotal}</span>
+              <span>{formatCurrency(valorTotal)}</span>
             </div>
 
             <button
