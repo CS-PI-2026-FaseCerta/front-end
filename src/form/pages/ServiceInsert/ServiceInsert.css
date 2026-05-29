@@ -76,6 +76,7 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    color: var(--color-text-primary);
 }
 
 .service-insert-form .card .buttons {
@@ -134,7 +135,7 @@
 .service-insert-form .value-line .title {
     font-size: 1.2rem;
     font-weight: 600;
-    color: rgb(53, 53, 53);
+    color: var(--color-text-primary);
 }
 
 .service-insert-form .value-line span {
