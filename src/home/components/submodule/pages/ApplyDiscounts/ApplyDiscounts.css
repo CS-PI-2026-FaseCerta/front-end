@@ -121,17 +121,18 @@
 }
 
 .discount-module-wrapper .input-wrapper.prefix input {
-    padding-left: 48px !important;
+    padding-left: 42px !important;
 }
 
 .discount-module-wrapper .currency-prefix {
     position: absolute;
-    left: 15px;
+    left: 20px;
     font-weight: 700;
     color: #433f9b;
     font-size: 14px;
     z-index: 2;
     pointer-events: none;
+    height: 20px;
 }
 
 .discount-total-container {
