@@ -215,3 +215,90 @@
         transform: translateY(0);
     }
 }
+
+/*Responsividade Mobile */
+ @media (max-width: 768px) {
+
+     .discount-module-wrapper .card.wide-card {
+         padding: 12px;
+     }
+
+     .discount-module-wrapper .card-header {
+         margin-bottom: 12px;
+     }
+
+     .discount-module-wrapper .card-header h1 {
+         font-size: 1.2rem;
+     }
+
+     .discount-module-wrapper .discount-card h3 {
+         margin: 10px 0 4px;
+         font-size: 1rem;
+     }
+
+     .discount-module-wrapper .discount-card p {
+         margin-bottom: 4px;
+         font-size: 0.8rem;
+     }
+
+     .discount-module-wrapper .toggle-container {
+         margin: 8px 0;
+         gap: 8px;
+     }
+
+     .discount-module-wrapper .toggle-button {
+         padding: 8px;
+         font-size: 13px;
+     }
+
+     .discount-module-wrapper .input-area {
+         margin-top: 6px;
+     }
+
+     .discount-module-wrapper .options-row {
+         gap: 6px;
+     }
+
+     .discount-module-wrapper .opt-btn {
+         padding: 8px 12px;
+         font-size: 13px;
+     }
+
+     .discount-module-wrapper .small-input,
+     .discount-module-wrapper .full-input {
+         padding: 8px;
+         font-size: 13px;
+     }
+
+     .discount-module-wrapper .input-wrapper.prefix input {
+         padding-left: 34px !important;
+     }
+
+     .discount-module-wrapper .currency-prefix {
+         left: 12px;
+         font-size: 13px;
+     }
+
+     .discount-total-container {
+         margin-top: 15px;
+     }
+
+     .discount-module-wrapper .discount-total-box {
+         padding: 12px;
+     }
+
+     .discount-module-wrapper .discount-total-value {
+         font-size: 24px;
+         margin-bottom: 4px;
+     }
+
+     .discount-total-description {
+         font-size: 12px;
+     }
+
+     .discount-module-wrapper .save-discount-btn {
+         margin-top: 12px;
+         padding: 12px;
+         font-size: 14px;
+     }
+ }

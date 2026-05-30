@@ -80,6 +80,24 @@ const Dashboard = () => {
     };
   }, [isSidebarOpen]);
 
+  useEffect(() => {
+    if (!isDiscountModalOpen) {
+      return;
+    }
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setIsDiscountModalOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isDiscountModalOpen]);
+
   const quickActions = getSelectedQuickActionsByProfile(
     perfilAtual,
     selectedQuickActionIds,
