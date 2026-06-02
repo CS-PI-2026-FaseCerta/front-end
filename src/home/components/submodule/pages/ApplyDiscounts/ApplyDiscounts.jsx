@@ -154,7 +154,8 @@ export default function AplicarDesconto() {
         descontoProduto <= subtotalProduto;
 
     const isFormValid =
-        servicoValido && produtoValido;
+        (servicoValido || produtoValido) &&
+        mensagemErroAtual === "";
 
     const handleSalvarDesconto = () => {
         if (!isFormValid) {
