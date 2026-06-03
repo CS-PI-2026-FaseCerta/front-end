@@ -207,3 +207,43 @@
     border-radius: 22px;
   }
 }
+
+.dashboard-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 24px;
+}
+
+.dashboard-modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 950px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 28px;
+  background: white;
+  box-shadow: var(--shadow-elevated);
+  padding: 24px;
+}
+
+.dashboard-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 28px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 10;
+}

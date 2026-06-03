@@ -17,7 +17,7 @@ const ModuleCard = ({
     }
 
     event.preventDefault();
-    onClick(path);
+    onClick();
   };
 
   return (
@@ -25,10 +25,12 @@ const ModuleCard = ({
       <div className="module-card__icon" aria-hidden="true">
         {icon}
       </div>
+
       <div className="module-card__content">
         <h3 className="module-card__title">{title}</h3>
         <p className="module-card__description">{description}</p>
       </div>
+
       <span className="module-card__cta">
         {ctaLabel}
         <FaArrowRight />

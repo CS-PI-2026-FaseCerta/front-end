@@ -117,11 +117,10 @@
     color: #ffffff;
     border: none;
     border-radius: 50px;
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 700;
     cursor: pointer;
     margin-top: 10px;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
     transition: all 0.3s ease;
 }
