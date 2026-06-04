@@ -165,7 +165,7 @@
   padding: 0.9rem 1.2rem;
   border-radius: 999px;
   background: var(--color-primary);
-  color: var(--color-surface);
+  color: var(--color-text-);
   font-weight: 700;
   text-decoration: none;
   transition:
@@ -241,8 +241,8 @@
   height: 42px;
   border: none;
   border-radius: 999px;
-  background: #ffffff;
-  color: #111827;
+  background: var(--card-background);
+  color: var(--text-primary);
   font-size: 28px;
   font-weight: 700;
   cursor: pointer;
