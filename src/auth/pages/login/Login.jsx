@@ -24,6 +24,12 @@ const Login = () => {
   const [loginError, setLoginError] = useState("");
   const [emailOrUsernameError, setEmailOrUsernameError] = useState(false);
 
+  const allFilled =
+    emailOrUsername &&
+    password &&
+    !emailOrUsernameError &&
+    !isLoading;
+
   useEffect(() => {
     const remembered = getRememberMe();
     if (!remembered) {
@@ -195,7 +201,7 @@ const Login = () => {
 
             {loginError && <p className="form-error">{loginError}</p>}
 
-            <button type="submit" className="form-button" disabled={isLoading}>
+            <button type="submit" className="form-button" disabled={!allFilled}>
               {isLoading ? "Entrando..." : "Entrar"}
             </button>
 
