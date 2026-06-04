@@ -227,8 +227,9 @@
   max-height: 90vh;
   overflow-y: auto;
   border-radius: 28px;
-  background: white;
+  background: var(--background-color);
   box-shadow: var(--shadow-elevated);
+  border: 2px solid var(--border-color);
   padding: 24px;
 }
 
