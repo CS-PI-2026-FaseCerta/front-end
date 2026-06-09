@@ -4,7 +4,7 @@ import {
   FaArrowLeft,
   FaArrowRight,
   FaExclamationTriangle,
-  FaDownload,
+  FaFileImport,
   FaSearch,
 } from "react-icons/fa";
 import Header from "../header/Header.jsx";
@@ -19,6 +19,9 @@ import {
 } from "./listHelpers";
 import LoadingOverlay from "../loading/LoadingOverlay.jsx";
 import { exportCsv } from "../../utils/exportCsv";
+import { exportXlsx } from "../../import-export/exportXlsx";
+import ExportButton from "../../import-export/ExportButton";
+import ImportModal from "../../import-export/ImportModal";
 import "./GenericListPage.css";
 
 const getVisiblePageNumbers = (currentPage, totalPages) => {
@@ -111,6 +114,7 @@ const GenericListPage = ({
   onQueryChange,
   onPageChange,
   onPageSizeChange,
+  importExport = {},
   className = "",
   rowKey = "id",
   search = {},
@@ -132,6 +136,8 @@ const GenericListPage = ({
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   useEffect(() => {
     // TODO: quando o backend suportar ordenação remota, reaproveitar sortParams para query string.
@@ -191,8 +197,17 @@ const GenericListPage = ({
   const totalPages = processedRows.totalPages ?? 1;
   const currentPage = processedRows.page ?? 1;
   const currentPageSize = processedRows.pageSize ?? pageSize;
+  const importExportColumns = importExport.columns ?? columns;
   const exportRows = clientSide ? filteredSortedRows : data;
   const exportFileName = `${buildExportFileName(title)}.csv`;
+  const importTemplateName = `${buildExportFileName(title)}-template`;
+  const importExportFormats =
+    Array.isArray(importExport.exportFormats) &&
+    importExport.exportFormats.length > 0
+      ? importExport.exportFormats
+      : ["csv"];
+  const isImportEnabled = Boolean(importExport.enableImport);
+  const isExportEnabled = importExport.enableExport !== false;
   const hasRealData = clientSide
     ? data.length > 0
     : Number(totalItems ?? data.length) > 0;
@@ -228,8 +243,13 @@ const GenericListPage = ({
     ? "Nenhum resultado encontrado"
     : "Sem dados para exibir.";
 
-  const handleExport = async () => {
-    if (!exportRows.length || isExporting) {
+  const handleExport = async (exportPayload = {}) => {
+    const requestedRows = exportPayload.rows ?? exportRows;
+    const requestedColumns = exportPayload.columns ?? importExportColumns;
+    const requestedFormat = exportPayload.format ?? "csv";
+    const requestedFilename = exportPayload.filename ?? exportFileName;
+
+    if (!requestedRows.length || isExporting) {
       return;
     }
 
@@ -239,22 +259,63 @@ const GenericListPage = ({
       if (typeof onExport === "function") {
         // TODO: quando a exportação vier do backend, a página pode delegar o download sem mudar a estrutura da listagem.
         await onExport({
-          rows: exportRows,
-          columns,
+          rows: requestedRows,
+          columns: requestedColumns,
           searchTerm,
           filters: filterValues,
           sort: sortConfig,
-          fileName: exportFileName,
+          fileName: requestedFilename,
+          format: requestedFormat,
         });
         return;
       }
 
-      exportCsv(exportRows, {
-        columns,
-        filename: exportFileName,
-      });
+      if (requestedFormat === "xlsx") {
+        exportXlsx(requestedRows, {
+          columns: requestedColumns,
+          filename: requestedFilename,
+        });
+      } else {
+        exportCsv(requestedRows, {
+          columns: requestedColumns,
+          filename: requestedFilename,
+        });
+      }
     } finally {
       setIsExporting(false);
+    }
+  };
+
+  const handleImportConfirm = async ({
+    rows,
+    headers,
+    rawRows,
+    summary,
+    file,
+    parser,
+    errors,
+    warnings,
+  }) => {
+    if (typeof importExport.onImportConfirm !== "function") {
+      return;
+    }
+
+    setIsImporting(true);
+
+    try {
+      // TODO: quando a API de importação estiver pronta, enviar rows como JSON para o backend.
+      await importExport.onImportConfirm({
+        rows,
+        headers,
+        rawRows,
+        summary,
+        file,
+        parser,
+        errors,
+        warnings,
+      });
+    } finally {
+      setIsImporting(false);
     }
   };
 
@@ -301,17 +362,21 @@ const GenericListPage = ({
     <div className={`generic-list-page ${className}`.trim()}>
       {showHeader ? <HeaderComponent /> : null}
 
-      {isExporting ? (
+      {isExporting || isImporting ? (
         <LoadingOverlay
-          label="Exportando CSV"
-          description="Preparando o arquivo para download."
+          label={isImporting ? "Importando dados" : "Exportando dados"}
+          description={
+            isImporting
+              ? "Consolidando os dados para a próxima etapa."
+              : "Preparando o arquivo para download."
+          }
         />
       ) : null}
 
       <main
         className="generic-list-page__main"
-        aria-busy={isExporting}
-        inert={isExporting ? "" : undefined}
+        aria-busy={isExporting || isImporting}
+        inert={isExporting || isImporting ? "" : undefined}
       >
         <section className="generic-list-page__hero">
           <div className="generic-list-page__hero-top">
@@ -459,18 +524,30 @@ const GenericListPage = ({
                     </div>
                   ) : null}
 
-                  <button
-                    type="button"
-                    className="generic-list-page__action generic-list-page__action--secondary generic-list-page__export-button"
-                    onClick={handleExport}
-                    disabled={isExporting || exportRows.length === 0}
-                    aria-label={isExporting ? "Exportando CSV" : "Exportar CSV"}
-                    title={isExporting ? "Exportando CSV" : "Exportar CSV"}
-                    aria-busy={isExporting}
-                  >
-                    <FaDownload aria-hidden="true" />
-                    <span>{isExporting ? "Exportando..." : "Exportar"}</span>
-                  </button>
+                  {isImportEnabled ? (
+                    <button
+                      type="button"
+                      className="generic-list-page__action generic-list-page__action--secondary generic-list-page__export-button"
+                      onClick={() => setIsImportModalOpen(true)}
+                      disabled={isImporting || isExporting}
+                    >
+                      <FaFileImport aria-hidden="true" />
+                      <span>Importar</span>
+                    </button>
+                  ) : null}
+
+                  {isExportEnabled ? (
+                    <ExportButton
+                      className="generic-list-page__export-button"
+                      rows={exportRows}
+                      columns={importExportColumns}
+                      formats={importExportFormats}
+                      filename={exportFileName.replace(/\.csv$/i, "")}
+                      busy={isExporting}
+                      disabled={isImporting}
+                      onExport={handleExport}
+                    />
+                  ) : null}
                 </div>
               </div>
             ) : null}
@@ -614,6 +691,18 @@ const GenericListPage = ({
           </div>
         </section>
       </main>
+
+      <ImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        title={importExport.importTitle ?? `Importar ${title}`}
+        columns={importExportColumns}
+        requiredColumns={importExport.requiredColumns}
+        allowUnknownColumns={Boolean(importExport.allowUnknownColumns)}
+        onConfirm={handleImportConfirm}
+        templateBaseName={importExport.templateBaseName ?? importTemplateName}
+        enableTemplateXlsx={importExport.enableTemplateXlsx !== false}
+      />
     </div>
   );
 };
