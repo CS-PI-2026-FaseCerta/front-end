@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
@@ -16,8 +16,15 @@ import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [emailOrUsername, setEmailOrUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const location = useLocation();
+
+  // Modificado apenas para verificar se existem dados vindos do cadastro primeiro
+  const [emailOrUsername, setEmailOrUsername] = useState(
+    location.state?.email || ""
+  );
+  const [password, setPassword] = useState(
+    location.state?.password || ""
+  );
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +38,11 @@ const Login = () => {
     !isLoading;
 
   useEffect(() => {
+    // Se veio dados do cadastro, ignora o preenchimento do "Lembre de mim" para não sobrescrever
+    if (location.state?.email) {
+      return;
+    }
+
     const remembered = getRememberMe();
     if (!remembered) {
       return;
@@ -39,7 +51,7 @@ const Login = () => {
     setEmailOrUsername(remembered.emailOrUsername || "");
     setPassword(remembered.password || "");
     setRememberMe(true);
-  }, []);
+  }, [location.state]);
 
   const validateEmailOrUsername = (value) => {
     if (!value) return false;
