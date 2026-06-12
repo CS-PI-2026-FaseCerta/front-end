@@ -43,11 +43,6 @@ export default function RegisterService() {
 
     setSuccessMessage("Cadastro realizado com sucesso!");
 
-    setName("");
-    setDescription("");
-    setValue("");
-    setBillingType("fixed");
-
     setTimeout(() => {
       setSuccessMessage("");
     }, 2000); 
