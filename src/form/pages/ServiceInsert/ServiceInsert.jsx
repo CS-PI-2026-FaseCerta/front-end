@@ -17,43 +17,7 @@ export default function ServiceInsert() {
 
   };
 
-  const [servicos, setServicos] = useState([
-    {
-      id: 1,
-      descricao: "Instalar Lâmpada",
-      qntd: 1,
-      preco: 350,
-      obs: "Altura de 20 metros."
-    },
-    {
-      id: 2,
-      descricao: "Instalar Lâmpada",
-      qntd: 1,
-      preco: 350,
-      obs: "Altura de 20 metros."
-    },
-    {
-      id: 3,
-      descricao: "Instalar Lâmpada",
-      qntd: 1,
-      preco: 350,
-      obs: "Altura de 20 metros."
-    },
-    {
-      id: 4,
-      descricao: "Instalar Lâmpada",
-      qntd: 1,
-      preco: 350,
-      obs: "Altura de 20 metros."
-    },
-    {
-      id: 5,
-      descricao: "Instalar Lâmpada",
-      qntd: 1,
-      preco: 350,
-      obs: "Altura de 20 metros."
-    },
-  ])
+  const [servicos, setServicos] = useState([])
 
   const valorTotal = servicos.reduce((total, servico) => total + servico.preco, 0);
 
@@ -98,6 +62,12 @@ export default function ServiceInsert() {
   }
 
   const servicosIds = new Set(servicos.map((s) => s.id));
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const servicosFiltrados = servicosDisponiveis.filter((s) =>
+    s.descricao.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="service-insert-page">
@@ -180,8 +150,17 @@ export default function ServiceInsert() {
               <button onClick={() => setIsModalOpen(false)}>✕</button>
             </div>
 
+            <div className="modal-search">
+              <input
+                type="text"
+                placeholder="Pesquisar serviço..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
             <div className="modal-list">
-              {servicosDisponiveis.map((servico) => {
+              {servicosFiltrados.map((servico) => {
                 const isDisabled = servicosIds.has(servico.id);
 
                 return (
