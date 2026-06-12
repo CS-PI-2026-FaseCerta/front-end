@@ -37,7 +37,7 @@ export default function ServiceInsert() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // simulação de serviços cadastrados no sistema
-  const [servicosDisponiveis] = useState([
+  const [servicosDisponiveis, setServicosDisponiveis] = useState([
     { id: 10, descricao: "Troca de fiação", qntd: 1, preco: 500, obs: "Padrão residencial" },
     { id: 11, descricao: "Instalação de tomada", qntd: 1, preco: 120, obs: "Parede interna" },
     { id: 12, descricao: "Manutenção elétrica", qntd: 1, preco: 300, obs: "Check completo" },
@@ -55,6 +55,19 @@ export default function ServiceInsert() {
     { id: 24, descricao: "Troca de fusível", qntd: 1, preco: 60, obs: "Diagnóstico rápido" },
     { id: 25, descricao: "Instalação de sensor de presença", qntd: 1, preco: 200, obs: "Áreas internas" },
   ]);
+
+  useEffect(() => {
+    const sync = () => {
+      const stored =
+        JSON.parse(localStorage.getItem("servicosDisponiveis")) || [];
+      setServicosDisponiveis(stored);
+    };
+
+    sync();
+    window.addEventListener("focus", sync);
+
+    return () => window.removeEventListener("focus", sync);
+  }, []);
 
   function handleAddService(servico) {
     setServicos((prev) => [...prev, servico]);
@@ -118,11 +131,6 @@ export default function ServiceInsert() {
               </div>
             )}
 
-            
-
-            <div className="create-service-line">
-              <button className="add-text-button">+ Criar Serviço</button>
-            </div>
 
             <div className="value-line">
               <p className="title">Valor Total:</p>
@@ -183,6 +191,16 @@ export default function ServiceInsert() {
                   </div>
                 );
               })}
+            </div>
+
+            <div className="create-service-line">
+              <button
+                className="add-text-button"
+                type="button"
+                onClick={() => navigate("/cadastroServico")}
+              >
+                + Criar Serviço
+              </button>
             </div>
 
           </div>

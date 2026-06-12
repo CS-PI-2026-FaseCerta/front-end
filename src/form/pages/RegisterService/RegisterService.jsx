@@ -30,22 +30,40 @@ export default function RegisterService() {
     setValue(formatted);
   };
 
+  const numericValue = Number(value.replace(/\D/g, "")) / 100;
+
   const isFormValid =
     name.trim() !== "" &&
     description.trim() !== "" &&
     value !== "" &&
-    value !== "R$ 0,00";
+    numericValue > 0;
 
   const [successMessage, setSuccessMessage] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+  e.preventDefault();
+
+  const novoServico = {
+    id: Date.now(), // simples e único
+    descricao: name,
+    qntd: 1,
+    preco: Number(value.replace(/\D/g, "")) / 100,
+    obs: description,
+    billingType,
+  };
+
+  const existentes = JSON.parse(localStorage.getItem("servicosDisponiveis")) || [];
+
+    localStorage.setItem(
+      "servicosDisponiveis",
+      JSON.stringify([...existentes, novoServico])
+    );
 
     setSuccessMessage("Cadastro realizado com sucesso!");
 
     setTimeout(() => {
-      setSuccessMessage("");
-    }, 2000); 
+      navigate("/inserirServico");
+    }, 800);
   };
 
   return (
@@ -57,14 +75,14 @@ export default function RegisterService() {
             <button
               type="button"
               className="back-button"
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/inserirServico")}
             >
               <FaArrowLeft size={20} className="back-button-icon" />
             </button>
             <h1>Cadastro de Serviço</h1>
           </div>
 
-          <form className="form">
+          <form className="form" onSubmit={handleSubmit}>
             <div className="input-group">
               <label className="form-label">NOME DO SERVIÇO</label>
               <input

@@ -46,17 +46,7 @@
     color: var(--color-text-primary);
 }
 
-.service-insert-form .add-text-button {
-    color: var(--color-primary);
-    border: none;
-    background-color: transparent;
-    font-size: 1rem;
-    font-weight: 600;
-}
 
-.service-insert-form .add-text-button:hover {
-    cursor: pointer;
-}
 
 .service-insert-form .header {
     display: flex;
@@ -157,11 +147,6 @@
 .service-insert-form .list .description {
     display: flex;
     gap: 1rem;
-}
-
-.service-insert-form .create-service-line {
-    display: flex;
-    justify-content: end;
 }
 
 .service-insert-form .value-line {
@@ -392,6 +377,25 @@
 
 .modal-card.disabled:hover {
   transform: none;
+}
+
+
+.create-service-line {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.add-text-button {
+    color: var(--color-primary);
+    border: none;
+    background-color: transparent;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.add-text-button:hover {
+    cursor: pointer;
 }
 
 
