@@ -181,24 +181,36 @@ export default function ServiceInsert() {
             </div>
 
             <div className="modal-list">
-              {servicosFiltrados.map((servico) => {
-                const isDisabled = servicosIds.has(servico.id);
+              {servicosFiltrados.length === 0 ? (
+                <div className="modal-empty-state">
+                  <PiToolboxBold size={42} color="var(--color-primary)" />
 
-                return (
-                  <div
-                    key={servico.id}
-                    className={`modal-card ${
-                      isDisabled ? "disabled" : ""
-                    }`}
-                    onClick={() => {
-                      if (isDisabled) return;
-                      handleAddService(servico);
-                    }}
-                  >
-                    <Card servico={servico} hideActions />
-                  </div>
-                );
-              })}
+                  <p className="title">
+                    Nenhum serviço encontrado
+                  </p>
+
+                  <p className="subtitle">
+                    Tente ajustar a busca ou cadastre um novo serviço
+                  </p>
+                </div>
+              ) : (
+                servicosFiltrados.map((servico) => {
+                  const isDisabled = servicosIds.has(servico.id);
+
+                  return (
+                    <div
+                      key={servico.id}
+                      className={`modal-card ${isDisabled ? "disabled" : ""}`}
+                      onClick={() => {
+                        if (isDisabled) return;
+                        handleAddService(servico);
+                      }}
+                    >
+                      <Card servico={servico} hideActions />
+                    </div>
+                  );
+                })
+              )}
             </div>
 
             <div className="create-service-line">
