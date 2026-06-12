@@ -67,6 +67,7 @@
     flex-direction: column;
     flex: 1;
     color: var(--color-text-primary);
+    min-width: 0;
 }
 
 .service-insert-form .card .buttons {
@@ -147,6 +148,8 @@
 .service-insert-form .list .description {
     display: flex;
     gap: 1rem;
+    flex-wrap: nowrap;
+    overflow: hidden;
 }
 
 .service-insert-form .value-line {
@@ -341,6 +344,15 @@
 .modal-card .card .description {
   display: flex;
   gap: 1rem;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.card .description p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 12rem;
 }
 
 .modal-card .text p, h3, span  {
@@ -398,6 +410,71 @@
     cursor: pointer;
 }
 
+
+
+
+
+.qty-button {
+  border: none;
+  background: var(--color-surface-muted);
+  color: var(--color-primary);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qty-button:hover {
+  background: var(--color-primary);
+  color: var(--color-surface);
+  transform: translateY(-1px);
+}
+
+.qty-button:active {
+  transform: scale(0.95);
+}
+
+.qty-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.qty-input {
+  width: 3rem;
+  height: 2rem;
+  text-align: center;
+  border-radius: 0.5rem;
+  border: 1px solid var(--control-bg-active);
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  outline: none;
+  transition: 0.2s;
+}
+
+.qty-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(91, 75, 255, 0.15);
+}
+
+/* Remove setinhas do input number (Chrome, Edge, Safari) */
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove setinhas no Firefox */
+.qty-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
 
 
 

@@ -66,6 +66,35 @@ export default function ServiceInsert() {
     s.descricao.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  function updateQuantidade(id, delta) {
+    setServicos((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? {
+              ...s,
+              qntd: Math.max(1, (Number(s.qntd) || 1) + delta),
+            }
+          : s
+      )
+    );
+  }
+  
+  function setQuantidadeManual(id, value) {
+    const numericValue = Number(value);
+
+    setServicos((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? {
+              ...s,
+              qntd: isNaN(numericValue) || numericValue < 1 ? 1 : numericValue,
+            }
+          : s
+      )
+    );
+  }
+  
+
   return (
     <div className="service-insert-page">
       <Header />
@@ -107,6 +136,8 @@ export default function ServiceInsert() {
                     key={servico.id}
                     servico={servico}
                     handleDelete={handleDelete}
+                    updateQuantidade={updateQuantidade}
+                    setQuantidadeManual={setQuantidadeManual}
                   />
                 ))}
               </div>
@@ -190,7 +221,7 @@ export default function ServiceInsert() {
   );
 }
 
-function Card({ servico, handleDelete, hideActions }) {
+function Card({ servico, handleDelete, hideActions, updateQuantidade }) {
   const navigate = useNavigate();
 
   if (!servico) return null;
@@ -201,13 +232,41 @@ function Card({ servico, handleDelete, hideActions }) {
         <h3>{servico.descricao}</h3>
 
         <div className="description">
-          <p>{servico.qntd}x</p>
-          <span>-</span>
           <p>R$ {servico.preco}</p>
           <span>-</span>
-          <p>OBS: {servico.obs}</p>
+          <p className="desc-text">OBS: {servico.obs}</p>
         </div>
       </div>
+
+      {!hideActions && (
+        <div className="qty-container">
+          <button
+            type="button"
+            className="qty-button"
+            onClick={() => updateQuantidade(servico.id, -1)}
+          >
+            -
+          </button>
+
+          <input
+            className="qty-input"
+            type="number"
+            min="1"
+            value={servico.qntd || 1}
+            onChange={(e) =>
+              updateQuantidade(servico.id, Number(e.target.value) - (servico.qntd || 1))
+            }
+          />
+
+          <button
+            type="button"
+            className="qty-button"
+            onClick={() => updateQuantidade(servico.id, 1)}
+          >
+            +
+          </button>
+        </div>
+      )}
 
       {!hideActions && (
         <div className="buttons">
