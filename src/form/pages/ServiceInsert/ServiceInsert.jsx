@@ -24,9 +24,9 @@ export default function ServiceInsert() {
   }, [servicos]);
 
   const valorTotal = servicos.reduce(
-    (total, s) => total + (Number(s.preco) || 0),
-    0
-  );
+  (total, s) => total + (Number(s.preco) || 0) * (Number(s.qntd) || 1),
+  0
+);
 
   function handleDelete(id) {
     setServicos((prev) => prev.filter((s) => s.id !== id));
