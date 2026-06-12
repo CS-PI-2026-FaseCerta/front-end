@@ -77,12 +77,27 @@ export default function ServiceInsert() {
     { id: 10, descricao: "Troca de fiação", qntd: 1, preco: 500, obs: "Padrão residencial" },
     { id: 11, descricao: "Instalação de tomada", qntd: 1, preco: 120, obs: "Parede interna" },
     { id: 12, descricao: "Manutenção elétrica", qntd: 1, preco: 300, obs: "Check completo" },
+    { id: 13, descricao: "Instalação de disjuntor", qntd: 1, preco: 180, obs: "Quadro de distribuição" },
+    { id: 14, descricao: "Troca de lâmpadas LED", qntd: 1, preco: 80, obs: "Inclui altura até 3m" },
+    { id: 15, descricao: "Instalação de ventilador de teto", qntd: 1, preco: 220, obs: "Com suporte estrutural básico" },
+    { id: 16, descricao: "Reparo em curto-circuito", qntd: 1, preco: 450, obs: "Diagnóstico incluso" },
+    { id: 17, descricao: "Aterramento elétrico", qntd: 1, preco: 600, obs: "Residencial padrão" },
+    { id: 18, descricao: "Instalação de chuveiro elétrico", qntd: 1, preco: 150, obs: "Até 7500W" },
+    { id: 19, descricao: "Troca de interruptor", qntd: 1, preco: 70, obs: "Simples ou duplo" },
+    { id: 20, descricao: "Revisão elétrica geral", qntd: 1, preco: 750, obs: "Residência até 3 quartos" },
+    { id: 21, descricao: "Instalação de luminária", qntd: 1, preco: 140, obs: "Fixação em teto ou parede" },
+    { id: 22, descricao: "Passagem de cabos", qntd: 1, preco: 320, obs: "Infraestrutura interna" },
+    { id: 23, descricao: "Instalação de quadro elétrico", qntd: 1, preco: 900, obs: "Montagem completa" },
+    { id: 24, descricao: "Troca de fusível", qntd: 1, preco: 60, obs: "Diagnóstico rápido" },
+    { id: 25, descricao: "Instalação de sensor de presença", qntd: 1, preco: 200, obs: "Áreas internas" },
   ]);
 
   function handleAddService(servico) {
     setServicos((prev) => [...prev, servico]);
     setIsModalOpen(false);
   }
+
+  const servicosIds = new Set(servicos.map((s) => s.id));
 
   return (
     <div className="service-insert-page">
@@ -166,23 +181,29 @@ export default function ServiceInsert() {
             </div>
 
             <div className="modal-list">
-              {servicosDisponiveis.map((servico) => (
-                <div
-                  key={servico.id}
-                  className="modal-card"
-                  onClick={() => handleAddService(servico)}
-                >
-                  <Card
-                    id={servico.id}
-                    descricao={servico.descricao}
-                    qntd={servico.qntd}
-                    preco={servico.preco}
-                    obs={servico.obs}
-                    handleDelete={() => {}}
-                    hideActions
-                  />
-                </div>
-              ))}
+              {servicosDisponiveis.map((servico) => {
+                const isDisabled = servicosIds.has(servico.id);
+
+                return (
+                  <div
+                    key={servico.id}
+                    className={`modal-card ${isDisabled ? "disabled" : ""}`}
+                    onClick={() => {
+                      if (isDisabled) return;
+                      handleAddService(servico);
+                    }}
+                  >
+                    <Card
+                      id={servico.id}
+                      descricao={servico.descricao}
+                      qntd={servico.qntd}
+                      preco={servico.preco}
+                      obs={servico.obs}
+                      hideActions
+                    />
+                  </div>
+                );
+              })}
             </div>
 
           </div>

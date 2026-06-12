@@ -248,7 +248,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -266,6 +266,7 @@
   flex-direction: column;
   overflow: hidden;
   animation: modalIn 0.2s ease-out;
+  height: 80%;
 }
 
 /* animação leve (combina com UI moderna) */
@@ -319,7 +320,7 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  max-height: 20rem;
+  max-height: 35rem;
   overflow-y: auto;
 }
 
@@ -382,7 +383,16 @@
     color: var(--color-surface);
 }
 
+.modal-card.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.6);
+  transform: none !important;
+}
 
+.modal-card.disabled:hover {
+  transform: none;
+}
 
 
 
