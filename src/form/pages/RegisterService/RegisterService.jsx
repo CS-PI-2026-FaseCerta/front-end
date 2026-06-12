@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./RegisterService.css";
@@ -7,12 +7,19 @@ import "../../../global/components/form/Form.css";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
 
+import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+
 export default function RegisterService() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [billingType, setBillingType] = useState("fixed");
   const [value, setValue] = useState("");
+
+  const location = useLocation();
+  const mode = location.state?.mode || "createCatalog";
+  const editingService = location.state?.service;
  
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
@@ -40,26 +47,89 @@ export default function RegisterService() {
 
   const [successMessage, setSuccessMessage] = useState("");
 
-  const handleSubmit = (e) => {
-  e.preventDefault();
+  const { id } = useParams();
+  const isEdit = Boolean(id);
 
-  const novoServico = {
-    id: Date.now(), // simples e único
-    descricao: name,
-    qntd: 1,
-    preco: Number(value.replace(/\D/g, "")) / 100,
-    obs: description,
-    billingType,
-  };
+  useEffect(() => {
+    if (!editingService) return;
 
-  const existentes = JSON.parse(localStorage.getItem("servicosDisponiveis")) || [];
+    setName(editingService.descricao);
+    setDescription(editingService.obs);
+    setBillingType(editingService.billingType || "fixed");
 
-    localStorage.setItem(
-      "servicosDisponiveis",
-      JSON.stringify([...existentes, novoServico])
+    setValue(
+      Number(editingService.preco).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      })
     );
+  }, [editingService]);
 
-    setSuccessMessage("Cadastro realizado com sucesso!");
+  useEffect(() => {
+    if (!id) return;
+
+    const selecionados = JSON.parse(localStorage.getItem("servicosSelecionados")) || [];
+
+    const servico = selecionados.find((s) => String(s.id) === String(id));
+
+    if (servico) {
+      setName(servico.descricao);
+      setDescription(servico.obs);
+      setValue(
+        Number(servico.preco).toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })
+      );
+      setBillingType(servico.billingType || "fixed");
+    }
+  }, [id]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const novoServico = {
+      id: editingService?.id || Date.now(),
+      descricao: name,
+      qntd: 1,
+      preco: Number(value.replace(/\D/g, "")) / 100,
+      obs: description,
+      billingType,
+    };
+
+    // 🔥 CASO 1: catálogo global
+    if (mode === "createCatalog") {
+      const existentes =
+        JSON.parse(localStorage.getItem("servicosDisponiveis")) || [];
+
+      const updated = editingService
+        ? existentes.map((s) =>
+            s.id === editingService.id ? novoServico : s
+          )
+        : [...existentes, novoServico];
+
+      localStorage.setItem(
+        "servicosDisponiveis",
+        JSON.stringify(updated)
+      );
+    }
+
+    // 🧾 CASO 2: serviços do orçamento
+    if (mode === "editSelected") {
+      const selecionados =
+        JSON.parse(localStorage.getItem("servicosSelecionados")) || [];
+
+      const updated = selecionados.map((s) =>
+        s.id === editingService.id ? novoServico : s
+      );
+
+      localStorage.setItem(
+        "servicosSelecionados",
+        JSON.stringify(updated)
+      );
+    }
+
+    setSuccessMessage("Salvo com sucesso!");
 
     setTimeout(() => {
       navigate("/inserirServico");
@@ -75,7 +145,7 @@ export default function RegisterService() {
             <button
               type="button"
               className="back-button"
-              onClick={() => navigate("/inserirServico")}
+              onClick={() => navigate(-1)}
             >
               <FaArrowLeft size={20} className="back-button-icon" />
             </button>
