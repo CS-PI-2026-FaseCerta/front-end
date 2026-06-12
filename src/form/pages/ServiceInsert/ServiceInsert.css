@@ -338,6 +338,10 @@
   border-radius: 10px;
 }
 
+.modal-card {
+    transition: 0.2s;
+}
+
 /* card clicável */
 .modal-card .card {
   cursor: pointer;
@@ -350,11 +354,34 @@
 
 .modal-card .card .description {
   display: flex;
+  gap: 1rem;
+}
+
+.modal-card .text p, h3, span  {
+  color: var(--color-text-primary);
 }
 
 .modal-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-5px);
 }
+
+.modal-header button {
+    background-color: transparent;
+    border-radius: 1rem;
+    color: var(--color-primary);
+    font-size: 1.3rem;
+    height: 2.5rem;
+    width: 2.5rem;
+    transition: 0.2s;
+    border: none;
+}
+
+.modal-header button:hover {
+    cursor: pointer;
+    background-color: var(--color-primary);
+    color: var(--color-surface);
+}
+
 
 
 
