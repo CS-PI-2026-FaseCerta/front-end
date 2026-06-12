@@ -114,7 +114,7 @@ export default function RegisterService() {
                     checked={billingType === "hourly"}
                     onChange={() => setBillingType("hourly")}
                   />
-                  Por Hora
+                  Por Unidade de Serviço
                 </label>
               </div>
             </div>

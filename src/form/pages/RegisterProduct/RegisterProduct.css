@@ -56,7 +56,7 @@
 }
 
 .input-group label {
-    display: block;
+    display: flex;
     font-size: 12px;
     font-weight: 700;
     margin-bottom: 8px;
