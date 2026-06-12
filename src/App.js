@@ -1,7 +1,7 @@
 import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import MaterialRegistration from "./form/pages/MaterialRegistration/MaterialRegistration.jsx";
+import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx"
 import Dashboard from "./home/pages/Dashboard.jsx";
 import PedidosListPage from "./home/pages/pedidos/PedidosListPage.jsx";
 import Login from "./auth/pages/login/Login.jsx";
@@ -43,12 +43,12 @@ function App() {
               element={<RegisterService />}
             />
             <Route
-              path={AppRoutes.ServiceInsert}
-              element={<ServiceInsert />}
+              path={AppRoutes.RegisterProduct}
+              element={<RegisterProduct />}
             />
             <Route
-              path={AppRoutes.MaterialRegistration}
-              element={<MaterialRegistration />}
+              path={AppRoutes.ServiceInsert}
+              element={<ServiceInsert />}
             />
             <Route
               path={AppRoutes.UserRegistration}

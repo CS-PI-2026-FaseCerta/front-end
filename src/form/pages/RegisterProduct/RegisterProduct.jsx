@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
-import "./MaterialRegistration.css";
+import "./RegisterProduct.css";
 
-export default function CadastrarPeca() {
+export default function CadastrarProduto() {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -49,11 +49,11 @@ export default function CadastrarPeca() {
     setIsLoading(true);
     setMessage("");
 
-    console.log("Dados da peça:", form);
+    console.log("Dados do produto:", form);
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage("Peça cadastrada com sucesso!");
+      setMessage("Produto cadastrado com sucesso!");
     }, 1500);
   };
 
@@ -73,12 +73,12 @@ export default function CadastrarPeca() {
             >
               <FaArrowLeft />
             </button>
-            <h1>Cadastrar Peça/Material</h1>
+            <h1>Cadastrar Produto</h1>
           </div>
 
           <form id="registerForm" onSubmit={handleSubmit}>
             <div className="input-group">
-              <label htmlFor="nome">NOME DA PEÇA</label>
+              <label htmlFor="nome">NOME DO PRODUTO</label>
               <input
                 type="text"
                 id="nome"
@@ -208,7 +208,7 @@ export default function CadastrarPeca() {
               className="btn-primary btn-submit"
               disabled={isLoading || !isFormValid}
             >
-              {isLoading ? "CADASTRANDO..." : "CADASTRAR PEÇA/MATERIAL"}
+              {isLoading ? "CADASTRANDO..." : "Cadastrar Produto"}
             </button>
           </form>
         </div>

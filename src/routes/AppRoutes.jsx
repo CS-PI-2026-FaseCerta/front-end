@@ -5,8 +5,9 @@ export const RecoverPassword = "/recuperarSenha";
 export const RegisterService = "/cadastroServico";
 export const ServiceInsert = "/inserirServico";
 export const RegisterCity = "/cadastroCidade";
-export const MaterialRegistration = "/cadastroMaterial";
+export const RegisterProduct = "/cadastroProduto";
 export const Dashboard = "/dashboard";
+export const ApplyDiscounts = "/aplicarDesconto";
 export const Loading = "/loading";
 
 //Não implementados ainda, mas já mapeados para facilitar futuras integrações.
