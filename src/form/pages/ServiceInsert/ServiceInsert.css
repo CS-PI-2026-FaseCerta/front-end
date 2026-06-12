@@ -109,6 +109,9 @@
 
 
 
+
+
+
 /* ===================== SCROLL BAR ========================== */
 
 .service-insert-form .list::-webkit-scrollbar-thumb:hover {
@@ -129,6 +132,11 @@
 .service-insert-form .list::-webkit-scrollbar {
   width: 8px;
 }
+
+
+
+
+
 
 
 
@@ -226,6 +234,138 @@
     background-color: var(--control-bg-active);
     cursor: not-allowed;
 }
+
+
+
+
+
+
+
+
+
+/* ===================== MODAL ADICIONAR SERVIÇO ========================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 40rem;
+  background: var(--color-surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalIn 0.2s ease-out;
+}
+
+/* animação leve (combina com UI moderna) */
+@keyframes modalIn {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* HEADER igual padrão da página */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 25px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.modal-header h2 {
+  font-size: 1.3rem;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+/* botão fechar igual estilo da página */
+.modal-close-button {
+  border: none;
+  background: transparent;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.modal-close-button:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* LISTA reaproveitando lógica da página */
+.modal-list {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-height: 20rem;
+  overflow-y: auto;
+}
+
+/* scrollbar igual da página */
+.modal-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-list::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 10px;
+}
+
+.modal-list::-webkit-scrollbar-track {
+  background: var(--color-primary-dark);
+  border-radius: 10px;
+}
+
+/* card clicável */
+.modal-card .card {
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+    background-color: var(--color-surface-muted);
+    padding: 1rem 1rem;
+    border-radius: .7rem;
+}
+
+.modal-card .card .description {
+  display: flex;
+}
+
+.modal-card:hover {
+  transform: translateY(-2px);
+}
+
+
+
+
+
+
+
+
+
+
+
 
 @media (min-width: 720px) {
     .service-insert-form-card {
