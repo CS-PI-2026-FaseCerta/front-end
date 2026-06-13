@@ -95,7 +95,8 @@
     position: absolute;
     left: 15px;
     font-weight: 700;
-    color: var(--primary-color);
+    /* ALTERADO: Mudou de var(--primary-color) para var(--text-secondary) para tirar o roxo */
+    color: var(--text-secondary);
     font-size: 14px;
     z-index: 5;
     pointer-events: none;

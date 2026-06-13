@@ -4,159 +4,168 @@ import { FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
 import "./RegisterProduct.css";
+import "../../../global/components/form/Form.css";
 
 export default function CadastrarProduto() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    nome: "",
-    custo: "0,00",
-    precoVenda: "0,00",
-    quantidade: "",
-    estoqueMinimo: "",
-  });
+  const [nome, setNome] = useState("");
+  const [custo, setCusto] = useState("");
+  const [precoVenda, setPrecoVenda] = useState("");
+  const [quantidade, setQuantidade] = useState("");
+  const [estoqueMinimo, setEstoqueMinimo] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  const isFormValid = form.nome.trim() !== "" && form.custo.trim() !== "0,00" && form.precoVenda.trim() !== "0,00" &&
-  form.quantidade.trim() !== "" && form.estoqueMinimo.trim() !== "";
-
+  // Método de formatação idêntico ao da tela de Serviço
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
     const float = (Number(number) / 100).toFixed(2);
-    return float.replace(".", ",");
+
+    return Number(float).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   };
 
-  const custoNum = parseFloat(form.custo.replace(",", ".")) || 0;
-  const vendaNum = parseFloat(form.precoVenda.replace(",", ".")) || 0;
+  const handleCustoChange = (e) => {
+    const raw = e.target.value;
+    const formatted = formatCurrency(raw);
+    setCusto(formatted);
+  };
+
+  const handleVendaChange = (e) => {
+    const raw = e.target.value;
+    const formatted = formatCurrency(raw);
+    setPrecoVenda(formatted);
+  };
+
+  // Lógica de conversão para cálculos matemáticos limpando o "R$"
+  const parseCurrencyToFloat = (valueString) => {
+    if (!valueString) return 0;
+    const cleanString = valueString
+      .replace("R$", "")
+      .replace(/\./g, "")
+      .replace(",", ".")
+      .trim();
+    return parseFloat(cleanString) || 0;
+  };
+
+  const custoNum = parseCurrencyToFloat(custo);
+  const vendaNum = parseCurrencyToFloat(precoVenda);
   const lucroNominal = vendaNum - custoNum;
   const margemPercentual = vendaNum > 0 ? (lucroNominal / vendaNum) * 100 : 0;
 
-  const updateField = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "custo" || name === "precoVenda") {
-      const formatted = formatCurrency(value);
-      setForm({ ...form, [name]: formatted });
-    } else {
-      setForm({ ...form, [name]: value });
-    }
-  };
+  const isFormValid =
+    nome.trim() !== "" &&
+    custo !== "" &&
+    custo !== "R$ 0,00" &&
+    precoVenda !== "" &&
+    precoVenda !== "R$ 0,00" &&
+    quantidade.trim() !== "" &&
+    estoqueMinimo.trim() !== "";
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage("");
 
-    console.log("Dados do produto:", form);
+    const payload = { nome, custo, precoVenda, quantidade, estoqueMinimo };
+    console.log("Dados do produto:", payload);
 
     setTimeout(() => {
       setIsLoading(false);
       setMessage("Produto cadastrado com sucesso!");
+
+      setNome("");
+      setCusto("");
+      setPrecoVenda("");
+      setQuantidade("");
+      setEstoqueMinimo("");
     }, 1500);
   };
 
-
   return (
-    <div className="page-container">
-      <Header /> 
-
-      <main className="main-content">
-        <div className="card wide-card">
-          <div className="card-header"> 
-            {/* Botão de voltar */}
+    <div className="service-page">
+      <Header />
+      <div className="service-page-content">
+        <main className="service-form-card">
+          <div className="card-header">
             <button
-              onClick={() => navigate("/dashboard")}
+              type="button"
               className="back-button"
-              style={{ background: "none", border: "none", cursor: "pointer" }}
+              onClick={() => navigate("/dashboard")}
             >
-              <FaArrowLeft />
+              <FaArrowLeft size={20} className="back-button-icon" />
             </button>
             <h1>Cadastrar Produto</h1>
           </div>
 
-          <form id="registerForm" onSubmit={handleSubmit}>
+          <form className="form" onSubmit={handleSubmit}>
             <div className="input-group">
-              <label htmlFor="nome">NOME DO PRODUTO</label>
+              <label className="form-label">NOME DO PRODUTO</label>
               <input
+                className="form-input"
                 type="text"
-                id="nome"
-                name="nome"
                 placeholder="Ex: Filtro de Óleo Magneti Marelli"
-                value={form.nome}
-                onChange={updateField}
-                required
-                className="input-field"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
               />
             </div>
 
-            <div className="form-row" style={{ display: "flex", gap: "20px" }}>
-              <div className="input-group" style={{ flex: 1 }}>
-                <label htmlFor="custo">CUSTO (R$)</label>
-                <div className="input-wrapper prefix">
-                  <span className="currency-prefix">R$</span>
-                  <input
-                    type="text"
-                    id="custo"
-                    name="custo"
-                    placeholder="0,00"
-                    value={form.custo}
-                    onChange={updateField}
-                    className="input-field"
-                  />
-                </div>
+            <div className="form-row">
+              <div className="input-group">
+                <label className="form-label">CUSTO</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={custo}
+                  onChange={handleCustoChange}
+                  placeholder="R$ 0,00"
+                />
               </div>
-              <div className="input-group" style={{ flex: 1 }}>
-                <label htmlFor="precoVenda">PREÇO FINAL DE VENDA (R$)</label>
-                <div className="input-wrapper prefix">
-                  <span className="currency-prefix">R$</span>
-                  <input
-                    type="text"
-                    id="precoVenda"
-                    name="precoVenda"
-                    placeholder="0,00"
-                    value={form.precoVenda}
-                    onChange={updateField}
-                    className="input-field"
-                  />
-                </div>
+              <div className="input-group">
+                <label className="form-label">PREÇO FINAL DE VENDA</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  value={precoVenda}
+                  onChange={handleVendaChange}
+                  placeholder="R$ 0,00"
+                />
               </div>
             </div>
 
-            <div className="form-row" style={{ display: "flex", gap: "20px" }}>
-              <div className="input-group" style={{ flex: 1 }}>
-                <label htmlFor="quantidade">QUANTIDADE ATUAL</label>
+            <div className="form-row">
+              <div className="input-group">
+                <label className="form-label">QUANTIDADE ATUAL</label>
                 <input
+                  className="form-input"
                   type="number"
-                  id="quantidade"
-                  name="quantidade"
                   min="0"
                   placeholder="0"
-                  value={form.quantidade}
-                  onChange={updateField}
-                  className="input-field"
+                  value={quantidade}
+                  onChange={(e) => setQuantidade(e.target.value)}
                 />
               </div>
-              <div className="input-group" style={{ flex: 1 }}>
-                <label htmlFor="estoqueMinimo">ESTOQUE MÍNIMO</label>
+              <div className="input-group">
+                <label className="form-label">ESTOQUE MÍNIMO</label>
                 <input
+                  className="form-input"
                   type="number"
-                  id="estoqueMinimo"
-                  name="estoqueMinimo"
                   min="0"
                   placeholder="5"
-                  value={form.estoqueMinimo}
-                  onChange={updateField}
-                  className="input-field"
+                  value={estoqueMinimo}
+                  onChange={(e) => setEstoqueMinimo(e.target.value)}
                 />
               </div>
             </div>
 
             <div className="input-group" style={{ marginTop: "10px" }}>
-              <label>MARGEM DE LUCRO ESTIMADA</label>
+              <label className="form-label">MARGEM DE LUCRO ESTIMADA</label>
               <div
-                className="margin-display-field"
+                className="margin-display"
                 style={{
                   color:
                     lucroNominal > 0
@@ -171,49 +180,30 @@ export default function CadastrarProduto() {
               </div>
 
               {lucroNominal < 0 && (
-                <p className="login-error-message" style={{ fontSize: "12px" }}>
+                <p className="form-error-inline">
                   Atenção: Preço de venda abaixo do custo!
                 </p>
               )}
 
               {lucroNominal === 0 && vendaNum > 0 && (
-                <p
-                  style={{
-                    fontSize: "12px",
-                    color: "#f1c40f",
-                    marginTop: "5px",
-                  }}
-                >
-                  <i className="fas fa-exclamation-triangle"></i> Cuidado: Você
-                  não terá margem de lucro.
+                <p className="form-error-inline" style={{ color: "#f1c40f" }}>
+                  Cuidado: Você não terá margem de lucro.
                 </p>
               )}
             </div>
 
-            {message && (
-              <p
-                style={{
-                  color: "#28a745",
-                  fontWeight: "bold",
-                  textAlign: "center",
-                  marginBottom: "1rem",
-                }}
-              >
-                {message}
-              </p>
-            )}
+            {message && <p className="form-success">{message}</p>}
 
             <button
               type="submit"
-              className="btn-primary btn-submit"
+              className="form-button"
               disabled={isLoading || !isFormValid}
             >
               {isLoading ? "CADASTRANDO..." : "Cadastrar Produto"}
             </button>
           </form>
-        </div>
-      </main>
-
+        </main>
+      </div>
       <Footer />
     </div>
   );
