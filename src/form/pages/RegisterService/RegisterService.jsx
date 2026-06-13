@@ -14,6 +14,9 @@ export default function RegisterService() {
   const [billingType, setBillingType] = useState("fixed");
   const [value, setValue] = useState("");
 
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
     const float = (Number(number) / 100).toFixed(2);
@@ -28,13 +31,11 @@ export default function RegisterService() {
     const raw = e.target.value;
 
     if (billingType === "hourly") {
-      // Formata apenas os números com a vírgula para Unidade de Serviço (sem R$)
       const number = raw.replace(/\D/g, "");
       const float = (Number(number) / 100).toFixed(2);
       const formatted = float.replace(".", ",");
       setValue(formatted === "0,00" && raw === "" ? "" : formatted);
     } else {
-      // Mantém a formatação com R$ para Preço Fixo
       const formatted = formatCurrency(raw);
       setValue(formatted);
     }
@@ -44,23 +45,29 @@ export default function RegisterService() {
     name.trim() !== "" &&
     value !== "" &&
     value !== "R$ 0,00" &&
-    value !== "0,00";
-
-  const [successMessage, setSuccessMessage] = useState("");
+    value !== "0,00" &&
+    !isLoading;
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isFormValid) return;
 
-    setSuccessMessage("Cadastro realizado com sucesso!");
-
-    setName("");
-    setDescription("");
-    setValue("");
-    setBillingType("fixed");
+    setIsLoading(true);
+    setSuccessMessage("");
 
     setTimeout(() => {
-      setSuccessMessage("");
-    }, 2000);
+      setIsLoading(false);
+      setSuccessMessage("Cadastro realizado com sucesso!");
+
+      setName("");
+      setDescription("");
+      setValue("");
+      setBillingType("fixed");
+
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 2000);
+    }, 1500);
   };
 
   return (
@@ -73,10 +80,11 @@ export default function RegisterService() {
               type="button"
               className="back-button"
               onClick={() => navigate("/dashboard")}
+              disabled={isLoading}
             >
               <FaArrowLeft size={20} className="back-button-icon" />
             </button>
-            <h1>Cadastro de Serviço</h1>
+            <h1>Salvar Serviço</h1>
           </div>
 
           <form className="form" onSubmit={handleSubmit}>
@@ -88,6 +96,7 @@ export default function RegisterService() {
                 placeholder="Ex: Manutenção Elétrica"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                disabled={isLoading}
               />
             </div>
 
@@ -98,6 +107,7 @@ export default function RegisterService() {
                 placeholder="Descreva os detalhes do serviço oferecido..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                disabled={isLoading}
               />
             </div>
 
@@ -107,8 +117,10 @@ export default function RegisterService() {
               <div className="form-radio-group">
                 <label
                   className="form-radio-option"
-                  tabIndex={0}
+                  tabIndex={isLoading ? -1 : 0}
+                  style={{ pointerEvents: isLoading ? "none" : "auto", opacity: isLoading ? 0.7 : 1 }}
                   onKeyDown={(e) => {
+                    if (isLoading) return;
                     if (e.key === " " || e.key === "Enter") {
                       e.preventDefault();
                       setBillingType("fixed");
@@ -125,6 +137,7 @@ export default function RegisterService() {
                       setBillingType("fixed");
                       setValue("");
                     }}
+                    disabled={isLoading}
                     tabIndex={-1}
                   />
                   Preço Fixo
@@ -132,8 +145,10 @@ export default function RegisterService() {
 
                 <label
                   className="form-radio-option"
-                  tabIndex={0}
+                  tabIndex={isLoading ? -1 : 0}
+                  style={{ pointerEvents: isLoading ? "none" : "auto", opacity: isLoading ? 0.7 : 1 }}
                   onKeyDown={(e) => {
+                    if (isLoading) return;
                     if (e.key === " " || e.key === "Enter") {
                       e.preventDefault();
                       setBillingType("hourly");
@@ -150,6 +165,7 @@ export default function RegisterService() {
                       setBillingType("hourly");
                       setValue("");
                     }}
+                    disabled={isLoading}
                     tabIndex={-1}
                   />
                   Por Unidade de Serviço
@@ -167,11 +183,14 @@ export default function RegisterService() {
                 value={value}
                 onChange={handleValueChange}
                 placeholder={billingType === "hourly" ? "0,00" : "R$ 0,00"}
+                disabled={isLoading}
               />
             </div>
 
-            <button type="submit" className="form-button" disabled={!isFormValid}>
-              Salvar Serviço
+            {successMessage && <p className="form-success">{successMessage}</p>}
+
+            <button type="submit" className="form-button" disabled={!isFormValid || isLoading}>
+              {isLoading ? "SALVANDO..." : "Salvar Serviço"}
             </button>
           </form>
         </main>

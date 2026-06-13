@@ -14,6 +14,7 @@ export default function AplicarDesconto() {
     const [quickSelectedProduto, setQuickSelectedProduto] = useState("");
 
     const [isSaving, setIsSaving] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
 
     const formatCurrency = (value) => {
         const number = value.replace(/\D/g, "");
@@ -148,21 +149,30 @@ export default function AplicarDesconto() {
         descontoProduto > 0 &&
         descontoProduto <= subtotalProduto;
 
-    const isFormValid = (servicoValido || produtoValido) && mensagemErroAtual === "";
+    const isFormValid = (servicoValido || produtoValido) && mensagemErroAtual === "" && !isSaving;
 
     const handleSalvarDesconto = () => {
         if (!isFormValid) return;
 
         setIsSaving(true);
+        setSuccessMessage("");
 
         setTimeout(() => {
-            console.log("Desconto salvo com sucesso!");
             setIsSaving(false);
+            setSuccessMessage("Desconto aplicado com sucesso!");
 
-            const modalOverlay = document.querySelector(".dashboard-modal-overlay");
-            if (modalOverlay) {
-                modalOverlay.click();
-            }
+            setValorServico("");
+            setQuickSelectedServico("");
+            setValorProduto("");
+            setQuickSelectedProduto("");
+
+            setTimeout(() => {
+                setSuccessMessage("");
+                const modalOverlay = document.querySelector(".dashboard-modal-overlay");
+                if (modalOverlay) {
+                    modalOverlay.click();
+                }
+            }, 2000);
         }, 1500);
     };
 
@@ -188,6 +198,7 @@ export default function AplicarDesconto() {
                                         setValorServico("");
                                         setQuickSelectedServico("");
                                     }}
+                                    disabled={isSaving}
                                 >
                                     %
                                 </button>
@@ -199,6 +210,7 @@ export default function AplicarDesconto() {
                                         setValorServico("");
                                         setQuickSelectedServico("");
                                     }}
+                                    disabled={isSaving}
                                 >
                                     R$
                                 </button>
@@ -213,6 +225,7 @@ export default function AplicarDesconto() {
                                             type="button"
                                             className={`opt-btn ${quickSelectedServico === "5" ? "active" : ""}`}
                                             onClick={() => handleQuickValueServico("5")}
+                                            disabled={isSaving}
                                         >
                                             5%
                                         </button>
@@ -221,6 +234,7 @@ export default function AplicarDesconto() {
                                             type="button"
                                             className={`opt-btn ${quickSelectedServico === "10" ? "active" : ""}`}
                                             onClick={() => handleQuickValueServico("10")}
+                                            disabled={isSaving}
                                         >
                                             10%
                                         </button>
@@ -232,6 +246,7 @@ export default function AplicarDesconto() {
                                             className="small-input"
                                             value={valorServico}
                                             onChange={handleInputChangeServico}
+                                            disabled={isSaving}
                                         />
                                     </div>
                                 ) : (
@@ -243,6 +258,7 @@ export default function AplicarDesconto() {
                                             className="full-input"
                                             value={valorServico}
                                             onChange={handleInputChangeServico}
+                                            disabled={isSaving}
                                         />
                                     </div>
                                 )}
@@ -262,6 +278,7 @@ export default function AplicarDesconto() {
                                         setValorProduto("");
                                         setQuickSelectedProduto("");
                                     }}
+                                    disabled={isSaving}
                                 >
                                     %
                                 </button>
@@ -273,6 +290,7 @@ export default function AplicarDesconto() {
                                         setValorProduto("");
                                         setQuickSelectedProduto("");
                                     }}
+                                    disabled={isSaving}
                                 >
                                     R$
                                 </button>
@@ -287,6 +305,7 @@ export default function AplicarDesconto() {
                                             type="button"
                                             className={`opt-btn ${quickSelectedProduto === "5" ? "active" : ""}`}
                                             onClick={() => handleQuickValueProduto("5")}
+                                            disabled={isSaving}
                                         >
                                             5%
                                         </button>
@@ -295,6 +314,7 @@ export default function AplicarDesconto() {
                                             type="button"
                                             className={`opt-btn ${quickSelectedProduto === "10" ? "active" : ""}`}
                                             onClick={() => handleQuickValueProduto("10")}
+                                            disabled={isSaving}
                                         >
                                             10%
                                         </button>
@@ -306,6 +326,7 @@ export default function AplicarDesconto() {
                                             className="small-input"
                                             value={valorProduto}
                                             onChange={handleInputChangeProduto}
+                                            disabled={isSaving}
                                         />
                                     </div>
                                 ) : (
@@ -317,6 +338,7 @@ export default function AplicarDesconto() {
                                             className="full-input"
                                             value={valorProduto}
                                             onChange={handleInputChangeProduto}
+                                            disabled={isSaving}
                                         />
                                     </div>
                                 )}
@@ -335,13 +357,17 @@ export default function AplicarDesconto() {
                                 </span>
 
                                 <span className="discount-total-description">
-                                    Valor total applied na ordem de serviço
+                                    Valor total aplicado na ordem de serviço
                                 </span>
 
                                 {mensagemErroAtual && (
                                     <p className="discount-error-message">{mensagemErroAtual}</p>
                                 )}
                             </div>
+
+                            {successMessage && (
+                                <p className="form-success" >{successMessage}</p>
+                            )}
 
                             <button
                                 type="button"

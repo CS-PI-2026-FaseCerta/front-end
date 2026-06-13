@@ -62,10 +62,13 @@ export default function CadastrarProduto() {
     precoVenda !== "" &&
     precoVenda !== "R$ 0,00" &&
     quantidade.trim() !== "" &&
-    estoqueMinimo.trim() !== "";
+    estoqueMinimo.trim() !== "" &&
+    !isLoading;
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isFormValid) return;
+
     setIsLoading(true);
     setMessage("");
 
@@ -74,13 +77,17 @@ export default function CadastrarProduto() {
 
     setTimeout(() => {
       setIsLoading(false);
-      setMessage("Produto cadastrado com sucesso!");
+      setMessage("Cadastro realizado com sucesso!");
 
       setNome("");
       setCusto("");
       setPrecoVenda("");
       setQuantidade("");
       setEstoqueMinimo("");
+
+      setTimeout(() => {
+        setMessage("");
+      }, 2000);
     }, 1500);
   };
 
@@ -94,10 +101,11 @@ export default function CadastrarProduto() {
               type="button"
               className="back-button"
               onClick={() => navigate("/dashboard")}
+              disabled={isLoading}
             >
               <FaArrowLeft size={20} className="back-button-icon" />
             </button>
-            <h1>Cadastrar Produto</h1>
+            <h1>Salvar Produto</h1>
           </div>
 
           <form className="form" onSubmit={handleSubmit}>
@@ -109,6 +117,7 @@ export default function CadastrarProduto() {
                 placeholder="Ex: Filtro de Óleo Magneti Marelli"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
+                disabled={isLoading}
               />
             </div>
 
@@ -121,6 +130,7 @@ export default function CadastrarProduto() {
                   value={custo}
                   onChange={handleCustoChange}
                   placeholder="R$ 0,00"
+                  disabled={isLoading}
                 />
               </div>
               <div className="input-group">
@@ -131,6 +141,7 @@ export default function CadastrarProduto() {
                   value={precoVenda}
                   onChange={handleVendaChange}
                   placeholder="R$ 0,00"
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -145,6 +156,7 @@ export default function CadastrarProduto() {
                   placeholder="0"
                   value={quantidade}
                   onChange={(e) => setQuantidade(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
               <div className="input-group">
@@ -156,6 +168,7 @@ export default function CadastrarProduto() {
                   placeholder="5"
                   value={estoqueMinimo}
                   onChange={(e) => setEstoqueMinimo(e.target.value)}
+                  disabled={isLoading}
                 />
               </div>
             </div>
@@ -197,7 +210,7 @@ export default function CadastrarProduto() {
               className="form-button"
               disabled={isLoading || !isFormValid}
             >
-              {isLoading ? "CADASTRANDO..." : "Cadastrar Produto"}
+              {isLoading ? "SALVANDO..." : "Salvar Produto"}
             </button>
           </form>
         </main>
