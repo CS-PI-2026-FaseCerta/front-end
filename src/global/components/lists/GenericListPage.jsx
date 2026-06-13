@@ -22,6 +22,7 @@ import { exportCsv } from "../../utils/exportCsv";
 import { exportXlsx } from "../../import-export/exportXlsx";
 import ExportButton from "../../import-export/ExportButton";
 import ImportModal from "../../import-export/ImportModal";
+import useDeviceType from "../../hooks/useDeviceType";
 import "./GenericListPage.css";
 
 const getVisiblePageNumbers = (currentPage, totalPages) => {
@@ -119,6 +120,7 @@ const GenericListPage = ({
   rowKey = "id",
   search = {},
 }) => {
+  const deviceType = useDeviceType();
   const titleTooltipId = useId();
   const [searchTerm, setSearchTerm] = useState(search.defaultValue ?? "");
   const [sortConfig, setSortConfig] = useState(() =>
@@ -404,6 +406,38 @@ const GenericListPage = ({
                   const ActionIcon = action.icon;
                   const actionKey = action.key ?? action.label;
 
+                  if (action.onCreate) {
+                    if (deviceType === "mobile") {
+                      const resolvedHref =
+                        typeof action.onCreate.mobile === "function"
+                          ? action.onCreate.mobile()
+                          : action.onCreate.mobile;
+
+                      return (
+                        <Link
+                          key={actionKey}
+                          to={resolvedHref}
+                          className={`generic-list-page__action generic-list-page__action--${action.variant ?? "primary"}`}
+                        >
+                          {ActionIcon ? <ActionIcon aria-hidden="true" /> : null}
+                          <span>{action.label}</span>
+                        </Link>
+                      );
+                    } else {
+                      return (
+                        <button
+                          key={actionKey}
+                          type="button"
+                          className={`generic-list-page__action generic-list-page__action--${action.variant ?? "primary"}`}
+                          onClick={action.onCreate.desktop}
+                        >
+                          {ActionIcon ? <ActionIcon aria-hidden="true" /> : null}
+                          <span>{action.label}</span>
+                        </button>
+                      );
+                    }
+                  }
+
                   if (action.href) {
                     const resolvedHref =
                       typeof action.href === "function"
@@ -581,8 +615,16 @@ const GenericListPage = ({
                   "Quando houver registros disponíveis, eles aparecerão nesta tabela."
                 }
                 actionLabel={emptyState.actionLabel}
-                actionHref={emptyState.actionHref}
-                onAction={emptyState.onAction}
+                actionHref={
+                  emptyState.onCreate
+                    ? (deviceType === "mobile" ? emptyState.onCreate.mobile : undefined)
+                    : emptyState.actionHref
+                }
+                onAction={
+                  emptyState.onCreate
+                    ? (deviceType === "desktop" ? emptyState.onCreate.desktop : undefined)
+                    : emptyState.onAction
+                }
               />
             ) : showTableState ? (
               <GenericTable
