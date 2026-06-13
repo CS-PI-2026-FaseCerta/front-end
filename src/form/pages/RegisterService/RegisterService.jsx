@@ -13,7 +13,7 @@ export default function RegisterService() {
   const [description, setDescription] = useState("");
   const [billingType, setBillingType] = useState("fixed");
   const [value, setValue] = useState("");
- 
+
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
     const float = (Number(number) / 100).toFixed(2);
@@ -26,15 +26,25 @@ export default function RegisterService() {
 
   const handleValueChange = (e) => {
     const raw = e.target.value;
-    const formatted = formatCurrency(raw);
-    setValue(formatted);
+
+    if (billingType === "hourly") {
+      // Formata apenas os números com a vírgula para Unidade de Serviço (sem R$)
+      const number = raw.replace(/\D/g, "");
+      const float = (Number(number) / 100).toFixed(2);
+      const formatted = float.replace(".", ",");
+      setValue(formatted === "0,00" && raw === "" ? "" : formatted);
+    } else {
+      // Mantém a formatação com R$ para Preço Fixo
+      const formatted = formatCurrency(raw);
+      setValue(formatted);
+    }
   };
 
   const isFormValid =
     name.trim() !== "" &&
-    description.trim() !== "" &&
     value !== "" &&
-    value !== "R$ 0,00";
+    value !== "R$ 0,00" &&
+    value !== "0,00";
 
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -50,7 +60,7 @@ export default function RegisterService() {
 
     setTimeout(() => {
       setSuccessMessage("");
-    }, 2000); 
+    }, 2000);
   };
 
   return (
@@ -69,7 +79,7 @@ export default function RegisterService() {
             <h1>Cadastro de Serviço</h1>
           </div>
 
-          <form className="form">
+          <form className="form" onSubmit={handleSubmit}>
             <div className="input-group">
               <label className="form-label">NOME DO SERVIÇO</label>
               <input
@@ -95,24 +105,52 @@ export default function RegisterService() {
               <label className="form-label">TIPO DE COBRANÇA</label>
 
               <div className="form-radio-group">
-                <label className="form-radio-option">
+                <label
+                  className="form-radio-option"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === " " || e.key === "Enter") {
+                      e.preventDefault();
+                      setBillingType("fixed");
+                      setValue("");
+                    }
+                  }}
+                >
                   <input
                     type="radio"
                     name="billing"
                     value="fixed"
                     checked={billingType === "fixed"}
-                    onChange={() => setBillingType("fixed")}
+                    onChange={() => {
+                      setBillingType("fixed");
+                      setValue("");
+                    }}
+                    tabIndex={-1}
                   />
                   Preço Fixo
                 </label>
 
-                <label className="form-radio-option">
+                <label
+                  className="form-radio-option"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === " " || e.key === "Enter") {
+                      e.preventDefault();
+                      setBillingType("hourly");
+                      setValue("");
+                    }
+                  }}
+                >
                   <input
                     type="radio"
                     name="billing"
                     value="hourly"
                     checked={billingType === "hourly"}
-                    onChange={() => setBillingType("hourly")}
+                    onChange={() => {
+                      setBillingType("hourly");
+                      setValue("");
+                    }}
+                    tabIndex={-1}
                   />
                   Por Unidade de Serviço
                 </label>
@@ -121,14 +159,14 @@ export default function RegisterService() {
 
             <div className="input-group">
               <label className="form-label">
-                VALOR {billingType === "hourly" ? "(R$/h)" : "(R$)"}
+                VALOR {billingType === "hourly" ? "(U.S)" : "(R$)"}
               </label>
               <input
                 className="form-input"
                 type="text"
                 value={value}
                 onChange={handleValueChange}
-                placeholder="R$ 0,00"
+                placeholder={billingType === "hourly" ? "0,00" : "R$ 0,00"}
               />
             </div>
 
