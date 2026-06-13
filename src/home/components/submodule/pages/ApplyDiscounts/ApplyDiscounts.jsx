@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import "./ApplyDiscounts.css";
 
-
 export default function AplicarDesconto() {
-
     const subtotalServico = 350;
     const subtotalProduto = 350;
 
@@ -18,21 +16,23 @@ export default function AplicarDesconto() {
     const [isSaving, setIsSaving] = useState(false);
 
     const formatCurrency = (value) => {
-        const numericValue = value.replace(/\D/g, "");
+        const number = value.replace(/\D/g, "");
+        const float = (Number(number) / 100).toFixed(2);
 
-        const number = (Number(numericValue) / 100).toFixed(2);
-
-        return number.replace(".", ",");
+        return Number(float).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        });
     };
 
-    const parseCurrency = (value) => {
-        return Number(
-            value
-                .replace("R$", "")
-                .replace(/\./g, "")
-                .replace(",", ".")
-                .trim()
-        );
+    const parseCurrency = (valueString) => {
+        if (!valueString) return 0;
+        const cleanString = valueString
+            .replace("R$", "")
+            .replace(/\./g, "")
+            .replace(",", ".")
+            .trim();
+        return parseFloat(cleanString) || 0;
     };
 
     const handleQuickValueServico = (valor) => {
@@ -47,11 +47,10 @@ export default function AplicarDesconto() {
 
     const handleInputChangeServico = (e) => {
         setQuickSelectedServico("");
-
         const value = e.target.value;
 
         if (tipoDescontoServico === "valor") {
-            setValorServico(formatCurrency(value));
+            setCustoDoInput(value, setValorServico);
         } else {
             setValorServico(value.replace(/\D/g, ""));
         }
@@ -69,13 +68,20 @@ export default function AplicarDesconto() {
 
     const handleInputChangeProduto = (e) => {
         setQuickSelectedProduto("");
-
         const value = e.target.value;
 
         if (tipoDescontoProduto === "valor") {
-            setValorProduto(formatCurrency(value));
+            setCustoDoInput(value, setValorProduto);
         } else {
             setValorProduto(value.replace(/\D/g, ""));
+        }
+    };
+
+    const setCustoDoInput = (value, stateSetter) => {
+        if (value === "") {
+            stateSetter("");
+        } else {
+            stateSetter(formatCurrency(value));
         }
     };
 
@@ -85,9 +91,7 @@ export default function AplicarDesconto() {
                 ? parseCurrency(valorServico)
                 : Number(valorServico);
 
-        if (!valor || valor <= 0) {
-            return 0;
-        }
+        if (!valor || valor <= 0) return 0;
 
         if (tipoDescontoServico === "percentual") {
             return (subtotalServico * valor) / 100;
@@ -102,9 +106,7 @@ export default function AplicarDesconto() {
                 ? parseCurrency(valorProduto)
                 : Number(valorProduto);
 
-        if (!valor || valor <= 0) {
-            return 0;
-        }
+        if (!valor || valor <= 0) return 0;
 
         if (tipoDescontoProduto === "percentual") {
             return (subtotalProduto * valor) / 100;
@@ -118,61 +120,46 @@ export default function AplicarDesconto() {
 
     let mensagemErroAtual = "";
 
-    if (tipoDescontoServico === "percentual") {
-        if (Number(valorServico) > 100) {
-            mensagemErroAtual =
-                "O percentual não pode ser maior que 100%.";
-        }
+    if (tipoDescontoServico === "percentual" && Number(valorServico) > 100) {
+        mensagemErroAtual = "O percentual não pode ser maior que 100%.";
     }
 
     if (descontoServico > subtotalServico) {
-        mensagemErroAtual =
-            "O desconto não pode ser maior que o valor total do SERVIÇO.";
+        mensagemErroAtual = "O desconto não pode ser maior que o valor total do SERVIÇO.";
     }
-    
-    if (
-        tipoDescontoProduto === "percentual" &&
-        Number(valorProduto) > 100
-    ) {
-        mensagemErroAtual =
-            "O percentual do produto não pode ser maior que 100%.";
+
+    if (tipoDescontoProduto === "percentual" && Number(valorProduto) > 100) {
+        mensagemErroAtual = "O percentual do produto não pode ser maior que 100%.";
     }
 
     if (descontoProduto > subtotalProduto) {
-        mensagemErroAtual =
-            "O desconto não pode ser maior que o valor total do PRODUTO.";
+        mensagemErroAtual = "O desconto não pode ser maior que o valor total do PRODUTO.";
     }
 
     const servicoValido =
         valorServico !== "" &&
+        valorServico !== "R$ 0,00" &&
         descontoServico > 0 &&
         descontoServico <= subtotalServico;
 
     const produtoValido =
         valorProduto !== "" &&
+        valorProduto !== "R$ 0,00" &&
         descontoProduto > 0 &&
         descontoProduto <= subtotalProduto;
 
-    const isFormValid =
-        (servicoValido || produtoValido) &&
-        mensagemErroAtual === "";
+    const isFormValid = (servicoValido || produtoValido) && mensagemErroAtual === "";
 
     const handleSalvarDesconto = () => {
-        if (!isFormValid) {
-            return;
-        }
+        if (!isFormValid) return;
 
         setIsSaving(true);
 
         setTimeout(() => {
             console.log("Desconto salvo com sucesso!");
-
             setIsSaving(false);
 
-            const modalOverlay = document.querySelector(
-                ".dashboard-modal-overlay"
-            );
-
+            const modalOverlay = document.querySelector(".dashboard-modal-overlay");
             if (modalOverlay) {
                 modalOverlay.click();
             }
@@ -190,16 +177,12 @@ export default function AplicarDesconto() {
 
                         <div className="discount-card">
                             <h3>Serviço</h3>
-
                             <p>Desconto em percentual ou valor?</p>
 
                             <div className="toggle-container">
                                 <button
                                     type="button"
-                                    className={`toggle-button ${tipoDescontoServico === "percentual"
-                                            ? "active"
-                                            : ""
-                                        }`}
+                                    className={`toggle-button ${tipoDescontoServico === "percentual" ? "active" : ""}`}
                                     onClick={() => {
                                         setTipoDescontoServico("percentual");
                                         setValorServico("");
@@ -208,13 +191,9 @@ export default function AplicarDesconto() {
                                 >
                                     %
                                 </button>
-
                                 <button
                                     type="button"
-                                    className={`toggle-button ${tipoDescontoServico === "valor"
-                                            ? "active"
-                                            : ""
-                                        }`}
+                                    className={`toggle-button ${tipoDescontoServico === "valor" ? "active" : ""}`}
                                     onClick={() => {
                                         setTipoDescontoServico("valor");
                                         setValorServico("");
@@ -232,26 +211,16 @@ export default function AplicarDesconto() {
                                     <div className="options-row">
                                         <button
                                             type="button"
-                                            className={`opt-btn ${quickSelectedServico === "5"
-                                                    ? "active"
-                                                    : ""
-                                                }`}
-                                            onClick={() =>
-                                                handleQuickValueServico("5")
-                                            }
+                                            className={`opt-btn ${quickSelectedServico === "5" ? "active" : ""}`}
+                                            onClick={() => handleQuickValueServico("5")}
                                         >
                                             5%
                                         </button>
 
                                         <button
                                             type="button"
-                                            className={`opt-btn ${quickSelectedServico === "10"
-                                                    ? "active"
-                                                    : ""
-                                                }`}
-                                            onClick={() =>
-                                                handleQuickValueServico("10")
-                                            }
+                                            className={`opt-btn ${quickSelectedServico === "10" ? "active" : ""}`}
+                                            onClick={() => handleQuickValueServico("10")}
                                         >
                                             10%
                                         </button>
@@ -266,15 +235,11 @@ export default function AplicarDesconto() {
                                         />
                                     </div>
                                 ) : (
-                                    <div className="input-wrapper prefix">
-                                        <span className="currency-prefix">
-                                            R$
-                                        </span>
-
+                                    <div className="input-wrapper">
                                         <input
                                             type="text"
                                             inputMode="numeric"
-                                            placeholder="0,00"
+                                            placeholder="R$ 0,00"
                                             className="full-input"
                                             value={valorServico}
                                             onChange={handleInputChangeServico}
@@ -286,16 +251,12 @@ export default function AplicarDesconto() {
 
                         <div className="discount-card piece-section">
                             <h3>Produto</h3>
-
                             <p>Desconto em percentual ou valor?</p>
 
                             <div className="toggle-container">
                                 <button
                                     type="button"
-                                    className={`toggle-button ${tipoDescontoProduto === "percentual"
-                                            ? "active"
-                                            : ""
-                                        }`}
+                                    className={`toggle-button ${tipoDescontoProduto === "percentual" ? "active" : ""}`}
                                     onClick={() => {
                                         setTipoDescontoProduto("percentual");
                                         setValorProduto("");
@@ -304,13 +265,9 @@ export default function AplicarDesconto() {
                                 >
                                     %
                                 </button>
-
                                 <button
                                     type="button"
-                                    className={`toggle-button ${tipoDescontoProduto === "valor"
-                                            ? "active"
-                                            : ""
-                                        }`}
+                                    className={`toggle-button ${tipoDescontoProduto === "valor" ? "active" : ""}`}
                                     onClick={() => {
                                         setTipoDescontoProduto("valor");
                                         setValorProduto("");
@@ -328,10 +285,7 @@ export default function AplicarDesconto() {
                                     <div className="options-row">
                                         <button
                                             type="button"
-                                            className={`opt-btn ${quickSelectedProduto === "5"
-                                                    ? "active"
-                                                    : ""
-                                                }`}
+                                            className={`opt-btn ${quickSelectedProduto === "5" ? "active" : ""}`}
                                             onClick={() => handleQuickValueProduto("5")}
                                         >
                                             5%
@@ -339,10 +293,7 @@ export default function AplicarDesconto() {
 
                                         <button
                                             type="button"
-                                            className={`opt-btn ${quickSelectedProduto === "10"
-                                                    ? "active"
-                                                    : ""
-                                                }`}
+                                            className={`opt-btn ${quickSelectedProduto === "10" ? "active" : ""}`}
                                             onClick={() => handleQuickValueProduto("10")}
                                         >
                                             10%
@@ -358,15 +309,11 @@ export default function AplicarDesconto() {
                                         />
                                     </div>
                                 ) : (
-                                    <div className="input-wrapper prefix">
-                                        <span className="currency-prefix">
-                                            R$
-                                        </span>
-
+                                    <div className="input-wrapper">
                                         <input
                                             type="text"
                                             inputMode="numeric"
-                                            placeholder="0,00"
+                                            placeholder="R$ 0,00"
                                             className="full-input"
                                             value={valorProduto}
                                             onChange={handleInputChangeProduto}
@@ -377,32 +324,22 @@ export default function AplicarDesconto() {
                         </div>
 
                         <div className="discount-total-container">
-                            <label className="discount-total-label">
-                                DESCONTO TOTAL
-                            </label>
+                            <label className="discount-total-label">DESCONTO TOTAL</label>
 
                             <div className="discount-total-box">
-                                <span
-                                    className={`discount-total-value ${mensagemErroAtual ? "error" : ""
-                                        }`}
-                                >
-                                    -R$ {(descontoServico + descontoProduto).toLocaleString(
-                                        "pt-BR",
-                                        {
-                                            minimumFractionDigits: 2,
-                                            maximumFractionDigits: 2,
-                                        }
-                                    )}
+                                <span className={`discount-total-value ${mensagemErroAtual ? "error" : ""}`}>
+                                    -R$ {(descontoServico + descontoProduto).toLocaleString("pt-BR", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    })}
                                 </span>
 
                                 <span className="discount-total-description">
-                                    Valor total aplicado na ordem de serviço
+                                    Valor total applied na ordem de serviço
                                 </span>
 
                                 {mensagemErroAtual && (
-                                    <p className="discount-error-message">
-                                        {mensagemErroAtual}
-                                    </p>
+                                    <p className="discount-error-message">{mensagemErroAtual}</p>
                                 )}
                             </div>
 
@@ -412,9 +349,7 @@ export default function AplicarDesconto() {
                                 disabled={!isFormValid || isSaving}
                                 onClick={handleSalvarDesconto}
                             >
-                                {isSaving
-                                    ? "SALVANDO..."
-                                    : "Salvar Desconto"}
+                                {isSaving ? "SALVANDO..." : "Salvar Desconto"}
                             </button>
                         </div>
                     </div>

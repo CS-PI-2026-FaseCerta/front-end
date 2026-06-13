@@ -18,7 +18,6 @@ export default function CadastrarProduto() {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Método de formatação idêntico ao da tela de Serviço
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
     const float = (Number(number) / 100).toFixed(2);
@@ -41,7 +40,6 @@ export default function CadastrarProduto() {
     setPrecoVenda(formatted);
   };
 
-  // Lógica de conversão para cálculos matemáticos limpando o "R$"
   const parseCurrencyToFloat = (valueString) => {
     if (!valueString) return 0;
     const cleanString = valueString
