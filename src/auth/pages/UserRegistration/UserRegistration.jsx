@@ -66,11 +66,21 @@ export default function CadastroUsuario() {
 
       console.log("Iniciando cadastro...", form);
 
-      // -- Simulação de chamada de API (2 segundos)
+      // -- Simulação de chamada de API (1 segundos)
       setTimeout(() => {
         setIsLoading(false);
         setSuccessMessage("Cadastro realizado com sucesso!");
-      }, 2000);
+
+        setTimeout(() => {
+          navigate(AppRoutes.Login, {
+            state: {
+              email: form.email,
+              password: form.password
+            }
+          });
+        }, 2000);
+
+      }, 1000);
     }
   };
 

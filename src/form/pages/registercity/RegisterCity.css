@@ -150,14 +150,14 @@
 /* Botão de Envio */
 .city-form-submit-button {
     width: 100%;
-    padding: 16px;
+    padding: 18px;
     background-color: var(--color-primary);
-    color: var(--color-surface);
+    color: white;
     border: none;
     border-radius: 999px;
     /* Pill shape */
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 17px;
+    font-weight: 700;
     cursor: pointer;
     transition:
         background-color 0.3s ease,
@@ -176,6 +176,7 @@
 .city-form-submit-button:disabled {
     background-color: var(--control-bg-active);
     cursor: not-allowed;
+    opacity: 0.6;
 }
 
 
@@ -273,6 +274,8 @@
     margin-bottom: 4px;
     cursor: pointer;
     transition: all 0.15s ease;
+    color: var(--color-text-primary) !important;
+    background-color: transparent !important;
 }
 
 /* hover */
@@ -285,6 +288,10 @@
 .city-react-select__option--is-selected {
     background-color: var(--color-primary) !important;
     color: var(--color-surface) !important;
+}
+
+.city-react-select__input {
+    color: var(--color-text-primary) !important;
 }
 
 /* =========================

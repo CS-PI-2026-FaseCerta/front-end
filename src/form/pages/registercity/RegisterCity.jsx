@@ -3,7 +3,7 @@ import Select from "react-select";
 import "./RegisterCity.css";
 import { FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/header/Header.jsx";
-import Footer from "../../../global/components/Footer/Footer.jsx"
+import Footer from "../../../global/components/Footer/Footer.jsx";
 import { useNavigate } from "react-router-dom";
 
 export default function RegisterCity() {
@@ -11,7 +11,7 @@ export default function RegisterCity() {
 
   const [name, setName] = useState("");
   const [cep, setCep] = useState("");
-
+  const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
   const isCepValid = (cep) => {
@@ -19,7 +19,7 @@ export default function RegisterCity() {
     return numbers.length === 8;
   };
 
-  const isFormValid = name.trim() !== "" && isCepValid(cep);
+  const isFormValid = name.trim() !== "" && isCepValid(cep) && !isSaving;
 
   const states = [
     { value: "ac", label: "Acre" },
@@ -29,7 +29,7 @@ export default function RegisterCity() {
     { value: "ba", label: "Bahia" },
     { value: "ce", label: "Ceará" },
     { value: "df", label: "Distrito Federal" },
-    { value: "es", label: "Espírito Santo" }, 
+    { value: "es", label: "Espírito Santo" },
     { value: "go", label: "Goiás" },
     { value: "ma", label: "Maranhão" },
     { value: "mt", label: "Mato Grosso" },
@@ -66,16 +66,23 @@ export default function RegisterCity() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isFormValid) return;
 
-    setSuccessMessage("Cadastro realizado com sucesso!");
-
-    setState(states.find(s => s.value === "pr"));
-    setName("");
-    setCep("");
+    setIsSaving(true);
+    setSuccessMessage("");
 
     setTimeout(() => {
-      setSuccessMessage("");
-    }, 2000); 
+      setIsSaving(false);
+      setSuccessMessage("Cadastro realizado com sucesso!");
+
+      setState(states.find(s => s.value === "pr"));
+      setName("");
+      setCep("");
+
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 2000);
+    }, 1500);
   };
 
   return (
@@ -87,10 +94,11 @@ export default function RegisterCity() {
             <button
               className="back-button"
               onClick={() => navigate("/dashboard")}
+              disabled={isSaving}
             >
-              <FaArrowLeft size={20}/>
+              <FaArrowLeft size={20} />
             </button>
-            <h1>Cadastro de Cidade</h1>
+            <h1>Salvar Cidade</h1>
           </div>
 
           <form className="city-form" onSubmit={handleSubmit}>
@@ -105,6 +113,7 @@ export default function RegisterCity() {
                 placeholder="Ex: Dois Vizinhos"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                disabled={isSaving}
               />
             </div>
 
@@ -120,6 +129,7 @@ export default function RegisterCity() {
                   placeholder="Ex: 85660-000"
                   value={cep}
                   onChange={(e) => setCep(formatCep(e.target.value))}
+                  disabled={isSaving}
                 />
               </div>
 
@@ -137,6 +147,7 @@ export default function RegisterCity() {
                   isSearchable
                   className="city-select"
                   classNamePrefix="city-react-select"
+                  isDisabled={isSaving}
                 />
               </div>
             </div>
@@ -158,9 +169,9 @@ export default function RegisterCity() {
             <button
               type="submit"
               className="city-form-submit-button"
-              disabled={!isFormValid}
+              disabled={!isFormValid || isSaving}
             >
-              Salvar Cidade
+              {isSaving ? "SALVANDO..." : "Salvar Cidade"}
             </button>
           </form>
         </div>
