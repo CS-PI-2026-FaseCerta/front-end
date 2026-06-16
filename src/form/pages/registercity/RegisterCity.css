@@ -274,6 +274,8 @@
     margin-bottom: 4px;
     cursor: pointer;
     transition: all 0.15s ease;
+    color: var(--color-text-primary) !important;
+    background-color: transparent !important;
 }
 
 /* hover */
@@ -286,6 +288,10 @@
 .city-react-select__option--is-selected {
     background-color: var(--color-primary) !important;
     color: var(--color-surface) !important;
+}
+
+.city-react-select__input {
+    color: var(--color-text-primary) !important;
 }
 
 /* =========================
