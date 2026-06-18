@@ -15,11 +15,11 @@ export const MODULES = [
     },
   },
   {
-    id: "servicos-estoque",
-    title: "Serviços e Estoque",
+    id: "produtos-estoque",
+    title: "Produtos e Estoque",
     description:
-      "Gerencie itens, materiais e disponibilidade operacional com visão integrada.",
-    path: "/servicos-estoque",
+      "Gerencie e centralize produtos, materiais, custos de compra e venda, além de quantidade em estoque com visão integrada.",
+    path: "/produtos-estoque",
     icon: <FaBoxOpen />,
     allowedProfiles: ["gestor", "tecnico"],
     order: {

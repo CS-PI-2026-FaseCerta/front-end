@@ -101,7 +101,7 @@ function App() {
               }
             />
             <Route
-              path={AppRoutes.ServicosEstoque}
+              path={AppRoutes.ProdutosEstoque}
               element={
                 <SectionPage
                   eyebrow="Módulo operacional"
@@ -113,7 +113,7 @@ function App() {
               }
             />
             <Route
-              path={AppRoutes.ServicosEstoqueNovoItem}
+              path={AppRoutes.ProdutosEstoqueNovoItem}
               element={
                 <SectionPage
                   eyebrow="Fallback temporário"
