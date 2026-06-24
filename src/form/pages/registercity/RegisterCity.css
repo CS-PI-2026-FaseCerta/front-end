@@ -276,6 +276,10 @@
   color: var(--color-surface) !important;
 }
 
+.city-react-select__input {
+  color: var(--color-text-primary) !important;
+}
+
 /* =========================
    SETA
 ========================= */

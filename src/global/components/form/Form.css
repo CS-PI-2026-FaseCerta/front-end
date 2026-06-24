@@ -27,6 +27,7 @@
 .form-textarea {
   width: 100%;
   padding: 14px 16px;
+  font-family: "Poppins", sans-serif;
   border: 1px solid transparent;
   border-radius: 8px;
   font-size: 16px;
@@ -114,7 +115,8 @@
 
 .form-radio-group {
   display: flex;
-  gap: 20px;
+  align-items: center;
+  gap: 32px;
   flex-wrap: wrap;
 }
 
@@ -124,12 +126,15 @@
   gap: 8px;
   font-size: 14px;
   color: var(--color-text-primary);
+  cursor: pointer;
+  padding: 10px 10px 0px 0;
 }
 
 .form-radio-option input {
   width: 16px;
   height: 16px;
   accent-color: var(--color-primary);
+  flex-shrink: 0;
 }
 
 .form-button {
@@ -140,7 +145,7 @@
   border-radius: 999px;
   font-size: 18px;
   font-weight: 600;
-  color: var(--color-surface);
+  color: #fff;
   background: var(--color-primary);
   box-shadow: var(--shadow-card);
   transition:
@@ -192,4 +197,62 @@
   text-align: center;
   font-weight: 600;
   color: var(--success-color);
+}
+
+@media (max-width: 480px) {
+  .form-radio-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+
+/* ── Linha de campos ── */
+.form-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-row>.input-group {
+  flex: 1;
+  min-width: 150px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.form-button-secondary {
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+  box-shadow: none;
+}
+
+.form-button-secondary:hover:not(:disabled) {
+  background: var(--control-bg-hover);
+  box-shadow: none;
+  transform: translateY(-2px);
+}
+
+/* Responsividade adicional para form-button */
+@media (max-width: 720px) {
+  .form-button {
+    font-size: 16px;
+    padding: 14px;
+  }
+
+  .toggle-group {
+    width: 100%;
+    display: flex;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    text-align: center;
+  }
 }

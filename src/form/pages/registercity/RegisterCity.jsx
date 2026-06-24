@@ -48,7 +48,7 @@ export function RegisterCityForm({
     return numbers.length === 8;
   };
 
-  const isFormValid = name.trim() !== "" && isCepValid(cep);
+  const isFormValid = name.trim() !== "" && isCepValid(cep) && !isSaving;
 
   const states = [
     { value: "ac", label: "Acre" },
@@ -95,6 +95,7 @@ export function RegisterCityForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isFormValid) return;
 
     setSuccessMessage("Cadastro realizado com sucesso!");
 
