@@ -206,3 +206,53 @@
     gap: 12px;
   }
 }
+
+
+/* ── Linha de campos ── */
+.form-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-row>.input-group {
+  flex: 1;
+  min-width: 150px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.form-button-secondary {
+  background: var(--color-surface-muted);
+  color: var(--color-text-primary);
+  box-shadow: none;
+}
+
+.form-button-secondary:hover:not(:disabled) {
+  background: var(--control-bg-hover);
+  box-shadow: none;
+  transform: translateY(-2px);
+}
+
+/* Responsividade adicional para form-button */
+@media (max-width: 720px) {
+  .form-button {
+    font-size: 16px;
+    padding: 14px;
+  }
+
+  .toggle-group {
+    width: 100%;
+    display: flex;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    text-align: center;
+  }
+}

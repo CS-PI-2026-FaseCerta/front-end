@@ -5,6 +5,7 @@ export const RecoverPassword = "/recuperarSenha";
 export const RegisterService = "/cadastroServico";
 export const RegisterCity = "/cadastroCidade";
 export const RegisterProduct = "/cadastroProduto";
+export const RegisterClient = "/cadastroCliente";
 export const Dashboard = "/dashboard";
 export const ApplyDiscounts = "/aplicarDesconto";
 export const Loading = "/loading";
