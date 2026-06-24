@@ -1,7 +1,7 @@
 import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx"
+import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
 import PedidosListPage from "./home/pages/pedidos/PedidosListPage.jsx";
 import Login from "./auth/pages/login/Login.jsx";
@@ -13,6 +13,7 @@ import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
+import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
@@ -48,6 +49,10 @@ function App() {
             <Route
               path={AppRoutes.UserRegistration}
               element={<UserRegistration />}
+            />
+            <Route
+              path={AppRoutes.RegisterClient}
+              element={<RegisterCustomer />}
             />
             <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
             {/* Fallbacks temporarios para areas do dashboard que ainda nao
