@@ -1,7 +1,7 @@
 import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx";
+import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx"
 import Dashboard from "./home/pages/Dashboard.jsx";
 import PedidosListPage from "./home/pages/pedidos/PedidosListPage.jsx";
 import Login from "./auth/pages/login/Login.jsx";
