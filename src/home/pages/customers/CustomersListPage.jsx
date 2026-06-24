@@ -3,12 +3,13 @@ import { FaPen, FaClipboardList, FaPlus, FaTrash } from "react-icons/fa";
 import GenericListPage from "../../../global/components/lists/GenericListPage";
 import { customersMockData } from "./Customers.mock";
 import { customersColumns } from "./Customers.columns";
-import { RegisterCityModal } from "../../../form/pages/registercity/RegisterCity.jsx";
+import RegisterCustomerModal from "../../../form/pages/registercustomer/RegisterCustomerModal.jsx";
+
 import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 const CustomersListPage = () => {
   const items = customersMockData;
-  const [isCityModalOpen, setIsCityModalOpen] = useState(false);
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
 
   return (
     <>
@@ -27,8 +28,8 @@ const CustomersListPage = () => {
             label: "Novo Cliente",
             icon: FaPlus,
             onCreate: {
-              mobile: AppRoutes.RegisterCity,
-              desktop: () => setIsCityModalOpen(true),
+              mobile: AppRoutes.RegisterClient,
+              desktop: () => setIsCustomerModalOpen(true),
             },
             variant: "primary",
           },
@@ -58,14 +59,14 @@ const CustomersListPage = () => {
             "Use filtros, busca ou crie um novo cliente para começar a alimentar a listagem.",
           actionLabel: "Criar novo cliente",
           onCreate: {
-            mobile: AppRoutes.RegisterCity,
-            desktop: () => setIsCityModalOpen(true),
+            mobile: AppRoutes.RegisterClient,
+            desktop: () => setIsCustomerModalOpen(true),
           },
         }}
       />
-      <RegisterCityModal
-        isOpen={isCityModalOpen}
-        onClose={() => setIsCityModalOpen(false)}
+      <RegisterCustomerModal
+        isOpen={isCustomerModalOpen}
+        onClose={() => setIsCustomerModalOpen(false)}
       />
     </>
   );
