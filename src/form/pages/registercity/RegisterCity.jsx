@@ -1,18 +1,48 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import "./RegisterCity.css";
+import "./RegisterCityModal.css";
 import { FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
 import { useNavigate } from "react-router-dom";
+import Modal from "../../../global/components/modal/Modal";
 
 export default function RegisterCity() {
+  return (
+    <div className="city-page">
+      <Header />
+      <main className="city-page-content">
+        <RegisterCityForm showBackButton={true} />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+export function RegisterCityModal({ isOpen, onClose }) {
+  return (
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <RegisterCityForm
+        showBackButton={false}
+        onSuccess={onClose}
+        onCancel={onClose}
+      />
+    </Modal>
+  );
+}
+
+export function RegisterCityForm({
+  showBackButton = false,
+  onCancel,
+  onSuccess,
+}) {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [cep, setCep] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const isCepValid = (cep) => {
     const numbers = cep.replace(/\D/g, "");
@@ -68,115 +98,117 @@ export default function RegisterCity() {
     e.preventDefault();
     if (!isFormValid) return;
 
-    setIsSaving(true);
-    setSuccessMessage("");
+    setSuccessMessage("Cadastro realizado com sucesso!");
+
+    setState(states.find((s) => s.value === "pr"));
+    setName("");
+    setCep("");
 
     setTimeout(() => {
-      setIsSaving(false);
-      setSuccessMessage("Cadastro realizado com sucesso!");
-
-      setState(states.find(s => s.value === "pr"));
-      setName("");
-      setCep("");
-
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 2000);
-    }, 1500);
+      setSuccessMessage("");
+      if (typeof onSuccess === "function") {
+        onSuccess();
+      }
+    }, 2000);
   };
 
   return (
-    <div className="city-page">
-      <Header />
-      <main className="city-page-content">
-        <div className="city-form-card">
-          <div className="card-header">
-            <button
-              className="back-button"
-              onClick={() => navigate("/dashboard")}
-              disabled={isSaving}
-            >
-              <FaArrowLeft size={20} />
-            </button>
-            <h1>Salvar Cidade</h1>
+    <div className="city-form-card">
+      <div className="card-header">
+        {showBackButton && (
+          <button
+            className="back-button"
+            type="button"
+            onClick={() => navigate("/dashboard")}
+            aria-label="Voltar ao dashboard"
+          >
+            <FaArrowLeft size={20} />
+          </button>
+        )}
+        <h1>Cadastro de Cidade</h1>
+      </div>
+
+      <form className="city-form" onSubmit={handleSubmit}>
+        <div className="city-form-group">
+          <label htmlFor="city-name" className="city-form-label">
+            NOME DA CIDADE
+          </label>
+          <input
+            id="city-name"
+            className="city-form-input"
+            type="text"
+            placeholder="Ex: Dois Vizinhos"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+
+        <div id="city-form-midline">
+          <div className="city-form-group" id="city-form-cep-group">
+            <label htmlFor="city-cep" className="city-form-label">
+              CEP - CIDADE
+            </label>
+            <input
+              id="city-cep"
+              className="city-form-input"
+              type="text"
+              placeholder="Ex: 85660-000"
+              value={cep}
+              onChange={(e) => setCep(formatCep(e.target.value))}
+            />
           </div>
 
-          <form className="city-form" onSubmit={handleSubmit}>
-            <div className="city-form-group">
-              <label htmlFor="city-name" className="city-form-label">
-                NOME DA CIDADE
-              </label>
-              <input
-                id="city-name"
-                className="city-form-input"
-                type="text"
-                placeholder="Ex: Dois Vizinhos"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={isSaving}
-              />
-            </div>
+          <div id="city-form-state-group" className="city-form-group">
+            <label htmlFor="city-state" className="city-form-label">
+              ESTADO (UF)
+            </label>
 
-            <div id="city-form-midline">
-              <div className="city-form-group" id="city-form-cep-group">
-                <label htmlFor="city-cep" className="city-form-label">
-                  CEP - CIDADE
-                </label>
-                <input
-                  id="city-cep"
-                  className="city-form-input"
-                  type="text"
-                  placeholder="Ex: 85660-000"
-                  value={cep}
-                  onChange={(e) => setCep(formatCep(e.target.value))}
-                  disabled={isSaving}
-                />
-              </div>
-
-              <div id="city-form-state-group" className="city-form-group">
-                <label htmlFor="city-state" className="city-form-label">
-                  ESTADO (UF)
-                </label>
-
-                <Select
-                  id="city-state"
-                  options={states}
-                  value={state}
-                  onChange={setState}
-                  placeholder="Selecione um estado..."
-                  isSearchable
-                  className="city-select"
-                  classNamePrefix="city-react-select"
-                  isDisabled={isSaving}
-                />
-              </div>
-            </div>
-
-            {/* MENSAGEM DE SUCESSO */}
-            {successMessage && (
-              <p
-                style={{
-                  color: "#28a745",
-                  marginTop: "10px",
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                {successMessage}
-              </p>
-            )}
-
-            <button
-              type="submit"
-              className="city-form-submit-button"
-              disabled={!isFormValid || isSaving}
-            >
-              {isSaving ? "SALVANDO..." : "Salvar Cidade"}
-            </button>
-          </form>
+            <Select
+              id="city-state"
+              options={states}
+              value={state}
+              onChange={setState}
+              placeholder="Selecione um estado..."
+              isSearchable
+              className="city-select"
+              classNamePrefix="city-react-select"
+            />
+          </div>
         </div>
-      </main>
-      <Footer />
+
+        {/* MENSAGEM DE SUCESSO */}
+        {successMessage && (
+          <p
+            style={{
+              color: "#28a745",
+              marginTop: "10px",
+              textAlign: "center",
+              fontWeight: "bold",
+            }}
+          >
+            {successMessage}
+          </p>
+        )}
+
+        <div className="city-form-actions">
+          {onCancel && (
+            <button
+              type="button"
+              className="city-form-cancel-button"
+              onClick={onCancel}
+            >
+              Cancelar
+            </button>
+          )}
+          <button
+            type="submit"
+            className="city-form-submit-button"
+            disabled={!isFormValid}
+          >
+            Salvar Cidade
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
