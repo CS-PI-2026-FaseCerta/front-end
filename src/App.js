@@ -15,7 +15,7 @@ import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
 import CustomersListPage from "./home/pages/customers/CustomersListPage.jsx";
 import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx";
-
+import ProductsListPage from "./home/pages/products/ProductsListPage";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
@@ -60,6 +60,12 @@ function App() {
             {/* Fallbacks temporarios para areas do dashboard que ainda nao
             possuem telas dedicadas. */}
             <Route path={AppRoutes.Clientes} element={<CustomersListPage />} />
+
+            <Route
+              path={AppRoutes.ProdutosEstoque}
+              element={<ProductsListPage />}
+            />
+
             <Route
               path={AppRoutes.Perfil}
               element={
@@ -97,18 +103,6 @@ function App() {
               }
             />
 
-            <Route
-              path={AppRoutes.ProdutosEstoque}
-              element={
-                <SectionPage
-                  eyebrow="Módulo operacional"
-                  title="Serviços e Estoque"
-                  description="Área demonstrativa para a futura navegação do módulo de serviços e estoque."
-                  ctaLabel="Voltar ao painel"
-                  ctaPath="/dashboard"
-                />
-              }
-            />
             <Route
               path={AppRoutes.ProdutosEstoqueNovoItem}
               element={
