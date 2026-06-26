@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { FaArrowRight, FaChartLine } from "react-icons/fa";
 
-import HeaderDashBoard from "../components/headerDashBoard/HeaderDashBoard";
-import Footer from "../../global/components/Footer/Footer";
-import Sidebar from "../components/menu/Sidebar";
+import { DashboardContext } from "../../global/components/layout/DashboardLayout";
 import ModuleCard from "../components/cards/ModuleCard";
 import QuickActionsCarousel from "../components/actions/QuickActionsCarousel";
 import QuickActionsModal from "../components/actions/QuickActionsModal";
@@ -31,7 +29,7 @@ const Dashboard = () => {
   const [isQuickActionsModalOpen, setIsQuickActionsModalOpen] =
     useState(false);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { setIsSidebarOpen } = React.useContext(DashboardContext);
 
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
 
@@ -57,28 +55,7 @@ const Dashboard = () => {
     setSelectedQuickActionIds(storedSelection);
   }, [perfilAtual]);
 
-  useEffect(() => {
-    if (!isSidebarOpen) {
-      return undefined;
-    }
 
-    const handleEscape = (event) => {
-      if (event.key === "Escape") {
-        setIsSidebarOpen(false);
-      }
-    };
-
-    const previousOverflow = document.body.style.overflow;
-
-    document.body.style.overflow = "hidden";
-
-    window.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [isSidebarOpen]);
 
   useEffect(() => {
     if (!isDiscountModalOpen) {
@@ -151,13 +128,7 @@ const Dashboard = () => {
     setIsSidebarOpen(true);
   };
 
-  const handleToggleSidebar = () => {
-    setIsSidebarOpen((current) => !current);
-  };
 
-  const handleCloseSidebar = () => {
-    setIsSidebarOpen(false);
-  };
 
   const perfilLabel = PERFIL_LABELS[perfilAtual] || "Perfil não mapeado";
 
@@ -166,56 +137,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="dashboard-page">
-      <HeaderDashBoard
-        onMenuToggle={handleToggleSidebar}
-        isSidebarOpen={isSidebarOpen}
-      />
-
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={handleCloseSidebar}
-        profile={perfilAtual}
-      />
-
+    <>
       <main className="dashboard-shell">
-        <section className="dashboard-hero">
-          <div>
-            <span className="dashboard-hero__eyebrow">
-              Painel de Controle
-            </span>
-
-            <h1 className="dashboard-hero__title">
-              Acesso rápido aos módulos operacionais
-            </h1>
-
-            <p className="dashboard-hero__subtitle">
-              Os módulos abaixo são filtrados de acordo com o perfil
-              autenticado. O objetivo desta tela é dar uma visão clara e direta
-              das áreas que cada função pode acessar.
-            </p>
-          </div>
-
-          <aside className="dashboard-hero__profile">
-            <span className="dashboard-hero__profile-label">
-              Usuário logado
-            </span>
-
-            <strong>{currentUser.nome}</strong>
-
-            <small>{currentUser.email}</small>
-
-            <span className="dashboard-hero__profile-label">
-              Perfil atual
-            </span>
-
-            <strong>{perfilLabel}</strong>
-
-            <small>
-              As permissões desta página seguem o perfil autenticado.
-            </small>
-          </aside>
-        </section>
 
         <section className="dashboard-grid" aria-label="Módulos disponíveis">
           {visibleModules.map((modulo) => (
@@ -296,9 +219,7 @@ const Dashboard = () => {
           </section>
         )}
       </main>
-
-      <Footer />
-    </div>
+    </>
   );
 };
 

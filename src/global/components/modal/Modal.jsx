@@ -3,7 +3,6 @@ import { FaTimes } from "react-icons/fa";
 import "./Modal.css";
 
 export default function Modal({ isOpen, onClose, children }) {
-  // Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -15,7 +14,6 @@ export default function Modal({ isOpen, onClose, children }) {
     };
   }, [isOpen]);
 
-  // Handle escape key press
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
