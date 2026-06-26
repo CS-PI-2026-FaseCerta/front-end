@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import Select from "react-select";
 import "./RegisterCity.css";
 import { FaArrowLeft } from "react-icons/fa";
-import Header from "../../../global/components/header/Header.jsx";
-import Footer from "../../../global/components/Footer/Footer.jsx";
+
 import { useNavigate } from "react-router-dom";
 
 export default function RegisterCity() {
@@ -86,8 +85,7 @@ export default function RegisterCity() {
   };
 
   return (
-    <div className="city-page">
-      <Header />
+    <div className="register-city-page">
       <main className="city-page-content">
         <div className="city-form-card">
           <div className="card-header">
@@ -176,7 +174,6 @@ export default function RegisterCity() {
           </form>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
