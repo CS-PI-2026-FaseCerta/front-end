@@ -15,8 +15,53 @@ export default function ServiceInsert() {
     e.preventDefault();
   };
 
+  const mockServicos = [
+    {
+      id: 1,
+      descricao: "Troca de Óleo",
+      preco: 120,
+      obs: "Óleo sintético 5W30",
+      qntd: 1,
+    },
+    {
+      id: 2,
+      descricao: "Alinhamento",
+      preco: 80,
+      obs: "Alinhamento computadorizado",
+      qntd: 2,
+    },
+    {
+      id: 3,
+      descricao: "Balanceamento",
+      preco: 60,
+      obs: "4 rodas",
+      qntd: 1,
+    },
+    {
+      id: 4,
+      descricao: "Troca de Pastilhas de Freio",
+      preco: 250,
+      obs: "Eixo dianteiro",
+      qntd: 1,
+    },
+    {
+      id: 5,
+      descricao: "Higienização do Ar Condicionado",
+      preco: 150,
+      obs: "Inclui troca do filtro",
+      qntd: 1,
+    },
+  ];
+
   const [servicos, setServicos] = useState(() => {
-    return JSON.parse(localStorage.getItem("servicosSelecionados")) || [];
+    const stored = JSON.parse(localStorage.getItem("servicosSelecionados"));
+
+    return stored && stored.length
+      ? stored
+      : [
+        { ...mockServicos[0] },
+        { ...mockServicos[1] },
+      ];
   });
 
   useEffect(() => {
@@ -39,13 +84,53 @@ export default function ServiceInsert() {
     });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingService, setEditingService] = useState(null);
+
+  function handleOpenEdit(servico) {
+    setEditingService({ ...servico });
+    setIsEditModalOpen(true);
+  }
+
+  function handleSaveEdit() {
+    setServicos((prev) =>
+      prev.map((s) =>
+        s.id === editingService.id ? editingService : s
+      )
+    );
+
+    setIsEditModalOpen(false);
+    setEditingService(null);
+  }
+
   const [servicosDisponiveis, setServicosDisponiveis] = useState([]);
 
   useEffect(() => {
+    if (!localStorage.getItem("servicosDisponiveis")) {
+      localStorage.setItem(
+        "servicosDisponiveis",
+        JSON.stringify(mockServicos)
+      );
+    }
+
+    if (!localStorage.getItem("servicosSelecionados")) {
+      localStorage.setItem(
+        "servicosSelecionados",
+        JSON.stringify([
+          { ...mockServicos[0] },
+          { ...mockServicos[1] },
+        ])
+      );
+    }
+  }, []);
+
+  useEffect(() => {
     const sync = () => {
-      const stored =
-        JSON.parse(localStorage.getItem("servicosDisponiveis")) || [];
-      setServicosDisponiveis(stored);
+      const stored = JSON.parse(localStorage.getItem("servicosDisponiveis"));
+
+      setServicosDisponiveis(
+        stored && stored.length ? stored : mockServicos
+      );
     };
 
     sync();
@@ -138,6 +223,7 @@ export default function ServiceInsert() {
                     handleDelete={handleDelete}
                     updateQuantidade={updateQuantidade}
                     setQuantidadeManual={setQuantidadeManual}
+                    handleEdit={handleOpenEdit}
                   />
                 ))}
               </div>
@@ -157,6 +243,75 @@ export default function ServiceInsert() {
           </form>
         </div>
       </main>
+
+      {isEditModalOpen && editingService && (
+        <div
+          className="modal-overlay"
+          onClick={() => setIsEditModalOpen(false)}
+        >
+          <div
+            className="modal-content edit-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="modal-header">
+              <h2>Editar Serviço</h2>
+
+              <button onClick={() => setIsEditModalOpen(false)}>
+                ✕
+              </button>
+            </div>
+
+            <div className="edit-form">
+
+              <label>Descrição</label>
+
+              <input
+                value={editingService.descricao}
+                onChange={(e) =>
+                  setEditingService({
+                    ...editingService,
+                    descricao: e.target.value
+                  })
+                }
+              />
+
+              <label>Preço</label>
+
+              <input
+                type="number"
+                value={editingService.preco}
+                onChange={(e) =>
+                  setEditingService({
+                    ...editingService,
+                    preco: Number(e.target.value)
+                  })
+                }
+              />
+
+              <label>Observações</label>
+
+              <textarea
+                rows={4}
+                value={editingService.obs}
+                onChange={(e) =>
+                  setEditingService({
+                    ...editingService,
+                    obs: e.target.value
+                  })
+                }
+              />
+
+              <button
+                className="service-insert-form-submit-button"
+                onClick={handleSaveEdit}
+              >
+                Salvar Alterações
+              </button>
+
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
 
@@ -233,7 +388,13 @@ export default function ServiceInsert() {
   );
 }
 
-function Card({ servico, handleDelete, hideActions, updateQuantidade }) {
+function Card({
+  servico,
+  handleDelete,
+  hideActions,
+  updateQuantidade,
+  handleEdit,
+}) {
   const navigate = useNavigate();
 
   if (!servico) return null;
@@ -283,14 +444,8 @@ function Card({ servico, handleDelete, hideActions, updateQuantidade }) {
       {!hideActions && (
         <div className="buttons">
           <button
-            onClick={() =>
-              navigate("/cadastroServico", {
-                state: {
-                  mode: "editSelected",
-                  service: servico,
-                },
-              })
-            }
+            type="button"
+            onClick={() => handleEdit(servico)}
           >
             <HiOutlinePencil size={20} color="var(--color-primary)" />
           </button>
@@ -300,6 +455,8 @@ function Card({ servico, handleDelete, hideActions, updateQuantidade }) {
           </button>
         </div>
       )}
+
+      
     </div>
   );
 }
