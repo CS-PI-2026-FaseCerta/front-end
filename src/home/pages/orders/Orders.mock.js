@@ -5,7 +5,7 @@ import {
   FaRegDotCircle,
 } from "react-icons/fa";
 
-export const pedidosMockData = [
+export const ordersMockData = [
   {
     id: "OS-1024",
     numero: "1024",

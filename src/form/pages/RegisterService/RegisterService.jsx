@@ -17,10 +17,9 @@ export default function RegisterService() {
   const [billingType, setBillingType] = useState("fixed");
   const [value, setValue] = useState("");
 
-  const location = useLocation();
-  const mode = location.state?.mode || "createCatalog";
-  const editingService = location.state?.service;
- 
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
     const float = (Number(number) / 100).toFixed(2);
@@ -33,37 +32,29 @@ export default function RegisterService() {
 
   const handleValueChange = (e) => {
     const raw = e.target.value;
-    const formatted = formatCurrency(raw);
-    setValue(formatted);
+
+    if (billingType === "hourly") {
+      const number = raw.replace(/\D/g, "");
+      const float = (Number(number) / 100).toFixed(2);
+      const formatted = float.replace(".", ",");
+      setValue(formatted === "0,00" && raw === "" ? "" : formatted);
+    } else {
+      const formatted = formatCurrency(raw);
+      setValue(formatted);
+    }
   };
 
   const numericValue = Number(value.replace(/\D/g, "")) / 100;
 
   const isFormValid =
     name.trim() !== "" &&
-    description.trim() !== "" &&
     value !== "" &&
-    numericValue > 0;
-
-  const [successMessage, setSuccessMessage] = useState("");
+    value !== "R$ 0,00" &&
+    value !== "0,00" &&
+    !isLoading;
 
   const { id } = useParams();
   const isEdit = Boolean(id);
-
-  useEffect(() => {
-    if (!editingService) return;
-
-    setName(editingService.descricao);
-    setDescription(editingService.obs);
-    setBillingType(editingService.billingType || "fixed");
-
-    setValue(
-      Number(editingService.preco).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      })
-    );
-  }, [editingService]);
 
   useEffect(() => {
     if (!id) return;
@@ -87,53 +78,24 @@ export default function RegisterService() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isFormValid) return;
 
-    const novoServico = {
-      id: editingService?.id || Date.now(),
-      descricao: name,
-      qntd: 1,
-      preco: Number(value.replace(/\D/g, "")) / 100,
-      obs: description,
-      billingType,
-    };
-
-    // 🔥 CASO 1: catálogo global
-    if (mode === "createCatalog") {
-      const existentes =
-        JSON.parse(localStorage.getItem("servicosDisponiveis")) || [];
-
-      const updated = editingService
-        ? existentes.map((s) =>
-            s.id === editingService.id ? novoServico : s
-          )
-        : [...existentes, novoServico];
-
-      localStorage.setItem(
-        "servicosDisponiveis",
-        JSON.stringify(updated)
-      );
-    }
-
-    // 🧾 CASO 2: serviços do orçamento
-    if (mode === "editSelected") {
-      const selecionados =
-        JSON.parse(localStorage.getItem("servicosSelecionados")) || [];
-
-      const updated = selecionados.map((s) =>
-        s.id === editingService.id ? novoServico : s
-      );
-
-      localStorage.setItem(
-        "servicosSelecionados",
-        JSON.stringify(updated)
-      );
-    }
-
-    setSuccessMessage("Salvo com sucesso!");
+    setIsLoading(true);
+    setSuccessMessage("");
 
     setTimeout(() => {
-      navigate("/inserirServico");
-    }, 800);
+      setIsLoading(false);
+      setSuccessMessage("Cadastro realizado com sucesso!");
+
+      setName("");
+      setDescription("");
+      setValue("");
+      setBillingType("fixed");
+
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 2000);
+    }, 1500);
   };
 
   return (
@@ -145,11 +107,12 @@ export default function RegisterService() {
             <button
               type="button"
               className="back-button"
-              onClick={() => navigate(-1)}
+              onClick={() => navigate("/dashboard")}
+              disabled={isLoading}
             >
               <FaArrowLeft size={20} className="back-button-icon" />
             </button>
-            <h1>Cadastro de Serviço</h1>
+            <h1>Salvar Serviço</h1>
           </div>
 
           <form className="form" onSubmit={handleSubmit}>
@@ -161,6 +124,7 @@ export default function RegisterService() {
                 placeholder="Ex: Manutenção Elétrica"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
+                disabled={isLoading}
               />
             </div>
 
@@ -171,6 +135,7 @@ export default function RegisterService() {
                 placeholder="Descreva os detalhes do serviço oferecido..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                disabled={isLoading}
               />
             </div>
 
@@ -178,45 +143,82 @@ export default function RegisterService() {
               <label className="form-label">TIPO DE COBRANÇA</label>
 
               <div className="form-radio-group">
-                <label className="form-radio-option">
+                <label
+                  className="form-radio-option"
+                  tabIndex={isLoading ? -1 : 0}
+                  style={{ pointerEvents: isLoading ? "none" : "auto", opacity: isLoading ? 0.7 : 1 }}
+                  onKeyDown={(e) => {
+                    if (isLoading) return;
+                    if (e.key === " " || e.key === "Enter") {
+                      e.preventDefault();
+                      setBillingType("fixed");
+                      setValue("");
+                    }
+                  }}
+                >
                   <input
                     type="radio"
                     name="billing"
                     value="fixed"
                     checked={billingType === "fixed"}
-                    onChange={() => setBillingType("fixed")}
+                    onChange={() => {
+                      setBillingType("fixed");
+                      setValue("");
+                    }}
+                    disabled={isLoading}
+                    tabIndex={-1}
                   />
                   Preço Fixo
                 </label>
 
-                <label className="form-radio-option">
+                <label
+                  className="form-radio-option"
+                  tabIndex={isLoading ? -1 : 0}
+                  style={{ pointerEvents: isLoading ? "none" : "auto", opacity: isLoading ? 0.7 : 1 }}
+                  onKeyDown={(e) => {
+                    if (isLoading) return;
+                    if (e.key === " " || e.key === "Enter") {
+                      e.preventDefault();
+                      setBillingType("hourly");
+                      setValue("");
+                    }
+                  }}
+                >
                   <input
                     type="radio"
                     name="billing"
                     value="hourly"
                     checked={billingType === "hourly"}
-                    onChange={() => setBillingType("hourly")}
+                    onChange={() => {
+                      setBillingType("hourly");
+                      setValue("");
+                    }}
+                    disabled={isLoading}
+                    tabIndex={-1}
                   />
-                  Por Hora
+                  Por Unidade de Serviço
                 </label>
               </div>
             </div>
 
             <div className="input-group">
               <label className="form-label">
-                VALOR {billingType === "hourly" ? "(R$/h)" : "(R$)"}
+                VALOR {billingType === "hourly" ? "(U.S)" : "(R$)"}
               </label>
               <input
                 className="form-input"
                 type="text"
                 value={value}
                 onChange={handleValueChange}
-                placeholder="R$ 0,00"
+                placeholder={billingType === "hourly" ? "0,00" : "R$ 0,00"}
+                disabled={isLoading}
               />
             </div>
 
-            <button type="submit" className="form-button" disabled={!isFormValid}>
-              Salvar Serviço
+            {successMessage && <p className="form-success">{successMessage}</p>}
+
+            <button type="submit" className="form-button" disabled={!isFormValid || isLoading}>
+              {isLoading ? "SALVANDO..." : "Salvar Serviço"}
             </button>
           </form>
         </main>

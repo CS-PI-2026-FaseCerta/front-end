@@ -13,7 +13,7 @@ import { PiToolboxBold } from "react-icons/pi";
 // Hoje o array é mockado para validar comportamento do carrossel e regras de perfil.
 export const QUICK_ACTIONS = [
   {
-    id: "criar-os", 
+    id: "criar-os",
     nome: "Criar OS",
     rota: "/os/novo",
     icon: FaClipboardList,
@@ -37,7 +37,7 @@ export const QUICK_ACTIONS = [
   {
     id: "cadastrar-cliente",
     nome: "Cadastrar Cliente",
-    rota: "/cadastroUsuario",
+    rota: "/cadastroCliente",
     icon: FaUserPlus,
     allowedProfiles: ["gestor", "tecnico"],
     order: {
