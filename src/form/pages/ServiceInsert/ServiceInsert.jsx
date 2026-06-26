@@ -411,50 +411,54 @@ function Card({
         </div>
       </div>
 
-      {!hideActions && (
-        <div className="qty-container">
-          <button
-            type="button"
-            className="qty-button"
-            onClick={() => updateQuantidade(servico.id, -1)}
-          >
-            -
-          </button>
+      <div className="actions-line">
+        {!hideActions && (
+          <div className="qty-container">
+            <button
+              type="button"
+              className="qty-button"
+              onClick={() => updateQuantidade(servico.id, -1)}
+            >
+              -
+            </button>
 
-          <input
-            className="qty-input"
-            type="number"
-            min="1"
-            value={servico.qntd || 1}
-            onChange={(e) =>
-              updateQuantidade(servico.id, Number(e.target.value) - (servico.qntd || 1))
-            }
-          />
+            <input
+              className="qty-input"
+              type="number"
+              min="1"
+              value={servico.qntd || 1}
+              onChange={(e) =>
+                updateQuantidade(servico.id, Number(e.target.value) - (servico.qntd || 1))
+              }
+            />
 
-          <button
-            type="button"
-            className="qty-button"
-            onClick={() => updateQuantidade(servico.id, 1)}
-          >
-            +
-          </button>
-        </div>
-      )}
+            <button
+              type="button"
+              className="qty-button"
+              onClick={() => updateQuantidade(servico.id, 1)}
+            >
+              +
+            </button>
+          </div>
+        )}
 
-      {!hideActions && (
-        <div className="buttons">
-          <button
-            type="button"
-            onClick={() => handleEdit(servico)}
-          >
-            <HiOutlinePencil size={20} color="var(--color-primary)" />
-          </button>
+        {!hideActions && (
+          <div className="buttons">
+            <button
+              type="button"
+              onClick={() => handleEdit(servico)}
+            >
+              <HiOutlinePencil size={20} color="var(--color-primary)" />
+            </button>
 
-          <button onClick={() => handleDelete(servico.id)}>
-            <FaRegTrashCan size={20} color="red" />
-          </button>
-        </div>
-      )}
+            <button onClick={() => handleDelete(servico.id)}>
+              <FaRegTrashCan size={20} color="red" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      
 
       
     </div>
