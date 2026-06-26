@@ -1,4 +1,5 @@
 //imports necessários para o código
+//remover os comentários antes da finalização do arquivo
 import React, {useState} from "react";
 import {FaArrowLeft} from "react-icons/fa";
 import {useNavigate} from "react-router-dom"
@@ -18,15 +19,28 @@ const PAYMENT_METHODS = [
     {id: "pix", label: "PIX"},
 ];
 
+//função que permite o usuário selecionar e desselecionar as formas de pagamento
 export default function PaymentMethods=(){
     const navigate = useNavigate();
 
     const[selectedMethods, setSelectedMethods] = useState([]);
     const[successMessage, setSuccessMessage] = useState("");
-    //salva e exibe uma imagem de sucesso após o método ser selecionado para que o cliente tenha uma confirmação que foi salvo
-
     const toggleMethod = (id) => {
         setSelectedMethods(prev) => prev.includes(id)? prev.filter((item) => item !== id) : [...prev, id]
     };
-    //função que checa se o método já está marcado como selecionado, se estiver, quando o cliente clicar novamente ele irá remove-lo do array dos métodos marcados
+};
+
+//verificar se ao menos ums forma foi selecionada
+const isFormValid= selectedMethods.lengh >0;
+
+const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if(!isFormValid) return;
+
+    setSuccessMessage("Meios de pagamento salvos com sucesso!");
+
+    setTimeout(() => {
+        setSuccessMessage("");
+    },2000);
 };
