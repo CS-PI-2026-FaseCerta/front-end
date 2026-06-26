@@ -62,4 +62,11 @@ export const productsMockData = [
         salePrice: "R$ 369,90",
         stock: 6,
     },
+    {
+        id: 10,
+        name: "Disjuntor Bipolar A50",
+        cost: "R$ 28,99",
+        salePrice: "49,90",
+        stock: 8,
+    }
 ];

@@ -1,5 +1,5 @@
 import React from "react";
-
+import { FaPen, FaClipboardList, FaPlus, FaTrash } from "react-icons/fa";
 import GenericListPage from "../../../global/components/lists/GenericListPage";
 
 import { productsMockData } from "./Products.mock";
@@ -16,6 +16,15 @@ const ProductsListPage = () => {
                 key: "id",
                 direction: "asc",
             }}
+            actions={[
+              {
+                key: "novo-produto",
+                label: "Novo Produto",
+                icon: FaPlus,
+                href: "/produtos-estoque/novo-item",
+                variant: "primary",
+                },
+            ]}
         />
     );
 };
