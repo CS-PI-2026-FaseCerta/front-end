@@ -16,6 +16,7 @@ import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
 import CustomersListPage from "./home/pages/customers/CustomersListPage.jsx";
 import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx";
 
+
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
 function App() {
