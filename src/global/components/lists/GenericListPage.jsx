@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -7,7 +7,7 @@ import {
   FaDownload,
   FaSearch,
 } from "react-icons/fa";
-import Header from "../header/Header.jsx";
+
 import EmptyState from "./EmptyState";
 import GenericTable from "./GenericTable";
 import {
@@ -104,8 +104,7 @@ const GenericListPage = ({
   pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
   initialPageSize = DEFAULT_PAGE_SIZE,
   clientSide = true,
-  showHeader = true,
-  HeaderComponent = Header,
+
   onRetry,
   onExport,
   onQueryChange,
@@ -115,6 +114,7 @@ const GenericListPage = ({
   rowKey = "id",
   search = {},
 }) => {
+  const navigate = useNavigate();
   const titleTooltipId = useId();
   const [searchTerm, setSearchTerm] = useState(search.defaultValue ?? "");
   const [sortConfig, setSortConfig] = useState(() =>
@@ -299,7 +299,7 @@ const GenericListPage = ({
 
   return (
     <div className={`generic-list-page ${className}`.trim()}>
-      {showHeader ? <HeaderComponent /> : null}
+
 
       {isExporting ? (
         <LoadingOverlay
@@ -315,22 +315,32 @@ const GenericListPage = ({
       >
         <section className="generic-list-page__hero">
           <div className="generic-list-page__hero-top">
-            <div
-              className="generic-list-page__title-group"
-              tabIndex={0}
-              aria-describedby={description ? titleTooltipId : undefined}
-            >
-              <span className="generic-list-page__eyebrow">Listagem</span>
-              <h1 className="generic-list-page__title">{title}</h1>
-              {description ? (
-                <span
-                  className="generic-list-page__title-tooltip"
-                  id={titleTooltipId}
-                  role="tooltip"
-                >
-                  {description}
-                </span>
-              ) : null}
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <button
+                className="back-button"
+                onClick={() => navigate(-1)}
+                title="Voltar"
+                aria-label="Voltar"
+              >
+                <FaArrowLeft size={20} />
+              </button>
+              <div
+                className="generic-list-page__title-group"
+                tabIndex={0}
+                aria-describedby={description ? titleTooltipId : undefined}
+              >
+                <span className="generic-list-page__eyebrow">Listagem</span>
+                <h1 className="generic-list-page__title">{title}</h1>
+                {description ? (
+                  <span
+                    className="generic-list-page__title-tooltip"
+                    id={titleTooltipId}
+                    role="tooltip"
+                  >
+                    {description}
+                  </span>
+                ) : null}
+              </div>
             </div>
 
             {actions.length > 0 ? (

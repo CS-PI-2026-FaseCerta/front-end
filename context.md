@@ -258,3 +258,33 @@ rowActions = [
 ---
 
 > Observação: mantivemos toda a documentação anterior — essa seção complementa o contexto com a implementação de listagens genéricas e como usá-las.
+
+## 10. Navegação e DashboardLayout
+
+Esta seção documenta a arquitetura visual unificada que centralizou Sidebar, Header, e Footer no `DashboardLayout`.
+
+### Objetivo da refatoração
+- Padronizar toda a infraestrutura visual (`Dashboard`, `SectionPage`, `GenericListPage`, formulários autenticados) para compartilhar o mesmo ambiente base.
+- Prevenir a quebra do layout horizontal (Footer subindo em resolução Desktop) causada por uso incorreto de `flex-direction: row`.
+- Evitar a duplicação de chamadas ao Header e Sidebar e inconsistências de estado no Menu Mobile (Drawer).
+
+### Como o DashboardLayout funciona
+- `DashboardLayout.jsx` é um componente "Wrapper". 
+- Ele renderiza a `Sidebar`, o `HeaderDashBoard` e o `Footer`. 
+- Ele envolve a sua `children` ou o `<Outlet />` do React Router (para uso direto no `App.js`) em um `.dashboard-layout__content`.
+- O layout utiliza classes específicas (`.dashboard-layout--sidebar-open`) para calcular as larguras (usando `margin-left` ao invés de transições internas no Flexbox). 
+
+### Integração nas Rotas (`App.js`)
+As rotas do projeto foram divididas em duas camadas no `App.js`:
+1. **Public/Auth Routes**: rotas limpas sem o Wrapper (`/login`, recuperação de senha, overlay, etc).
+2. **Authenticated Dashboard Routes**: todas as rotas operacionais englobadas dentro de `<Route element={<DashboardLayout />}>`.
+
+Isto inclui:
+- **Telas Reais**: `/pedidos`, `/cadastroCliente`, `/cadastroServico`, `/cadastroCidade`, `/cadastroProduto`.
+- **Placeholders (`SectionPage`)**: `/clientes`, `/servicos`, `/estoque`, `/ordens-servico`, `/calendario`, `/suporte`, `/perfil`, `/relatorios`, `/configuracoes`, etc.
+
+### Acessibilidade (a11y)
+- **Escape (Esc)**: a `Sidebar` possui um `useEffect` que mapeia a tecla Escape para fechar automaticamente o Menu Lateral em resoluções onde atua como Drawer (Mobile e Tablet).
+- **Tab e Enter**: O fluxo normal do DOM foi garantido.
+- **Outlines (Focus-Visible)**: Foi adicionado em `.sidebar-drawer__link:focus-visible` e afins o uso de `outline: 2px solid var(--color-primary)` para navegação exclusiva por teclado.
+- **Tooltips Customizados**: Ao invés do tradicional e estático `title=""` fornecido pelo HTML (que muitas vezes é inconsistente), foi construído um `.sidebar-drawer__tooltip` utilizando CSS absoluto que se torna visível (`opacity: 1`) quando a Sidebar está recolhida e o usuário foca (`focus-visible`) ou passa o mouse (`hover`) nos ícones.
