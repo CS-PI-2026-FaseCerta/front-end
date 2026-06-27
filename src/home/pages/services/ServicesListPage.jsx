@@ -26,7 +26,7 @@ const ServicesListPage = () => {
           key: "novo-servico",
           label: "Cadastrar Serviço",
           icon: FaPlus,
-          href: "/servicos/novo",
+          href: "/cadastroServico",
           variant: "primary",
         },
       ]}
@@ -53,7 +53,7 @@ const ServicesListPage = () => {
         title: "Salve o Serviço prestado",
         description: "Salve seu catalogo.",
         actionLabel: "+ CADASTRAR SERVIÇO",
-        actionHref: "/servicos/novo",
+        actionHref: "/cadastroServico",
       }}
     />
   );
