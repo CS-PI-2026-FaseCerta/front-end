@@ -255,7 +255,7 @@ rowActions = [
 - Colunas suportam `sortAccessor` e `sortOrder` para mapear valores exibidos para valores usados pela API.
 - Há comentários `TODO` indicando onde reaproveitar `sortParams` para consultas remotas.
 
----
+## 10. Exportação
 
 > Observação: mantivemos toda a documentação anterior — essa seção complementa o contexto com a implementação de listagens genéricas e como usá-las.
 
@@ -264,27 +264,96 @@ rowActions = [
 Esta seção documenta a arquitetura visual unificada que centralizou Sidebar, Header, e Footer no `DashboardLayout`.
 
 ### Objetivo da refatoração
+
 - Padronizar toda a infraestrutura visual (`Dashboard`, `SectionPage`, `GenericListPage`, formulários autenticados) para compartilhar o mesmo ambiente base.
 - Prevenir a quebra do layout horizontal (Footer subindo em resolução Desktop) causada por uso incorreto de `flex-direction: row`.
 - Evitar a duplicação de chamadas ao Header e Sidebar e inconsistências de estado no Menu Mobile (Drawer).
 
 ### Como o DashboardLayout funciona
-- `DashboardLayout.jsx` é um componente "Wrapper". 
-- Ele renderiza a `Sidebar`, o `HeaderDashBoard` e o `Footer`. 
+
+- `DashboardLayout.jsx` é um componente "Wrapper".
+- Ele renderiza a `Sidebar`, o `HeaderDashBoard` e o `Footer`.
 - Ele envolve a sua `children` ou o `<Outlet />` do React Router (para uso direto no `App.js`) em um `.dashboard-layout__content`.
-- O layout utiliza classes específicas (`.dashboard-layout--sidebar-open`) para calcular as larguras (usando `margin-left` ao invés de transições internas no Flexbox). 
+- O layout utiliza classes específicas (`.dashboard-layout--sidebar-open`) para calcular as larguras (usando `margin-left` ao invés de transições internas no Flexbox).
 
 ### Integração nas Rotas (`App.js`)
+
 As rotas do projeto foram divididas em duas camadas no `App.js`:
+
 1. **Public/Auth Routes**: rotas limpas sem o Wrapper (`/login`, recuperação de senha, overlay, etc).
 2. **Authenticated Dashboard Routes**: todas as rotas operacionais englobadas dentro de `<Route element={<DashboardLayout />}>`.
 
 Isto inclui:
+
 - **Telas Reais**: `/pedidos`, `/cadastroCliente`, `/cadastroServico`, `/cadastroCidade`, `/cadastroProduto`.
 - **Placeholders (`SectionPage`)**: `/clientes`, `/servicos`, `/estoque`, `/ordens-servico`, `/calendario`, `/suporte`, `/perfil`, `/relatorios`, `/configuracoes`, etc.
 
 ### Acessibilidade (a11y)
+
 - **Escape (Esc)**: a `Sidebar` possui um `useEffect` que mapeia a tecla Escape para fechar automaticamente o Menu Lateral em resoluções onde atua como Drawer (Mobile e Tablet).
 - **Tab e Enter**: O fluxo normal do DOM foi garantido.
 - **Outlines (Focus-Visible)**: Foi adicionado em `.sidebar-drawer__link:focus-visible` e afins o uso de `outline: 2px solid var(--color-primary)` para navegação exclusiva por teclado.
 - **Tooltips Customizados**: Ao invés do tradicional e estático `title=""` fornecido pelo HTML (que muitas vezes é inconsistente), foi construído um `.sidebar-drawer__tooltip` utilizando CSS absoluto que se torna visível (`opacity: 1`) quando a Sidebar está recolhida e o usuário foca (`focus-visible`) ou passa o mouse (`hover`) nos ícones.
+  Utilitário global de exportação de dados:
+  `src/utils/exportCsv.js`
+
+Responsabilidades:
+
+- Exportação genérica de dados para formato CSV.
+- Arquitetura reutilizável por qualquer módulo (ex: Listagens, Relatórios).
+- Estrutura preparada para futura transição/suporte de exportação gerada via backend.
+
+## 11. Loading Global
+
+Componente visual de bloqueio e carregamento:
+`src/global/components/loading/LoadingOverlay.jsx`
+
+Responsabilidades:
+
+- Bloqueio visual durante operações assíncronas (como salvar dados, exportação ou processamento pesado).
+- Reutilização ampla em relatórios, exportações e operações de cadastro.
+- Feedback essencial para UX em integrações futuras com backend.
+
+## 12. Módulo de Clientes
+
+O Módulo de Clientes atua como prova de conceito sólida da arquitetura reutilizável, consumindo diretamente as abstrações globais criadas. A tela de clientes e seu fluxo de cadastro utilizam integralmente:
+
+- A infraestrutura genérica de listagem (`GenericListPage`, `GenericTable`, `EmptyState`).
+- Exportação de tabela via `exportCsv.js`.
+- Indicadores visuais (`LoadingOverlay`).
+- A nova arquitetura de formulários.
+
+## 13. Arquitetura de Formulários
+
+O padrão oficial adotado para criação de formulários de cadastro segue o princípio de separação entre Lógica do Formulário e Wrappers de Visualização.
+
+Estrutura base adotada:
+
+- `RegisterEntityForm`: O formulário puro com estado, validações e inputs (ex: `RegisterCustomerForm.jsx`, `RegisterCityForm.jsx`). Depende exclusivamente das classes globais do `Form.css`.
+- `RegisterEntity`: Wrapper de Página, encapsulando o formulário com Header/Footer para a experiência padrão de navegação e mobile (ex: `RegisterCustomer.jsx`).
+- `RegisterEntityModal`: Wrapper de Modal, permitindo que o MESMO formulário puro seja aberto em overlay para experiências Desktop mais dinâmicas (ex: `RegisterCustomerModal.jsx`).
+
+Objetivos da arquitetura:
+
+- Reutilização de 100% da lógica e UI do formulário para Página e Modal.
+- Desktop = Modal / Mobile = Página.
+- Integração facilitada com os botões de ação ("Novo Cadastro") da `GenericListPage`.
+
+## 14. Services
+
+Padrão arquitetural adotado para comunicação externa:
+
+- Chamadas externas e consultas a APIs (ex: ViaCEP) devem ficar isoladas na pasta `services/` (ex: `src/services/addressService.js`).
+- Componentes React **não devem** conter chamadas `fetch` ou `axios` diretamente.
+- O isolamento dessa camada prepara o terreno para a conexão direta e escalável com a API oficial do backend em Spring Boot.
+
+## 15. Próximos Passos (Roadmap)
+
+Os avanços arquiteturais de front-end preparam a aplicação para a evolução plena:
+
+- Integração real com backend Spring Boot.
+- Implementação de fluxos de importação de dados.
+- Exportação avançada de relatórios (XLS, PDF estruturados).
+- Geração de relatórios analíticos e painéis do Gestor.
+- Persistência efetiva dos dados de todas as tabelas genéricas e formulários.
+- Controle real de permissões restritivas por perfil a nível de backend e roteamento.

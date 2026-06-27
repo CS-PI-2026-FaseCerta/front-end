@@ -1,20 +1,20 @@
 import React from "react";
 import { FaPen, FaClipboardList, FaPlus, FaTrash } from "react-icons/fa";
 import GenericListPage from "../../../global/components/lists/GenericListPage";
-import { pedidosMockData } from "./pedidos.mock";
-import { pedidosColumns } from "./pedidos.columns";
-import { pedidosFilters } from "./pedidos.filters";
+import { ordersMockData } from "./Orders.mock";
+import { ordersColumns } from "./Orders.columns";
+import { ordersFilters } from "./Orders.filters";
 
-const PedidosListPage = () => {
-  const items = pedidosMockData;
+const OrdersListPage = () => {
+  const items = ordersMockData;
 
   return (
     <GenericListPage
       title="Ordens de Serviço"
       description="Gerencie e acompanhe todas as ordens de serviço em tempo real."
-      columns={pedidosColumns}
+      columns={ordersColumns}
       data={items}
-      filters={pedidosFilters}
+      filters={ordersFilters}
       defaultSort={{
         key: "dataAbertura",
         direction: "desc",
@@ -58,4 +58,4 @@ const PedidosListPage = () => {
   );
 };
 
-export default PedidosListPage;
+export default OrdersListPage;

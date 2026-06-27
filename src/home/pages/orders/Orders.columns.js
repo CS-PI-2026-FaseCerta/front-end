@@ -8,7 +8,7 @@ const parseCurrencyValue = (value) => {
   return Number(text) || 0;
 };
 
-export const pedidosColumns = [
+export const ordersColumns = [
   {
     key: "numero",
     header: "OS",
