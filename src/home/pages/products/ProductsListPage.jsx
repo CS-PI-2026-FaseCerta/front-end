@@ -43,6 +43,14 @@ const ProductsListPage = () => {
                 variant: "ghost",
                 },
             ]}
+            emptyState={{
+                icon: FaClipboardList,
+                title: "Crie seu próprio catálogo de produtos!",
+                description:
+                    "Isso vai te economizar muito tempo!",
+                actionLabel: "Cadastrar Produto",
+                actionHref: "/produtos-estoque/novo-item",
+            }}
         />
     );
 };
