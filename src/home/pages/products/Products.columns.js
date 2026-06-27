@@ -10,6 +10,13 @@ const parseCurrencyValue = (value) => {
 
 export const productsColumns = [
     {
+        key: "id",
+        header: "ID",
+        accessor: "id",
+        sortable: true,
+        sortType: "number",
+    },
+    {
         key: "name",
         header: "Nome do Produto",
         accessor: "name",

@@ -109,14 +109,6 @@ const GenericTable = ({
                       onClick={() => handleSortToggle(column)}
                       aria-label={`Ordenar por ${column.header ?? column.label ?? column.key}`}
                       title={`Ordenar por ${column.header ?? column.label ?? column.key}`}
-                      style={{
-                        justifyContent:
-                          column.align === "center"
-                            ? "center"
-                            : column.align === "right"
-                              ? "flex-end"
-                              : "flex-start",
-                      }}
                     >
                       <span>{column.header ?? column.label}</span>
                       {resolveSortIcon(column)}

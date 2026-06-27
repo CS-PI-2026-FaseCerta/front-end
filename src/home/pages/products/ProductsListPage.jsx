@@ -25,6 +25,24 @@ const ProductsListPage = () => {
                 variant: "primary",
                 },
             ]}
+            rowActions={[
+                {
+                key: "visualizar",
+                title: "Editar",
+                icon: FaPen,
+                iconOnly: true,
+                onClick: () => {},
+                variant: "ghost",
+                },
+                {
+                key: "excluir",
+                title: "Excluir",
+                icon: FaTrash,
+                iconOnly: true,
+                onClick: () => {},
+                variant: "ghost",
+                },
+            ]}
         />
     );
 };
