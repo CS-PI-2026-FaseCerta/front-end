@@ -1,0 +1,15 @@
+.payment-methods-list {
+    display: flex;
+    flex-direction: conlumn;
+    gap: 4px;
+}
+
+.payment-methods-option{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 4px;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 16px;
+    color: var(--color-text-primary);
+}
