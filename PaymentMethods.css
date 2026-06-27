@@ -13,3 +13,17 @@
     font-size: 16px;
     color: var(--color-text-primary);
 }
+
+.payment-methods-option:last-child{
+    border-bottom: none;
+}
+
+.payment-methods-option:hover{
+    cursor:pointer;
+}
+
+.payment-methods-option input[type="checkbox"]{
+    width: 20px;
+    height: 20px;
+    accent-color: var(--color-primary);
+}
