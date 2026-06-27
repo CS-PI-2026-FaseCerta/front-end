@@ -7,7 +7,7 @@ export const servicesFilters = [
     defaultValue: "",
     options: [
       { value: "REAL", label: "REAL" },
-      { value: "UNIDADE", label: "Un. de Serviço" },
+      { value: "Un. de Serviço", label: "Un. de Serviço" },
     ],
   },
 ];
