@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./ServiceInsert.css";
 import { FaArrowLeft } from "react-icons/fa";
 import { HiOutlinePencil } from "react-icons/hi";
@@ -86,6 +86,22 @@ export default function ServiceInsert() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingService, setEditingService] = useState(null);
+
+  useEffect(() => {
+    if (isEditModalOpen) {
+      setTimeout(() => {
+        document.querySelector(".edit-form input")?.focus();
+      }, 0);
+    }
+  }, [isEditModalOpen]);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      setTimeout(() => {
+        searchRef.current?.focus();
+      }, 0);
+    }
+  }, [isModalOpen]);
 
   function handleOpenEdit(servico) {
     setEditingService({ ...servico });
@@ -178,6 +194,8 @@ export default function ServiceInsert() {
       )
     );
   }
+
+  const searchRef = useRef(null);
   
 
   return (
@@ -252,6 +270,7 @@ export default function ServiceInsert() {
           <div
             className="modal-content edit-modal"
             onClick={(e) => e.stopPropagation()}
+            tabIndex={-1}
           >
             <div className="modal-header">
               <h2>Editar Serviço</h2>
@@ -261,7 +280,10 @@ export default function ServiceInsert() {
               </button>
             </div>
 
-            <div className="edit-form">
+            <form className="edit-form" onSubmit={(e) => {
+              e.preventDefault();
+              handleSaveEdit();
+            }}>
 
               <label>Descrição</label>
 
@@ -302,13 +324,13 @@ export default function ServiceInsert() {
               />
 
               <button
+                type="submit"
                 className="service-insert-form-submit-button"
-                onClick={handleSaveEdit}
               >
                 Salvar Alterações
               </button>
 
-            </div>
+            </form>
           </div>
         </div>
       )}
@@ -328,6 +350,7 @@ export default function ServiceInsert() {
 
             <div className="modal-search">
               <input
+                ref={searchRef}
                 type="text"
                 placeholder="Pesquisar serviço..."
                 value={searchTerm}
@@ -356,9 +379,17 @@ export default function ServiceInsert() {
                     <div
                       key={servico.id}
                       className={`modal-card ${isDisabled ? "disabled" : ""}`}
+                      tabIndex={isDisabled ? -1 : 0}
+                      role="button"
                       onClick={() => {
                         if (isDisabled) return;
                         handleAddService(servico);
+                      }}
+                      onKeyDown={(e) => {
+                        if (isDisabled) return;
+                        if (e.key === "Enter" || e.key === " ") {
+                          handleAddService(servico);
+                        }
                       }}
                     >
                       <Card servico={servico} hideActions />

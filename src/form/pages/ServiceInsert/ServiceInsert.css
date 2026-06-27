@@ -336,6 +336,11 @@
     transition: 0.2s;
 }
 
+.modal-card:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 /* card clicável */
 .modal-card .card {
   cursor: pointer;
