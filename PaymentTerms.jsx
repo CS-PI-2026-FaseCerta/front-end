@@ -22,6 +22,27 @@ export default function PaymentTerms() {
         const number = value.replace(/\D/g, "");
         const float = (Number(number)/100).toFixed(2);
         return
-
+        Number(float).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        });
     };
-}
+
+    const handleDownPaymentChange = (e) => {
+        const raw = e.target.value;
+        if (raw === "") {
+            setDownPayment("");
+            return;
+        }
+        setDownPayment(formatCurrency(raw));
+    };
+
+    const handleQuickInstallmentsclick = (option) =>{
+        setSelectedQuickInstallmentsText(option);
+    };
+
+    const handleInstallmentsTextChange = (e) =>{
+        const value = e.target.value;
+        setInstallmentsText(value);
+    }
+};
