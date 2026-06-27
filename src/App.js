@@ -9,6 +9,7 @@ import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RecoverPassword from "./auth/pages/recoverpassword/RecoverPassword.jsx";
 import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
+import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
 import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
@@ -47,6 +48,10 @@ function App() {
             <Route
               path={AppRoutes.RegisterProduct}
               element={<RegisterProduct />}
+            />
+            <Route
+              path={AppRoutes.ServiceInsert}
+              element={<ServiceInsert />}
             />
             <Route
               path={AppRoutes.UserRegistration}
