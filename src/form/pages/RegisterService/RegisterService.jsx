@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./RegisterService.css";
@@ -6,6 +6,9 @@ import "../../../global/components/form/Form.css";
 
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
+
+import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 export default function RegisterService() {
   const navigate = useNavigate();
@@ -41,12 +44,37 @@ export default function RegisterService() {
     }
   };
 
+  const numericValue = Number(value.replace(/\D/g, "")) / 100;
+
   const isFormValid =
     name.trim() !== "" &&
     value !== "" &&
     value !== "R$ 0,00" &&
     value !== "0,00" &&
     !isLoading;
+
+  const { id } = useParams();
+  const isEdit = Boolean(id);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const selecionados = JSON.parse(localStorage.getItem("servicosSelecionados")) || [];
+
+    const servico = selecionados.find((s) => String(s.id) === String(id));
+
+    if (servico) {
+      setName(servico.descricao);
+      setDescription(servico.obs);
+      setValue(
+        Number(servico.preco).toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        })
+      );
+      setBillingType(servico.billingType || "fixed");
+    }
+  }, [id]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
