@@ -44,5 +44,11 @@ export default function PaymentTerms() {
     const handleInstallmentsTextChange = (e) =>{
         const value = e.target.value;
         setInstallmentsText(value);
-    }
+
+        if(value !== selectedQuickInstallments("")){
+            setSelectedQuickInstallments("");
+        }
+    };
+
+    
 };
