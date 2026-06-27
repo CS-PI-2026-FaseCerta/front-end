@@ -13,12 +13,12 @@ export const Loading = "/loading";
 export const Pedidos = "/pedidos";
 export const ProdutosEstoque = "/produtos-estoque";
 export const Clientes = "/clientes";
+export const ProdutosEstoqueNovoItem = "/produtos-estoque/novo-item";
 
 //Não implementados ainda, mas já mapeados para facilitar futuras integrações.
 export const Perfil = "/perfil";
 export const Relatorios = "/relatorios";
 export const Configuracoes = "/configuracoes";
-export const ProdutosEstoqueNovoItem = "/produtos-estoque/novo-item";
 export const OrdensServicoNovo = "/os/novo";
 export const Financeiro = "/financeiro";
 export const FinanceiroDespesasNova = "/financeiro/despesas/nova";

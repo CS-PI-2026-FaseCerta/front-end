@@ -107,19 +107,6 @@ function App() {
                 />
               }
             />
-
-            <Route
-              path={AppRoutes.ProdutosEstoqueNovoItem}
-              element={
-                <SectionPage
-                  eyebrow="Fallback temporário"
-                  title="Novo Item"
-                  description="Ainda não existe uma tela dedicada para cadastro de itens no estoque. Esta rota permanece como placeholder até a implementação do formulário real."
-                  ctaLabel="Voltar ao painel"
-                  ctaPath="/dashboard"
-                />
-              }
-            />
             <Route path={AppRoutes.Pedidos} element={<OrdersListPage />} />
             <Route
               path={AppRoutes.OrdensServicoNovo}
