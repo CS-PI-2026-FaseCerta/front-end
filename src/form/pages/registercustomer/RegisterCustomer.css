@@ -27,6 +27,7 @@
   padding: 32px;
   border-radius: 16px;
   box-shadow: var(--shadow-card);
+  margin-top: 5rem;
 }
 
 .card-header {

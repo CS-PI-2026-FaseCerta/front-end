@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
-import Header from "../../../global/components/header/Header.jsx";
-import Footer from "../../../global/components/Footer/Footer.jsx";
+
 import RegisterCustomerForm from "./RegisterCustomerForm.jsx";
 import "./RegisterCustomer.css";
 
@@ -21,7 +20,6 @@ export default function RegisterCustomer() {
 
   return (
     <div className="register-customer-page">
-      <Header />
       <main className="register-customer-content">
         <div className="register-customer-card">
           <div className="card-header">
@@ -43,7 +41,6 @@ export default function RegisterCustomer() {
           <RegisterCustomerForm onSuccess={handleSuccess} onCancel={() => navigate(-1)} />
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

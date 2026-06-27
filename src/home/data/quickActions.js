@@ -58,7 +58,7 @@ export const QUICK_ACTIONS = [
   {
     id: "novo-item",
     nome: "Novo Item",
-    rota: "/servicos-estoque/novo-item",
+    rota: "/estoque/novo-item",
     icon: FaBoxOpen,
     allowedProfiles: ["gestor", "tecnico"],
     order: {

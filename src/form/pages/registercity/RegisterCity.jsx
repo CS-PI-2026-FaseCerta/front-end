@@ -3,19 +3,16 @@ import Select from "react-select";
 import "./RegisterCity.css";
 import "./RegisterCityModal.css";
 import { FaArrowLeft } from "react-icons/fa";
-import Header from "../../../global/components/header/Header.jsx";
-import Footer from "../../../global/components/Footer/Footer.jsx";
+
 import { useNavigate } from "react-router-dom";
 import Modal from "../../../global/components/modal/Modal";
 
 export default function RegisterCity() {
   return (
     <div className="city-page">
-      <Header />
       <main className="city-page-content">
         <RegisterCityForm showBackButton={true} />
       </main>
-      <Footer />
     </div>
   );
 }
