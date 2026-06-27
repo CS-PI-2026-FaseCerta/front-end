@@ -1,0 +1,31 @@
+export const servicesColumns = [
+  {
+    key: "nome",
+    header: "Nome do Serviço",
+    accessor: "nome",
+    sortable: true,
+    sortType: "string",
+    searchable: true,
+  },
+  {
+    key: "tipoCobranca",
+    header: "Tipo de Cobrança",
+    accessor: "tipoCobranca",
+    type: "badge",
+    sortable: true,
+    sortType: "string",
+    sortOrder: ["REAL", "UNIDADE"],
+    searchable: true,
+    width: "180px",
+  },
+  {
+    key: "valor",
+    header: "Valor (R$)",
+    accessor: "valor",
+    align: "right",
+    sortable: true,
+    sortType: "number",
+    searchable: false,
+    width: "140px",
+  },
+];

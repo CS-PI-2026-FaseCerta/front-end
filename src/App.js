@@ -15,6 +15,7 @@ import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
 import CustomersListPage from "./home/pages/customers/CustomersListPage.jsx";
 import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx";
+import ServicesListPage from "./home/pages/services/ServicesListPage.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
@@ -59,6 +60,7 @@ function App() {
             {/* Fallbacks temporarios para areas do dashboard que ainda nao
             possuem telas dedicadas. */}
             <Route path={AppRoutes.Clientes} element={<CustomersListPage />} />
+            <Route path={AppRoutes.ServicosEstoque} element={<ServicesListPage />} />
             <Route
               path={AppRoutes.Perfil}
               element={
@@ -96,7 +98,7 @@ function App() {
               }
             />
 
-            <Route
+            {/* <Route
               path={AppRoutes.ServicosEstoque}
               element={
                 <SectionPage
@@ -107,7 +109,7 @@ function App() {
                   ctaPath="/dashboard"
                 />
               }
-            />
+            /> */}
             <Route
               path={AppRoutes.ServicosEstoqueNovoItem}
               element={
