@@ -512,3 +512,25 @@
     width: 100%;
   }
 }
+
+.generic-list-page__hero-top .back-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+}
+
+.generic-list-page__hero-top .back-button svg {
+  color: inherit;
+}
+
+.generic-list-page__hero-top .back-button:hover {
+  background-color: var(--color-hover, #e0e0e0);
+}

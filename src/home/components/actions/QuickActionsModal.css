@@ -11,8 +11,8 @@
 .quick-actions-modal__backdrop {
   position: absolute;
   inset: 0;
-  background: var(--header-border-color);
-  backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(6px);
 }
 
 .quick-actions-modal__panel {

@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaArrowLeft,
   FaArrowRight,
@@ -7,7 +7,7 @@ import {
   FaFileImport,
   FaSearch,
 } from "react-icons/fa";
-import Header from "../header/Header.jsx";
+
 import EmptyState from "./EmptyState";
 import GenericTable from "./GenericTable";
 import {
@@ -108,8 +108,7 @@ const GenericListPage = ({
   pageSizeOptions = DEFAULT_PAGE_SIZE_OPTIONS,
   initialPageSize = DEFAULT_PAGE_SIZE,
   clientSide = true,
-  showHeader = true,
-  HeaderComponent = Header,
+
   onRetry,
   onExport,
   onQueryChange,
@@ -120,6 +119,7 @@ const GenericListPage = ({
   rowKey = "id",
   search = {},
 }) => {
+  const navigate = useNavigate();
   const deviceType = useDeviceType();
   const titleTooltipId = useId();
   const [searchTerm, setSearchTerm] = useState(search.defaultValue ?? "");
@@ -362,8 +362,6 @@ const GenericListPage = ({
 
   return (
     <div className={`generic-list-page ${className}`.trim()}>
-      {showHeader ? <HeaderComponent /> : null}
-
       {isExporting || isImporting ? (
         <LoadingOverlay
           label={isImporting ? "Importando dados" : "Exportando dados"}
@@ -382,22 +380,32 @@ const GenericListPage = ({
       >
         <section className="generic-list-page__hero">
           <div className="generic-list-page__hero-top">
-            <div
-              className="generic-list-page__title-group"
-              tabIndex={0}
-              aria-describedby={description ? titleTooltipId : undefined}
-            >
-              <span className="generic-list-page__eyebrow">Listagem</span>
-              <h1 className="generic-list-page__title">{title}</h1>
-              {description ? (
-                <span
-                  className="generic-list-page__title-tooltip"
-                  id={titleTooltipId}
-                  role="tooltip"
-                >
-                  {description}
-                </span>
-              ) : null}
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+              <button
+                className="back-button"
+                onClick={() => navigate(-1)}
+                title="Voltar"
+                aria-label="Voltar"
+              >
+                <FaArrowLeft size={20} />
+              </button>
+              <div
+                className="generic-list-page__title-group"
+                tabIndex={0}
+                aria-describedby={description ? titleTooltipId : undefined}
+              >
+                <span className="generic-list-page__eyebrow">Listagem</span>
+                <h1 className="generic-list-page__title">{title}</h1>
+                {description ? (
+                  <span
+                    className="generic-list-page__title-tooltip"
+                    id={titleTooltipId}
+                    role="tooltip"
+                  >
+                    {description}
+                  </span>
+                ) : null}
+              </div>
             </div>
 
             {actions.length > 0 ? (
@@ -419,7 +427,9 @@ const GenericListPage = ({
                           to={resolvedHref}
                           className={`generic-list-page__action generic-list-page__action--${action.variant ?? "primary"}`}
                         >
-                          {ActionIcon ? <ActionIcon aria-hidden="true" /> : null}
+                          {ActionIcon ? (
+                            <ActionIcon aria-hidden="true" />
+                          ) : null}
                           <span>{action.label}</span>
                         </Link>
                       );
@@ -431,7 +441,9 @@ const GenericListPage = ({
                           className={`generic-list-page__action generic-list-page__action--${action.variant ?? "primary"}`}
                           onClick={action.onCreate.desktop}
                         >
-                          {ActionIcon ? <ActionIcon aria-hidden="true" /> : null}
+                          {ActionIcon ? (
+                            <ActionIcon aria-hidden="true" />
+                          ) : null}
                           <span>{action.label}</span>
                         </button>
                       );
@@ -617,12 +629,16 @@ const GenericListPage = ({
                 actionLabel={emptyState.actionLabel}
                 actionHref={
                   emptyState.onCreate
-                    ? (deviceType === "mobile" ? emptyState.onCreate.mobile : undefined)
+                    ? deviceType === "mobile"
+                      ? emptyState.onCreate.mobile
+                      : undefined
                     : emptyState.actionHref
                 }
                 onAction={
                   emptyState.onCreate
-                    ? (deviceType === "desktop" ? emptyState.onCreate.desktop : undefined)
+                    ? deviceType === "desktop"
+                      ? emptyState.onCreate.desktop
+                      : undefined
                     : emptyState.onAction
                 }
               />
