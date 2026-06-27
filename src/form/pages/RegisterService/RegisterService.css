@@ -68,6 +68,14 @@
   margin-bottom: 8px;
 }
 
+.form-button:hover {
+  cursor: pointer;
+}
+
+.form-button:disabled {
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .service-form-card {
     padding: 24px;

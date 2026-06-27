@@ -7,6 +7,8 @@ import {
   FaCity,
 } from "react-icons/fa";
 
+import { PiToolboxBold } from "react-icons/pi";
+
 // TODO: Integrar com backend para carregar atalhos personalizados do usuário logado.
 // Hoje o array é mockado para validar comportamento do carrossel e regras de perfil.
 export const QUICK_ACTIONS = [
@@ -15,6 +17,17 @@ export const QUICK_ACTIONS = [
     nome: "Criar OS",
     rota: "/os/novo",
     icon: FaClipboardList,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 1,
+      tecnico: 1,
+    },
+  },
+  {
+    id: "inserir-servico", 
+    nome: "Inserir Serviço",
+    rota: "/inserirServico",
+    icon: PiToolboxBold,
     allowedProfiles: ["gestor", "tecnico"],
     order: {
       gestor: 1,
