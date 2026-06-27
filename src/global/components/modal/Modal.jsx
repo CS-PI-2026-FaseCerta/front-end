@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
+import FocusTrap from "focus-trap-react";
 import "./Modal.css";
 
 export default function Modal({ isOpen, onClose, children }) {
@@ -31,23 +32,25 @@ export default function Modal({ isOpen, onClose, children }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" role="dialog" aria-modal="true" onClick={onClose}>
-      <div 
-        className="modal-panel" 
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button 
-          className="modal-close" 
-          type="button" 
-          onClick={onClose} 
-          aria-label="Fechar"
+    <FocusTrap active={isOpen}>
+      <div className="modal-overlay" role="dialog" aria-modal="true" onClick={onClose}>
+        <div 
+          className="modal-panel" 
+          onClick={(e) => e.stopPropagation()}
         >
-          <FaTimes size={18} />
-        </button>
-        <div className="modal-content">
-          {children}
+          <button 
+            className="modal-close" 
+            type="button" 
+            onClick={onClose} 
+            aria-label="Fechar"
+          >
+            <FaTimes size={18} />
+          </button>
+          <div className="modal-content">
+            {children}
+          </div>
         </div>
       </div>
-    </div>
+    </FocusTrap>
   );
 }

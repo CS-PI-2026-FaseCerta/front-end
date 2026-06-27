@@ -24,6 +24,7 @@
   box-shadow: var(--shadow-elevated);
   animation: modal-scale-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
+  margin-top: 5.3rem;
 }
 
 .modal-close {
@@ -101,7 +102,7 @@
     inset: 0;
     animation: modal-slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  
+
   @keyframes modal-slide-up {
     from {
       transform: translateY(100%);

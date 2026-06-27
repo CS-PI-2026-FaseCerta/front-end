@@ -10,11 +10,9 @@ import Modal from "../../../global/components/modal/Modal";
 export default function RegisterCity() {
   return (
     <div className="city-page">
-      <Header />
       <main className="city-page-content">
         <RegisterCityForm showBackButton={true} />
       </main>
-      <Footer />
     </div>
   );
 }

@@ -26,8 +26,7 @@ const Dashboard = () => {
   const currentUser = getCurrentUser();
   const perfilAtual = currentUser?.perfil;
 
-  const [isQuickActionsModalOpen, setIsQuickActionsModalOpen] =
-    useState(false);
+  const [isQuickActionsModalOpen, setIsQuickActionsModalOpen] = useState(false);
 
   const { setIsSidebarOpen } = React.useContext(DashboardContext);
 
@@ -55,8 +54,6 @@ const Dashboard = () => {
     setSelectedQuickActionIds(storedSelection);
   }, [perfilAtual]);
 
-
-
   useEffect(() => {
     if (!isDiscountModalOpen) {
       return;
@@ -83,10 +80,7 @@ const Dashboard = () => {
   const handleOpenCustomizeQuickActions = () => {
     const safeDraft =
       selectedQuickActionIds.length > 0
-        ? sanitizeQuickActionIdsByProfile(
-          perfilAtual,
-          selectedQuickActionIds,
-        )
+        ? sanitizeQuickActionIdsByProfile(perfilAtual, selectedQuickActionIds)
         : allowedQuickActions.map((action) => action.id);
 
     setDraftQuickActionIds(safeDraft);
@@ -128,8 +122,6 @@ const Dashboard = () => {
     setIsSidebarOpen(true);
   };
 
-
-
   const perfilLabel = PERFIL_LABELS[perfilAtual] || "Perfil não mapeado";
 
   if (!currentUser) {
@@ -139,7 +131,6 @@ const Dashboard = () => {
   return (
     <>
       <main className="dashboard-shell">
-
         <section className="dashboard-grid" aria-label="Módulos disponíveis">
           {visibleModules.map((modulo) => (
             <ModuleCard
@@ -149,7 +140,11 @@ const Dashboard = () => {
               icon={modulo.icon}
               // Se for desconto, não passa path, passa o onClick
               path={modulo.id === "aplicar-desconto" ? null : modulo.path}
-              onClick={modulo.id === "aplicar-desconto" ? () => setIsDiscountModalOpen(true) : null}
+              onClick={
+                modulo.id === "aplicar-desconto"
+                  ? () => setIsDiscountModalOpen(true)
+                  : null
+              }
               ctaLabel={modulo.id === "aplicar-desconto" ? "Abrir" : "Acessar"}
             />
           ))}
@@ -161,19 +156,19 @@ const Dashboard = () => {
             onClick={() => setIsDiscountModalOpen(false)}
           >
             <FocusTrap>
-            <div
-              className="dashboard-modal-content"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                className="dashboard-modal-close"
-                onClick={() => setIsDiscountModalOpen(false)}
+              <div
+                className="dashboard-modal-content"
+                onClick={(e) => e.stopPropagation()}
               >
-                ×
-              </button>
+                <button
+                  className="dashboard-modal-close"
+                  onClick={() => setIsDiscountModalOpen(false)}
+                >
+                  ×
+                </button>
 
-              <ApplyDiscounts onClose={() => setIsDiscountModalOpen(false)} />
-            </div>
+                <ApplyDiscounts onClose={() => setIsDiscountModalOpen(false)} />
+              </div>
             </FocusTrap>
           </div>
         )}

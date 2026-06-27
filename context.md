@@ -357,3 +357,13 @@ Os avanços arquiteturais de front-end preparam a aplicação para a evolução 
 - Geração de relatórios analíticos e painéis do Gestor.
 - Persistência efetiva dos dados de todas as tabelas genéricas e formulários.
 - Controle real de permissões restritivas por perfil a nível de backend e roteamento.
+
+## 16. Histórico de Correções Estruturais (Pós-Merge)
+
+Após um evento de resolução de conflitos (merge), a estrutura de roteamento original do projeto sofreu degradação, gerando as seguintes inconsistências:
+- O arquivo `App.js` aglutinou duas versões do array de rotas, isolando a grande maioria das páginas fora do `DashboardLayout`.
+- Arquivos de formulários (como `RegisterCity.jsx`) reintroduziram chamadas manuais para os componentes globais (`Header`, `Footer`).
+- Rotas antigas e superadas (ex: `/servicos-estoque`) ressurgiram em `AppRoutes.jsx`.
+
+**Resolução Arquitetural Consolidada**:
+Foi realizada uma purga minuciosa do código legado no roteamento. O `DashboardLayout` foi confirmado como o invólucro (wrapper) definitivo para as telas internas do sistema, assegurando que o Header, Sidebar e Footer sejam instanciados e gerenciados apenas neste componente raiz. Toda a estrutura de rotas autenticadas em `App.js` foi unificada sob a árvore do layout, e páginas como formulários herdaram essa apresentação sem duplicação de componentes globais. As rotas obsoletas reavivadas pelo merge foram removidas definitivamente em favor da separação modular (`/estoque`, `/servicos`, etc.).
