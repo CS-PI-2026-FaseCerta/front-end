@@ -264,15 +264,15 @@ export default function ServiceInsert() {
 
       {isEditModalOpen && editingService && (
         <div
-          className="modal-overlay"
+          className="service-insert-modal-overlay"
           onClick={() => setIsEditModalOpen(false)}
         >
           <div
-            className="modal-content edit-modal"
+            className="service-insert-modal-content edit-modal"
             onClick={(e) => e.stopPropagation()}
             tabIndex={-1}
           >
-            <div className="modal-header">
+            <div className="service-insert-modal-header">
               <h2>Editar Serviço</h2>
 
               <button onClick={() => setIsEditModalOpen(false)}>
@@ -338,12 +338,12 @@ export default function ServiceInsert() {
       <Footer />
 
       {isModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+        <div className="service-insert-modal-overlay" onClick={() => setIsModalOpen(false)}>
           <div
-            className="modal-content"
+            className="service-insert-modal-content"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-header">
+            <div className="service-insert-modal-header">
               <h2>Selecionar Serviço</h2>
               <button onClick={() => setIsModalOpen(false)}>✕</button>
             </div>
@@ -358,7 +358,7 @@ export default function ServiceInsert() {
               />
             </div>
 
-            <div className="modal-list">
+            <div className="service-insert-modal-body">
               {servicosFiltrados.length === 0 ? (
                 <div className="modal-empty-state">
                   <PiToolboxBold size={42} color="var(--color-primary)" />
@@ -378,7 +378,7 @@ export default function ServiceInsert() {
                   return (
                     <div
                       key={servico.id}
-                      className={`modal-card ${isDisabled ? "disabled" : ""}`}
+                      className={`service-insert-modal-card ${isDisabled ? "disabled" : ""}`}
                       tabIndex={isDisabled ? -1 : 0}
                       role="button"
                       onClick={() => {
@@ -415,6 +415,7 @@ export default function ServiceInsert() {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 }

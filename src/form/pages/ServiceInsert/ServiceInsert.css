@@ -237,7 +237,7 @@
 
 /* ===================== MODAL ADICIONAR SERVIÇO ========================== */
 
-.modal-overlay {
+.service-insert-modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.25);
@@ -248,7 +248,7 @@
   backdrop-filter: blur(4px);
 }
 
-.modal-content {
+.service-insert-modal-content {
   width: 100%;
   max-width: 40rem;
   background: var(--color-surface);
@@ -274,7 +274,7 @@
 }
 
 /* HEADER igual padrão da página */
-.modal-header {
+.service-insert-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -282,14 +282,14 @@
   border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
-.modal-header h2 {
+.service-insert-modal-header h2 {
   font-size: 1.3rem;
   color: var(--color-text-primary);
   font-weight: 600;
 }
 
 /* botão fechar igual estilo da página */
-.modal-close-button {
+.service-insert-modal-close-button {
   border: none;
   background: transparent;
   width: 2rem;
@@ -302,12 +302,12 @@
   cursor: pointer;
 }
 
-.modal-close-button:hover {
+.service-insert-modal-close-button:hover {
   background: rgba(0, 0, 0, 0.06);
 }
 
 /* LISTA reaproveitando lógica da página */
-.modal-list {
+.service-insert-modal-body {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -318,31 +318,35 @@
 }
 
 /* scrollbar igual da página */
-.modal-list::-webkit-scrollbar {
+.service-insert-modal-body::-webkit-scrollbar {
   width: 8px;
 }
 
-.modal-list::-webkit-scrollbar-thumb {
+.service-insert-modal-body::-webkit-scrollbar-thumb {
   background: var(--color-primary);
   border-radius: 10px;
 }
 
-.modal-list::-webkit-scrollbar-track {
+.service-insert-modal-body::-webkit-scrollbar-track {
   background: var(--color-primary-dark);
   border-radius: 10px;
 }
 
-.modal-card {
-    transition: 0.2s;
+.service-insert-modal-card {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
-.modal-card:focus {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+.service-insert-modal-card:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
 }
 
 /* card clicável */
-.modal-card .card {
+.service-insert-modal-card .card {
   cursor: pointer;
   transition: 0.2s;
   display: flex;
@@ -351,7 +355,7 @@
     border-radius: .7rem;
 }
 
-.modal-card .card .description {
+.service-insert-modal-card .card .description {
   display: flex;
   gap: 1rem;
   flex-wrap: nowrap;
@@ -365,15 +369,15 @@
   max-width: 12rem;
 }
 
-.modal-card .text p, h3, span  {
+.service-insert-modal-card .text p, h3, span  {
   color: var(--color-text-primary);
 }
 
-.modal-card:hover {
+.service-insert-modal-card:hover {
   transform: translateY(-5px);
 }
 
-.modal-header button {
+.service-insert-modal-header button {
     background-color: transparent;
     border-radius: 1rem;
     color: var(--color-primary);
@@ -384,20 +388,20 @@
     border: none;
 }
 
-.modal-header button:hover {
+.service-insert-modal-header button:hover {
     cursor: pointer;
     background-color: var(--color-primary);
     color: var(--color-surface);
 }
 
-.modal-card.disabled {
+.service-insert-modal-card.disabled {
   opacity: 0.4;
   cursor: not-allowed;
   filter: grayscale(0.6);
   transform: none !important;
 }
 
-.modal-card.disabled:hover {
+.service-insert-modal-card.disabled:hover {
   transform: none;
 }
 
