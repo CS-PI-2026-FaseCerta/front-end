@@ -365,7 +365,9 @@
   max-width: 12rem;
 }
 
-.modal-card .text p, h3, span  {
+.modal-card .text p,
+.modal-card .text h3,
+.modal-card .text span {
   color: var(--color-text-primary);
 }
 
