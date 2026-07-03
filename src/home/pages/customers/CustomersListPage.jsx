@@ -26,7 +26,7 @@ const CustomersListPage = () => {
           {
             key: "novo-cliente",
             label: "Novo Cliente",
-            icon: FaPlus,
+            icon: FaPlus, 
             onCreate: {
               mobile: AppRoutes.RegisterClient,
               desktop: () => setIsCustomerModalOpen(true),

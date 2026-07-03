@@ -8,6 +8,8 @@ import Footer from "../../../global/components/Footer/Footer.jsx";
 import { useNavigate } from "react-router-dom";
 import { PiToolboxBold } from "react-icons/pi";
 
+import FocusTrap from "focus-trap-react";
+
 export default function ServiceInsert() {
   const navigate = useNavigate();
 
@@ -263,157 +265,161 @@ export default function ServiceInsert() {
       </main>
 
       {isEditModalOpen && editingService && (
-        <div
-          className="modal-overlay"
-          onClick={() => setIsEditModalOpen(false)}
-        >
+        <FocusTrap active={isEditModalOpen}>
           <div
-            className="modal-content edit-modal"
-            onClick={(e) => e.stopPropagation()}
-            tabIndex={-1}
+            className="modal-overlay"
+            onClick={() => setIsEditModalOpen(false)}
           >
-            <div className="modal-header">
-              <h2>Editar Serviço</h2>
+            <div
+              className="modal-content edit-modal"
+              onClick={(e) => e.stopPropagation()}
+              tabIndex={-1}
+            >
+              <div className="modal-header">
+                <h2>Editar Serviço</h2>
 
-              <button onClick={() => setIsEditModalOpen(false)}>
-                ✕
-              </button>
+                <button onClick={() => setIsEditModalOpen(false)}>
+                  ✕
+                </button>
+              </div>
+
+              <form className="edit-form" onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveEdit();
+              }}>
+
+                <label>Descrição</label>
+
+                <input
+                  value={editingService.descricao}
+                  onChange={(e) =>
+                    setEditingService({
+                      ...editingService,
+                      descricao: e.target.value
+                    })
+                  }
+                />
+
+                <label>Preço</label>
+
+                <input
+                  type="number"
+                  value={editingService.preco}
+                  onChange={(e) =>
+                    setEditingService({
+                      ...editingService,
+                      preco: Number(e.target.value)
+                    })
+                  }
+                />
+
+                <label>Observações</label>
+
+                <textarea
+                  rows={4}
+                  value={editingService.obs}
+                  onChange={(e) =>
+                    setEditingService({
+                      ...editingService,
+                      obs: e.target.value
+                    })
+                  }
+                />
+
+                <button
+                  type="submit"
+                  className="service-insert-form-submit-button"
+                >
+                  Salvar Alterações
+                </button>
+
+              </form>
             </div>
-
-            <form className="edit-form" onSubmit={(e) => {
-              e.preventDefault();
-              handleSaveEdit();
-            }}>
-
-              <label>Descrição</label>
-
-              <input
-                value={editingService.descricao}
-                onChange={(e) =>
-                  setEditingService({
-                    ...editingService,
-                    descricao: e.target.value
-                  })
-                }
-              />
-
-              <label>Preço</label>
-
-              <input
-                type="number"
-                value={editingService.preco}
-                onChange={(e) =>
-                  setEditingService({
-                    ...editingService,
-                    preco: Number(e.target.value)
-                  })
-                }
-              />
-
-              <label>Observações</label>
-
-              <textarea
-                rows={4}
-                value={editingService.obs}
-                onChange={(e) =>
-                  setEditingService({
-                    ...editingService,
-                    obs: e.target.value
-                  })
-                }
-              />
-
-              <button
-                type="submit"
-                className="service-insert-form-submit-button"
-              >
-                Salvar Alterações
-              </button>
-
-            </form>
           </div>
-        </div>
+        </FocusTrap>
       )}
 
       <Footer />
 
       {isModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="modal-header">
-              <h2>Selecionar Serviço</h2>
-              <button onClick={() => setIsModalOpen(false)}>✕</button>
-            </div>
+        <FocusTrap active={isModalOpen}>
+            <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+            <div
+              className="modal-content"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="modal-header">
+                <h2>Selecionar Serviço</h2>
+                <button onClick={() => setIsModalOpen(false)}>✕</button>
+              </div>
 
-            <div className="modal-search">
-              <input
-                ref={searchRef}
-                type="text"
-                placeholder="Pesquisar serviço..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+              <div className="modal-search">
+                <input
+                  ref={searchRef}
+                  type="text"
+                  placeholder="Pesquisar serviço..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
 
-            <div className="modal-list">
-              {servicosFiltrados.length === 0 ? (
-                <div className="modal-empty-state">
-                  <PiToolboxBold size={42} color="var(--color-primary)" />
+              <div className="modal-list">
+                {servicosFiltrados.length === 0 ? (
+                  <div className="modal-empty-state">
+                    <PiToolboxBold size={42} color="var(--color-primary)" />
 
-                  <p className="title">
-                    Nenhum serviço encontrado
-                  </p>
+                    <p className="title">
+                      Nenhum serviço encontrado
+                    </p>
 
-                  <p className="subtitle">
-                    Tente ajustar a busca ou cadastre um novo serviço
-                  </p>
-                </div>
-              ) : (
-                servicosFiltrados.map((servico) => {
-                  const isDisabled = servicosIds.has(servico.id);
+                    <p className="subtitle">
+                      Tente ajustar a busca ou cadastre um novo serviço
+                    </p>
+                  </div>
+                ) : (
+                  servicosFiltrados.map((servico) => {
+                    const isDisabled = servicosIds.has(servico.id);
 
-                  return (
-                    <div
-                      key={servico.id}
-                      className={`modal-card ${isDisabled ? "disabled" : ""}`}
-                      tabIndex={isDisabled ? -1 : 0}
-                      role="button"
-                      onClick={() => {
-                        if (isDisabled) return;
-                        handleAddService(servico);
-                      }}
-                      onKeyDown={(e) => {
-                        if (isDisabled) return;
-                        if (e.key === "Enter" || e.key === " ") {
+                    return (
+                      <div
+                        key={servico.id}
+                        className={`modal-card ${isDisabled ? "disabled" : ""}`}
+                        tabIndex={isDisabled ? -1 : 0}
+                        role="button"
+                        onClick={() => {
+                          if (isDisabled) return;
                           handleAddService(servico);
-                        }
-                      }}
-                    >
-                      <Card servico={servico} hideActions />
-                    </div>
-                  );
-                })
-              )}
-            </div>
-
-            <div className="create-service-line">
-              <button
-                className="add-text-button"
-                type="button"
-                onClick={() =>
-                  navigate("/cadastroServico", {
-                    state: { mode: "createCatalog" },
+                        }}
+                        onKeyDown={(e) => {
+                          if (isDisabled) return;
+                          if (e.key === "Enter" || e.key === " ") {
+                            handleAddService(servico);
+                          }
+                        }}
+                      >
+                        <Card servico={servico} hideActions />
+                      </div>
+                    );
                   })
-                }
-              >
-                + Criar Serviço
-              </button>
+                )}
+              </div>
+
+              <div className="create-service-line">
+                <button
+                  className="add-text-button"
+                  type="button"
+                  onClick={() =>
+                    navigate("/cadastroServico", {
+                      state: { mode: "createCatalog" },
+                    })
+                  }
+                >
+                  + Criar Serviço
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </FocusTrap>
       )}
     </div>
   );
