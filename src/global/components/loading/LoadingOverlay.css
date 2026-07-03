@@ -14,8 +14,8 @@
 .loading-overlay__backdrop {
   position: absolute;
   inset: 0;
-  background: color-mix(in srgb, var(--color-bg) 45%, transparent);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(6px);
 }
 
 .loading-overlay__panel {

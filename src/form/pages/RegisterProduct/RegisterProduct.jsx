@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
-import Header from "../../../global/components/header/Header.jsx";
-import Footer from "../../../global/components/Footer/Footer.jsx";
+
 import "./RegisterProduct.css";
 import "../../../global/components/form/Form.css";
+import Header from "../../../global/components/header/Header";
+import Footer from "../../../global/components/Footer/Footer";
 
 export default function CadastrarProduto() {
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ export default function CadastrarProduto() {
   };
 
   return (
-    <div className="service-page">
+    <div className="register-product-page">
       <Header />
       <div className="service-page-content">
         <main className="service-form-card">

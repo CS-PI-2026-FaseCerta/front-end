@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Header from "../../global/components/header/Header.jsx";
+
 
 import "./Dashboard.css";
 
@@ -13,9 +13,7 @@ const SectionPage = ({
   children,
 }) => {
   return (
-    <div className="dashboard-page">
-      <Header />
-
+    <>
       <main className="dashboard-shell dashboard-shell--section">
         <section className="section-card">
           <span className="dashboard-hero__eyebrow">
@@ -40,7 +38,7 @@ const SectionPage = ({
           </Link>
         </section>
       </main>
-    </div>
+    </>
   );
 };
 

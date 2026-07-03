@@ -20,7 +20,7 @@
     padding: 20px 2rem;
 }
 
-.service-insert-form-card {
+.service-insert-page .service-insert-form-card {
     width: 100%;
     background: var(--color-surface);
     padding: 25px;
@@ -28,19 +28,19 @@
     box-shadow: var(--shadow-card);
 }
 
-.card-header {
+.service-insert-page .card-header {
     display: flex;
     margin-bottom: 1.5rem;
 }
 
-.card-header h1 {
+.service-insert-page .card-header h1 {
     text-align: center;
     width: 100%;
     padding-right: 2rem;
     color: var(--color-text-primary);
 }
 
-.service-insert-form h2 {
+.service-insert-page .service-insert-form h2 {
     padding-right: 2rem;
     font-size: 1.3rem;
     color: var(--color-text-primary);
@@ -48,21 +48,21 @@
 
 
 
-.service-insert-form .header {
+.service-insert-page .service-insert-form .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-direction: row;
 }
 
-.service-insert-form .card {
+.service-insert-page .service-insert-form .card {
     display: flex;
     background-color: var(--color-surface-muted);
     padding: 1rem 1rem;
     border-radius: .7rem;
 }
 
-.service-insert-form .card .text {
+.service-insert-page .service-insert-form .card .text {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -70,16 +70,16 @@
     min-width: 0;
 }
 
-.actions-line {
+.service-insert-page .actions-line {
   display: flex;
 }
 
-.service-insert-form .card .buttons {
+.service-insert-page .service-insert-form .card .buttons {
     display: flex;
     padding: 0 1rem;
 }
 
-.service-insert-form .card .buttons button {
+.service-insert-page .service-insert-form .card .buttons button {
     border: none;
     background-color: transparent;
     padding: .5rem .8rem;
@@ -87,12 +87,12 @@
     border-radius: 1rem;
 }
 
-.service-insert-form .card .buttons button:hover {
+.service-insert-page .service-insert-form .card .buttons button:hover {
     cursor: pointer;
     background-color: rgba(0, 0, 0, 0.062);
 }
 
-.service-insert-form .list {
+.service-insert-page .service-insert-form .list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -100,82 +100,64 @@
     height: 20rem;
 }
 
-
-
-
-
-
-
-
 /* ===================== SCROLL BAR ========================== */
 
-.service-insert-form .list::-webkit-scrollbar-thumb:hover {
+.service-insert-page .service-insert-form .list::-webkit-scrollbar-thumb:hover {
   background: var(--color-primary);
 }
 
-.service-insert-form .list::-webkit-scrollbar-thumb {
+.service-insert-page .service-insert-form .list::-webkit-scrollbar-thumb {
   background: var(--color-primary);
   border-radius: 10px;
 }
 
 /* fundo da scrollbar */
-.service-insert-form .list::-webkit-scrollbar-track {
+.service-insert-page .service-insert-form .list::-webkit-scrollbar-track {
   background: var(--color-primary-dark);
   border-radius: 10px;
 }
 
-.service-insert-form .list::-webkit-scrollbar {
+.service-insert-page .service-insert-form .list::-webkit-scrollbar {
   width: 8px;
 }
 
-
-
-
-
-
-
-
-
-
-
-.service-insert-form .list.empty-state {
+.service-insert-page .service-insert-form .list.empty-state {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
-.service-insert-form .list.empty-state p {
+.service-insert-page .service-insert-form .list.empty-state p {
     color: rgb(125, 115, 134);
 }
 
-.service-insert-form .list .description {
+.service-insert-page .service-insert-form .list .description {
     display: flex;
     gap: 1rem;
     flex-wrap: nowrap;
     overflow: hidden;
 }
 
-.service-insert-form .value-line {
+.service-insert-page .service-insert-form .value-line {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.service-insert-form .value-line .title {
+.service-insert-page .service-insert-form .value-line .title {
     font-size: 1.2rem;
     font-weight: 600;
     color: var(--color-text-primary);
 }
 
-.service-insert-form .value-line span {
+.service-insert-page .service-insert-form .value-line span {
     color: var(--color-primary);
     font-weight: 600;
     font-size: 2rem;
 }
 
-
-.back-button {
+.service-insert-page .back-button {
     border: none;
     background-color: transparent;
     width: 2rem;
@@ -187,18 +169,18 @@
     border-radius: 1rem;
 }
 
-.back-button svg {
+.service-insert-page .back-button svg {
     color: var(--color-primary);
 }
 
-.service-insert-form {
+.service-insert-page .service-insert-form {
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
 
 /* Botão de Envio */
-.service-insert-form-submit-button {
+.service-insert-page .service-insert-form-submit-button {
     width: 100%;
     padding: 16px;
     background-color: var(--color-primary);
@@ -216,28 +198,20 @@
     box-shadow: none;
 }
 
-.service-insert-form-submit-button:hover {
+.service-insert-page .service-insert-form-submit-button:hover {
     background-color: var(--color-primary-hover);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(91, 75, 255, 0.3);
 }
 
-.service-insert-form-submit-button:disabled {
+.service-insert-page .service-insert-form-submit-button:disabled {
     background-color: var(--control-bg-active);
     cursor: not-allowed;
 }
 
-
-
-
-
-
-
-
-
 /* ===================== MODAL ADICIONAR SERVIÇO ========================== */
 
-.modal-overlay {
+.service-insert-page .modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.25);
@@ -248,7 +222,7 @@
   backdrop-filter: blur(4px);
 }
 
-.modal-content {
+.service-insert-page .modal-content {
   width: 100%;
   max-width: 40rem;
   background: var(--color-surface);
@@ -257,12 +231,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: modalIn 0.2s ease-out;
+  animation: service-insert-page-modalIn 0.2s ease-out;
   height: 80%;
 }
 
 /* animação leve (combina com UI moderna) */
-@keyframes modalIn {
+@keyframes service-insert-page-modalIn {
   from {
     transform: translateY(10px);
     opacity: 0;
@@ -274,7 +248,7 @@
 }
 
 /* HEADER igual padrão da página */
-.modal-header {
+.service-insert-page .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -282,14 +256,14 @@
   border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
-.modal-header h2 {
+.service-insert-page .modal-header h2 {
   font-size: 1.3rem;
   color: var(--color-text-primary);
   font-weight: 600;
 }
 
 /* botão fechar igual estilo da página */
-.modal-close-button {
+.service-insert-page .modal-close-button {
   border: none;
   background: transparent;
   width: 2rem;
@@ -302,12 +276,12 @@
   cursor: pointer;
 }
 
-.modal-close-button:hover {
+.service-insert-page .modal-close-button:hover {
   background: rgba(0, 0, 0, 0.06);
 }
 
 /* LISTA reaproveitando lógica da página */
-.modal-list {
+.service-insert-page .modal-list {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
@@ -318,31 +292,31 @@
 }
 
 /* scrollbar igual da página */
-.modal-list::-webkit-scrollbar {
+.service-insert-page .modal-list::-webkit-scrollbar {
   width: 8px;
 }
 
-.modal-list::-webkit-scrollbar-thumb {
+.service-insert-page .modal-list::-webkit-scrollbar-thumb {
   background: var(--color-primary);
   border-radius: 10px;
 }
 
-.modal-list::-webkit-scrollbar-track {
+.service-insert-page .modal-list::-webkit-scrollbar-track {
   background: var(--color-primary-dark);
   border-radius: 10px;
 }
 
-.modal-card {
+.service-insert-page .modal-card {
     transition: 0.2s;
 }
 
-.modal-card:focus {
+.service-insert-page .modal-card:focus {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 /* card clicável */
-.modal-card .card {
+.service-insert-page .modal-card .card {
   cursor: pointer;
   transition: 0.2s;
   display: flex;
@@ -351,31 +325,31 @@
     border-radius: .7rem;
 }
 
-.modal-card .card .description {
+.service-insert-page .modal-card .card .description {
   display: flex;
   gap: 1rem;
   flex-wrap: nowrap;
   overflow: hidden;
 }
 
-.card .description p {
+.service-insert-page .card .description p {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 12rem;
 }
 
-.modal-card .text p,
-.modal-card .text h3,
-.modal-card .text span {
+.service-insert-page .modal-card .text p, 
+.service-insert-page .modal-card .text h3, 
+.service-insert-page .modal-card .text span  {
   color: var(--color-text-primary);
 }
 
-.modal-card:hover {
+.service-insert-page .modal-card:hover {
   transform: translateY(-5px);
 }
 
-.modal-header button {
+.service-insert-page .modal-header button {
     background-color: transparent;
     border-radius: 1rem;
     color: var(--color-primary);
@@ -386,31 +360,30 @@
     border: none;
 }
 
-.modal-header button:hover {
+.service-insert-page .modal-header button:hover {
     cursor: pointer;
     background-color: var(--color-primary);
     color: var(--color-surface);
 }
 
-.modal-card.disabled {
+.service-insert-page .modal-card.disabled {
   opacity: 0.4;
   cursor: not-allowed;
   filter: grayscale(0.6);
   transform: none !important;
 }
 
-.modal-card.disabled:hover {
+.service-insert-page .modal-card.disabled:hover {
   transform: none;
 }
 
-
-.create-service-line {
+.service-insert-page .create-service-line {
     display: flex;
     justify-content: center;
     margin-top: 1rem;
 }
 
-.add-text-button {
+.service-insert-page .add-text-button {
     color: var(--color-primary);
     border: none;
     background-color: transparent;
@@ -418,15 +391,11 @@
     font-weight: 600;
 }
 
-.add-text-button:hover {
+.service-insert-page .add-text-button:hover {
     cursor: pointer;
 }
 
-
-
-
-
-.qty-button {
+.service-insert-page .qty-button {
   border: none;
   background: var(--color-surface-muted);
   color: var(--color-primary);
@@ -441,23 +410,23 @@
   justify-content: center;
 }
 
-.qty-button:hover {
+.service-insert-page .qty-button:hover {
   background: var(--color-primary);
   color: var(--color-surface);
   transform: translateY(-1px);
 }
 
-.qty-button:active {
+.service-insert-page .qty-button:active {
   transform: scale(0.95);
 }
 
-.qty-container {
+.service-insert-page .qty-container {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.qty-input {
+.service-insert-page .qty-input {
   width: 3rem;
   height: 2rem;
   text-align: center;
@@ -470,34 +439,32 @@
   transition: 0.2s;
 }
 
-.qty-input:focus {
+.service-insert-page .qty-input:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(91, 75, 255, 0.15);
 }
 
 /* Remove setinhas do input number (Chrome, Edge, Safari) */
-.qty-input::-webkit-outer-spin-button,
-.qty-input::-webkit-inner-spin-button {
+.service-insert-page .qty-input::-webkit-outer-spin-button,
+.service-insert-page .qty-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 /* Remove setinhas no Firefox */
-.qty-input {
+.service-insert-page .qty-input {
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
-
-
 /* ===================== SEARCH INPUT MODAL ===================== */
 
-.modal-search {
+.service-insert-page .modal-search {
   padding: 0 25px;
   padding-bottom: 15px;
 }
 
-.modal-search input {
+.service-insert-page .modal-search input {
   width: 100%;
   padding: 12px 14px;
   border-radius: 10px;
@@ -509,15 +476,10 @@
   transition: 0.2s;
 }
 
-.modal-search input:focus {
+.service-insert-page .modal-search input:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(91, 75, 255, 0.15);
 }
-
-
-
-
-
 
 .service-insert-page .modal-empty-state {
   display: flex;
@@ -542,33 +504,27 @@
   opacity: 0.7;
 }
 
-
-
-
-
-
-
 /* ================= MODAL EDITAR ================= */
 
-.edit-modal{
+.service-insert-page .edit-modal{
     max-width:32rem;
     height:auto;
 }
 
-.edit-form{
+.service-insert-page .edit-form{
     display:flex;
     flex-direction:column;
     gap:1rem;
     padding:25px;
 }
 
-.edit-form label{
+.service-insert-page .edit-form label{
     font-weight:600;
     color:var(--color-text-primary);
 }
 
-.edit-form input,
-.edit-form textarea{
+.service-insert-page .edit-form input,
+.service-insert-page .edit-form textarea{
     width:100%;
     padding:12px 14px;
     border:none;
@@ -581,23 +537,17 @@
     transition:.2s;
 }
 
-.edit-form input:focus,
-.edit-form textarea:focus{
+.service-insert-page .edit-form input:focus,
+.service-insert-page .edit-form textarea:focus{
     box-shadow:0 0 0 3px rgba(91,75,255,.15);
 }
 
-.edit-form textarea{
+.service-insert-page .edit-form textarea{
     min-height:110px;
 }
 
-
-
-
-
-
-
 @media (min-width: 720px) {
-    .service-insert-form-card {
+    .service-insert-page .service-insert-form-card {
         width: 40rem;
     }
 
@@ -611,18 +561,18 @@
         width: 100%;
     }
 
-    .card-header h1 {
+    .service-insert-page .card-header h1 {
         font-size: 1.2rem;
     }
 }
 
 @media (max-width: 600px) {
-  .service-insert-form .card {
+  .service-insert-page .service-insert-form .card {
     flex-direction: column;
     gap: 1rem;
   }
 
-  .actions-line {
+  .service-insert-page .actions-line {
     justify-content: center;
   }
 }

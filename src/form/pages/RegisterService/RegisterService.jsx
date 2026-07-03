@@ -3,10 +3,8 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./RegisterService.css";
 import "../../../global/components/form/Form.css";
-
-import Header from "../../../global/components/header/Header.jsx";
-import Footer from "../../../global/components/Footer/Footer.jsx";
-
+import Header from "../../../global/components/header/Header";
+import Footer from "../../../global/components/Footer/Footer";
 import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
@@ -99,7 +97,7 @@ export default function RegisterService() {
   };
 
   return (
-    <div className="service-page">
+    <div className="register-service-page">
       <Header />
       <div className="service-page-content">
         <main className="service-form-card">
