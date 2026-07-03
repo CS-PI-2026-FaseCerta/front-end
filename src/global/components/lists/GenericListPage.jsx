@@ -22,7 +22,7 @@ import { exportCsv } from "../../utils/exportCsv";
 import { exportXlsx } from "../../import-export/exportXlsx";
 import ExportButton from "../../import-export/ExportButton";
 import ImportModal from "../../import-export/ImportModal";
-import useDeviceType from "../../hooks/useDeviceType";
+import useDeviceType from "../../hooks/useDeviceType.js";
 import "./GenericListPage.css";
 
 const getVisiblePageNumbers = (currentPage, totalPages) => {
