@@ -19,8 +19,6 @@ export const Estoque = "/estoque";
 export const Perfil = "/perfil";
 export const Relatorios = "/relatorios";
 export const Configuracoes = "/configuracoes";
-
-export const ServicosEstoqueNovoItem = "/estoque/novo-item";
 export const OrdensServico = "/ordens-servico";
 export const OrdensServicoNovo = "/os/novo";
 export const Financeiro = "/financeiro";
