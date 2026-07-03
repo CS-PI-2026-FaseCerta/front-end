@@ -75,7 +75,7 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
       {
         id: "estoque",
         label: "Estoque",
-        path: "/estoque",
+        path: "/produtos-estoque",
         icon: <FaBoxOpen aria-hidden="true" />,
         allowedProfiles: ["gestor", "tecnico"],
       },

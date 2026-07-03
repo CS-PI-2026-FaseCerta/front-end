@@ -26,17 +26,24 @@ export const MODULES = [
     },
   },
   {
-    id: "produtos-estoque",
-    title: "Produtos e Estoque",
-    description:
-      "Gerencie e centralize produtos, materiais, custos de compra e venda, além de quantidade em estoque com visão integrada.",
-    path: "/produtos-estoque",
-    icon: <FaBoxOpen />,
     id: "servicos",
     title: "Serviços",
     description: "Catálogo de serviços oferecidos e tabelas de preço.",
     path: "/servicos",
     icon: <FaWrench />,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 3,
+      tecnico: 3,
+    },
+  },
+  {
+    id: "produtos-estoque",
+    title: "Estoque",
+    description:
+      "Gerencie e centralize produtos, materiais, custos de compra e venda, além de quantidade em estoque com visão integrada.",
+    path: "/produtos-estoque",
+    icon: <FaBoxOpen />,
     allowedProfiles: ["gestor", "tecnico"],
     order: {
       gestor: 3,
@@ -53,18 +60,6 @@ export const MODULES = [
     order: {
       gestor: 4,
       tecnico: 4,
-    },
-  },
-  {
-    id: "estoque",
-    title: "Estoque",
-    description: "Gerencie itens, materiais e disponibilidade operacional.",
-    path: "/produtos-estoque",
-    icon: <FaBoxOpen />,
-    allowedProfiles: ["gestor", "tecnico"],
-    order: {
-      gestor: 5,
-      tecnico: 5,
     },
   },
   {

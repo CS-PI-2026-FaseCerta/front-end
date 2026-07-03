@@ -69,23 +69,7 @@ function App() {
             <Route path={AppRoutes.Servicos} element={<ServicesListPage />} />
             <Route path={AppRoutes.Pedidos} element={<OrdersListPage />} />
 
-            {/* Módulos futuros / placeholders */}
-          
-
-            <Route
-              path={AppRoutes.Estoque}
-              element={
-                <SectionPage
-                  eyebrow="Módulo operacional"
-                  title="Estoque"
-                  description="Área demonstrativa para a futura navegação do módulo de estoque."
-                  ctaLabel="Voltar ao painel"
-                  ctaPath="/dashboard"
-                />
-              }
-            />
-
-           
+            {/* Módulos futuros / placeholders */}          
 
             <Route
               path={AppRoutes.OrdensServico}
