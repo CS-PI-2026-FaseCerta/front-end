@@ -45,7 +45,7 @@ const CustomersListPage = () => {
           },
           {
             key: "excluir",
-            title: "Excluir",
+            title: "Excluir", 
             icon: FaTrash,
             iconOnly: true,
             onClick: () => {},

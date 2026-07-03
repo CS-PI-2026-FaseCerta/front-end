@@ -9,7 +9,6 @@ import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RecoverPassword from "./auth/pages/recoverpassword/RecoverPassword.jsx";
 
-import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
 
@@ -23,6 +22,8 @@ import CustomersListPage from "./home/pages/customers/CustomersListPage.jsx";
 import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx";
 
 import ServicesListPage from "./home/pages/services/ServicesListPage.jsx";
+import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
+
 import DashboardLayout from "./global/components/layout/DashboardLayout.jsx";
 
 import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
