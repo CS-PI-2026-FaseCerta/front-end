@@ -4,6 +4,8 @@ import { FaArrowLeft } from "react-icons/fa";
 
 import "./RegisterProduct.css";
 import "../../../global/components/form/Form.css";
+import Header from "../../../global/components/header/Header";
+import Footer from "../../../global/components/Footer/Footer";
 
 export default function CadastrarProduto() {
   const navigate = useNavigate();
@@ -92,6 +94,7 @@ export default function CadastrarProduto() {
 
   return (
     <div className="register-product-page">
+      <Header />
       <div className="service-page-content">
         <main className="service-form-card">
           <div className="card-header">
@@ -213,6 +216,7 @@ export default function CadastrarProduto() {
           </form>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }
