@@ -11,9 +11,10 @@ export const Dashboard = "/dashboard";
 export const ApplyDiscounts = "/aplicarDesconto";
 export const Loading = "/loading";
 export const Pedidos = "/pedidos";
+export const ProdutosEstoque = "/produtos-estoque";
 export const Clientes = "/clientes";
+export const ProdutosEstoqueNovoItem = "/produtos-estoque/novo-item";
 export const Servicos = "/servicos";
-export const Estoque = "/estoque";
 
 //Não implementados ainda, mas já mapeados para facilitar futuras integrações.
 export const Perfil = "/perfil";

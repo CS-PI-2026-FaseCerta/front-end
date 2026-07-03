@@ -1,0 +1,72 @@
+export const productsMockData = [
+    {
+        id: 1,
+        name: "Fio Elétrico 2,5mm",
+        cost: "R$ 45,90",
+        salePrice: "R$ 68,90",
+        stock: 48,
+    },
+    {
+        id: 2,
+        name: "Fio Elétrico 1,5mm",
+        cost: "R$ 22,15",
+        salePrice: "R$ 34,90",
+        stock: 122,
+    },
+    {
+        id: 3,
+        name: "Ventilador",
+        cost: "R$ 115,00",
+        salePrice: "R$ 179,90",
+        stock: 5,
+    },
+    {
+        id: 4,
+        name: "Cabo de Rede",
+        cost: "R$ 88,30",
+        salePrice: "R$ 129,90",
+        stock: 15,
+    },
+    {
+        id: 5,
+        name: "Furadeira Bosch GSB 550",
+        cost: "R$ 185,00",
+        salePrice: "R$ 289,90",
+        stock: 12,
+    },
+    {
+        id: 6,
+        name: "Chave Philips",
+        cost: "R$ 8,50",
+        salePrice: "R$ 16,90",
+        stock: 45,
+    },
+    {
+        id: 7,
+        name: "Disco de Corte 4½\"",
+        cost: "R$ 6,90",
+        salePrice: "R$ 13,90",
+        stock: 80,
+    },
+    {
+        id: 8,
+        name: "Parafuso Sextavado",
+        cost: "R$ 0,60",
+        salePrice: "R$ 1,20",
+        stock: 500,
+    },
+    {
+        id: 9,
+        name: "Serra Mármore",
+        cost: "R$ 245,00",
+        salePrice: "R$ 369,90",
+        stock: 6,
+    },
+    {
+        id: 10,
+        name: "Disjuntor Bipolar A50",
+        cost: "R$ 28,99",
+        salePrice: "49,90",
+        stock: 8,
+    }
+];
