@@ -76,6 +76,11 @@
   cursor: not-allowed;
 }
 
+.register-service-modal-container h2 {
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 768px) {
   .service-form-card {
     padding: 24px;
