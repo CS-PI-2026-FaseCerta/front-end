@@ -34,7 +34,6 @@ export const ordersColumns = [
     sortable: true,
     sortType: "date",
     searchable: true,
-    width: "132px",
   },
   {
     key: "status",
@@ -46,7 +45,6 @@ export const ordersColumns = [
     sortType: "status",
     sortOrder: ["Aberto", "Em execução", "Finalizado"],
     searchable: true,
-    width: "160px",
   },
   {
     key: "responsavel",
@@ -65,6 +63,5 @@ export const ordersColumns = [
     sortType: "number",
     sortAccessor: (row) => parseCurrencyValue(row.valor),
     searchable: false,
-    width: "120px",
   },
 ];

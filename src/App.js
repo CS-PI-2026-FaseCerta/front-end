@@ -21,11 +21,14 @@ import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
 
 import CustomersListPage from "./home/pages/customers/CustomersListPage.jsx";
 import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx";
+import ProductsListPage from "./home/pages/products/ProductsListPage";
 
 import ServicesListPage from "./home/pages/services/ServicesListPage.jsx";
 import DashboardLayout from "./global/components/layout/DashboardLayout.jsx";
 
 import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
+
+import ApplyDiscounts from "./home/components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
@@ -60,26 +63,20 @@ function App() {
 
             {/* Listas principais */}
             <Route path={AppRoutes.Clientes} element={<CustomersListPage />} />
+
+            <Route
+              path={AppRoutes.ProdutosEstoque}
+              element={<ProductsListPage />}
+            />
             <Route path={AppRoutes.Servicos} element={<ServicesListPage />} />
             <Route path={AppRoutes.Pedidos} element={<OrdersListPage />} />
 
-            {/* Módulos futuros / placeholders */}
-          
-
             <Route
-              path={AppRoutes.Estoque}
-              element={
-                <SectionPage
-                  eyebrow="Módulo operacional"
-                  title="Estoque"
-                  description="Área demonstrativa para a futura navegação do módulo de estoque."
-                  ctaLabel="Voltar ao painel"
-                  ctaPath="/dashboard"
-                />
-              }
+              path={AppRoutes.ApplyDiscounts}
+              element={<ApplyDiscounts />}
             />
 
-           
+            {/* Módulos futuros / placeholders */}          
 
             <Route
               path={AppRoutes.OrdensServico}
