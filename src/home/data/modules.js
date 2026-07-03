@@ -73,6 +73,17 @@ export const MODULES = [
       gestor: 6,
     },
   },
+  {
+    id: "aplicar-desconto",
+    title: "Aplicar Descontos (Provisório!)",
+    description: "Aplicar descontos em pedidos.",
+    icon: <FaBoxOpen />,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 7,
+      tecnico: 5,
+    },
+  }
 ];
 
 export const getVisibleModulesByProfile = (profile) =>

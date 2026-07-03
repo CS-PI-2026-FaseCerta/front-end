@@ -28,6 +28,8 @@ import DashboardLayout from "./global/components/layout/DashboardLayout.jsx";
 
 import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 
+import ApplyDiscounts from "./home/components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
+
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
 function App() {
@@ -68,6 +70,11 @@ function App() {
             />
             <Route path={AppRoutes.Servicos} element={<ServicesListPage />} />
             <Route path={AppRoutes.Pedidos} element={<OrdersListPage />} />
+
+            <Route
+              path={AppRoutes.ApplyDiscounts}
+              element={<ApplyDiscounts />}
+            />
 
             {/* Módulos futuros / placeholders */}          
 
