@@ -50,5 +50,15 @@ export default function PaymentTerms() {
         }
     };
 
+    const handleSelectCash = () => {
+        setPaymentType("cash");
+    };
+
+    const handleSelectInstallments = () => {
+        setPaymentType("installments");
+    };
+
+    const isFormValid = paymentYype === "cash" || (paymentType == "installments" && installmentsText.trim()!== "");
+
     
 };
