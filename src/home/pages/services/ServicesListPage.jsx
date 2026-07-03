@@ -25,7 +25,7 @@ const ServicesListPage = () => {
         data={items}
         filters={servicesFilters}
         defaultSort={{
-          key: "nome",
+          key: "id",
           direction: "asc",
         }}
         actions={[
