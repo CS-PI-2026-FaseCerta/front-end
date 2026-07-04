@@ -1,4 +1,4 @@
-.service-page {
+.register-service-page {
   min-height: 100vh;
   width: 100%;
   display: flex;
@@ -21,11 +21,11 @@
 .service-form-card {
   width: 100%;
   max-width: 640px;
-  background: var(--color-surface); 
+  background: var(--color-surface);
   padding: 32px;
   border-radius: 24px;
   box-shadow: var(--shadow-card);
-  margin: 20px auto 0;
+  margin: 80px auto 0;
 }
 
 .service-form-card .card-header {
@@ -74,6 +74,11 @@
 
 .form-button:disabled {
   cursor: not-allowed;
+}
+
+.register-service-modal-container h2 {
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {

@@ -1,6 +1,6 @@
 import React from "react";
-import { Link, NavLink } from "react-router-dom";
-import { FaBars, FaMoon, FaSun, FaUserCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { FaBars, FaMoon, FaSun, FaBell } from "react-icons/fa";
 import useTheme from "../../../global/hooks/useTheme";
 import "./HeaderDashBoard.css";
 
@@ -29,35 +29,8 @@ const HeaderDashBoard = ({ onMenuToggle, isSidebarOpen = false }) => {
         </Link>
       </div>
 
-      <nav className="dashboard-header__nav" aria-label="Navegação principal">
-        <NavLink
-          to="/dashboard"
-          end
-          className={({ isActive }) =>
-            `dashboard-header__nav-link${isActive ? " dashboard-header__nav-link--active" : ""}`
-          }
-        >
-          Dashboard
-        </NavLink>
-        <NavLink
-          to="/relatorios"
-          className={({ isActive }) =>
-            `dashboard-header__nav-link${isActive ? " dashboard-header__nav-link--active" : ""}`
-          }
-        >
-          Relatórios
-        </NavLink>
-        <NavLink
-          to="/configuracoes"
-          className={({ isActive }) =>
-            `dashboard-header__nav-link${isActive ? " dashboard-header__nav-link--active" : ""}`
-          }
-        >
-          Configurações
-        </NavLink>
-      </nav>
-
       <div className="dashboard-header__actions">
+
         <button
           className="dashboard-header__icon-button"
           type="button"
@@ -67,14 +40,13 @@ const HeaderDashBoard = ({ onMenuToggle, isSidebarOpen = false }) => {
           {theme === "dark" ? <FaSun size={18} /> : <FaMoon size={18} />}
         </button>
 
-        <Link
-          to="/perfil"
-          className="dashboard-header__profile-link"
-          aria-label="Acessar gerenciamento do perfil"
+        <button
+          className="dashboard-header__icon-button"
+          type="button"
+          aria-label="Notificações"
         >
-          <FaUserCircle size={22} />
-          <span>Perfil</span>
-        </Link>
+          <FaBell size={18} />
+        </button>
       </div>
     </header>
   );

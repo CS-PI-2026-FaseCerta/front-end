@@ -1,70 +1,89 @@
-import { FaBoxOpen, FaClipboardList, FaUsers, FaWallet } from "react-icons/fa";
+import { FaBoxOpen, FaClipboardList, FaUsers, FaWallet, FaWrench, FaFileAlt } from "react-icons/fa";
 
 export const MODULES = [
   {
     id: "clientes",
-    title: "Gestão de Clientes",
-    description:
-      "Centralize cadastros, histórico e acompanhamento comercial em um único fluxo.",
+    title: "Clientes",
+    description: "Gerenciamento de clientes e histórico.",
     path: "/clientes",
     icon: <FaUsers />,
     allowedProfiles: ["gestor", "tecnico"],
     order: {
       gestor: 1,
+      tecnico: 1,
+    },
+  },
+  {
+    id: "ordens-servico",
+    title: "Ordens de Serviço",
+    description: "Acompanhe solicitações e andamento das atividades em campo.",
+    path: "/ordens-servico",
+    icon: <FaClipboardList />,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 2,
       tecnico: 2,
     },
   },
   {
-    id: "servicos-estoque",
-    title: "Serviços e Estoque",
+    id: "servicos",
+    title: "Serviços",
+    description: "Catálogo de serviços oferecidos e tabelas de preço.",
+    path: "/servicos",
+    icon: <FaWrench />,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 3,
+      tecnico: 3,
+    },
+  },
+  {
+    id: "produtos-estoque",
+    title: "Estoque",
     description:
-      "Gerencie itens, materiais e disponibilidade operacional com visão integrada.",
-    path: "/servicos-estoque",
+      "Gerencie e centralize produtos, materiais, custos de compra e venda, além de quantidade em estoque com visão integrada.",
+    path: "/produtos-estoque",
     icon: <FaBoxOpen />,
     allowedProfiles: ["gestor", "tecnico"],
     order: {
-      gestor: 2,
+      gestor: 3,
       tecnico: 3,
     },
   },
   {
     id: "pedidos",
-    title: "Pedidos / Ordens de Serviço",
-    description:
-      "Acompanhe solicitações, abertura de OS e andamento das atividades em campo.",
+    title: "Pedidos",
+    description: "Acompanhamento de pedidos comerciais.",
     path: "/pedidos",
-    icon: <FaClipboardList />,
+    icon: <FaFileAlt />,
     allowedProfiles: ["gestor", "tecnico"],
     order: {
-      gestor: 3,
-      tecnico: 1,
+      gestor: 4,
+      tecnico: 4,
     },
   },
   {
     id: "financeiro",
     title: "Financeiro",
-    description:
-      "Concentre recebimentos, cobranças e indicadores financeiros da operação.",
+    description: "Concentre recebimentos, cobranças e indicadores financeiros da operação.",
     path: "/financeiro",
     icon: <FaWallet />,
     allowedProfiles: ["gestor"],
     order: {
-      gestor: 4,
+      gestor: 6,
     },
   },
   {
     id: "aplicar-desconto",
-    title: "Aplicar Desconto",
-    description:
-      "Configure descontos para serviços e peças de forma rápida.",
-    path: "#",
-    icon: <FaWallet />,
+    title: "Aplicar Descontos (Provisório!)",
+    description: "Aplicar descontos em pedidos.",
+    icon: <FaBoxOpen />,
     allowedProfiles: ["gestor", "tecnico"],
     order: {
-      gestor: 5,
-      tecnico: 4,
+      gestor: 7,
+      tecnico: 5,
     },
-  },
+  }
 ];
 
 export const getVisibleModulesByProfile = (profile) =>

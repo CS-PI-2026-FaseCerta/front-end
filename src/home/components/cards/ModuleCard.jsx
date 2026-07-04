@@ -8,7 +8,6 @@ const ModuleCard = ({
   description,
   icon,
   path,
-  ctaLabel = "Acessar módulo",
   onClick,
 }) => {
   const handleClick = (event) => {
@@ -21,20 +20,14 @@ const ModuleCard = ({
   };
 
   return (
-    <Link to={path} onClick={handleClick} className="module-card">
+    <Link to={path} onClick={handleClick} className="module-card" title={description}>
       <div className="module-card__icon" aria-hidden="true">
         {icon}
       </div>
 
       <div className="module-card__content">
         <h3 className="module-card__title">{title}</h3>
-        <p className="module-card__description">{description}</p>
       </div>
-
-      <span className="module-card__cta">
-        {ctaLabel}
-        <FaArrowRight />
-      </span>
     </Link>
   );
 };

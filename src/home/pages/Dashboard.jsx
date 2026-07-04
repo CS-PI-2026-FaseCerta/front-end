@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { FaArrowRight, FaChartLine } from "react-icons/fa";
 
-import HeaderDashBoard from "../components/headerDashBoard/HeaderDashBoard";
-import Footer from "../../global/components/Footer/Footer";
-import Sidebar from "../components/menu/Sidebar";
+import { DashboardContext } from "../../global/components/layout/DashboardLayout";
 import ModuleCard from "../components/cards/ModuleCard";
 import QuickActionsCarousel from "../components/actions/QuickActionsCarousel";
 import QuickActionsModal from "../components/actions/QuickActionsModal";
@@ -28,10 +26,9 @@ const Dashboard = () => {
   const currentUser = getCurrentUser();
   const perfilAtual = currentUser?.perfil;
 
-  const [isQuickActionsModalOpen, setIsQuickActionsModalOpen] =
-    useState(false);
+  const [isQuickActionsModalOpen, setIsQuickActionsModalOpen] = useState(false);
 
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { setIsSidebarOpen } = React.useContext(DashboardContext);
 
   const [isDiscountModalOpen, setIsDiscountModalOpen] = useState(false);
 
@@ -56,29 +53,6 @@ const Dashboard = () => {
 
     setSelectedQuickActionIds(storedSelection);
   }, [perfilAtual]);
-
-  useEffect(() => {
-    if (!isSidebarOpen) {
-      return undefined;
-    }
-
-    const handleEscape = (event) => {
-      if (event.key === "Escape") {
-        setIsSidebarOpen(false);
-      }
-    };
-
-    const previousOverflow = document.body.style.overflow;
-
-    document.body.style.overflow = "hidden";
-
-    window.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleEscape);
-    };
-  }, [isSidebarOpen]);
 
   useEffect(() => {
     if (!isDiscountModalOpen) {
@@ -106,10 +80,7 @@ const Dashboard = () => {
   const handleOpenCustomizeQuickActions = () => {
     const safeDraft =
       selectedQuickActionIds.length > 0
-        ? sanitizeQuickActionIdsByProfile(
-          perfilAtual,
-          selectedQuickActionIds,
-        )
+        ? sanitizeQuickActionIdsByProfile(perfilAtual, selectedQuickActionIds)
         : allowedQuickActions.map((action) => action.id);
 
     setDraftQuickActionIds(safeDraft);
@@ -151,14 +122,6 @@ const Dashboard = () => {
     setIsSidebarOpen(true);
   };
 
-  const handleToggleSidebar = () => {
-    setIsSidebarOpen((current) => !current);
-  };
-
-  const handleCloseSidebar = () => {
-    setIsSidebarOpen(false);
-  };
-
   const perfilLabel = PERFIL_LABELS[perfilAtual] || "Perfil não mapeado";
 
   if (!currentUser) {
@@ -166,57 +129,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="dashboard-page">
-      <HeaderDashBoard
-        onMenuToggle={handleToggleSidebar}
-        isSidebarOpen={isSidebarOpen}
-      />
-
-      <Sidebar
-        isOpen={isSidebarOpen}
-        onClose={handleCloseSidebar}
-        profile={perfilAtual}
-      />
-
+    <>
       <main className="dashboard-shell">
-        <section className="dashboard-hero">
-          <div>
-            <span className="dashboard-hero__eyebrow">
-              Painel de Controle
-            </span>
-
-            <h1 className="dashboard-hero__title">
-              Acesso rápido aos módulos operacionais
-            </h1>
-
-            <p className="dashboard-hero__subtitle">
-              Os módulos abaixo são filtrados de acordo com o perfil
-              autenticado. O objetivo desta tela é dar uma visão clara e direta
-              das áreas que cada função pode acessar.
-            </p>
-          </div>
-
-          <aside className="dashboard-hero__profile">
-            <span className="dashboard-hero__profile-label">
-              Usuário logado
-            </span>
-
-            <strong>{currentUser.nome}</strong>
-
-            <small>{currentUser.email}</small>
-
-            <span className="dashboard-hero__profile-label">
-              Perfil atual
-            </span>
-
-            <strong>{perfilLabel}</strong>
-
-            <small>
-              As permissões desta página seguem o perfil autenticado.
-            </small>
-          </aside>
-        </section>
-
         <section className="dashboard-grid" aria-label="Módulos disponíveis">
           {visibleModules.map((modulo) => (
             <ModuleCard
@@ -226,7 +140,11 @@ const Dashboard = () => {
               icon={modulo.icon}
               // Se for desconto, não passa path, passa o onClick
               path={modulo.id === "aplicar-desconto" ? null : modulo.path}
-              onClick={modulo.id === "aplicar-desconto" ? () => setIsDiscountModalOpen(true) : null}
+              onClick={
+                modulo.id === "aplicar-desconto"
+                  ? () => setIsDiscountModalOpen(true)
+                  : null
+              }
               ctaLabel={modulo.id === "aplicar-desconto" ? "Abrir" : "Acessar"}
             />
           ))}
@@ -238,19 +156,19 @@ const Dashboard = () => {
             onClick={() => setIsDiscountModalOpen(false)}
           >
             <FocusTrap>
-            <div
-              className="dashboard-modal-content"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                className="dashboard-modal-close"
-                onClick={() => setIsDiscountModalOpen(false)}
+              <div
+                className="dashboard-modal-content"
+                onClick={(e) => e.stopPropagation()}
               >
-                ×
-              </button>
+                <button
+                  className="dashboard-modal-close"
+                  onClick={() => setIsDiscountModalOpen(false)}
+                >
+                  ×
+                </button>
 
-              <ApplyDiscounts onClose={() => setIsDiscountModalOpen(false)} />
-            </div>
+                <ApplyDiscounts onClose={() => setIsDiscountModalOpen(false)} />
+              </div>
             </FocusTrap>
           </div>
         )}
@@ -296,9 +214,7 @@ const Dashboard = () => {
           </section>
         )}
       </main>
-
-      <Footer />
-    </div>
+    </>
   );
 };
 

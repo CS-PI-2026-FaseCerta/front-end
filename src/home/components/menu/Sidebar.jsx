@@ -1,10 +1,9 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   FaChevronRight,
   FaClipboardList,
   FaCog,
-  FaFileAlt,
   FaQuestionCircle,
   FaSignOutAlt,
   FaTimes,
@@ -14,12 +13,27 @@ import {
   FaUsers,
   FaCalendarAlt,
   FaPlus,
+  FaBoxOpen,
 } from "react-icons/fa";
 import { clearSession } from "../../../auth/mockAuth";
-import { getModuleById } from "../../data/modules";
 import "./Sidebar.css";
 
 const Sidebar = ({ isOpen, onClose, profile }) => {
+  useEffect(() => {
+    if (!isOpen) {
+      return undefined;
+    }
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isOpen, onClose]);
+
   const handleSecondaryItemClick = (itemId) => {
     if (itemId === "sair") {
       clearSession();
@@ -29,66 +43,62 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
   };
 
   const preferenceItems = useMemo(() => {
-    const moduleConfigById = {
-      pedidos: getModuleById("pedidos"),
-      servicos: getModuleById("servicos-estoque"),
-      clientes: getModuleById("clientes"),
-      financeiro: getModuleById("financeiro"),
-    };
-
     const items = [
       {
-        id: "pedidos",
-        label: "Pedidos",
-        path: moduleConfigById.pedidos?.path || "/pedidos",
-        icon: <FaClipboardList aria-hidden="true" />,
-        allowedProfiles: moduleConfigById.pedidos?.allowedProfiles || [
-          "gestor",
-          "tecnico",
-        ],
-      },
-      {
-        id: "documentos",
-        label: "Documentos",
-        path: "/relatorios",
-        icon: <FaFileAlt aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
-      },
-      {
-        id: "financeiro",
-        label: "Finanças & pagamentos",
-        path: moduleConfigById.financeiro?.path || "/financeiro",
-        icon: <FaWallet aria-hidden="true" />,
-        allowedProfiles: moduleConfigById.financeiro?.allowedProfiles || [
-          "gestor",
-        ],
-      },
-      {
-        id: "agenda",
-        label: "Agenda",
-        path: "/configuracoes",
+        id: "dashboard",
+        label: "Dashboard",
+        path: "/dashboard",
         icon: <FaCalendarAlt aria-hidden="true" />,
         allowedProfiles: ["gestor", "tecnico"],
       },
       {
-        id: "servicos",
-        label: "Peças & serviços",
-        path: moduleConfigById.servicos?.path || "/servicos-estoque",
-        icon: <FaWrench aria-hidden="true" />,
-        allowedProfiles: moduleConfigById.servicos?.allowedProfiles || [
-          "gestor",
-          "tecnico",
-        ],
-      },
-      {
         id: "clientes",
         label: "Clientes",
-        path: moduleConfigById.clientes?.path || "/clientes",
+        path: "/clientes",
         icon: <FaUsers aria-hidden="true" />,
-        allowedProfiles: moduleConfigById.clientes?.allowedProfiles || [
-          "gestor",
-          "tecnico",
-        ],
+        allowedProfiles: ["gestor", "tecnico"],
+      },
+      {
+        id: "ordens-servico",
+        label: "Ordens de Serviço",
+        path: "/ordens-servico",
+        icon: <FaClipboardList aria-hidden="true" />,
+        allowedProfiles: ["gestor", "tecnico"],
+      },
+      {
+        id: "servicos",
+        label: "Serviços",
+        path: "/servicos",
+        icon: <FaWrench aria-hidden="true" />,
+        allowedProfiles: ["gestor", "tecnico"],
+      },
+      {
+        id: "estoque",
+        label: "Estoque",
+        path: "/produtos-estoque",
+        icon: <FaBoxOpen aria-hidden="true" />,
+        allowedProfiles: ["gestor", "tecnico"],
+      },
+      {
+        id: "financeiro",
+        label: "Financeiro",
+        path: "/financeiro",
+        icon: <FaWallet aria-hidden="true" />,
+        allowedProfiles: ["gestor"],
+      },
+      {
+        id: "calendario",
+        label: "Calendário",
+        path: "/calendario",
+        icon: <FaCalendarAlt aria-hidden="true" />,
+        allowedProfiles: ["gestor", "tecnico"],
+      },
+      {
+        id: "configuracoes",
+        label: "Configurações",
+        path: "/configuracoes",
+        icon: <FaCog aria-hidden="true" />,
+        allowedProfiles: ["gestor", "tecnico"],
       },
     ];
 
@@ -97,20 +107,14 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
 
   const secondaryItems = [
     {
-      id: "configuracoes",
-      label: "Outras configurações",
-      path: "/configuracoes",
-      icon: <FaCog aria-hidden="true" />,
-    },
-    {
-      id: "ajuda",
-      label: "Preciso de ajuda",
-      path: "/configuracoes",
+      id: "suporte",
+      label: "Suporte",
+      path: "/suporte",
       icon: <FaQuestionCircle aria-hidden="true" />,
     },
     {
       id: "sair",
-      label: "Sair da conta",
+      label: "Sair",
       path: "/",
       icon: <FaSignOutAlt aria-hidden="true" />,
     },
@@ -151,9 +155,10 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
           </button>
         </header>
 
-        <button type="button" className="sidebar-drawer__profile-action">
+        <button type="button" className="sidebar-drawer__profile-action" title="Adicionar dados">
           <FaPlus aria-hidden="true" />
-          <span>Adicionar dados</span>
+          <span className="sidebar-drawer__label">Adicionar dados</span>
+          <span className="sidebar-drawer__tooltip">Adicionar dados</span>
         </button>
 
         <section className="sidebar-drawer__section" aria-label="Preferências">
@@ -165,13 +170,15 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
                 key={item.id}
                 to={item.path}
                 className="sidebar-drawer__link"
-                onClick={onClose}
+                onClick={window.innerWidth < 1024 ? onClose : undefined}
+                title={item.label}
               >
                 <span className="sidebar-drawer__link-main">
                   {item.icon}
-                  {item.label}
+                  <span className="sidebar-drawer__label">{item.label}</span>
                 </span>
-                <FaChevronRight aria-hidden="true" />
+                <span className="sidebar-drawer__tooltip">{item.label}</span>
+                <FaChevronRight aria-hidden="true" className="sidebar-drawer__chevron" />
               </Link>
             ))}
           </nav>
@@ -188,12 +195,13 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
                 to={item.path}
                 className="sidebar-drawer__link"
                 onClick={() => handleSecondaryItemClick(item.id)}
+                title={item.label}
               >
                 <span className="sidebar-drawer__link-main">
                   {item.icon}
-                  {item.label}
+                  <span className="sidebar-drawer__label">{item.label}</span>
                 </span>
-                <FaChevronRight aria-hidden="true" />
+                <span className="sidebar-drawer__tooltip">{item.label}</span>
               </Link>
             ))}
           </nav>

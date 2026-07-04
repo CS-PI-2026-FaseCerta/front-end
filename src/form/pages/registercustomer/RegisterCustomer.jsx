@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
-import Header from "../../../global/components/header/Header.jsx";
-import Footer from "../../../global/components/Footer/Footer.jsx";
+
 import RegisterCustomerForm from "./RegisterCustomerForm.jsx";
+import Header from "../../../global/components/header/Header";
+import Footer from "../../../global/components/Footer/Footer";
 import "./RegisterCustomer.css";
 
 export default function RegisterCustomer() {
@@ -24,7 +25,7 @@ export default function RegisterCustomer() {
       <Header />
       <main className="register-customer-content">
         <div className="register-customer-card">
-          <div className="card-header">
+          <div className="card-header"> 
             <button
               className="back-button"
               onClick={() => navigate(-1)}

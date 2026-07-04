@@ -1,6 +1,7 @@
 import React from "react";
 import { FaTimes } from "react-icons/fa";
 import "./QuickActionsModal.css";
+import FocusTrap from "focus-trap-react";
 
 const QuickActionsModal = ({
     isOpen,
@@ -14,6 +15,7 @@ const QuickActionsModal = ({
         return null;
     }
 
+<<<<<<< HEAD
     return (
         <div className="quick-actions-modal" role="dialog" aria-modal="true">
             <div
@@ -21,6 +23,16 @@ const QuickActionsModal = ({
                 onClick={onCancel}
                 aria-hidden="true"
             />
+=======
+  return (
+     <FocusTrap active={isOpen}>
+    <div className="quick-actions-modal" role="dialog" aria-modal="true">
+      <div
+        className="quick-actions-modal__backdrop"
+        onClick={onCancel}
+        aria-hidden="true"
+      />
+>>>>>>> ffddedaaa2004be665fe446e9b18b3a728e53ffb
 
             <div className="quick-actions-modal__panel">
                 <header className="quick-actions-modal__header">
@@ -66,6 +78,7 @@ const QuickActionsModal = ({
                     })}
                 </ul>
 
+<<<<<<< HEAD
                 <footer className="quick-actions-modal__footer">
                     <button
                         type="button"
@@ -85,6 +98,28 @@ const QuickActionsModal = ({
             </div>
         </div>
     );
+=======
+        <footer className="quick-actions-modal__footer">
+          <button
+            type="button"
+            className="quick-actions-modal__button quick-actions-modal__button--ghost"
+            onClick={onCancel}
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            className="quick-actions-modal__button quick-actions-modal__button--primary"
+            onClick={onSave}
+          >
+            Salvar
+          </button>
+        </footer>
+      </div>
+    </div>
+    </FocusTrap>
+  );
+>>>>>>> ffddedaaa2004be665fe446e9b18b3a728e53ffb
 };
 
 export default QuickActionsModal;

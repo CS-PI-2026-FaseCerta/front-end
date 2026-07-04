@@ -21,6 +21,7 @@
 
 .generic-table__head-cell,
 .generic-table__cell {
+<<<<<<< HEAD
     padding: 0.85rem 0.95rem;
     border-bottom: 1px solid var(--list-border-soft);
     vertical-align: middle;
@@ -37,6 +38,25 @@
     transition:
         background-color 160ms ease,
         color 160ms ease;
+=======
+  padding: 0.85rem 0.95rem;
+  border-bottom: 1px solid var(--list-border-soft);
+  vertical-align: middle;
+  text-align: center;
+}
+
+.generic-table__head-cell {
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  background: var(--list-card-muted-surface);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+>>>>>>> ffddedaaa2004be665fe446e9b18b3a728e53ffb
 }
 
 .generic-table__head-cell--sortable {
@@ -59,6 +79,7 @@
 }
 
 .generic-table__head-button {
+<<<<<<< HEAD
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
@@ -76,6 +97,27 @@
     cursor: inherit;
     outline: 2px solid transparent;
     outline-offset: 3px;
+=======
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  min-height: 1.5rem;
+  border: 0;
+  border-radius: 10px;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: inherit;
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+>>>>>>> ffddedaaa2004be665fe446e9b18b3a728e53ffb
 }
 
 .generic-table__head-button:focus-visible {
@@ -261,6 +303,7 @@
         padding-inline: 0.8rem;
     }
 
+<<<<<<< HEAD
     .generic-table__actions {
         justify-content: flex-start;
     }
@@ -268,4 +311,9 @@
     .generic-table__scroll {
         min-height: 15rem;
     }
+=======
+  .generic-table__scroll {
+    min-height: 15rem;
+  }
+>>>>>>> ffddedaaa2004be665fe446e9b18b3a728e53ffb
 }

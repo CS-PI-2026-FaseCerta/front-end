@@ -1,4 +1,4 @@
-.page-container {
+.register-product-page {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -6,7 +6,7 @@
     color: var(--text-primary);
 }
 
-.main-content {
+.service-page-content {
     flex: 1;
     display: flex;
     justify-content: center;
@@ -14,7 +14,7 @@
     padding: 40px 20px;
 }
 
-.card.wide-card {
+.service-form-card {
     background-color: var(--card-background);
     width: 100%;
     max-width: 700px;
@@ -30,7 +30,7 @@
     margin-bottom: 30px;
 }
 
-.card h1 {
+.service-form-card h1 {
     font-size: 24px;
     color: var(--text-primary);
     font-weight: 700;
@@ -163,7 +163,7 @@
         gap: 0;
     }
 
-    .card.wide-card {
+    .service-form-card {
         padding: 25px;
     }
 }
