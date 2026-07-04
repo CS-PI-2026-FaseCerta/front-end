@@ -15,111 +15,79 @@ const QuickActionsModal = ({
         return null;
     }
 
-<<<<<<< HEAD
     return (
-        <div className="quick-actions-modal" role="dialog" aria-modal="true">
-            <div
-                className="quick-actions-modal__backdrop"
-                onClick={onCancel}
-                aria-hidden="true"
-            />
-=======
-  return (
-     <FocusTrap active={isOpen}>
-    <div className="quick-actions-modal" role="dialog" aria-modal="true">
-      <div
-        className="quick-actions-modal__backdrop"
-        onClick={onCancel}
-        aria-hidden="true"
-      />
->>>>>>> ffddedaaa2004be665fe446e9b18b3a728e53ffb
+        <FocusTrap active={isOpen}>
+            <div className="quick-actions-modal" role="dialog" aria-modal="true">
+                <div
+                    className="quick-actions-modal__backdrop"
+                    onClick={onCancel}
+                    aria-hidden="true"
+                />
 
-            <div className="quick-actions-modal__panel">
-                <header className="quick-actions-modal__header">
-                    <div>
-                        <h3>Personalizar atalhos</h3>
-                        <p>Selecione os atalhos que devem aparecer no carrossel.</p>
-                    </div>
-                    <button
-                        type="button"
-                        className="quick-actions-modal__close"
-                        onClick={onCancel}
-                        aria-label="Fechar personalização"
-                    >
-                        <FaTimes />
-                    </button>
-                </header>
+                <div className="quick-actions-modal__panel">
+                    <header className="quick-actions-modal__header">
+                        <div>
+                            <h3>Personalizar atalhos</h3>
+                            <p>Selecione os atalhos que devem aparecer no carrossel.</p>
+                        </div>
+                        <button
+                            type="button"
+                            className="quick-actions-modal__close"
+                            onClick={onCancel}
+                            aria-label="Fechar personalização"
+                        >
+                            <FaTimes />
+                        </button>
+                    </header>
 
-                <ul className="quick-actions-modal__list">
-                    {actions.map((action) => {
-                        const IconComponent = action.icon;
-                        const checked = selectedIds.includes(action.id);
+                    <ul className="quick-actions-modal__list">
+                        {actions.map((action) => {
+                            const IconComponent = action.icon;
+                            const checked = selectedIds.includes(action.id);
 
-                        return (
-                            <li key={action.id}>
-                                <label className="quick-actions-modal__item">
-                                    <span
-                                        className="quick-actions-modal__item-icon"
-                                        aria-hidden="true"
-                                    >
-                                        <IconComponent />
-                                    </span>
-                                    <span className="quick-actions-modal__item-label">
-                                        {action.nome}
-                                    </span>
-                                    <input
-                                        type="checkbox"
-                                        checked={checked}
-                                        onChange={() => onToggleAction(action.id)}
-                                    />
-                                </label>
-                            </li>
-                        );
-                    })}
-                </ul>
+                            return (
+                                <li key={action.id}>
+                                    <label className="quick-actions-modal__item">
+                                        <span
+                                            className="quick-actions-modal__item-icon"
+                                            aria-hidden="true"
+                                        >
+                                            <IconComponent />
+                                        </span>
+                                        <span className="quick-actions-modal__item-label">
+                                            {action.nome}
+                                        </span>
+                                        <input
+                                            type="checkbox"
+                                            checked={checked}
+                                            onChange={() => onToggleAction(action.id)}
+                                        />
+                                    </label>
+                                </li>
+                            );
+                        })}
+                    </ul>
 
-<<<<<<< HEAD
-                <footer className="quick-actions-modal__footer">
-                    <button
-                        type="button"
-                        className="quick-actions-modal__button quick-actions-modal__button--ghost"
-                        onClick={onCancel}
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        type="button"
-                        className="quick-actions-modal__button quick-actions-modal__button--primary"
-                        onClick={onSave}
-                    >
-                        Salvar
-                    </button>
-                </footer>
+                    <footer className="quick-actions-modal__footer">
+                        <button
+                            type="button"
+                            className="quick-actions-modal__button quick-actions-modal__button--ghost"
+                            onClick={onCancel}
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="button"
+                            className="quick-actions-modal__button quick-actions-modal__button--primary"
+                            onClick={onSave}
+                        >
+                            Salvar
+                        </button>
+                    </footer>
+                </div>
             </div>
-        </div>
+        </FocusTrap>
     );
-=======
-        <footer className="quick-actions-modal__footer">
-          <button
-            type="button"
-            className="quick-actions-modal__button quick-actions-modal__button--ghost"
-            onClick={onCancel}
-          >
-            Cancelar
-          </button>
-          <button
-            type="button"
-            className="quick-actions-modal__button quick-actions-modal__button--primary"
-            onClick={onSave}
-          >
-            Salvar
-          </button>
-        </footer>
-      </div>
-    </div>
-    </FocusTrap>
-  );
->>>>>>> ffddedaaa2004be665fe446e9b18b3a728e53ffb
 };
 
 export default QuickActionsModal;

@@ -1,4 +1,4 @@
-import { QUICK_ACTIONS } from "../data/quickActions";
+import { QUICK_ACTIONS } from "../../data/quickActions";
 
 const QUICK_ACTIONS_STORAGE_KEY = "quickActions";
 

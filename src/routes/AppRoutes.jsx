@@ -26,3 +26,6 @@ export const Financeiro = "/financeiro";
 export const FinanceiroDespesasNova = "/financeiro/despesas/nova";
 export const Calendario = "/calendario";
 export const Suporte = "/suporte";
+
+export const PaymentMethods = "/metodo-pagamento";
+export const PaymentTerms = "/termos-pagamento";

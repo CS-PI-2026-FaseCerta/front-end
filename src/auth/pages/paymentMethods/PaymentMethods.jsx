@@ -16,13 +16,13 @@ const PAYMENT_METHODS = [
     {id: "pix", label: "PIX"},
 ];
 
-export default function PaymentMethods=(){
+export default function PaymentMethods() {
     const navigate = useNavigate();
 
     const[selectedMethods, setSelectedMethods] = useState([]);
     const[successMessage, setSuccessMessage] = useState("");
     const toggleMethod = (id) => {
-        setSelectedMethods(prev) => prev.includes(id)? prev.filter((item) => item !== id) : [...prev, id]
+        setSelectedMethods(prev) => prev.includes(id)? prev.filter((item) => item !== id) : [...prev, id];
     };
 
     const isFormValid= selectedMethods.lengh >0;

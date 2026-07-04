@@ -31,7 +31,11 @@ import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 
 import ApplyDiscounts from "./home/components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
 
+import PaymentMethods from "./auth/pages/paymentMethods/PaymentMethods.jsx";
+import PaymentTerms from "./auth/pages/paymentTerms/PaymentTerms.jsx";
+
 import * as AppRoutes from "./routes/AppRoutes.jsx";
+
 
 function App() {
   return (
@@ -54,6 +58,8 @@ function App() {
           <Route path={AppRoutes.ServiceInsert} element={<ServiceInsert />} />
           <Route path={AppRoutes.RegisterClient} element={<RegisterCustomer />} />
           <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
+          <Route path={AppRoutes.PaymentMethods} element={<PaymentMethods />} />
+          <Route path={AppRoutes.PaymentTerms} element={<PaymentTerms />} />
 
           {/* Loading */}
           <Route path={AppRoutes.Loading} element={<LoadingOverlay />} />

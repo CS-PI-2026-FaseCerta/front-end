@@ -15,7 +15,7 @@ import {
   loadQuickActionSelection,
   saveQuickActionSelection,
   sanitizeQuickActionIdsByProfile,
-} from "../utils/quickActions";
+} from "./utils/quickActions.js";
 
 import "./Dashboard.css";
 
