@@ -1,6 +1,7 @@
 import React from "react";
 import { FaTimes } from "react-icons/fa";
 import "./QuickActionsModal.css";
+import FocusTrap from "focus-trap-react";
 
 const QuickActionsModal = ({
   isOpen,
@@ -15,6 +16,7 @@ const QuickActionsModal = ({
   }
 
   return (
+     <FocusTrap active={isOpen}>
     <div className="quick-actions-modal" role="dialog" aria-modal="true">
       <div
         className="quick-actions-modal__backdrop"
@@ -84,6 +86,7 @@ const QuickActionsModal = ({
         </footer>
       </div>
     </div>
+    </FocusTrap>
   );
 };
 

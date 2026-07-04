@@ -12,7 +12,7 @@ export const customersColumns = [
   {
     key: "id",
     header: "ID",
-    accessor: "id",
+    accessor: "id", 
     sortable: true,
     sortType: "number",
     width: "92px",

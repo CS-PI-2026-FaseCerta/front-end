@@ -25,7 +25,7 @@ export default function RegisterCustomer() {
       <Header />
       <main className="register-customer-content">
         <div className="register-customer-card">
-          <div className="card-header">
+          <div className="card-header"> 
             <button
               className="back-button"
               onClick={() => navigate(-1)}

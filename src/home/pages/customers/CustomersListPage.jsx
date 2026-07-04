@@ -26,7 +26,7 @@ const CustomersListPage = () => {
           {
             key: "novo-cliente",
             label: "Novo Cliente",
-            icon: FaPlus,
+            icon: FaPlus, 
             onCreate: {
               mobile: AppRoutes.RegisterClient,
               desktop: () => setIsCustomerModalOpen(true),
@@ -45,7 +45,7 @@ const CustomersListPage = () => {
           },
           {
             key: "excluir",
-            title: "Excluir",
+            title: "Excluir", 
             icon: FaTrash,
             iconOnly: true,
             onClick: () => {},

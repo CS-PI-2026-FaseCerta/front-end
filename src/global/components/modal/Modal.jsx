@@ -40,7 +40,7 @@ export default function Modal({ isOpen, onClose, children }) {
         >
           <button 
             className="modal-close" 
-            type="button" 
+            type="button"  
             onClick={onClose} 
             aria-label="Fechar"
           >

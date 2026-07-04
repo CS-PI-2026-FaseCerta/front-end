@@ -98,7 +98,7 @@
   padding: 0.9rem 1.2rem;
   border-radius: 999px;
   background: var(--color-primary);
-  color: var(--color-text-);
+  color: var(--color-surface);
   font-weight: 700;
   text-decoration: none;
   transition:
@@ -110,6 +110,10 @@
 .section-card__button:focus-visible {
   background: var(--color-primary-hover);
   transform: translateY(-1px);
+}
+
+.dashboard-hero__title, .dashboard-hero__eyebrow, .dashboard-hero__subtitle, .dashboard-summary__eyebrow, .dashboard-summary__description {
+  color: var(--color-text-primary);
 }
 
 @media (max-width: 1199px) {

@@ -10,9 +10,17 @@ const parseCurrencyValue = (value) => {
 
 export const servicesColumns = [
   {
+    key: "id",
+    header: "ID",
+    accessor: "id",
+    sortable: true,
+    sortType: "number",
+    width: "92px",
+  },
+  {
     key: "nome",
     header: "Nome do Serviço",
-    accessor: "nome",
+    accessor: "nome", 
     sortable: true,
     sortType: "string",
     searchable: true,
