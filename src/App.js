@@ -2,7 +2,7 @@ import "./App.css";
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import RegisterProduct from "./form/pages/RegisterProduct/RegisterProduct.jsx";
-import Dashboard from "./home/pages/pedidos/Dashboard.jsx";
+import Dashboard from "./home/pages/Dashboard.jsx";
 import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
@@ -10,12 +10,12 @@ import RecoverPassword from "./auth/pages/recoverpassword/RecoverPassword.jsx";
 import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
-import SectionPage from "./home/pages/pedidos/SectionPage.jsx";
+import SectionPage from "./home/pages/SectionPage.jsx";
 import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
 import CustomersListPage from "./home/pages/customers/CustomersListPage.jsx";
-import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx";
+import RegisterCustomer from "./form/pages/RegisterCustomer/RegisterCustomer.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 

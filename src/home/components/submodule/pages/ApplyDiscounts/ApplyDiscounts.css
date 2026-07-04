@@ -1,0 +1,307 @@
+.discount-module-wrapper .page-container {
+    background: var(--background-color);
+    min-height: auto;
+    width: 100%;
+}
+
+.discount-module-wrapper .main-content {
+    padding: 0;
+}
+
+.discount-module-wrapper .card.wide-card {
+    width: 100%;
+    max-width: 100%;
+    background: var(--background-color);
+    box-shadow: none;
+    padding: 20px;
+}
+
+.discount-module-wrapper .card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    justify-content: center;
+}
+
+.discount-module-wrapper .card-header h1 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.discount-module-wrapper .discount-card h3 {
+    font-weight: 700;
+    margin: 20px 0 10px;
+    padding: 0 10px;
+    color: var(--primary-color);
+}
+
+.discount-module-wrapper .discount-card p {
+    padding: 0 10px;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.discount-module-wrapper .toggle-container {
+    display: flex;
+    gap: 12px;
+    margin: 15px 0;
+    padding: 0 10px;
+}
+
+.discount-module-wrapper .toggle-button {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--input-background);
+    background: var(--card-background);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 16px;
+    color: var(--text-secondary);
+    transition: all 0.2s ease-in-out;
+}
+
+.discount-module-wrapper .toggle-button.active {
+    border-color: var(--primary-color);
+    background: var(--card-background);
+    color: var(--primary-color);
+}
+
+.discount-module-wrapper .input-area {
+    margin-top: 15px;
+    padding: 0 10px;
+}
+
+.discount-module-wrapper .options-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.discount-module-wrapper .opt-btn {
+    padding: 10px 18px;
+    border: 1px solid var(--border-color);
+    background: var(--input-background);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.discount-module-wrapper .opt-btn.active {
+    background: var(--primary-hover-color);
+    color: var(--card-background);
+}
+
+.discount-module-wrapper .small-input,
+.discount-module-wrapper .full-input {
+    padding: 12px;
+    color: var(--primary-color);
+    background: var(--input-background);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.small-input {
+    flex: 1;
+}
+
+.discount-module-wrapper .full-input {
+    width: 100%;
+}
+
+.discount-module-wrapper .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.discount-module-wrapper .input-wrapper.prefix input {
+    padding-left: 42px !important;
+}
+
+.discount-module-wrapper .currency-prefix {
+    position: absolute;
+    left: 20px;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 14px;
+    z-index: 2;
+    pointer-events: none;
+    height: 20px;
+}
+
+.discount-total-container {
+    margin-top: 40px;
+}
+
+.discount-total-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.discount-module-wrapper .discount-total-box {
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+}
+
+.discount-module-wrapper .discount-total-value {
+    display: block;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--error-color);
+    margin-bottom: 8px;
+}
+
+.discount-total-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    ;
+}
+
+.discount-total-value.error {
+    color: var(--error-color);
+}
+
+.discount-module-wrapper .discount-error-message {
+    margin-top: 10px;
+    color: var(--error-color-hover);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.discount-module-wrapper .save-discount-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    border: none;
+    border-radius: 999px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.save-discount-btn:hover:not(:disabled) {
+    background: var(--primary-hover-color);
+}
+
+.discount-module-wrapper .save-discount-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/*Responsividade Mobile */
+@media (max-width: 768px) {
+
+    .discount-module-wrapper .card.wide-card {
+        padding: 12px;
+    }
+
+    .discount-module-wrapper .card-header {
+        margin-bottom: 12px;
+    }
+
+    .discount-module-wrapper .card-header h1 {
+        font-size: 1.2rem;
+    }
+
+    .discount-module-wrapper .discount-card h3 {
+        margin: 10px 0 4px;
+        font-size: 1rem;
+    }
+
+    .discount-module-wrapper .discount-card p {
+        margin-bottom: 4px;
+        font-size: 0.8rem;
+    }
+
+    .discount-module-wrapper .toggle-container {
+        margin: 8px 0;
+        gap: 8px;
+    }
+
+    .discount-module-wrapper .toggle-button {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .discount-module-wrapper .input-area {
+        margin-top: 6px;
+    }
+
+    .discount-module-wrapper .options-row {
+        gap: 6px;
+    }
+
+    .discount-module-wrapper .opt-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .discount-module-wrapper .small-input,
+    .discount-module-wrapper .full-input {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .discount-module-wrapper .input-wrapper.prefix input {
+        padding-left: 34px !important;
+    }
+
+    .discount-module-wrapper .currency-prefix {
+        left: 12px;
+        font-size: 13px;
+    }
+
+    .discount-total-container {
+        margin-top: 15px;
+    }
+
+    .discount-module-wrapper .discount-total-box {
+        padding: 12px;
+    }
+
+    .discount-module-wrapper .discount-total-value {
+        font-size: 24px;
+        margin-bottom: 4px;
+    }
+
+    .discount-total-description {
+        font-size: 12px;
+    }
+
+    .discount-module-wrapper .save-discount-btn {
+        margin-top: 12px;
+        padding: 12px;
+        font-size: 14px;
+    }
+}

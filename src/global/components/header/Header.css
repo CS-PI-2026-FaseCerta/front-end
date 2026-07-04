@@ -1,0 +1,43 @@
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--card-background);
+    align-items: center;
+    padding: 24px 48px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--primary-color);
+}
+
+.theme-icon {
+    cursor: pointer;
+    color: var(--text-secondary);
+    background: transparent;
+    border: none;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.theme-icon:hover {
+    background-color: var(--control-bg-hover);
+}
+
+/* --- Responsividade --- */
+@media (max-width: 768px) {
+    .page-header {
+        padding: 16px 24px;
+        flex-direction: row;
+        gap: 16px;
+    }
+}
