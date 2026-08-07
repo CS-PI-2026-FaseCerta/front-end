@@ -22,7 +22,7 @@ export default function PaymentMethods() {
     const[selectedMethods, setSelectedMethods] = useState([]);
     const[successMessage, setSuccessMessage] = useState("");
     const toggleMethod = (id) => {
-        setSelectedMethods(prev) => prev.includes(id)? prev.filter((item) => item !== id) : [...prev, id];
+        setSelectedMethods((prev) => prev.includes(id)? prev.filter((item) => item !== id) : [...prev, id]);
     };
 
     const isFormValid= selectedMethods.lengh >0;
