@@ -40,9 +40,9 @@ export default function PaymentMethods() {
     };
 
     return(
-        <div className = "service-page">
+        <div className= "service-insert-page">
             <Header/>
-            <div className="service-page-content">
+            <div className="service-insert-page-content">
                 <main className="card-header">
                     <button type="button"className="back-button" onClick={() => navigate(-1)}>
                         <FaArrowLeft size={20} className="back-button-icon" />
