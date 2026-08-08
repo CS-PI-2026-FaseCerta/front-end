@@ -13,7 +13,7 @@ import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
 
 import SectionPage from "./home/pages/SectionPage.jsx";
-import protectedRoute from "./home/components/ProtectedRoute.jsx";
+import protectedRoute from "./home/components/protectedRoute.jsx";
 
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
@@ -144,7 +144,7 @@ function App() {
             <Route
               path={AppRoutes.Financeiro}
               element={
-                <ProtectedRoute allowedProfiles={["gestor"]} redirectTo="/">
+                <protectedRoute allowedProfiles={["gestor"]} redirectTo="/">
                   <SectionPage
                     eyebrow="Financeiro"
                     title="Financeiro"
@@ -152,7 +152,7 @@ function App() {
                     ctaLabel="Voltar ao painel"
                     ctaPath="/dashboard"
                   />
-                </ProtectedRoute>
+                </protectedRoute>
               }
             />
 

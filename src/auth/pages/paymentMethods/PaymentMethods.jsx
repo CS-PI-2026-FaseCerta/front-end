@@ -50,11 +50,11 @@ export default function PaymentMethods() {
                     <h1>Meios de Pagamento</h1>
 
                     <form className="form" onSubmit={handleSubmit}>
-                        <div className="input-group-payment-methods-list">
+                        <div className="form-checkbox-group">
                             {PAYMENT_METHODS.map((method) => (
                                 <label key={method.id} className="payment-method-options">
-                                    <span className="payment-method-label">(method.label)</span>
-                                    <input type="checkbox" checked={selectedMethods.includes(method.id)} on onChange={() => toggleMethod(method.i)} />
+                                    <span className="payment-method-label">{method.label}</span>
+                                    <input type="checkbox" checked={selectedMethods.includes(method.id)} onChange={() => toggleMethod(method.id)} />
                                 </label>
                             ))}
                         </div>
