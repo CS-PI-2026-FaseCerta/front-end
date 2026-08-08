@@ -8,171 +8,171 @@ import "../../../global/components/form/Form.css";
 import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 const RecoverPassword = () => {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [timer, setTimer] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const resendTimeoutRef = useRef(null);
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+    const [timer, setTimer] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+    const resendTimeoutRef = useRef(null);
 
-  const validateEmail = (value) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(value.trim());
-  };
-
-  useEffect(() => {
-    if (timer === 0) {
-      return undefined;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setTimer((currentTimer) => Math.max(currentTimer - 1, 0));
-    }, 1000);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [timer]);
-
-  useEffect(() => {
-    return () => {
-      if (resendTimeoutRef.current) {
-        window.clearTimeout(resendTimeoutRef.current);
-      }
+    const validateEmail = (value) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(value.trim());
     };
-  }, []);
 
-  const handleChange = (e) => {
-    const { value } = e.target;
-    setEmail(value);
+    useEffect(() => {
+        if (timer === 0) {
+            return undefined;
+        }
 
-    if (emailError && validateEmail(value)) {
-      setEmailError("");
-    }
-  };
+        const timeoutId = window.setTimeout(() => {
+            setTimer((currentTimer) => Math.max(currentTimer - 1, 0));
+        }, 1000);
 
-  const handleBlur = () => {
-    if (!validateEmail(email)) {
-      setEmailError("Insira um e-mail válido.");
-      return;
-    }
+        return () => window.clearTimeout(timeoutId);
+    }, [timer]);
 
-    setEmailError("");
-  };
+    useEffect(() => {
+        return () => {
+            if (resendTimeoutRef.current) {
+                window.clearTimeout(resendTimeoutRef.current);
+            }
+        };
+    }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+    const handleChange = (e) => {
+        const { value } = e.target;
+        setEmail(value);
 
-    if (isLoading || timer > 0 || !validateEmail(email)) return;
+        if (emailError && validateEmail(value)) {
+            setEmailError("");
+        }
+    };
 
-    setEmailError("");
-    setIsLoading(true);
-    setSuccessMessage("");
+    const handleBlur = () => {
+        if (!validateEmail(email)) {
+            setEmailError("Insira um e-mail válido.");
+            return;
+        }
 
-    if (resendTimeoutRef.current) {
-      window.clearTimeout(resendTimeoutRef.current);
-    }
+        setEmailError("");
+    };
 
-    const submittedEmail = email.trim();
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-    resendTimeoutRef.current = window.setTimeout(() => {
-      setSuccessMessage(
-        `Código de recuperação enviado para ${submittedEmail}.`,
-      );
-      setTimer(60);
-      setIsLoading(false);
-    }, 600);
-  };
+        if (isLoading || timer > 0 || !validateEmail(email)) return;
 
-  const submitLabel = isLoading
-    ? "Enviando..."
-    : timer > 0
-      ? `Reenviar código em ${timer}s`
-      : successMessage
-        ? "Reenviar código"
-        : "Enviar código";
+        setEmailError("");
+        setIsLoading(true);
+        setSuccessMessage("");
 
-  const isEmailValid = validateEmail(email);
-  const isSubmitDisabled = isLoading || timer > 0 || !isEmailValid;
+        if (resendTimeoutRef.current) {
+            window.clearTimeout(resendTimeoutRef.current);
+        }
 
-  return (
-    <div className="auth-page">
-      <Header />
+        const submittedEmail = email.trim();
 
-      <main className="auth-container">
-        <section className="auth-card">
-          <div className="auth-card-header">
-            <button
-              type="button"
-              className="auth-back-button"
-              onClick={() => navigate(AppRoutes.Login)}
-              aria-label="Voltar para o login"
-            >
-              <FaArrowLeft size={18} />
-            </button>
+        resendTimeoutRef.current = window.setTimeout(() => {
+            setSuccessMessage(
+                `Código de recuperação enviado para ${submittedEmail}.`,
+            );
+            setTimer(60);
+            setIsLoading(false);
+        }, 600);
+    };
 
-            <h1 className="auth-title">Recuperar senha</h1>
-          </div>
+    const submitLabel = isLoading
+        ? "Enviando..."
+        : timer > 0
+            ? `Reenviar código em ${timer}s`
+            : successMessage
+                ? "Reenviar código"
+                : "Enviar código";
 
-          <p className="auth-subtitle">
-            Informe o e-mail cadastrado para receber o código de recuperação.
-          </p>
+    const isEmailValid = validateEmail(email);
+    const isSubmitDisabled = isLoading || timer > 0 || !isEmailValid;
 
-          <form className="form" onSubmit={handleSubmit} noValidate>
-            <div className="input-group">
-              <label className="form-label" htmlFor="email">
-                E-mail
-              </label>
+    return (
+        <div className="auth-page">
+            <Header />
 
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={email}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                className={`form-input ${emailError ? "input-error" : ""}`}
-                placeholder="Insira seu e-mail aqui"
-                autoComplete="email"
-                aria-invalid={Boolean(emailError)}
-                aria-describedby={
-                  emailError ? "recover-password-error" : undefined
-                }
-                required
-              />
+            <main className="auth-container">
+                <section className="auth-card">
+                    <div className="auth-card-header">
+                        <button
+                            type="button"
+                            className="auth-back-button"
+                            onClick={() => navigate(AppRoutes.Login)}
+                            aria-label="Voltar para o login"
+                        >
+                            <FaArrowLeft size={18} />
+                        </button>
 
-              <p className="form-text">
-                Use o mesmo e-mail já cadastrado no sistema.
-              </p>
+                        <h1 className="auth-title">Recuperar senha</h1>
+                    </div>
 
-              {emailError && (
-                <span id="recover-password-error" className="form-error-inline">
-                  {emailError}
-                </span>
-              )}
-            </div>
+                    <p className="auth-subtitle">
+                        Informe o e-mail cadastrado para receber o código de recuperação.
+                    </p>
 
-            {successMessage && <p className="form-success">{successMessage}</p>}
+                    <form className="form" onSubmit={handleSubmit} noValidate>
+                        <div className="input-group">
+                            <label className="form-label" htmlFor="email">
+                                E-mail
+                            </label>
 
-            <button
-              type="submit"
-              className="form-button"
-              disabled={isSubmitDisabled}
-            >
-              {submitLabel}
-            </button>
+                            <input
+                                id="email"
+                                name="email"
+                                type="email"
+                                value={email}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                className={`form-input ${emailError ? "input-error" : ""}`}
+                                placeholder="Insira seu e-mail aqui"
+                                autoComplete="email"
+                                aria-invalid={Boolean(emailError)}
+                                aria-describedby={
+                                    emailError ? "recover-password-error" : undefined
+                                }
+                                required
+                            />
 
-            <p className="auth-footer-text">
-              Lembrou da senha?{" "}
-              <Link className="auth-link" to={AppRoutes.Login}>
-                Voltar ao login
-              </Link>
-            </p>
-          </form>
-        </section>
-      </main>
-      <Footer />
-    </div>
-  );
+                            <p className="form-text">
+                                Use o mesmo e-mail já cadastrado no sistema.
+                            </p>
+
+                            {emailError && (
+                                <span id="recover-password-error" className="form-error-inline">
+                                    {emailError}
+                                </span>
+                            )}
+                        </div>
+
+                        {successMessage && <p className="form-success">{successMessage}</p>}
+
+                        <button
+                            type="submit"
+                            className="form-button"
+                            disabled={isSubmitDisabled}
+                        >
+                            {submitLabel}
+                        </button>
+
+                        <p className="auth-footer-text">
+                            Lembrou da senha?{" "}
+                            <Link className="auth-link" to={AppRoutes.Login}>
+                                Voltar ao login
+                            </Link>
+                        </p>
+                    </form>
+                </section>
+            </main>
+            <Footer />
+        </div>
+    );
 };
 
 export default RecoverPassword;

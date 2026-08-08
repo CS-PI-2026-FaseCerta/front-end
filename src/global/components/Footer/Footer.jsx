@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import "./Footer.css";
 
 
-const Footer = () =>{
-    return(
+const Footer = () => {
+    return (
         <footer className="page-footer">
             <span className="copyright">FaseCerta © 2026</span>
             <div className="footer-links">
@@ -17,4 +17,3 @@ const Footer = () =>{
 }
 
 export default Footer;
-

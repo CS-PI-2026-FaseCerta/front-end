@@ -13,7 +13,7 @@ import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
 
 import SectionPage from "./home/pages/SectionPage.jsx";
-import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
+import protectedRoute from "./home/components/protectedRoute.jsx";
 
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
@@ -31,7 +31,11 @@ import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 
 import ApplyDiscounts from "./home/components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
 
+import PaymentMethods from "./auth/pages/paymentMethods/PaymentMethods.jsx";
+import PaymentTerms from "./auth/pages/paymentTerms/PaymentTerms.jsx";
+
 import * as AppRoutes from "./routes/AppRoutes.jsx";
+
 
 function App() {
   return (
@@ -54,6 +58,8 @@ function App() {
           <Route path={AppRoutes.ServiceInsert} element={<ServiceInsert />} />
           <Route path={AppRoutes.RegisterClient} element={<RegisterCustomer />} />
           <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
+          <Route path={AppRoutes.PaymentMethods} element={<PaymentMethods />} />
+          <Route path={AppRoutes.PaymentTerms} element={<PaymentTerms />} />
 
           {/* Loading */}
           <Route path={AppRoutes.Loading} element={<LoadingOverlay />} />
@@ -138,7 +144,7 @@ function App() {
             <Route
               path={AppRoutes.Financeiro}
               element={
-                <ProtectedRoute allowedProfiles={["gestor"]} redirectTo="/">
+                <protectedRoute allowedProfiles={["gestor"]} redirectTo="/">
                   <SectionPage
                     eyebrow="Financeiro"
                     title="Financeiro"
@@ -146,7 +152,7 @@ function App() {
                     ctaLabel="Voltar ao painel"
                     ctaPath="/dashboard"
                   />
-                </ProtectedRoute>
+                </protectedRoute>
               }
             />
 

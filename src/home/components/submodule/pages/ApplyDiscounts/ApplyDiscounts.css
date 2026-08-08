@@ -168,7 +168,8 @@
 
 .discount-total-description {
     font-size: 14px;
-    color: var(--text-secondary);;
+    color: var(--text-secondary);
+    ;
 }
 
 .discount-total-value.error {

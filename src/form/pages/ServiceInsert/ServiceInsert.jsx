@@ -8,496 +8,490 @@ import Footer from "../../../global/components/Footer/Footer.jsx";
 import { useNavigate } from "react-router-dom";
 import { PiToolboxBold } from "react-icons/pi";
 
-import FocusTrap from "focus-trap-react";
-
 export default function ServiceInsert() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
-
-  const mockServicos = [
-    {
-      id: 1,
-      descricao: "Troca de Óleo",
-      preco: 120,
-      obs: "Óleo sintético 5W30",
-      qntd: 1,
-    },
-    {
-      id: 2,
-      descricao: "Alinhamento",
-      preco: 80,
-      obs: "Alinhamento computadorizado",
-      qntd: 2,
-    },
-    {
-      id: 3,
-      descricao: "Balanceamento",
-      preco: 60,
-      obs: "4 rodas",
-      qntd: 1,
-    },
-    {
-      id: 4,
-      descricao: "Troca de Pastilhas de Freio",
-      preco: 250,
-      obs: "Eixo dianteiro",
-      qntd: 1,
-    },
-    {
-      id: 5,
-      descricao: "Higienização do Ar Condicionado",
-      preco: 150,
-      obs: "Inclui troca do filtro",
-      qntd: 1,
-    },
-  ];
-
-  const [servicos, setServicos] = useState(() => {
-    const stored = JSON.parse(localStorage.getItem("servicosSelecionados"));
-
-    return stored && stored.length
-      ? stored
-      : [
-        { ...mockServicos[0] },
-        { ...mockServicos[1] },
-      ];
-  });
-
-  useEffect(() => {
-    localStorage.setItem("servicosSelecionados", JSON.stringify(servicos));
-  }, [servicos]);
-
-  const valorTotal = servicos.reduce(
-  (total, s) => total + (Number(s.preco) || 0) * (Number(s.qntd) || 1),
-  0
-);
-
-  function handleDelete(id) {
-    setServicos((prev) => prev.filter((s) => s.id !== id));
-  }
-
-  const formatCurrency = (value) =>
-    Number(value).toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingService, setEditingService] = useState(null);
-
-  useEffect(() => {
-    if (isEditModalOpen) {
-      setTimeout(() => {
-        document.querySelector(".edit-form input")?.focus();
-      }, 0);
-    }
-  }, [isEditModalOpen]);
-
-  useEffect(() => {
-    if (isModalOpen) {
-      setTimeout(() => {
-        searchRef.current?.focus();
-      }, 0);
-    }
-  }, [isModalOpen]);
-
-  function handleOpenEdit(servico) {
-    setEditingService({ ...servico });
-    setIsEditModalOpen(true);
-  }
-
-  function handleSaveEdit() {
-    setServicos((prev) =>
-      prev.map((s) =>
-        s.id === editingService.id ? editingService : s
-      )
-    );
-
-    setIsEditModalOpen(false);
-    setEditingService(null);
-  }
-
-  const [servicosDisponiveis, setServicosDisponiveis] = useState([]);
-
-  useEffect(() => {
-    if (!localStorage.getItem("servicosDisponiveis")) {
-      localStorage.setItem(
-        "servicosDisponiveis",
-        JSON.stringify(mockServicos)
-      );
-    }
-
-    if (!localStorage.getItem("servicosSelecionados")) {
-      localStorage.setItem(
-        "servicosSelecionados",
-        JSON.stringify([
-          { ...mockServicos[0] },
-          { ...mockServicos[1] },
-        ])
-      );
-    }
-  }, []);
-
-  useEffect(() => {
-    const sync = () => {
-      const stored = JSON.parse(localStorage.getItem("servicosDisponiveis"));
-
-      setServicosDisponiveis(
-        stored && stored.length ? stored : mockServicos
-      );
+    const handleSubmit = (e) => {
+        e.preventDefault();
     };
 
-    sync();
-    window.addEventListener("focus", sync);
+    const mockServicos = [
+        {
+            id: 1,
+            descricao: "Troca de Óleo",
+            preco: 120,
+            obs: "Óleo sintético 5W30",
+            qntd: 1,
+        },
+        {
+            id: 2,
+            descricao: "Alinhamento",
+            preco: 80,
+            obs: "Alinhamento computadorizado",
+            qntd: 2,
+        },
+        {
+            id: 3,
+            descricao: "Balanceamento",
+            preco: 60,
+            obs: "4 rodas",
+            qntd: 1,
+        },
+        {
+            id: 4,
+            descricao: "Troca de Pastilhas de Freio",
+            preco: 250,
+            obs: "Eixo dianteiro",
+            qntd: 1,
+        },
+        {
+            id: 5,
+            descricao: "Higienização do Ar Condicionado",
+            preco: 150,
+            obs: "Inclui troca do filtro",
+            qntd: 1,
+        },
+    ];
 
-    return () => window.removeEventListener("focus", sync);
-  }, []);
+    const [servicos, setServicos] = useState(() => {
+        const stored = JSON.parse(localStorage.getItem("servicosSelecionados"));
 
-  function handleAddService(servico) {
-    setServicos((prev) => [...prev, servico]);
-    setIsModalOpen(false);
-  }
+        return stored && stored.length
+            ? stored
+            : [
+                { ...mockServicos[0] },
+                { ...mockServicos[1] },
+            ];
+    });
 
-  const servicosIds = new Set(servicos.map((s) => s.id));
-  const [searchTerm, setSearchTerm] = useState("");
+    useEffect(() => {
+        localStorage.setItem("servicosSelecionados", JSON.stringify(servicos));
+    }, [servicos]);
 
-  const servicosFiltrados = servicosDisponiveis.filter((s) =>
-    s.descricao.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  function updateQuantidade(id, delta) {
-    setServicos((prev) =>
-      prev.map((s) =>
-        s.id === id
-          ? {
-              ...s,
-              qntd: Math.max(1, (Number(s.qntd) || 1) + delta),
-            }
-          : s
-      )
+    const valorTotal = servicos.reduce(
+        (total, s) => total + (Number(s.preco) || 0) * (Number(s.qntd) || 1),
+        0
     );
-  }
-  
-  function setQuantidadeManual(id, value) {
-    const numericValue = Number(value);
 
-    setServicos((prev) =>
-      prev.map((s) =>
-        s.id === id
-          ? {
-              ...s,
-              qntd: isNaN(numericValue) || numericValue < 1 ? 1 : numericValue,
-            }
-          : s
-      )
+    function handleDelete(id) {
+        setServicos((prev) => prev.filter((s) => s.id !== id));
+    }
+
+    const formatCurrency = (value) =>
+        Number(value).toLocaleString("pt-BR", {
+            style: "currency",
+            currency: "BRL",
+        });
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editingService, setEditingService] = useState(null);
+
+    useEffect(() => {
+        if (isEditModalOpen) {
+            setTimeout(() => {
+                document.querySelector(".edit-form input")?.focus();
+            }, 0);
+        }
+    }, [isEditModalOpen]);
+
+    useEffect(() => {
+        if (isModalOpen) {
+            setTimeout(() => {
+                searchRef.current?.focus();
+            }, 0);
+        }
+    }, [isModalOpen]);
+
+    function handleOpenEdit(servico) {
+        setEditingService({ ...servico });
+        setIsEditModalOpen(true);
+    }
+
+    function handleSaveEdit() {
+        setServicos((prev) =>
+            prev.map((s) =>
+                s.id === editingService.id ? editingService : s
+            )
+        );
+
+        setIsEditModalOpen(false);
+        setEditingService(null);
+    }
+
+    const [servicosDisponiveis, setServicosDisponiveis] = useState([]);
+
+    useEffect(() => {
+        if (!localStorage.getItem("servicosDisponiveis")) {
+            localStorage.setItem(
+                "servicosDisponiveis",
+                JSON.stringify(mockServicos)
+            );
+        }
+
+        if (!localStorage.getItem("servicosSelecionados")) {
+            localStorage.setItem(
+                "servicosSelecionados",
+                JSON.stringify([
+                    { ...mockServicos[0] },
+                    { ...mockServicos[1] },
+                ])
+            );
+        }
+    }, []);
+
+    useEffect(() => {
+        const sync = () => {
+            const stored = JSON.parse(localStorage.getItem("servicosDisponiveis"));
+
+            setServicosDisponiveis(
+                stored && stored.length ? stored : mockServicos
+            );
+        };
+
+        sync();
+        window.addEventListener("focus", sync);
+
+        return () => window.removeEventListener("focus", sync);
+    }, []);
+
+    function handleAddService(servico) {
+        setServicos((prev) => [...prev, servico]);
+        setIsModalOpen(false);
+    }
+
+    const servicosIds = new Set(servicos.map((s) => s.id));
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const servicosFiltrados = servicosDisponiveis.filter((s) =>
+        s.descricao.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }
 
-  const searchRef = useRef(null);
-  
+    function updateQuantidade(id, delta) {
+        setServicos((prev) =>
+            prev.map((s) =>
+                s.id === id
+                    ? {
+                        ...s,
+                        qntd: Math.max(1, (Number(s.qntd) || 1) + delta),
+                    }
+                    : s
+            )
+        );
+    }
 
-  return (
-    <div className="service-insert-page">
-      <Header />
+    function setQuantidadeManual(id, value) {
+        const numericValue = Number(value);
 
-      <main className="service-insert-page-content">
-        <div className="service-insert-form-card">
-          <div className="card-header">
-            <button
-              className="back-button"
-              onClick={() => navigate("/dashboard")}
-            >
-              <FaArrowLeft size={20} />
-            </button>
-            <h1>Adicionar Serviço</h1>
-          </div>
+        setServicos((prev) =>
+            prev.map((s) =>
+                s.id === id
+                    ? {
+                        ...s,
+                        qntd: isNaN(numericValue) || numericValue < 1 ? 1 : numericValue,
+                    }
+                    : s
+            )
+        );
+    }
 
-          <form className="service-insert-form" onSubmit={handleSubmit}>
-            <div className="header">
-              <h2>Serviços</h2>
+    const searchRef = useRef(null);
 
-              <button
-                type="button"
-                className="add-text-button"
-                onClick={() => setIsModalOpen(true)}
-              >
-                + Adicionar Serviço
-              </button>
-            </div>
 
-            {servicos.length === 0 ? (
-              <div className="list empty-state">
-                <PiToolboxBold size={40} color="var(--color-primary)" />
-                <p>Comece inserindo um Novo Serviço</p>
-              </div>
-            ) : (
-              <div className="list">
-                {servicos.map((servico) => (
-                  <Card
-                    key={servico.id}
-                    servico={servico}
-                    handleDelete={handleDelete}
-                    updateQuantidade={updateQuantidade}
-                    setQuantidadeManual={setQuantidadeManual}
-                    handleEdit={handleOpenEdit}
-                  />
-                ))}
-              </div>
+    return (
+        <div className="service-insert-page">
+            <Header />
+
+            <main className="service-insert-page-content">
+                <div className="service-insert-form-card">
+                    <div className="card-header">
+                        <button
+                            className="back-button"
+                            onClick={() => navigate("/dashboard")}
+                        >
+                            <FaArrowLeft size={20} />
+                        </button>
+                        <h1>Adicionar Serviço</h1>
+                    </div>
+
+                    <form className="service-insert-form" onSubmit={handleSubmit}>
+                        <div className="header">
+                            <h2>Serviços</h2>
+
+                            <button
+                                type="button"
+                                className="add-text-button"
+                                onClick={() => setIsModalOpen(true)}
+                            >
+                                + Adicionar Serviço
+                            </button>
+                        </div>
+
+                        {servicos.length === 0 ? (
+                            <div className="list empty-state">
+                                <PiToolboxBold size={40} color="var(--color-primary)" />
+                                <p>Comece inserindo um Novo Serviço</p>
+                            </div>
+                        ) : (
+                            <div className="list">
+                                {servicos.map((servico) => (
+                                    <Card
+                                        key={servico.id}
+                                        servico={servico}
+                                        handleDelete={handleDelete}
+                                        updateQuantidade={updateQuantidade}
+                                        setQuantidadeManual={setQuantidadeManual}
+                                        handleEdit={handleOpenEdit}
+                                    />
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="value-line">
+                            <p className="title">Valor Total:</p>
+                            <span>{formatCurrency(valorTotal)}</span>
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="service-insert-form-submit-button"
+                        >
+                            Salvar Serviços
+                        </button>
+                    </form>
+                </div>
+            </main>
+
+            {isEditModalOpen && editingService && (
+                <div
+                    className="modal-overlay"
+                    onClick={() => setIsEditModalOpen(false)}
+                >
+                    <div
+                        className="modal-content edit-modal"
+                        onClick={(e) => e.stopPropagation()}
+                        tabIndex={-1}
+                    >
+                        <div className="modal-header">
+                            <h2>Editar Serviço</h2>
+
+                            <button onClick={() => setIsEditModalOpen(false)}>
+                                ✕
+                            </button>
+                        </div>
+
+                        <form className="edit-form" onSubmit={(e) => {
+                            e.preventDefault();
+                            handleSaveEdit();
+                        }}>
+
+                            <label>Descrição</label>
+
+                            <input
+                                value={editingService.descricao}
+                                onChange={(e) =>
+                                    setEditingService({
+                                        ...editingService,
+                                        descricao: e.target.value
+                                    })
+                                }
+                            />
+
+                            <label>Preço</label>
+
+                            <input
+                                type="number"
+                                value={editingService.preco}
+                                onChange={(e) =>
+                                    setEditingService({
+                                        ...editingService,
+                                        preco: Number(e.target.value)
+                                    })
+                                }
+                            />
+
+                            <label>Observações</label>
+
+                            <textarea
+                                rows={4}
+                                value={editingService.obs}
+                                onChange={(e) =>
+                                    setEditingService({
+                                        ...editingService,
+                                        obs: e.target.value
+                                    })
+                                }
+                            />
+
+                            <button
+                                type="submit"
+                                className="service-insert-form-submit-button"
+                            >
+                                Salvar Alterações
+                            </button>
+
+                        </form>
+                    </div>
+                </div>
             )}
 
-            <div className="value-line">
-              <p className="title">Valor Total:</p>
-              <span>{formatCurrency(valorTotal)}</span>
-            </div>
+            <Footer />
 
-            <button
-              type="submit"
-              className="service-insert-form-submit-button"
-            >
-              Salvar Serviços
-            </button>
-          </form>
+            {isModalOpen && (
+                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+                    <div
+                        className="modal-content"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="modal-header">
+                            <h2>Selecionar Serviço</h2>
+                            <button onClick={() => setIsModalOpen(false)}>✕</button>
+                        </div>
+
+                        <div className="modal-search">
+                            <input
+                                ref={searchRef}
+                                type="text"
+                                placeholder="Pesquisar serviço..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="modal-list">
+                            {servicosFiltrados.length === 0 ? (
+                                <div className="modal-empty-state">
+                                    <PiToolboxBold size={42} color="var(--color-primary)" />
+
+                                    <p className="title">
+                                        Nenhum serviço encontrado
+                                    </p>
+
+                                    <p className="subtitle">
+                                        Tente ajustar a busca ou cadastre um novo serviço
+                                    </p>
+                                </div>
+                            ) : (
+                                servicosFiltrados.map((servico) => {
+                                    const isDisabled = servicosIds.has(servico.id);
+
+                                    return (
+                                        <div
+                                            key={servico.id}
+                                            className={`modal-card ${isDisabled ? "disabled" : ""}`}
+                                            tabIndex={isDisabled ? -1 : 0}
+                                            role="button"
+                                            onClick={() => {
+                                                if (isDisabled) return;
+                                                handleAddService(servico);
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (isDisabled) return;
+                                                if (e.key === "Enter" || e.key === " ") {
+                                                    handleAddService(servico);
+                                                }
+                                            }}
+                                        >
+                                            <Card servico={servico} hideActions />
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+
+                        <div className="create-service-line">
+                            <button
+                                className="add-text-button"
+                                type="button"
+                                onClick={() =>
+                                    navigate("/cadastroServico", {
+                                        state: { mode: "createCatalog" },
+                                    })
+                                }
+                            >
+                                + Criar Serviço
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
-      </main>
-
-      {isEditModalOpen && editingService && (
-        <FocusTrap active={isEditModalOpen}>
-          <div
-            className="modal-overlay"
-            onClick={() => setIsEditModalOpen(false)}
-          >
-            <div
-              className="modal-content edit-modal"
-              onClick={(e) => e.stopPropagation()}
-              tabIndex={-1}
-            >
-              <div className="modal-header">
-                <h2>Editar Serviço</h2>
-
-                <button onClick={() => setIsEditModalOpen(false)}>
-                  ✕
-                </button>
-              </div>
-
-              <form className="edit-form" onSubmit={(e) => {
-                e.preventDefault();
-                handleSaveEdit();
-              }}>
-
-                <label>Descrição</label>
-
-                <input
-                  value={editingService.descricao}
-                  onChange={(e) =>
-                    setEditingService({
-                      ...editingService,
-                      descricao: e.target.value
-                    })
-                  }
-                />
-
-                <label>Preço</label>
-
-                <input
-                  type="number"
-                  value={editingService.preco}
-                  onChange={(e) =>
-                    setEditingService({
-                      ...editingService,
-                      preco: Number(e.target.value)
-                    })
-                  }
-                />
-
-                <label>Observações</label>
-
-                <textarea
-                  rows={4}
-                  value={editingService.obs}
-                  onChange={(e) =>
-                    setEditingService({
-                      ...editingService,
-                      obs: e.target.value
-                    })
-                  }
-                />
-
-                <button
-                  type="submit"
-                  className="service-insert-form-submit-button"
-                >
-                  Salvar Alterações
-                </button>
-
-              </form>
-            </div>
-          </div>
-        </FocusTrap>
-      )}
-
-      <Footer />
-
-      {isModalOpen && (
-        <FocusTrap active={isModalOpen}>
-            <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
-            <div
-              className="modal-content"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="modal-header">
-                <h2>Selecionar Serviço</h2>
-                <button onClick={() => setIsModalOpen(false)}>✕</button>
-              </div>
-
-              <div className="modal-search">
-                <input
-                  ref={searchRef}
-                  type="text"
-                  placeholder="Pesquisar serviço..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-
-              <div className="modal-list">
-                {servicosFiltrados.length === 0 ? (
-                  <div className="modal-empty-state">
-                    <PiToolboxBold size={42} color="var(--color-primary)" />
-
-                    <p className="title">
-                      Nenhum serviço encontrado
-                    </p>
-
-                    <p className="subtitle">
-                      Tente ajustar a busca ou cadastre um novo serviço
-                    </p>
-                  </div>
-                ) : (
-                  servicosFiltrados.map((servico) => {
-                    const isDisabled = servicosIds.has(servico.id);
-
-                    return (
-                      <div
-                        key={servico.id}
-                        className={`modal-card ${isDisabled ? "disabled" : ""}`}
-                        tabIndex={isDisabled ? -1 : 0}
-                        role="button"
-                        onClick={() => {
-                          if (isDisabled) return;
-                          handleAddService(servico);
-                        }}
-                        onKeyDown={(e) => {
-                          if (isDisabled) return;
-                          if (e.key === "Enter" || e.key === " ") {
-                            handleAddService(servico);
-                          }
-                        }}
-                      >
-                        <Card servico={servico} hideActions />
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-
-              <div className="create-service-line">
-                <button
-                  className="add-text-button"
-                  type="button"
-                  onClick={() =>
-                    navigate("/cadastroServico", {
-                      state: { mode: "createCatalog" },
-                    })
-                  }
-                >
-                  + Criar Serviço
-                </button>
-              </div>
-            </div>
-          </div>
-        </FocusTrap>
-      )}
-    </div>
-  );
+    );
 }
 
 function Card({
-  servico,
-  handleDelete,
-  hideActions,
-  updateQuantidade,
-  handleEdit,
+    servico,
+    handleDelete,
+    hideActions,
+    updateQuantidade,
+    handleEdit,
 }) {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  if (!servico) return null;
+    if (!servico) return null;
 
-  return (
-    <div className="card">
-      <div className="text">
-        <h3>{servico.descricao}</h3>
+    return (
+        <div className="card">
+            <div className="text">
+                <h3>{servico.descricao}</h3>
 
-        <div className="description">
-          <p>R$ {servico.preco}</p>
-          <span>-</span>
-          <p className="desc-text">OBS: {servico.obs}</p>
+                <div className="description">
+                    <p>R$ {servico.preco}</p>
+                    <span>-</span>
+                    <p className="desc-text">OBS: {servico.obs}</p>
+                </div>
+            </div>
+
+            <div className="actions-line">
+                {!hideActions && (
+                    <div className="qty-container">
+                        <button
+                            type="button"
+                            className="qty-button"
+                            onClick={() => updateQuantidade(servico.id, -1)}
+                        >
+                            -
+                        </button>
+
+                        <input
+                            className="qty-input"
+                            type="number"
+                            min="1"
+                            value={servico.qntd || 1}
+                            onChange={(e) =>
+                                updateQuantidade(servico.id, Number(e.target.value) - (servico.qntd || 1))
+                            }
+                        />
+
+                        <button
+                            type="button"
+                            className="qty-button"
+                            onClick={() => updateQuantidade(servico.id, 1)}
+                        >
+                            +
+                        </button>
+                    </div>
+                )}
+
+                {!hideActions && (
+                    <div className="buttons">
+                        <button
+                            type="button"
+                            onClick={() => handleEdit(servico)}
+                        >
+                            <HiOutlinePencil size={20} color="var(--color-primary)" />
+                        </button>
+
+                        <button onClick={() => handleDelete(servico.id)}>
+                            <FaRegTrashCan size={20} color="red" />
+                        </button>
+                    </div>
+                )}
+            </div>
+
+
+
+
         </div>
-      </div>
-
-      <div className="actions-line">
-        {!hideActions && (
-          <div className="qty-container">
-            <button
-              type="button"
-              className="qty-button"
-              onClick={() => updateQuantidade(servico.id, -1)}
-            >
-              -
-            </button>
-
-            <input
-              className="qty-input"
-              type="number"
-              min="1"
-              value={servico.qntd || 1}
-              onChange={(e) =>
-                updateQuantidade(servico.id, Number(e.target.value) - (servico.qntd || 1))
-              }
-            />
-
-            <button
-              type="button"
-              className="qty-button"
-              onClick={() => updateQuantidade(servico.id, 1)}
-            >
-              +
-            </button>
-          </div>
-        )}
-
-        {!hideActions && (
-          <div className="buttons">
-            <button
-              type="button"
-              onClick={() => handleEdit(servico)}
-            >
-              <HiOutlinePencil size={20} color="var(--color-primary)" />
-            </button>
-
-            <button onClick={() => handleDelete(servico.id)}>
-              <FaRegTrashCan size={20} color="red" />
-            </button>
-          </div>
-        )}
-      </div>
-
-      
-
-      
-    </div>
-  );
+    );
 }

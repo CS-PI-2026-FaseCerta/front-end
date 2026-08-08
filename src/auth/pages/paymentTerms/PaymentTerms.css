@@ -1,0 +1,79 @@
+.payment-type-toggle {
+  display: flex;
+  gap: 12px;
+}
+.payment-type-option {
+  flex: 1;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+.payment-type-option:hover {
+  cursor: pointer;
+  border-color: var(--control-border-hover);
+}
+.payment-type-option-active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.form-sublabel {
+  display: block;
+  margin-top: -4px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.installments-row {
+  display: flex;
+  gap: 12px;
+}
+.installment-quick-button {
+  flex: 0 0 auto;
+  min-width: 64px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+.installment-quick-button:hover {
+  cursor: pointer;
+  border-color: var(--control-border-hover);
+}
+.installment-quick-button-active {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+.installments-free-input {
+  flex: 1;
+}
+
+@media (max-width: 480px) {
+  .payment-type-toggle {
+    flex-direction: column;
+  }
+  .installments-row {
+    flex-wrap: wrap;
+  }
+  .installments-free-input {
+    flex: 1 1 100%;
+  }
+}
