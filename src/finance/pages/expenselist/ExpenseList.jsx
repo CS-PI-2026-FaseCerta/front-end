@@ -1,5 +1,10 @@
+// ExpenseList v2 — filtros aplicáveis + calculadora + menus em portal
 import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import {
+  FaBackspace,
+  FaCalculator,
+  FaCheck,
   FaCheckCircle,
   FaChevronDown,
   FaChevronLeft,
@@ -210,6 +215,58 @@ const getVisiblePages = (currentPage, totalPages) => {
     .sort((a, b) => a - b);
 };
 
+const CALCULATOR_KEYS = [
+  "backspace",
+  "(",
+  ")",
+  "÷",
+  "7",
+  "8",
+  "9",
+  "×",
+  "4",
+  "5",
+  "6",
+  "−",
+  "1",
+  "2",
+  "3",
+  "+",
+  "C",
+  "0",
+  ",",
+  "=",
+];
+
+const normalizeCalculatorExpression = (value) =>
+  String(value ?? "")
+    .replaceAll(",", ".")
+    .replaceAll("×", "*")
+    .replaceAll("÷", "/")
+    .replaceAll("−", "-");
+
+const formatCalculatorNumber = (value) => {
+  const rounded = Math.round((Number(value) + Number.EPSILON) * 100000000) / 100000000;
+  return String(rounded).replace(".", ",");
+};
+
+const evaluateCalculatorExpression = (value) => {
+  const normalized = normalizeCalculatorExpression(value).trim();
+
+  if (!normalized || !/^[0-9+\-*/().\s]+$/.test(normalized)) {
+    throw new Error("Expressão inválida");
+  }
+
+  // A expressão é limitada pelo regex acima a números, parênteses e operadores aritméticos.
+  const result = Function(`"use strict"; return (${normalized});`)();
+
+  if (!Number.isFinite(result)) {
+    throw new Error("Resultado inválido");
+  }
+
+  return result;
+};
+
 const Dialog = ({ title, children, onClose, className = "" }) => (
   <div className="expense-list__overlay" role="presentation" onMouseDown={onClose}>
     <section
@@ -273,6 +330,7 @@ const ExpenseList = ({
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState({ key: "date", direction: "asc" });
   const [menuRowId, setMenuRowId] = useState(null);
+  const [menuPosition, setMenuPosition] = useState(null);
   const [dialog, setDialog] = useState(null);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [notice, setNotice] = useState("");
@@ -285,6 +343,24 @@ const ExpenseList = ({
     paymentType: "",
     paymentMode: "",
     paid: "",
+  });
+  const [draftInlineFilters, setDraftInlineFilters] = useState({
+    date: "",
+    description: "",
+    payee: "",
+    category: "",
+    value: "",
+    paymentType: "",
+    paymentMode: "",
+    paid: "",
+  });
+  const [calculator, setCalculator] = useState({
+    open: false,
+    expression: "",
+    error: "",
+    left: 0,
+    top: 0,
+    placement: "below",
   });
   const [advancedFilters, setAdvancedFilters] = useState({
     dateFrom: "",
@@ -302,6 +378,7 @@ const ExpenseList = ({
     const closeMenu = (event) => {
       if (!event.target.closest("[data-expense-row-menu]")) {
         setMenuRowId(null);
+        setMenuPosition(null);
       }
     };
 
@@ -310,14 +387,69 @@ const ExpenseList = ({
   }, []);
 
   useEffect(() => {
+    if (!menuRowId) return undefined;
+
+    const closeFloatingMenu = (event) => {
+      if (
+        event?.target instanceof Element &&
+        event.target.closest("[data-expense-row-menu]")
+      ) {
+        return;
+      }
+
+      setMenuRowId(null);
+      setMenuPosition(null);
+    };
+
+    window.addEventListener("resize", closeFloatingMenu);
+    window.addEventListener("scroll", closeFloatingMenu, true);
+
+    return () => {
+      window.removeEventListener("resize", closeFloatingMenu);
+      window.removeEventListener("scroll", closeFloatingMenu, true);
+    };
+  }, [menuRowId]);
+
+  useEffect(() => {
+    if (!calculator.open) return undefined;
+
+    const closeOnPointerDown = (event) => {
+      if (
+        event?.target instanceof Element &&
+        event.target.closest("[data-expense-calculator]")
+      ) {
+        return;
+      }
+      closeCalculator();
+    };
+
+    const closeOnViewportChange = () => closeCalculator();
+
+    document.addEventListener("pointerdown", closeOnPointerDown);
+    window.addEventListener("resize", closeOnViewportChange);
+    window.addEventListener("scroll", closeOnViewportChange, true);
+
+    return () => {
+      document.removeEventListener("pointerdown", closeOnPointerDown);
+      window.removeEventListener("resize", closeOnViewportChange);
+      window.removeEventListener("scroll", closeOnViewportChange, true);
+    };
+  }, [calculator.open]);
+
+  useEffect(() => {
     if (!notice) return undefined;
     const timeout = window.setTimeout(() => setNotice(""), 3200);
     return () => window.clearTimeout(timeout);
   }, [notice]);
 
   const updateInlineFilter = (key, value) => {
-    setInlineFilters((current) => ({ ...current, [key]: value }));
+    setDraftInlineFilters((current) => ({ ...current, [key]: value }));
+  };
+
+  const applyInlineFilters = () => {
+    setInlineFilters({ ...draftInlineFilters });
     setPage(1);
+    setCalculator((current) => ({ ...current, open: false, error: "" }));
   };
 
   const filteredRows = useMemo(() => {
@@ -456,11 +588,98 @@ const ExpenseList = ({
     [advancedFilters, inlineFilters],
   );
 
+  const hasDraftInlineFilters = useMemo(
+    () => Object.values(draftInlineFilters).some(Boolean),
+    [draftInlineFilters],
+  );
+
+  const hasPendingInlineChanges = useMemo(
+    () => JSON.stringify(draftInlineFilters) !== JSON.stringify(inlineFilters),
+    [draftInlineFilters, inlineFilters],
+  );
+
+  const openCalculator = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const width = 320;
+    const estimatedHeight = 430;
+    const gap = 8;
+    const viewportPadding = 12;
+    const availableBelow = window.innerHeight - rect.bottom;
+    const placeAbove = availableBelow < estimatedHeight && rect.top > availableBelow;
+    const left = Math.max(
+      viewportPadding,
+      Math.min(rect.right - width, window.innerWidth - width - viewportPadding),
+    );
+
+    setCalculator({
+      open: true,
+      expression: draftInlineFilters.value || "",
+      error: "",
+      left,
+      top: placeAbove ? rect.top - gap : rect.bottom + gap,
+      placement: placeAbove ? "above" : "below",
+    });
+  };
+
+  const closeCalculator = () => {
+    setCalculator((current) => ({ ...current, open: false, error: "" }));
+  };
+
+  const calculateExpression = (expression = calculator.expression) => {
+    try {
+      const result = evaluateCalculatorExpression(expression);
+      const formatted = formatCalculatorNumber(result);
+      setCalculator((current) => ({ ...current, expression: formatted, error: "" }));
+      return formatted;
+    } catch (error) {
+      setCalculator((current) => ({ ...current, error: "Expressão inválida" }));
+      return null;
+    }
+  };
+
+  const handleCalculatorKey = (key) => {
+    if (key === "C") {
+      setCalculator((current) => ({ ...current, expression: "", error: "" }));
+      return;
+    }
+
+    if (key === "backspace") {
+      setCalculator((current) => ({
+        ...current,
+        expression: current.expression.slice(0, -1),
+        error: "",
+      }));
+      return;
+    }
+
+    if (key === "=") {
+      const result = calculateExpression();
+      if (result != null) {
+        updateInlineFilter("value", result);
+      }
+      return;
+    }
+
+    setCalculator((current) => ({
+      ...current,
+      expression: `${current.expression}${key}`,
+      error: "",
+    }));
+  };
+
+  const useCalculatorValue = () => {
+    const result = calculateExpression();
+    if (result == null) return;
+    updateInlineFilter("value", result);
+    closeCalculator();
+  };
+
   const changeMonth = (direction) => {
     const nextMonth = new Date(month.getFullYear(), month.getMonth() + direction, 1);
     setMonth(nextMonth);
     setPage(1);
     setMenuRowId(null);
+    setMenuPosition(null);
     onMonthChange?.(nextMonth);
   };
 
@@ -484,6 +703,16 @@ const ExpenseList = ({
       paymentMode: "",
       paid: "",
     });
+    setDraftInlineFilters({
+      date: "",
+      description: "",
+      payee: "",
+      category: "",
+      value: "",
+      paymentType: "",
+      paymentMode: "",
+      paid: "",
+    });
     setAdvancedFilters({
       dateFrom: "",
       dateTo: "",
@@ -491,6 +720,7 @@ const ExpenseList = ({
       maxValue: "",
       onlyWithAttachments: false,
     });
+    setCalculator((current) => ({ ...current, open: false, expression: "", error: "" }));
     setPage(1);
   };
 
@@ -507,6 +737,40 @@ const ExpenseList = ({
   };
 
   const getExpense = (id) => rows.find((item) => item.id === id);
+
+  const closeRowMenu = () => {
+    setMenuRowId(null);
+    setMenuPosition(null);
+  };
+
+  const toggleRowMenu = (event, expenseId) => {
+    if (menuRowId === expenseId) {
+      closeRowMenu();
+      return;
+    }
+
+    const triggerRect = event.currentTarget.getBoundingClientRect();
+    const menuWidth = 276;
+    const viewportPadding = 12;
+    const gap = 8;
+    const availableBelow = window.innerHeight - triggerRect.bottom;
+    const availableAbove = triggerRect.top;
+    const placeAbove = availableBelow < 430 && availableAbove > availableBelow;
+    const left = Math.max(
+      viewportPadding,
+      Math.min(
+        triggerRect.right - menuWidth,
+        window.innerWidth - menuWidth - viewportPadding,
+      ),
+    );
+
+    setMenuRowId(expenseId);
+    setMenuPosition({
+      left,
+      top: placeAbove ? triggerRect.top - gap : triggerRect.bottom + gap,
+      placement: placeAbove ? "above" : "below",
+    });
+  };
 
   const replaceExpense = (nextExpense) => {
     setRows((current) =>
@@ -613,7 +877,7 @@ const ExpenseList = ({
     };
     setRows((current) => [copy, ...current]);
     onDuplicateExpense?.(copy, expense);
-    setMenuRowId(null);
+    closeRowMenu();
     setNotice("Despesa duplicada.");
   };
 
@@ -706,6 +970,7 @@ const ExpenseList = ({
   };
 
   const activeExpense = dialog?.expenseId ? getExpense(dialog.expenseId) : null;
+  const activeMenuExpense = menuRowId ? getExpense(menuRowId) : null;
 
   return (
     <main className="expense-list-page">
@@ -785,11 +1050,11 @@ const ExpenseList = ({
                     <th scope="col" aria-label="Ações" />
                   </tr>
 
-                  <tr className="expense-list__filter-row">
+                  <tr className="expense-list__filter-row" onKeyDown={(event) => { if (event.key === "Enter") applyInlineFilters(); }}>
                     <th>
                       <input
                         type="date"
-                        value={inlineFilters.date}
+                        value={draftInlineFilters.date}
                         onChange={(event) => updateInlineFilter("date", event.target.value)}
                         aria-label="Filtrar por data"
                       />
@@ -797,7 +1062,7 @@ const ExpenseList = ({
                     <th>
                       <input
                         type="search"
-                        value={inlineFilters.description}
+                        value={draftInlineFilters.description}
                         onChange={(event) => updateInlineFilter("description", event.target.value)}
                         placeholder="Pesquisar"
                         aria-label="Filtrar por descrição"
@@ -806,7 +1071,7 @@ const ExpenseList = ({
                     <th>
                       <input
                         type="search"
-                        value={inlineFilters.payee}
+                        value={draftInlineFilters.payee}
                         onChange={(event) => updateInlineFilter("payee", event.target.value)}
                         placeholder="Pesquisar"
                         aria-label="Filtrar por favorecido"
@@ -814,7 +1079,7 @@ const ExpenseList = ({
                     </th>
                     <th>
                       <FilterSelect
-                        value={inlineFilters.category}
+                        value={draftInlineFilters.category}
                         onChange={(event) => updateInlineFilter("category", event.target.value)}
                         ariaLabel="Filtrar por categoria"
                       >
@@ -823,19 +1088,33 @@ const ExpenseList = ({
                       </FilterSelect>
                     </th>
                     <th>
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={inlineFilters.value}
-                        onChange={(event) => updateInlineFilter("value", event.target.value)}
-                        placeholder="0,00"
-                        aria-label="Filtrar por valor"
-                      />
+                      <div className="expense-list__value-filter" data-expense-calculator>
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          value={draftInlineFilters.value}
+                          onChange={(event) => updateInlineFilter("value", event.target.value)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter") applyInlineFilters();
+                          }}
+                          placeholder="0,00"
+                          aria-label="Filtrar por valor"
+                        />
+                        <button
+                          type="button"
+                          className={`expense-list__calculator-trigger ${calculator.open ? "is-open" : ""}`.trim()}
+                          onClick={openCalculator}
+                          title="Abrir calculadora"
+                          aria-label="Abrir calculadora de valor"
+                          aria-expanded={calculator.open}
+                        >
+                          <FaCalculator aria-hidden="true" />
+                        </button>
+                      </div>
                     </th>
                     <th>
                       <FilterSelect
-                        value={inlineFilters.paymentType}
+                        value={draftInlineFilters.paymentType}
                         onChange={(event) => updateInlineFilter("paymentType", event.target.value)}
                         ariaLabel="Filtrar por tipo de pagamento"
                       >
@@ -845,7 +1124,7 @@ const ExpenseList = ({
                     </th>
                     <th>
                       <FilterSelect
-                        value={inlineFilters.paymentMode}
+                        value={draftInlineFilters.paymentMode}
                         onChange={(event) => updateInlineFilter("paymentMode", event.target.value)}
                         ariaLabel="Filtrar por modo de pagamento"
                       >
@@ -855,7 +1134,7 @@ const ExpenseList = ({
                     </th>
                     <th>
                       <FilterSelect
-                        value={inlineFilters.paid}
+                        value={draftInlineFilters.paid}
                         onChange={(event) => updateInlineFilter("paid", event.target.value)}
                         ariaLabel="Filtrar por status de pagamento"
                       >
@@ -865,17 +1144,28 @@ const ExpenseList = ({
                       </FilterSelect>
                     </th>
                     <th>
-                      {hasFilters ? (
+                      <div className="expense-list__filter-actions" aria-label="Ações dos filtros inline">
+                        <button
+                          type="button"
+                          className="expense-list__apply-inline"
+                          onClick={applyInlineFilters}
+                          title="Aplicar filtros"
+                          aria-label="Aplicar filtros"
+                          disabled={!hasPendingInlineChanges}
+                        >
+                          <FaCheck aria-hidden="true" />
+                        </button>
                         <button
                           type="button"
                           className="expense-list__clear-inline"
                           onClick={clearFilters}
-                          title="Limpar filtros"
-                          aria-label="Limpar filtros"
+                          title="Limpar todos os filtros"
+                          aria-label="Limpar todos os filtros"
+                          disabled={!hasFilters && !hasDraftInlineFilters}
                         >
                           <FaTimes aria-hidden="true" />
                         </button>
-                      ) : null}
+                      </div>
                     </th>
                   </tr>
                 </thead>
@@ -911,7 +1201,7 @@ const ExpenseList = ({
                             <button
                               type="button"
                               className={`expense-list__kebab ${menuRowId === expense.id ? "is-open" : ""}`.trim()}
-                              onClick={() => setMenuRowId((current) => current === expense.id ? null : expense.id)}
+                              onClick={(event) => toggleRowMenu(event, expense.id)}
                               aria-haspopup="menu"
                               aria-expanded={menuRowId === expense.id}
                               aria-label={`Ações da despesa ${expense.description}`}
@@ -919,50 +1209,6 @@ const ExpenseList = ({
                               <FaEllipsisV aria-hidden="true" />
                             </button>
 
-                            {menuRowId === expense.id ? (
-                              <div className="expense-list__action-menu" role="menu">
-                                <button type="button" role="menuitem" onClick={() => { generateReceipt(expense); setMenuRowId(null); }}>
-                                  <FaFileInvoice aria-hidden="true" />
-                                  <span>Gerar recibo</span>
-                                </button>
-                                <button type="button" role="menuitem" onClick={() => { setDialog({ type: "edit", expenseId: expense.id }); setMenuRowId(null); }}>
-                                  <FaPen aria-hidden="true" />
-                                  <span>Editar detalhes</span>
-                                </button>
-                                <button type="button" role="menuitem" onClick={() => { onViewValueDetails?.(expense); setDialog({ type: "details", expenseId: expense.id }); setMenuRowId(null); }}>
-                                  <FaListUl aria-hidden="true" />
-                                  <span>Detalhar valor</span>
-                                </button>
-                                <button type="button" role="menuitem" onClick={() => { setDialog({ type: "attachments", expenseId: expense.id }); setMenuRowId(null); }}>
-                                  <FaPaperclip aria-hidden="true" />
-                                  <span>Anexos</span>
-                                  {expense.attachments?.length ? <small>{expense.attachments.length}</small> : null}
-                                </button>
-                                <button type="button" role="menuitem" onClick={() => duplicateExpense(expense)}>
-                                  <FaCopy aria-hidden="true" />
-                                  <span>Duplicar</span>
-                                </button>
-                                <button type="button" role="menuitem" onClick={() => { setDialog({ type: "move", expenseId: expense.id }); setMenuRowId(null); }}>
-                                  <FaExchangeAlt aria-hidden="true" />
-                                  <span>Mover para...</span>
-                                </button>
-                                <div className="expense-list__menu-divider" />
-                                <button type="button" role="menuitem" onClick={() => { setDialog({ type: "recurring", expenseId: expense.id }); setMenuRowId(null); }}>
-                                  <FaClock aria-hidden="true" />
-                                  <span>Tornar recorrente...</span>
-                                </button>
-                                <div className="expense-list__menu-divider" />
-                                <button type="button" role="menuitem" onClick={() => { setDialog({ type: "installments", expenseId: expense.id }); setMenuRowId(null); }}>
-                                  <FaMoneyBillWave aria-hidden="true" />
-                                  <span>Parcelar...</span>
-                                </button>
-                                <div className="expense-list__menu-divider" />
-                                <button type="button" role="menuitem" className="is-danger" onClick={() => { setDialog({ type: "delete", expenseId: expense.id }); setMenuRowId(null); }}>
-                                  <FaTrash aria-hidden="true" />
-                                  <span>Excluir</span>
-                                </button>
-                              </div>
-                            ) : null}
                           </div>
                         </td>
                       </tr>
@@ -1037,6 +1283,129 @@ const ExpenseList = ({
           </div>
         </div>
       </section>
+
+      {calculator.open && typeof document !== "undefined"
+        ? createPortal(
+            <section
+              className={`expense-list__calculator-popover expense-list__calculator-popover--portal ${calculator.placement === "above" ? "is-above" : "is-below"}`.trim()}
+              style={{ left: `${calculator.left}px`, top: `${calculator.top}px` }}
+              data-expense-calculator
+              role="dialog"
+              aria-label="Calculadora de valor"
+            >
+              <header className="expense-list__calculator-header">
+                <div>
+                  <span>Calculadora</span>
+                  <strong>Valor da despesa</strong>
+                </div>
+                <button type="button" onClick={closeCalculator} aria-label="Fechar calculadora">
+                  <FaTimes aria-hidden="true" />
+                </button>
+              </header>
+
+              <div className={`expense-list__calculator-display ${calculator.error ? "has-error" : ""}`.trim()}>
+                <input
+                  value={calculator.expression}
+                  onChange={(event) =>
+                    setCalculator((current) => ({
+                      ...current,
+                      expression: event.target.value,
+                      error: "",
+                    }))
+                  }
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      handleCalculatorKey("=");
+                    }
+                  }}
+                  inputMode="decimal"
+                  aria-label="Expressão da calculadora"
+                  placeholder="0"
+                  autoFocus
+                />
+                <span>{calculator.error || "Use +, −, ×, ÷ e parênteses"}</span>
+              </div>
+
+              <div className="expense-list__calculator-grid">
+                {CALCULATOR_KEYS.map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className={`expense-list__calculator-key ${key === "=" ? "is-equals" : ""} ${key === "C" ? "is-clear" : ""} ${["÷", "×", "−", "+"].includes(key) ? "is-operator" : ""}`.trim()}
+                    onClick={() => handleCalculatorKey(key)}
+                    aria-label={key === "backspace" ? "Apagar último caractere" : key}
+                  >
+                    {key === "backspace" ? <FaBackspace aria-hidden="true" /> : key}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                className="expense-list__calculator-use"
+                onClick={useCalculatorValue}
+              >
+                <FaCheck aria-hidden="true" />
+                <span>Usar valor no filtro</span>
+              </button>
+            </section>,
+            document.body,
+          )
+        : null}
+
+      {menuRowId && activeMenuExpense && menuPosition && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              className={`expense-list__action-menu expense-list__action-menu--portal ${menuPosition.placement === "above" ? "is-above" : "is-below"}`.trim()}
+              data-expense-row-menu
+              role="menu"
+              style={{ left: `${menuPosition.left}px`, top: `${menuPosition.top}px` }}
+            >
+              <button type="button" role="menuitem" onClick={() => { generateReceipt(activeMenuExpense); closeRowMenu(); }}>
+                <FaFileInvoice aria-hidden="true" />
+                <span>Gerar recibo</span>
+              </button>
+              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "edit", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+                <FaPen aria-hidden="true" />
+                <span>Editar detalhes</span>
+              </button>
+              <button type="button" role="menuitem" onClick={() => { onViewValueDetails?.(activeMenuExpense); setDialog({ type: "details", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+                <FaListUl aria-hidden="true" />
+                <span>Detalhar valor</span>
+              </button>
+              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "attachments", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+                <FaPaperclip aria-hidden="true" />
+                <span>Anexos</span>
+                {activeMenuExpense.attachments?.length ? <small>{activeMenuExpense.attachments.length}</small> : null}
+              </button>
+              <button type="button" role="menuitem" onClick={() => duplicateExpense(activeMenuExpense)}>
+                <FaCopy aria-hidden="true" />
+                <span>Duplicar</span>
+              </button>
+              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "move", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+                <FaExchangeAlt aria-hidden="true" />
+                <span>Mover para...</span>
+              </button>
+              <div className="expense-list__menu-divider" />
+              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "recurring", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+                <FaClock aria-hidden="true" />
+                <span>Tornar recorrente...</span>
+              </button>
+              <div className="expense-list__menu-divider" />
+              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "installments", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+                <FaMoneyBillWave aria-hidden="true" />
+                <span>Parcelar...</span>
+              </button>
+              <div className="expense-list__menu-divider" />
+              <button type="button" role="menuitem" className="is-danger" onClick={() => { setDialog({ type: "delete", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+                <FaTrash aria-hidden="true" />
+                <span>Excluir</span>
+              </button>
+            </div>,
+            document.body,
+          )
+        : null}
 
       {notice ? (
         <div className="expense-list__toast" role="status">{notice}</div>
