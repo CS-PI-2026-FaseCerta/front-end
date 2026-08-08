@@ -1,5 +1,5 @@
 .receipt-list-page {
-  padding: 24px;
+  /* padding and width handled by dashboard-shell */
 }
 
 .receipt-list-page__card {
@@ -119,15 +119,19 @@
   color: #fff;
 }
 
-/* Abas */
+/* Abas - Segmented Control */
 .receipt-list-page__tabs {
   display: flex;
-  gap: 8px;
   align-items: center;
+  background-color: var(--color-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 4px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .receipt-list-page__tab {
-  background: none;
+  background: transparent;
   border: none;
   font-size: 14px;
   font-weight: 600;
@@ -135,16 +139,18 @@
   cursor: pointer;
   padding: 8px 16px;
   border-radius: 20px;
+  transition: all 0.2s ease-in-out;
 }
 
 .receipt-list-page__tab:hover:not(.receipt-list-page__tab--active) {
-  color: var(--primary-color);
-  background-color: var(--control-bg-hover);
+  color: var(--text-primary);
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 .receipt-list-page__tab--active {
   background-color: #d1f391; /* Verde claro similar ao mockup */
   color: #2e4a06; /* Contraste para leitura */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 /* Botão de Filtros direito */

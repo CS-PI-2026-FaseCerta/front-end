@@ -235,7 +235,7 @@ const ReceipList = () => {
   const paymentMethodOptions = ["Indefinido", "Boleto", "Carteira Digital", "Cartão Pré-pago", "Cartão de Crédito", "Cartão de Débito", "Cheque", "Criptomoeda", "Depósito Bancário", "Pix", "Dinheiro", "Transferência"];
 
   return (
-    <div className="receipt-list-page">
+    <div className="receipt-list-page dashboard-shell">
       <div className="receipt-list-page__card">
         
         {/* Topo: Título FINANCEIRO */}
