@@ -1,109 +1,114 @@
 .receipt-list-page {
   padding: 24px;
+}
+
+.receipt-list-page__card {
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 24px;
 }
 
 .receipt-list-page__header {
+  padding: 24px 32px 16px 32px;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 16px;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .receipt-list-page__title {
   margin: 0;
   font-size: 24px;
   color: var(--text-primary);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
 }
 
-.receipt-list-page__toolbar-right {
+.receipt-list-page__header-controls {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
 }
 
-.receipt-list-page__btn-filters {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: var(--color-surface);
-  border: 1px solid var(--border-color);
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  color: var(--text-secondary);
-}
-
-.receipt-list-page__btn-filters:hover {
-  background-color: var(--control-bg-hover);
-  color: var(--primary-color);
-}
-
-.receipt-list-page__navigation {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-}
-
+/* Seletor de mês - Pill escuro */
 .receipt-list-page__month-selector {
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 18px;
+  gap: 12px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text-primary);
 }
 
 .receipt-list-page__month-selector button {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.7);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 2px;
 }
 
 .receipt-list-page__month-selector button:hover {
-  color: var(--primary-color);
+  color: #fff;
 }
 
+/* Abas */
 .receipt-list-page__tabs {
   display: flex;
-  gap: 24px;
-  border-bottom: 2px solid transparent;
+  gap: 16px;
+  align-items: center;
 }
 
 .receipt-list-page__tab {
   background: none;
   border: none;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 8px 0;
-  border-bottom: 2px solid transparent;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.receipt-list-page__tab:hover:not(.receipt-list-page__tab--active) {
+  color: var(--primary-color);
+  background-color: var(--control-bg-hover);
 }
 
 .receipt-list-page__tab--active {
-  color: var(--primary-color);
-  border-bottom-color: var(--primary-color);
+  background-color: #d1f391; /* Verde claro similar ao mockup */
+  color: #2e4a06; /* Contraste para leitura */
 }
 
+/* Botão de Filtros direito */
+.receipt-list-page__btn-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.receipt-list-page__btn-filters:hover {
+  color: var(--primary-color);
+}
+
+/* Container da Tabela */
 .receipt-list-page__table-container {
-  background-color: var(--color-surface);
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-card);
-  overflow: hidden;
+  width: 100%;
 }
 
 .receipt-list-page__table-scroll {
@@ -113,46 +118,105 @@
 .receipt-list-page__table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1000px;
+  min-width: 1200px; /* Garante que os inputs não sejam esmagados */
 }
 
 .receipt-list-page__table th {
   background-color: var(--background-color);
-  color: var(--text-secondary);
-  font-weight: 600;
-  text-align: left;
   padding: 12px 16px;
   border-bottom: 1px solid var(--border-color);
+  vertical-align: top;
 }
 
-.receipt-list-page__header-cell {
+.receipt-list-page__column-header {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  min-height: 20px;
 }
 
-.receipt-list-page__header-cell input,
-.receipt-list-page__header-cell select {
-  width: 100%;
-  padding: 6px 8px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+.receipt-list-page__column-header--sortable {
+  cursor: pointer;
+}
+.receipt-list-page__column-header--sortable:hover {
+  color: var(--primary-color);
+}
+
+.receipt-list-page__sort-icon {
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+.receipt-list-page__column-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.receipt-list-page__column-filter input,
+.receipt-list-page__column-filter select {
+  flex: 1;
+  min-width: 0; /* Previne estourar container flex */
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 16px;
   background-color: var(--color-surface);
   font-size: 13px;
   color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* leve destaque similar ao mockup */
 }
 
-.receipt-list-page__header-cell input:focus,
-.receipt-list-page__header-cell select:focus {
+.receipt-list-page__column-filter input:focus,
+.receipt-list-page__column-filter select:focus {
   outline: 2px solid var(--color-focus);
   outline-offset: -1px;
 }
 
+/* Botões de Ação do Filtro */
+.receipt-list-page__filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.receipt-list-page__filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  opacity: 0.8;
+}
+
+.receipt-list-page__filter-btn:hover {
+  opacity: 1;
+}
+
+.receipt-list-page__filter-btn--apply {
+  background-color: var(--success-color);
+}
+
+.receipt-list-page__filter-btn--clear {
+  background-color: #ef4444; /* Vermelho claro */
+}
+
+/* Linhas da Tabela */
 .receipt-list-page__table td {
-  padding: 12px 16px;
+  padding: 16px;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
   vertical-align: middle;
 }
 
@@ -161,7 +225,7 @@
 }
 
 .receipt-list-page__table tr:hover {
-  background-color: var(--control-bg-hover);
+  background-color: var(--background-color);
 }
 
 .receipt-list-page__status {
@@ -173,10 +237,15 @@
 
 .receipt-list-page__status--paid {
   color: var(--success-color);
+  background-color: #e6f6ec;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
 }
 
 .receipt-list-page__status--pending {
-  color: var(--color-accent);
+  color: var(--border-color); /* Circulo vazio cinza */
+  font-size: 20px;
 }
 
 .receipt-list-page__actions-cell {
@@ -195,19 +264,18 @@
 
 .receipt-list-page__btn-actions:hover,
 .receipt-list-page__btn-actions:focus {
-  background-color: var(--border-color);
   color: var(--text-primary);
 }
 
 /* Menu de Ações (Dropdown) */
 .receipt-list-page__dropdown {
   position: absolute;
-  right: 16px;
+  right: 24px;
   top: 40px;
   background-color: var(--color-surface);
   border: 1px solid var(--border-color);
-  border-radius: 4px;
-  box-shadow: var(--shadow-card-strong);
+  border-radius: 8px;
+  box-shadow: var(--shadow-elevated);
   z-index: 10;
   min-width: 180px;
   display: flex;
@@ -220,7 +288,7 @@
   border: none;
   text-align: left;
   padding: 8px 16px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-primary);
   cursor: pointer;
   width: 100%;
@@ -228,7 +296,7 @@
 
 .receipt-list-page__dropdown-item:hover,
 .receipt-list-page__dropdown-item:focus {
-  background-color: var(--control-bg-hover);
+  background-color: var(--background-color);
   color: var(--primary-color);
   outline: none;
 }
@@ -254,38 +322,46 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 16px 32px;
   border-top: 1px solid var(--border-color);
-  background-color: var(--background-color);
+  background-color: var(--background-color); /* Similar ao layout da imagem na base */
 }
 
 .receipt-list-page__pagination-info {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-secondary);
 }
 
 .receipt-list-page__pagination-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
+.receipt-list-page__pagination-arrow,
 .receipt-list-page__pagination-btn {
-  background-color: var(--color-surface);
-  border: 1px solid var(--border-color);
+  background: none;
+  border: none;
   color: var(--text-secondary);
   border-radius: 4px;
-  padding: 6px 12px;
+  padding: 6px;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
 }
 
-.receipt-list-page__pagination-btn:disabled {
+.receipt-list-page__pagination-arrow:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.receipt-list-page__pagination-btn:not(:disabled):hover {
+.receipt-list-page__pagination-arrow:not(:disabled):hover,
+.receipt-list-page__pagination-btn:hover {
   background-color: var(--control-bg-hover);
   color: var(--primary-color);
 }
@@ -293,7 +369,7 @@
 .receipt-list-page__pagination-btn--active {
   background-color: var(--primary-color);
   color: #fff;
-  border-color: var(--primary-color);
+  border-radius: 8px; /* Quadrado arredondado na imagem */
 }
 .receipt-list-page__pagination-btn--active:hover {
   background-color: var(--primary-hover-color);
