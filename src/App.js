@@ -22,6 +22,8 @@ import CustomersListPage from "./home/pages/customers/CustomersListPage.jsx";
 import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx";
 import ProductsListPage from "./home/pages/products/ProductsListPage";
 
+import ListagemDespesas from "./finance/pages/expenselist/ExpenseList.jsx";
+
 import ServicesListPage from "./home/pages/services/ServicesListPage.jsx";
 import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 
@@ -71,6 +73,8 @@ function App() {
             />
             <Route path={AppRoutes.Servicos} element={<ServicesListPage />} />
             <Route path={AppRoutes.Pedidos} element={<OrdersListPage />} />
+
+            <Route path={AppRoutes.ListagemDespesas} element={<ListagemDespesas />} />
 
             <Route
               path={AppRoutes.ApplyDiscounts}
