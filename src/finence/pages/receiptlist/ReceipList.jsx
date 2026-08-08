@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { FaChevronLeft, FaChevronRight, FaFilter, FaSearch, FaEllipsisV, FaCheck, FaRegCircle, FaExclamationTriangle, FaSort, FaTimes } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaFilter, FaSearch, FaEllipsisV, FaCheck, FaRegCircle, FaExclamationTriangle, FaSort, FaTimes, FaInfoCircle } from "react-icons/fa";
 import { receivablesMockData } from "./receivablesMock";
 import { applyReceivablesFilters } from "./receivablesFilters";
+import { formatCurrency } from "../../../utils/maskUtils";
 import Modal from "../../../global/components/modal/Modal";
 import EmptyState from "../../../global/components/lists/EmptyState";
 import "./ReceiptList.css";
@@ -14,11 +15,11 @@ const MONTHS = [
 const ReceipList = () => {
   const [data, setData] = useState([...receivablesMockData]);
   
-  // Período - Mês inicial fixo em Maio/2026 para corresponder aos mocks e à referência
+  // Período
   const [currentMonth, setCurrentMonth] = useState(5); // 1-12
   const [currentYear, setCurrentYear] = useState(2026);
 
-  // Filtros - Rascunho (o que está sendo digitado) e Aplicados (o que filtra a tabela)
+  // Filtros - Rascunho e Aplicados
   const initialFilters = {
     date: "",
     description: "",
@@ -39,14 +40,17 @@ const ReceipList = () => {
 
   // Ações menu e Modal
   const [activeMenuId, setActiveMenuId] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const menuRef = useRef(null);
+  const tableContainerRef = useRef(null);
+  
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 
-  // Ordenação básica para manter o componente interativo e os ícones funcionais
+  // Ordenação
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
-  // Fechar menu ao clicar fora ou apertar Escape
+  // Fechar menu ao clicar fora ou apertar Escape ou fazer scroll
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -60,14 +64,28 @@ const ReceipList = () => {
       }
     };
 
+    const handleScroll = () => {
+      if (activeMenuId !== null) {
+        setActiveMenuId(null);
+      }
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleKeyDown);
+    
+    const tableEl = tableContainerRef.current;
+    if (tableEl) {
+      tableEl.addEventListener("scroll", handleScroll);
+    }
     
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
+      if (tableEl) {
+        tableEl.removeEventListener("scroll", handleScroll);
+      }
     };
-  }, []);
+  }, [activeMenuId]);
 
   const handlePrevMonth = () => {
     if (currentMonth === 1) {
@@ -93,14 +111,18 @@ const ReceipList = () => {
     setDraftFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  const applyFilter = (key) => {
-    setAppliedFilters((prev) => ({ ...prev, [key]: draftFilters[key] }));
+  const handleDraftChangeCurrency = (key, value) => {
+    setDraftFilters((prev) => ({ ...prev, [key]: formatCurrency(value) }));
+  };
+
+  const applyAllFilters = () => {
+    setAppliedFilters({ ...draftFilters });
     setCurrentPage(1);
   };
 
-  const clearFilter = (key) => {
-    setDraftFilters((prev) => ({ ...prev, [key]: "" }));
-    setAppliedFilters((prev) => ({ ...prev, [key]: "" }));
+  const clearAllFilters = () => {
+    setDraftFilters({ ...initialFilters });
+    setAppliedFilters({ ...initialFilters });
     setCurrentPage(1);
   };
 
@@ -158,11 +180,11 @@ const ReceipList = () => {
     return pages;
   };
 
-  const formatCurrency = (value) => {
+  const formatCurrencyLabel = (value) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
-  const formatDate = (dateStr) => {
+  const formatDateLabel = (dateStr) => {
     if (!dateStr) return "";
     const [year, month, day] = dateStr.split("-");
     return `${day}/${month}/${year}`;
@@ -171,7 +193,16 @@ const ReceipList = () => {
   // Ações
   const openMenu = (id, event) => {
     event.stopPropagation();
-    setActiveMenuId(activeMenuId === id ? null : id);
+    if (activeMenuId === id) {
+      setActiveMenuId(null);
+    } else {
+      const rect = event.currentTarget.getBoundingClientRect();
+      setMenuPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left - 150 + window.scrollX // Adjust for menu width so it doesn't spill off screen
+      });
+      setActiveMenuId(id);
+    }
   };
 
   const handleDeleteClick = (item) => {
@@ -189,7 +220,7 @@ const ReceipList = () => {
   };
 
   const handleDuplicateClick = (item) => {
-    const newItem = { ...item, id: Date.now(), date: item.date }; // Mock duplication
+    const newItem = { ...item, id: Date.now(), date: item.date };
     setData((prev) => [newItem, ...prev]);
     setActiveMenuId(null);
   };
@@ -198,76 +229,30 @@ const ReceipList = () => {
     setActiveMenuId(null);
   };
 
-  // Componente de coluna de filtro
-  const FilterColumn = ({ label, fieldKey, type = "text", options = [], sortable = true }) => {
-    return (
-      <th>
-        <div 
-          className={`receipt-list-page__column-header ${sortable ? 'receipt-list-page__column-header--sortable' : ''}`}
-          onClick={sortable ? () => handleSort(fieldKey) : undefined}
-          role={sortable ? "button" : undefined}
-          tabIndex={sortable ? 0 : undefined}
-        >
-          <span>{label}</span>
-          {sortable && <FaSort className="receipt-list-page__sort-icon" />}
-        </div>
-        <div className="receipt-list-page__column-filter">
-          {type === "select" ? (
-            <select 
-              value={draftFilters[fieldKey]} 
-              onChange={(e) => handleDraftChange(fieldKey, e.target.value)}
-              aria-label={`Filtro rascunho de ${label}`}
-            >
-              <option value=""></option>
-              {options.map(opt => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
-          ) : type === "date" ? (
-            <input 
-              type="date" 
-              value={draftFilters[fieldKey]} 
-              onChange={(e) => handleDraftChange(fieldKey, e.target.value)} 
-              aria-label={`Filtro rascunho de ${label}`}
-            />
-          ) : (
-            <input 
-              type="text" 
-              value={draftFilters[fieldKey]} 
-              onChange={(e) => handleDraftChange(fieldKey, e.target.value)}
-              aria-label={`Filtro rascunho de ${label}`}
-            />
-          )}
-          
-          <div className="receipt-list-page__filter-actions">
-            <button 
-              className="receipt-list-page__filter-btn receipt-list-page__filter-btn--apply"
-              onClick={() => applyFilter(fieldKey)}
-              aria-label={`Aplicar filtro de ${label}`}
-              title="Confirmar filtro"
-            >
-              <FaCheck size={10} />
-            </button>
-            <button 
-              className="receipt-list-page__filter-btn receipt-list-page__filter-btn--clear"
-              onClick={() => clearFilter(fieldKey)}
-              aria-label={`Limpar filtro de ${label}`}
-              title="Limpar filtro"
-            >
-              <FaTimes size={10} />
-            </button>
-          </div>
-        </div>
-      </th>
-    );
-  };
+  // Opções dos selects
+  const categoryOptions = ["Ordem de Serviço", "Mensalidade", "Vendas", "Consultoria", "Contrato", "Treinamento", "Serviço Avulso", "Projeto"];
+  const paymentTypeOptions = ["À vista", "Parcelado", "Recorrente"];
+  const paymentMethodOptions = ["Indefinido", "Boleto", "Carteira Digital", "Cartão Pré-pago", "Cartão de Crédito", "Cartão de Débito", "Cheque", "Criptomoeda", "Depósito Bancário", "Pix", "Dinheiro", "Transferência"];
 
   return (
     <div className="receipt-list-page">
       <div className="receipt-list-page__card">
+        
+        {/* Topo: Título FINANCEIRO */}
+        <div className="receipt-list-page__top-section">
+          <div className="receipt-list-page__title-group">
+            <h1 className="receipt-list-page__title">FINANCEIRO</h1>
+            <div className="receipt-list-page__tooltip-trigger" tabIndex={0} aria-label="Informações do Financeiro">
+              <FaInfoCircle className="receipt-list-page__info-icon" />
+              <div className="receipt-list-page__tooltip" role="tooltip">
+                Gerencie recebimentos, despesas e transferências financeiras da empresa.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Controles: Meses e Abas */}
         <header className="receipt-list-page__header">
-          <h1 className="receipt-list-page__title">FINANCEIRO</h1>
-          
           <div className="receipt-list-page__header-controls">
             <div className="receipt-list-page__month-selector">
               <button onClick={handlePrevMonth} aria-label="Mês anterior">
@@ -299,71 +284,132 @@ const ReceipList = () => {
           </div>
         </header>
 
+        {/* Tabela */}
         <main className="receipt-list-page__table-container">
-          <div className="receipt-list-page__table-scroll">
+          <div className="receipt-list-page__table-scroll" ref={tableContainerRef}>
             <table className="receipt-list-page__table">
               <thead>
                 <tr>
-                  <FilterColumn label="Data" fieldKey="date" type="date" sortable={false} />
-                  <FilterColumn label="Descrição" fieldKey="description" />
-                  <FilterColumn label="Recebido de" fieldKey="client" />
-                  <FilterColumn 
-                    label="Categoria" 
-                    fieldKey="category" 
-                    type="select" 
-                    options={[
-                      {value: "Ordem de Serviço", label: "Ordem de Serviço"},
-                      {value: "Mensalidade", label: "Mensalidade"},
-                      {value: "Vendas", label: "Vendas"},
-                      {value: "Consultoria", label: "Consultoria"},
-                      {value: "Contrato", label: "Contrato"},
-                      {value: "Treinamento", label: "Treinamento"},
-                      {value: "Serviço Avulso", label: "Serviço Avulso"},
-                      {value: "Projeto", label: "Projeto"}
-                    ]} 
-                  />
-                  <FilterColumn label="Valor" fieldKey="value" />
-                  <FilterColumn 
-                    label="Tipo de pagamento" 
-                    fieldKey="paymentType" 
-                    type="select"
-                    options={[
-                      {value: "À vista", label: "À vista"},
-                      {value: "Parcelado", label: "Parcelado"},
-                      {value: "Recorrente", label: "Recorrente"}
-                    ]} 
-                  />
-                  <FilterColumn 
-                    label="Modo de pagamento" 
-                    fieldKey="paymentMethod" 
-                    type="select"
-                    options={[
-                      {value: "Indefinido", label: "Indefinido"},
-                      {value: "Boleto", label: "Boleto"},
-                      {value: "Carteira Digital", label: "Carteira Digital"},
-                      {value: "Cartão Pré-pago", label: "Cartão Pré-pago"},
-                      {value: "Cartão de Crédito", label: "Cartão de Crédito"},
-                      {value: "Cartão de Débito", label: "Cartão de Débito"},
-                      {value: "Cheque", label: "Cheque"},
-                      {value: "Criptomoeda", label: "Criptomoeda"},
-                      {value: "Depósito Bancário", label: "Depósito Bancário"},
-                      {value: "Pix", label: "Pix"},
-                      {value: "Dinheiro", label: "Dinheiro"},
-                      {value: "Transferência", label: "Transferência"}
-                    ]} 
-                  />
-                  <FilterColumn 
-                    label="Pago?" 
-                    fieldKey="paid" 
-                    type="select"
-                    sortable={false}
-                    options={[
-                      {value: "true", label: "Pago"},
-                      {value: "false", label: "Pendente"}
-                    ]} 
-                  />
-                  <th style={{ width: "60px" }}>
+                  {/* Data */}
+                  <th>
+                    <div className="receipt-list-page__column-header">
+                      <span>Data</span>
+                    </div>
+                    <div className="receipt-list-page__column-filter">
+                      <input type="date" value={draftFilters.date} onChange={(e) => handleDraftChange("date", e.target.value)} aria-label="Filtro de Data" />
+                    </div>
+                  </th>
+                  
+                  {/* Descrição */}
+                  <th>
+                    <div className="receipt-list-page__column-header receipt-list-page__column-header--sortable" onClick={() => handleSort("description")} role="button" tabIndex={0}>
+                      <span>Descrição</span>
+                      <FaSort className="receipt-list-page__sort-icon" />
+                    </div>
+                    <div className="receipt-list-page__column-filter">
+                      <input type="text" value={draftFilters.description} onChange={(e) => handleDraftChange("description", e.target.value)} aria-label="Filtro de Descrição" />
+                    </div>
+                  </th>
+
+                  {/* Recebido de */}
+                  <th>
+                    <div className="receipt-list-page__column-header receipt-list-page__column-header--sortable" onClick={() => handleSort("client")} role="button" tabIndex={0}>
+                      <span>Recebido de</span>
+                      <FaSort className="receipt-list-page__sort-icon" />
+                    </div>
+                    <div className="receipt-list-page__column-filter">
+                      <input type="text" value={draftFilters.client} onChange={(e) => handleDraftChange("client", e.target.value)} aria-label="Filtro de Cliente" />
+                    </div>
+                  </th>
+
+                  {/* Categoria */}
+                  <th>
+                    <div className="receipt-list-page__column-header receipt-list-page__column-header--sortable" onClick={() => handleSort("category")} role="button" tabIndex={0}>
+                      <span>Categoria</span>
+                      <FaSort className="receipt-list-page__sort-icon" />
+                    </div>
+                    <div className="receipt-list-page__column-filter">
+                      <select value={draftFilters.category} onChange={(e) => handleDraftChange("category", e.target.value)} aria-label="Filtro de Categoria">
+                        <option value=""></option>
+                        {categoryOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                      </select>
+                    </div>
+                  </th>
+
+                  {/* Valor */}
+                  <th>
+                    <div className="receipt-list-page__column-header receipt-list-page__column-header--sortable" onClick={() => handleSort("value")} role="button" tabIndex={0}>
+                      <span>Valor</span>
+                      <FaSort className="receipt-list-page__sort-icon" />
+                    </div>
+                    <div className="receipt-list-page__column-filter">
+                      <input type="text" placeholder="R$ 0,00" value={draftFilters.value} onChange={(e) => handleDraftChangeCurrency("value", e.target.value)} aria-label="Filtro de Valor" />
+                    </div>
+                  </th>
+
+                  {/* Tipo de pagamento */}
+                  <th>
+                    <div className="receipt-list-page__column-header receipt-list-page__column-header--sortable" onClick={() => handleSort("paymentType")} role="button" tabIndex={0}>
+                      <span>Tipo pagamento</span>
+                      <FaSort className="receipt-list-page__sort-icon" />
+                    </div>
+                    <div className="receipt-list-page__column-filter">
+                      <select value={draftFilters.paymentType} onChange={(e) => handleDraftChange("paymentType", e.target.value)} aria-label="Filtro de Tipo de pagamento">
+                        <option value=""></option>
+                        {paymentTypeOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                      </select>
+                    </div>
+                  </th>
+
+                  {/* Modo de pagamento */}
+                  <th>
+                    <div className="receipt-list-page__column-header receipt-list-page__column-header--sortable" onClick={() => handleSort("paymentMethod")} role="button" tabIndex={0}>
+                      <span>Modo pagamento</span>
+                      <FaSort className="receipt-list-page__sort-icon" />
+                    </div>
+                    <div className="receipt-list-page__column-filter">
+                      <select value={draftFilters.paymentMethod} onChange={(e) => handleDraftChange("paymentMethod", e.target.value)} aria-label="Filtro de Modo de pagamento">
+                        <option value=""></option>
+                        {paymentMethodOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                      </select>
+                    </div>
+                  </th>
+
+                  {/* Pago? */}
+                  <th>
+                    <div className="receipt-list-page__column-header">
+                      <span>Pago?</span>
+                    </div>
+                    <div className="receipt-list-page__column-filter">
+                      <select value={draftFilters.paid} onChange={(e) => handleDraftChange("paid", e.target.value)} aria-label="Filtro de Pago">
+                        <option value=""></option>
+                        <option value="true">Pago</option>
+                        <option value="false">Pendente</option>
+                      </select>
+                    </div>
+                  </th>
+
+                  {/* Coluna Ações (Filtros Globais) */}
+                  <th style={{ width: "80px" }}>
                     <div className="receipt-list-page__column-header"></div>
+                    <div className="receipt-list-page__column-filter receipt-list-page__global-filter-actions">
+                      <button 
+                        className="receipt-list-page__filter-btn receipt-list-page__filter-btn--apply"
+                        onClick={applyAllFilters}
+                        aria-label="Aplicar todos os filtros"
+                        title="Aplicar filtros"
+                      >
+                        <FaCheck size={10} />
+                      </button>
+                      <button 
+                        className="receipt-list-page__filter-btn receipt-list-page__filter-btn--clear"
+                        onClick={clearAllFilters}
+                        aria-label="Limpar todos os filtros"
+                        title="Limpar filtros"
+                      >
+                        <FaTimes size={10} />
+                      </button>
+                    </div>
                   </th>
                 </tr>
               </thead>
@@ -385,11 +431,11 @@ const ReceipList = () => {
                 ) : (
                   paginatedData.map((item) => (
                     <tr key={item.id}>
-                      <td>{formatDate(item.date)}</td>
+                      <td>{formatDateLabel(item.date)}</td>
                       <td>{item.description}</td>
                       <td>{item.client}</td>
                       <td>{item.category}</td>
-                      <td style={{ fontWeight: 600 }}>{formatCurrency(item.value)}</td>
+                      <td style={{ fontWeight: 600 }}>{formatCurrencyLabel(item.value)}</td>
                       <td>{item.paymentType}</td>
                       <td>{item.paymentMethod}</td>
                       <td style={{ textAlign: "center" }}>
@@ -413,23 +459,6 @@ const ReceipList = () => {
                         >
                           <FaEllipsisV />
                         </button>
-                        
-                        {activeMenuId === item.id && (
-                          <div className="receipt-list-page__dropdown" ref={menuRef} role="menu">
-                            <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Gerar recibo</button>
-                            <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Editar detalhes</button>
-                            <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Detalhar valor</button>
-                            <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Anexos</button>
-                            <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={() => handleDuplicateClick(item)}>Duplicar</button>
-                            <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Mover para ...</button>
-                            <div className="receipt-list-page__dropdown-divider" />
-                            <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Tornar recorrente...</button>
-                            <div className="receipt-list-page__dropdown-divider" />
-                            <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Parcelar...</button>
-                            <div className="receipt-list-page__dropdown-divider" />
-                            <button className="receipt-list-page__dropdown-item receipt-list-page__dropdown-item--danger" role="menuitem" onClick={() => handleDeleteClick(item)}>Excluir</button>
-                          </div>
-                        )}
                       </td>
                     </tr>
                   ))
@@ -478,6 +507,29 @@ const ReceipList = () => {
           )}
         </main>
       </div>
+
+      {/* Dropdown Menu rendered absolutely on top of everything */}
+      {activeMenuId && (
+        <div 
+          className="receipt-list-page__dropdown-portal" 
+          ref={menuRef} 
+          role="menu"
+          style={{ top: menuPosition.top, left: menuPosition.left }}
+        >
+          <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Gerar recibo</button>
+          <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Editar detalhes</button>
+          <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Detalhar valor</button>
+          <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Anexos</button>
+          <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={() => handleDuplicateClick(data.find(i => i.id === activeMenuId))}>Duplicar</button>
+          <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Mover para ...</button>
+          <div className="receipt-list-page__dropdown-divider" />
+          <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Tornar recorrente...</button>
+          <div className="receipt-list-page__dropdown-divider" />
+          <button className="receipt-list-page__dropdown-item" role="menuitem" onClick={genericAction}>Parcelar...</button>
+          <div className="receipt-list-page__dropdown-divider" />
+          <button className="receipt-list-page__dropdown-item receipt-list-page__dropdown-item--danger" role="menuitem" onClick={() => handleDeleteClick(data.find(i => i.id === activeMenuId))}>Excluir</button>
+        </div>
+      )}
 
       <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
         <div style={{ textAlign: "center", padding: "24px 0" }}>

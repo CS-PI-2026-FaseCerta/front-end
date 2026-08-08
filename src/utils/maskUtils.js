@@ -107,3 +107,13 @@ export const isValidCEP = (cep) => {
   const strCEP = cep.replace(/\D/g, "");
   return strCEP.length === 8;
 };
+
+export const formatCurrency = (value) => {
+  if (!value) return "";
+  let v = value.toString().replace(/\D/g, "");
+  if (v === "") return "";
+  v = (parseInt(v, 10) / 100).toFixed(2);
+  v = v.replace(".", ",");
+  v = v.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+  return `R$ ${v}`;
+};
