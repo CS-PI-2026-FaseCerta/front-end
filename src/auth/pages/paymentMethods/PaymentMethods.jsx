@@ -53,7 +53,7 @@ export default function PaymentMethods() {
                         <div className="form-checkbox-group">
                             {PAYMENT_METHODS.map((method) => (
                                 <label key={method.id} className="payment-method-options">
-                                    <span className="payment-method-label">{method.label}</span>
+                                    <span className="form-label">{method.label}</span>
                                     <input type="checkbox" checked={selectedMethods.includes(method.id)} onChange={() => toggleMethod(method.id)} />
                                 </label>
                             ))}
