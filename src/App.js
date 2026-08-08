@@ -31,6 +31,8 @@ import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 
 import ApplyDiscounts from "./home/components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
 
+import ReceipList from "./finence/pages/receiptlist/ReceipList.jsx";
+
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
 function App() {
@@ -139,13 +141,7 @@ function App() {
               path={AppRoutes.Financeiro}
               element={
                 <ProtectedRoute allowedProfiles={["gestor"]} redirectTo="/">
-                  <SectionPage
-                    eyebrow="Financeiro"
-                    title="Financeiro"
-                    description="Área restrita para gestores."
-                    ctaLabel="Voltar ao painel"
-                    ctaPath="/dashboard"
-                  />
+                  <ReceipList />
                 </ProtectedRoute>
               }
             />
