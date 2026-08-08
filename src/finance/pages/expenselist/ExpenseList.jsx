@@ -1,4 +1,4 @@
-// ExpenseList v2 — filtros aplicáveis + calculadora + menus em portal
+// ExpenseList v4 — fundo global do tema sem overlay e footer preservado
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -25,7 +25,9 @@ import {
   FaTimes,
   FaTrash,
 } from "react-icons/fa";
-import "./ExpenseList.css";
+import './ExpenseList.css';
+
+import Footer from "../../../global/components/Footer/Footer.jsx";
 
 const MONTHS = [
   "JAN",
@@ -1236,50 +1238,8 @@ const ExpenseList = ({
                 </tbody>
               </table>
             </div>
-
-            <footer className="expense-list__footer">
-              <p>
-                Mostrando <strong>{visibleRows.length}</strong> de <strong>{filteredRows.length}</strong> despesas
-              </p>
-
-              <div className="expense-list__pagination" aria-label="Paginação de despesas">
-                <button
-                  type="button"
-                  onClick={() => setPage((current) => Math.max(1, current - 1))}
-                  disabled={safePage <= 1}
-                  aria-label="Página anterior"
-                >
-                  <FaChevronLeft aria-hidden="true" />
-                </button>
-
-                {visiblePages.map((pageNumber, index) => {
-                  const previous = visiblePages[index - 1];
-                  const showGap = previous && pageNumber - previous > 1;
-                  return (
-                    <React.Fragment key={pageNumber}>
-                      {showGap ? <span className="expense-list__page-gap">…</span> : null}
-                      <button
-                        type="button"
-                        className={safePage === pageNumber ? "is-active" : ""}
-                        onClick={() => setPage(pageNumber)}
-                        aria-current={safePage === pageNumber ? "page" : undefined}
-                      >
-                        {pageNumber}
-                      </button>
-                    </React.Fragment>
-                  );
-                })}
-
-                <button
-                  type="button"
-                  onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
-                  disabled={safePage >= totalPages}
-                  aria-label="Próxima página"
-                >
-                  <FaChevronRight aria-hidden="true" />
-                </button>
-              </div>
-            </footer>
+            
+            <Footer/>
           </div>
         </div>
       </section>
