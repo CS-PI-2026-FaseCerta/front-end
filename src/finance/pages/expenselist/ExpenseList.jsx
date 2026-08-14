@@ -45,6 +45,7 @@ const MONTHS = [
 ];
 
 const PAYMENT_TYPES = ["À vista", "Parcelado", "Recorrente"];
+const PAGE_SIZE_OPTIONS = [4, 10, 20, 50];
 const PAYMENT_MODES = [
   "Boleto",
   "Carteira Digital",
@@ -314,6 +315,7 @@ const ExpenseList = ({
   expenses = DEMO_EXPENSES,
   initialMonth = "2026-05-01",
   pageSize = 4,
+  pageSizeOptions = PAGE_SIZE_OPTIONS,
   onMonthChange,
   onTabChange,
   onOpenAdvancedFilters,
@@ -330,6 +332,12 @@ const ExpenseList = ({
   const [rows, setRows] = useState(() => expenses.map((item) => ({ ...item })));
   const [month, setMonth] = useState(() => parseMonth(initialMonth));
   const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(() => {
+    const parsedPageSize = Number(pageSize);
+    return Number.isFinite(parsedPageSize) && parsedPageSize > 0
+      ? Math.floor(parsedPageSize)
+      : 4;
+  });
   const [sort, setSort] = useState({ key: "date", direction: "asc" });
   const [menuRowId, setMenuRowId] = useState(null);
   const [menuPosition, setMenuPosition] = useState(null);
@@ -375,6 +383,14 @@ const ExpenseList = ({
   useEffect(() => {
     setRows(expenses.map((item) => ({ ...item })));
   }, [expenses]);
+
+  useEffect(() => {
+    const parsedPageSize = Number(pageSize);
+    if (!Number.isFinite(parsedPageSize) || parsedPageSize <= 0) return;
+
+    setRowsPerPage(Math.floor(parsedPageSize));
+    setPage(1);
+  }, [pageSize]);
 
   useEffect(() => {
     const closeMenu = (event) => {
@@ -565,11 +581,21 @@ const ExpenseList = ({
       });
   }, [advancedFilters, inlineFilters, month, rows, sort]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize));
+  const availablePageSizes = useMemo(() => {
+    const configuredOptions = Array.isArray(pageSizeOptions) ? pageSizeOptions : [];
+
+    return [...new Set([rowsPerPage, ...configuredOptions]
+      .map(Number)
+      .filter((value) => Number.isFinite(value) && value > 0)
+      .map(Math.floor))]
+      .sort((left, right) => left - right);
+  }, [pageSizeOptions, rowsPerPage]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
   const safePage = Math.min(page, totalPages);
   const visibleRows = filteredRows.slice(
-    (safePage - 1) * pageSize,
-    safePage * pageSize,
+    (safePage - 1) * rowsPerPage,
+    safePage * rowsPerPage,
   );
   const visiblePages = getVisiblePages(safePage, totalPages);
 
@@ -1239,9 +1265,76 @@ const ExpenseList = ({
               </table>
             </div>
             
-            <Footer/>
+            
           </div>
+
+          
         </div>
+
+        <footer className="expense-list__footer">
+          <div className="expense-list__footer-summary">
+            <p>
+              Mostrando <strong>{visibleRows.length}</strong> de <strong>{filteredRows.length}</strong> despesas
+            </p>
+
+            <label className="expense-list__page-size">
+              <span>Linhas por página</span>
+              <div className="expense-list__select-wrap">
+                <select
+                  value={rowsPerPage}
+                  onChange={(event) => {
+                    setRowsPerPage(Number(event.target.value));
+                    setPage(1);
+                  }}
+                  aria-label="Linhas por página"
+                >
+                  {availablePageSizes.map((size) => (
+                    <option key={size} value={size}>{size}</option>
+                  ))}
+                </select>
+                <FaChevronDown className="expense-list__select-chevron" aria-hidden="true" />
+              </div>
+            </label>
+          </div>
+
+          <div className="expense-list__pagination" aria-label="Paginação de despesas">
+            <button
+              type="button"
+              onClick={() => setPage((current) => Math.max(1, current - 1))}
+              disabled={safePage <= 1}
+              aria-label="Página anterior"
+            >
+              <FaChevronLeft aria-hidden="true" />
+            </button>
+
+            {visiblePages.map((pageNumber, index) => {
+              const previous = visiblePages[index - 1];
+              const showGap = previous && pageNumber - previous > 1;
+              return (
+                <React.Fragment key={pageNumber}>
+                  {showGap ? <span className="expense-list__page-gap">…</span> : null}
+                  <button
+                    type="button"
+                    className={safePage === pageNumber ? "is-active" : ""}
+                    onClick={() => setPage(pageNumber)}
+                    aria-current={safePage === pageNumber ? "page" : undefined}
+                  >
+                    {pageNumber}
+                  </button>
+                </React.Fragment>
+              );
+            })}
+
+            <button
+              type="button"
+              onClick={() => setPage((current) => Math.min(totalPages, current + 1))}
+              disabled={safePage >= totalPages}
+              aria-label="Próxima página"
+            >
+              <FaChevronRight aria-hidden="true" />
+            </button>
+          </div>
+        </footer>
       </section>
 
       {calculator.open && typeof document !== "undefined"

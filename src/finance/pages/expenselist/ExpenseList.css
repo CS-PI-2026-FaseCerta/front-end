@@ -870,6 +870,47 @@ body:has(.expense-list-page),
   color: var(--expense-text);
 }
 
+.expense-list__footer-summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.expense-list__page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--expense-muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.expense-list__page-size .expense-list__select-wrap {
+  min-width: 4.75rem;
+}
+
+.expense-list__page-size select {
+  width: 100%;
+  min-height: 2.35rem;
+  padding: 0 1.9rem 0 0.7rem;
+  border: 1px solid var(--expense-border-strong);
+  border-radius: 9px;
+  outline: none;
+  appearance: none;
+  background: var(--expense-surface-solid);
+  color: var(--expense-text);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.expense-list__page-size select:focus {
+  border-color: var(--expense-purple-light);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--expense-focus) 16%, transparent);
+}
+
 .expense-list__pagination {
   display: inline-flex;
   align-items: center;
@@ -1356,6 +1397,18 @@ body:has(.expense-list-page),
     align-items: flex-start;
     flex-direction: column;
     border-radius: 0 0 20px 20px;
+  }
+
+  .expense-list__footer-summary {
+    width: 100%;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .expense-list__page-size {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .expense-list__pagination {
