@@ -1,5 +1,5 @@
 // ExpenseList — tabela responsiva com paginação confirmada
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   FaBackspace,
@@ -433,6 +433,43 @@ const ExpenseList = ({
     };
   }, [menuRowId]);
 
+  useLayoutEffect(() => {
+    if (!menuRowId || !menuPosition || typeof document === "undefined") return;
+
+    const menuElement = document.querySelector(
+      ".expense-list__action-menu--portal[data-expense-row-menu]",
+    );
+    if (!menuElement) return;
+
+    const viewportPadding = 12;
+    const gap = 8;
+    const menuRect = menuElement.getBoundingClientRect();
+    const menuHeight = Math.min(menuRect.height, window.innerHeight - viewportPadding * 2);
+    const availableBelow =
+      window.innerHeight - menuPosition.triggerBottom - gap - viewportPadding;
+    const availableAbove = menuPosition.triggerTop - gap - viewportPadding;
+    const placeAbove =
+      availableAbove >= menuHeight ||
+      (availableAbove > availableBelow && availableBelow < menuHeight);
+
+    const idealTop = placeAbove
+      ? menuPosition.triggerTop - gap - menuHeight
+      : menuPosition.triggerBottom + gap;
+    const top = Math.max(
+      viewportPadding,
+      Math.min(idealTop, window.innerHeight - viewportPadding - menuHeight),
+    );
+
+    setMenuPosition((current) => {
+      if (!current) return current;
+      const nextPlacement = placeAbove ? "above" : "below";
+      if (Math.abs(current.top - top) < 0.5 && current.placement === nextPlacement) {
+        return current;
+      }
+      return { ...current, top, placement: nextPlacement };
+    });
+  }, [menuRowId, menuPosition?.triggerBottom, menuPosition?.triggerTop]);
+
   useEffect(() => {
     if (!calculator.open) return undefined;
 
@@ -814,11 +851,21 @@ const ExpenseList = ({
       ),
     );
 
+    const estimatedMenuHeight = Math.min(430, window.innerHeight - viewportPadding * 2);
+    const initialTop = placeAbove
+      ? triggerRect.top - gap - estimatedMenuHeight
+      : triggerRect.bottom + gap;
+
     setMenuRowId(expenseId);
     setMenuPosition({
       left,
-      top: placeAbove ? triggerRect.top - gap : triggerRect.bottom + gap,
+      top: Math.max(
+        viewportPadding,
+        Math.min(initialTop, window.innerHeight - viewportPadding - estimatedMenuHeight),
+      ),
       placement: placeAbove ? "above" : "below",
+      triggerTop: triggerRect.top,
+      triggerBottom: triggerRect.bottom,
     });
   };
 

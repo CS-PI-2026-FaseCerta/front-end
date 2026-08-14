@@ -752,10 +752,7 @@ body:has(.expense-list-page),
   overscroll-behavior: contain;
 }
 
-.expense-list__action-menu--portal.is-above {
-  transform: translateY(-100%);
-}
-
+.expense-list__action-menu--portal.is-above,
 .expense-list__action-menu--portal.is-below {
   transform: none;
 }
