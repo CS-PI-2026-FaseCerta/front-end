@@ -1,4 +1,4 @@
-// ExpenseList v4 — fundo global do tema sem overlay e footer preservado
+// ExpenseList — tabela responsiva com paginação confirmada
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -45,7 +45,6 @@ const MONTHS = [
 ];
 
 const PAYMENT_TYPES = ["À vista", "Parcelado", "Recorrente"];
-const PAGE_SIZE_OPTIONS = [4, 10, 20, 50];
 const PAYMENT_MODES = [
   "Boleto",
   "Carteira Digital",
@@ -315,7 +314,6 @@ const ExpenseList = ({
   expenses = DEMO_EXPENSES,
   initialMonth = "2026-05-01",
   pageSize = 4,
-  pageSizeOptions = PAGE_SIZE_OPTIONS,
   onMonthChange,
   onTabChange,
   onOpenAdvancedFilters,
@@ -338,6 +336,11 @@ const ExpenseList = ({
       ? Math.floor(parsedPageSize)
       : 4;
   });
+  const [rowsPerPageInput, setRowsPerPageInput] = useState(() => String(
+    Number.isFinite(Number(pageSize)) && Number(pageSize) > 0
+      ? Math.floor(Number(pageSize))
+      : 4,
+  ));
   const [sort, setSort] = useState({ key: "date", direction: "asc" });
   const [menuRowId, setMenuRowId] = useState(null);
   const [menuPosition, setMenuPosition] = useState(null);
@@ -388,7 +391,9 @@ const ExpenseList = ({
     const parsedPageSize = Number(pageSize);
     if (!Number.isFinite(parsedPageSize) || parsedPageSize <= 0) return;
 
-    setRowsPerPage(Math.floor(parsedPageSize));
+    const normalizedPageSize = Math.floor(parsedPageSize);
+    setRowsPerPage(normalizedPageSize);
+    setRowsPerPageInput(String(normalizedPageSize));
     setPage(1);
   }, [pageSize]);
 
@@ -503,11 +508,19 @@ const ExpenseList = ({
         ) {
           return false;
         }
-        if (
-          inlineFilters.value &&
-          !String(row.value).includes(String(inlineFilters.value).replace(",", "."))
-        ) {
-          return false;
+        if (inlineFilters.value) {
+          const rawValueQuery = String(inlineFilters.value).trim().replace(/\s/g, "");
+          const normalizedValueQuery = rawValueQuery.includes(",")
+            ? rawValueQuery.replace(/\./g, "").replace(",", ".")
+            : rawValueQuery;
+          const numericRowValue = Number(row.value);
+          const valueCandidates = Number.isFinite(numericRowValue)
+            ? [String(numericRowValue), numericRowValue.toFixed(2)]
+            : [String(row.value ?? "")];
+
+          if (!valueCandidates.some((candidate) => candidate.includes(normalizedValueQuery))) {
+            return false;
+          }
         }
         if (
           inlineFilters.paymentType &&
@@ -581,16 +594,6 @@ const ExpenseList = ({
       });
   }, [advancedFilters, inlineFilters, month, rows, sort]);
 
-  const availablePageSizes = useMemo(() => {
-    const configuredOptions = Array.isArray(pageSizeOptions) ? pageSizeOptions : [];
-
-    return [...new Set([rowsPerPage, ...configuredOptions]
-      .map(Number)
-      .filter((value) => Number.isFinite(value) && value > 0)
-      .map(Math.floor))]
-      .sort((left, right) => left - right);
-  }, [pageSizeOptions, rowsPerPage]);
-
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
   const safePage = Math.min(page, totalPages);
   const visibleRows = filteredRows.slice(
@@ -598,6 +601,25 @@ const ExpenseList = ({
     safePage * rowsPerPage,
   );
   const visiblePages = getVisiblePages(safePage, totalPages);
+
+  const commitRowsPerPage = () => {
+    const normalizedInput = rowsPerPageInput.trim();
+
+    if (!/^\d+$/.test(normalizedInput)) {
+      setRowsPerPageInput(String(rowsPerPage));
+      return;
+    }
+
+    const parsedValue = Number(normalizedInput);
+    if (!Number.isSafeInteger(parsedValue) || parsedValue < 1) {
+      setRowsPerPageInput(String(rowsPerPage));
+      return;
+    }
+
+    setRowsPerPage(parsedValue);
+    setRowsPerPageInput(String(parsedValue));
+    setPage(1);
+  };
 
   useEffect(() => {
     if (page !== safePage) setPage(safePage);
@@ -1279,21 +1301,23 @@ const ExpenseList = ({
 
             <label className="expense-list__page-size">
               <span>Linhas por página</span>
-              <div className="expense-list__select-wrap">
-                <select
-                  value={rowsPerPage}
-                  onChange={(event) => {
-                    setRowsPerPage(Number(event.target.value));
-                    setPage(1);
-                  }}
-                  aria-label="Linhas por página"
-                >
-                  {availablePageSizes.map((size) => (
-                    <option key={size} value={size}>{size}</option>
-                  ))}
-                </select>
-                <FaChevronDown className="expense-list__select-chevron" aria-hidden="true" />
-              </div>
+              <input
+                type="number"
+                min="1"
+                step="1"
+                inputMode="numeric"
+                value={rowsPerPageInput}
+                onChange={(event) => setRowsPerPageInput(event.target.value)}
+                onBlur={commitRowsPerPage}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    commitRowsPerPage();
+                    event.currentTarget.blur();
+                  }
+                }}
+                aria-label="Linhas por página"
+              />
             </label>
           </div>
 
