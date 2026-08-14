@@ -31,7 +31,7 @@ import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 
 import ApplyDiscounts from "./home/components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
 
-import ReceipList from "./finence/pages/receiptlist/ReceipList.jsx";
+import ReceiptsList from "./finence/pages/receiptlist/ReceiptsList.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
@@ -141,7 +141,7 @@ function App() {
               path={AppRoutes.Financeiro}
               element={
                 <ProtectedRoute allowedProfiles={["gestor"]} redirectTo="/">
-                  <ReceipList />
+                  <ReceiptsList />
                 </ProtectedRoute>
               }
             />
