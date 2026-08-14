@@ -30,6 +30,7 @@ import DashboardLayout from "./global/components/layout/DashboardLayout.jsx";
 import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 
 import ApplyDiscounts from "./home/components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
+import TransfersList from "./finance/pages/transfersList/TransfersList.jsx";
 
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
@@ -146,6 +147,15 @@ function App() {
                     ctaLabel="Voltar ao painel"
                     ctaPath="/dashboard"
                   />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path={AppRoutes.FinanceiroTranferencias}
+              element={
+                <ProtectedRoute allowedProfiles={["gestor"]} redirectTo="/">
+                  <TransfersList />
                 </ProtectedRoute>
               }
             />
