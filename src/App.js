@@ -78,6 +78,11 @@ function App() {
               element={<ApplyDiscounts />}
             />
 
+            <Route 
+              path={AppRoutes.Financeiro}
+              element={<TransfersList />}
+            />
+
             {/* Módulos futuros / placeholders */}          
 
             <Route
@@ -136,29 +141,6 @@ function App() {
               />
             } />
 
-            <Route
-              path={AppRoutes.Financeiro}
-              element={
-                <ProtectedRoute allowedProfiles={["gestor"]} redirectTo="/">
-                  <SectionPage
-                    eyebrow="Financeiro"
-                    title="Financeiro"
-                    description="Área restrita para gestores."
-                    ctaLabel="Voltar ao painel"
-                    ctaPath="/dashboard"
-                  />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path={AppRoutes.FinanceiroTranferencias}
-              element={
-                <ProtectedRoute allowedProfiles={["gestor"]} redirectTo="/">
-                  <TransfersList />
-                </ProtectedRoute>
-              }
-            />
 
             <Route
               path={AppRoutes.FinanceiroDespesasNova}

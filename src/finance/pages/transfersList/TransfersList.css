@@ -1,0 +1,2305 @@
+.transfer-list-page,
+.transfer-list__action-menu--portal {
+    --transfer-surface: var(--list-shell-surface,
+            var(--color-surface));
+
+    --transfer-surface-solid:
+        var(--color-surface);
+
+    --transfer-soft: var(--list-card-muted-surface,
+            var(--color-surface-muted));
+
+    --transfer-filter:
+        var(--color-surface-muted);
+
+    --transfer-border: var(--list-border-soft,
+            var(--color-border));
+
+    --transfer-border-strong:
+        var(--color-border);
+
+    --transfer-text:
+        var(--color-text-primary);
+
+    --transfer-muted:
+        var(--color-text-secondary);
+
+    --transfer-purple:
+        var(--color-primary);
+
+    --transfer-purple-strong:
+        var(--color-primary-hover);
+
+    --transfer-red:
+        var(--error-color);
+
+    --transfer-green:
+        var(--success-color);
+
+    --transfer-focus:
+        var(--color-focus);
+
+    --transfer-hover: var(--list-hover-surface,
+            var(--color-surface-muted));
+
+    --transfer-danger-bg:
+        var(--error-bg);
+
+    --transfer-shadow:
+        var(--shadow-card);
+
+    --transfer-shadow-elevated:
+        var(--shadow-elevated);
+
+    --transfer-on-strong:
+        var(--color-surface);
+}
+
+
+[data-theme="dark"] .transfer-list-page,
+[data-theme="dark"] .transfer-list__action-menu--portal {
+    --transfer-on-strong:
+        var(--color-text-primary);
+}
+
+
+/* =========================================================
+   PÁGINA
+========================================================= */
+
+body:has(.transfer-list-page),
+#root:has(.transfer-list-page) {
+    background:
+        var(--list-page-bg, var(--color-bg));
+}
+
+
+.transfer-list-page {
+    --transfer-header-offset:
+        var(--app-header-height,
+            var(--header-height, 5.5rem));
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 0;
+
+    padding:
+        calc(var(--transfer-header-offset) + 1rem) clamp(0.75rem, 1.5vw, 1.5rem) 1rem;
+
+    box-sizing: border-box;
+
+    color: var(--transfer-text);
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+
+.transfer-list,
+.transfer-list * {
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CARD PRINCIPAL
+========================================================= */
+
+.transfer-list {
+    width: 100%;
+
+    margin: 0 auto;
+
+    border:
+        1px solid var(--transfer-border);
+
+    border-radius: 34px;
+
+    background:
+        var(--transfer-surface);
+
+    box-shadow:
+        var(--transfer-shadow);
+
+    overflow: visible;
+}
+
+
+/* =========================================================
+   TÍTULO
+========================================================= */
+
+.transfer-list__title-bar {
+    padding:
+        1.55rem 2rem 1.35rem;
+
+    border-bottom:
+        1px solid var(--transfer-border);
+}
+
+
+.transfer-list__title-bar>div {
+    display: grid;
+    gap: 0.25rem;
+}
+
+
+.transfer-list__eyebrow {
+    color:
+        var(--transfer-muted);
+
+    font-size:
+        0.72rem;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        0.14em;
+
+    text-transform:
+        uppercase;
+}
+
+
+.transfer-list__title-bar h1 {
+    margin: 0;
+
+    font-size:
+        clamp(1.45rem,
+            2.2vw,
+            2rem);
+
+    line-height: 1.1;
+
+    letter-spacing:
+        -0.025em;
+}
+
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.transfer-list__content {
+    padding:
+        1rem 1rem 0.9rem;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.transfer-list__toolbar {
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+        space-between;
+
+    gap: 1rem;
+
+    margin-bottom: 1rem;
+}
+
+
+.transfer-list__month-control {
+    display: inline-grid;
+
+    grid-template-columns:
+        2.25rem minmax(8rem, auto) 2.25rem;
+
+    align-items: center;
+
+    min-height:
+        2.6rem;
+
+    padding:
+        0.15rem;
+
+    border-radius:
+        999px;
+
+    background:
+        var(--transfer-soft);
+}
+
+
+.transfer-list__month-control button,
+.transfer-list__pagination button,
+.transfer-list__clear-inline,
+.transfer-list__apply-inline,
+.transfer-list__kebab,
+.transfer-list__icon-button {
+    border: 0;
+
+    background: transparent;
+
+    color: inherit;
+
+    font: inherit;
+
+    cursor: pointer;
+}
+
+
+.transfer-list__month-control button {
+    display: grid;
+
+    width: 2.25rem;
+
+    height: 2.25rem;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    color:
+        var(--transfer-muted);
+
+    transition:
+        background-color 160ms ease,
+        color 160ms ease;
+}
+
+
+.transfer-list__month-control button:hover,
+.transfer-list__month-control button:focus-visible {
+    background:
+        var(--transfer-hover);
+
+    color:
+        var(--transfer-purple);
+}
+
+
+.transfer-list__month-control strong {
+    padding:
+        0.52rem 1.05rem;
+
+    border-radius:
+        999px;
+
+    background:
+        var(--transfer-purple);
+
+    color:
+        var(--transfer-on-strong);
+
+    font-size:
+        0.92rem;
+
+    letter-spacing:
+        0.02em;
+
+    text-align: center;
+}
+
+
+.transfer-list__toolbar-right {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 1.35rem;
+}
+
+
+/* =========================================================
+   ABAS
+========================================================= */
+
+.transfer-list__tabs {
+    display: inline-flex;
+
+    align-items: center;
+
+    padding:
+        0.25rem;
+
+    border-radius:
+        999px;
+
+    background:
+        var(--transfer-soft);
+}
+
+
+.transfer-list__tabs button {
+    min-width:
+        9rem;
+
+    padding:
+        0.78rem 1.1rem;
+
+    border: 0;
+
+    border-radius:
+        999px;
+
+    background: transparent;
+
+    color:
+        var(--transfer-muted);
+
+    font: inherit;
+
+    font-weight:
+        700;
+
+    cursor: pointer;
+
+    transition:
+        background-color 160ms ease,
+        color 160ms ease;
+}
+
+
+.transfer-list__tabs button:hover,
+.transfer-list__tabs button:focus-visible {
+    background:
+        var(--transfer-hover);
+}
+
+
+.transfer-list__tabs button.is-active {
+    background:
+        var(--transfer-purple);
+
+    color:
+        var(--transfer-on-strong);
+
+    box-shadow:
+        0 7px 18px color-mix(in srgb,
+            var(--transfer-purple) 24%,
+            transparent);
+}
+
+
+/* =========================================================
+   BOTÃO FILTROS
+========================================================= */
+
+.transfer-list__filters-button {
+    position: relative;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 0.55rem;
+
+    min-height:
+        2.6rem;
+
+    padding:
+        0.65rem 0.8rem;
+
+    border: 0;
+
+    border-radius:
+        12px;
+
+    background: transparent;
+
+    color:
+        var(--transfer-muted);
+
+    font: inherit;
+
+    font-weight:
+        700;
+
+    cursor: pointer;
+}
+
+
+.transfer-list__filters-button:hover,
+.transfer-list__filters-button:focus-visible {
+    background:
+        var(--transfer-soft);
+
+    color:
+        var(--transfer-purple);
+}
+
+
+.transfer-list__filters-button i {
+    width:
+        0.48rem;
+
+    height:
+        0.48rem;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--transfer-purple);
+}
+
+
+/* =========================================================
+   TABELA
+========================================================= */
+
+.transfer-list__table-shell {
+    overflow: visible;
+
+    border-radius:
+        0 0 27px 27px;
+
+    background:
+        var(--transfer-surface-solid);
+}
+
+
+.transfer-list__table-scroll {
+    width: 100%;
+
+    max-width: 100%;
+
+    overflow-x: hidden;
+
+    overflow-y: hidden;
+}
+
+
+.transfer-list__table {
+    width: 100%;
+
+    min-width: 0;
+
+    border-collapse:
+        separate;
+
+    border-spacing: 0;
+
+    table-layout:
+        fixed;
+}
+
+
+/* 7 colunas */
+
+.transfer-list__table th:nth-child(1),
+.transfer-list__table td:nth-child(1) {
+    width: 9%;
+}
+
+
+.transfer-list__table th:nth-child(2),
+.transfer-list__table td:nth-child(2) {
+    width: 20%;
+}
+
+
+.transfer-list__table th:nth-child(3),
+.transfer-list__table td:nth-child(3) {
+    width: 17%;
+}
+
+
+.transfer-list__table th:nth-child(4),
+.transfer-list__table td:nth-child(4) {
+    width: 17%;
+}
+
+
+.transfer-list__table th:nth-child(5),
+.transfer-list__table td:nth-child(5) {
+    width: 12%;
+}
+
+
+.transfer-list__table th:nth-child(6),
+.transfer-list__table td:nth-child(6) {
+    width: 10%;
+}
+
+
+.transfer-list__table th:nth-child(7),
+.transfer-list__table td:nth-child(7) {
+    width: 7%;
+}
+
+
+.transfer-list__table th,
+.transfer-list__table td {
+    min-width: 0;
+
+    text-align: left;
+
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.transfer-list__header-row th {
+    height:
+        2.85rem;
+
+    padding:
+        0 0.6rem;
+
+    background:
+        color-mix(in srgb,
+            var(--transfer-surface-solid) 88%,
+            var(--transfer-soft));
+
+    color:
+        var(--transfer-text);
+
+    font-size:
+        0.82rem;
+
+    font-weight:
+        700;
+}
+
+
+.transfer-list__sort-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 0.2rem;
+
+    width: 100%;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+
+    color: inherit;
+
+    font: inherit;
+
+    font-weight: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+.transfer-list__sort-button span {
+    color:
+        var(--transfer-muted);
+
+    font-size:
+        0.78rem;
+}
+
+
+.transfer-list__sort-button span.is-sorted {
+    color:
+        var(--transfer-purple);
+}
+
+
+/* =========================================================
+   FILTROS INLINE
+========================================================= */
+
+.transfer-list__filter-row th {
+    position: relative;
+
+    z-index: 2;
+
+    padding:
+        0.5rem 0.4rem;
+
+    background:
+        var(--transfer-filter);
+}
+
+
+.transfer-list__filter-row input,
+.transfer-list__filter-row select {
+    width: 100%;
+
+    min-width: 0;
+
+    min-height:
+        2.6rem;
+
+    padding:
+        0 0.5rem;
+
+    border:
+        1px solid var(--transfer-border-strong);
+
+    border-radius:
+        8px;
+
+    outline: none;
+
+    background:
+        var(--transfer-surface-solid);
+
+    color:
+        var(--transfer-text);
+
+    font: inherit;
+
+    font-size:
+        0.82rem;
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+
+.transfer-list__filter-row input::placeholder {
+    color:
+        var(--transfer-muted);
+}
+
+
+.transfer-list__filter-row input:focus,
+.transfer-list__filter-row select:focus {
+    border-color:
+        var(--transfer-purple);
+
+    box-shadow:
+        0 0 0 3px color-mix(in srgb,
+            var(--transfer-focus) 16%,
+            transparent);
+}
+
+
+.transfer-list__select-wrap {
+    position: relative;
+
+    width: 100%;
+}
+
+
+.transfer-list__select-wrap select {
+    appearance: none;
+
+    padding-right:
+        1.7rem;
+}
+
+
+.transfer-list__select-chevron {
+    position: absolute;
+
+    top: 50%;
+
+    right: 0.55rem;
+
+    color:
+        var(--transfer-muted);
+
+    font-size:
+        0.7rem;
+
+    transform:
+        translateY(-50%);
+
+    pointer-events: none;
+}
+
+
+.transfer-list__filter-actions {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 0.25rem;
+}
+
+
+.transfer-list__apply-inline,
+.transfer-list__clear-inline {
+    display: grid;
+
+    width: 2rem;
+
+    height: 2rem;
+
+    place-items: center;
+
+    border-radius: 50%;
+
+    transition:
+        background-color 150ms ease,
+        color 150ms ease,
+        opacity 150ms ease;
+}
+
+
+.transfer-list__apply-inline {
+    background:
+        var(--list-badge-success-bg);
+
+    color:
+        var(--transfer-green);
+}
+
+
+.transfer-list__clear-inline {
+    background:
+        var(--transfer-danger-bg);
+
+    color:
+        var(--transfer-red);
+}
+
+
+.transfer-list__apply-inline:hover:not(:disabled),
+.transfer-list__clear-inline:hover:not(:disabled) {
+    opacity: 0.75;
+}
+
+
+.transfer-list__apply-inline:disabled,
+.transfer-list__clear-inline:disabled {
+    opacity: 0.32;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   LINHAS
+========================================================= */
+
+.transfer-list__table tbody tr {
+    position: relative;
+}
+
+
+.transfer-list__table tbody tr:hover {
+    background:
+        var(--transfer-hover);
+}
+
+
+.transfer-list__table tbody td {
+    height:
+        5.25rem;
+
+    padding:
+        0.8rem 0.6rem;
+
+    border-bottom:
+        1px solid var(--transfer-border);
+
+    color:
+        var(--transfer-text);
+
+    font-size:
+        0.84rem;
+
+    font-weight:
+        600;
+
+    line-height:
+        1.3;
+
+    overflow-wrap:
+        anywhere;
+}
+
+
+.transfer-list__description-cell {
+    font-weight:
+        700 !important;
+}
+
+
+.transfer-list__value-cell {
+    white-space:
+        nowrap;
+
+    font-weight:
+        800 !important;
+}
+
+
+/* =========================================================
+   STATUS PAGO
+========================================================= */
+
+.transfer-list__paid-status {
+    display: grid;
+
+    width: 2rem;
+
+    height: 2rem;
+
+    place-items: center;
+
+    border: 0;
+
+    border-radius:
+        50%;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-size:
+        1.45rem;
+}
+
+
+.transfer-list__paid-status.is-paid {
+    color:
+        var(--transfer-green);
+}
+
+
+.transfer-list__paid-status.is-pending {
+    color:
+        color-mix(in srgb,
+            var(--transfer-muted) 55%,
+            transparent);
+}
+
+
+/* =========================================================
+   BOTÃO ⋮
+========================================================= */
+
+.transfer-list__actions-cell {
+    text-align: center !important;
+}
+
+
+.transfer-list__row-menu {
+    display: flex;
+
+    justify-content: center;
+}
+
+
+.transfer-list__kebab {
+    display: grid;
+
+    width:
+        2.3rem;
+
+    height:
+        2.3rem;
+
+    place-items: center;
+
+    border-radius:
+        50%;
+
+    color:
+        var(--transfer-muted);
+}
+
+
+.transfer-list__kebab:hover,
+.transfer-list__kebab.is-open {
+    background:
+        var(--transfer-hover);
+
+    color:
+        var(--transfer-purple);
+}
+
+
+/* =========================================================
+   MENU FLUTUANTE
+========================================================= */
+
+.transfer-list__action-menu {
+    display: grid;
+
+    gap: 0.1rem;
+
+    width:
+        min(276px,
+            calc(100vw - 24px));
+
+    padding:
+        0.45rem;
+
+    border:
+        1px solid var(--transfer-border);
+
+    border-radius:
+        12px;
+
+    background:
+        var(--transfer-surface-solid);
+
+    box-shadow:
+        var(--transfer-shadow-elevated);
+
+    z-index:
+        2000;
+}
+
+
+.transfer-list__action-menu--portal {
+    position: fixed;
+
+    margin: 0;
+}
+
+
+.transfer-list__action-menu button {
+    display: grid;
+
+    grid-template-columns:
+        1.5rem minmax(0, 1fr) auto;
+
+    align-items: center;
+
+    gap: 0.75rem;
+
+    width: 100%;
+
+    min-height:
+        2.75rem;
+
+    padding:
+        0.5rem 0.8rem;
+
+    border: 0;
+
+    border-radius:
+        8px;
+
+    background: transparent;
+
+    color:
+        var(--transfer-text);
+
+    font: inherit;
+
+    font-size:
+        0.9rem;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+.transfer-list__action-menu button svg {
+    color:
+        var(--transfer-purple);
+
+    font-size:
+        1.1rem;
+}
+
+
+.transfer-list__action-menu button:hover,
+.transfer-list__action-menu button:focus-visible {
+    background:
+        var(--transfer-hover);
+}
+
+
+.transfer-list__action-menu button.is-danger,
+.transfer-list__action-menu button.is-danger svg {
+    color:
+        var(--transfer-red);
+}
+
+
+.transfer-list__action-menu button.is-danger:hover {
+    background:
+        var(--transfer-danger-bg);
+}
+
+
+.transfer-list__action-menu button small {
+    display: grid;
+
+    min-width:
+        1.3rem;
+
+    height:
+        1.3rem;
+
+    place-items: center;
+
+    border-radius:
+        999px;
+
+    background:
+        var(--list-badge-info-bg);
+
+    color:
+        var(--transfer-purple);
+
+    font-size:
+        0.68rem;
+
+    font-weight:
+        800;
+}
+
+
+.transfer-list__menu-divider {
+    height:
+        1px;
+
+    margin:
+        0.35rem -0.45rem;
+
+    background:
+        var(--transfer-border);
+}
+
+
+/* =========================================================
+   ESTADO VAZIO
+========================================================= */
+
+.transfer-list__empty-cell {
+    height:
+        22rem !important;
+
+    background:
+        var(--transfer-surface-solid);
+}
+
+
+.transfer-list__empty-state {
+    display: grid;
+
+    justify-items: center;
+
+    gap:
+        0.7rem;
+
+    max-width:
+        34rem;
+
+    margin:
+        0 auto;
+
+    text-align:
+        center;
+}
+
+
+.transfer-list__empty-icon {
+    display: grid;
+
+    width:
+        4rem;
+
+    height:
+        4rem;
+
+    place-items: center;
+
+    border-radius:
+        20px;
+
+    background:
+        var(--list-badge-info-bg);
+
+    color:
+        var(--transfer-purple);
+
+    font-size:
+        1.45rem;
+}
+
+
+.transfer-list__empty-state h2 {
+    margin: 0;
+
+    font-size:
+        1.2rem;
+}
+
+
+.transfer-list__empty-state p {
+    margin: 0;
+
+    color:
+        var(--transfer-muted);
+
+    font-weight:
+        500;
+}
+
+
+.transfer-list__empty-state button {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap:
+        0.5rem;
+
+    margin-top:
+        0.4rem;
+
+    padding:
+        0.7rem 1rem;
+
+    border:
+        1px solid var(--transfer-border-strong);
+
+    border-radius:
+        10px;
+
+    background:
+        var(--transfer-surface-solid);
+
+    color:
+        var(--transfer-purple);
+
+    font: inherit;
+
+    font-weight:
+        700;
+
+    cursor: pointer;
+}
+
+
+.transfer-list__empty-state button:hover {
+    background:
+        var(--transfer-hover);
+}
+
+
+/* =========================================================
+   FOOTER / PAGINAÇÃO
+========================================================= */
+
+.transfer-list__footer {
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+        space-between;
+
+    gap: 1rem;
+
+    min-height:
+        3.4rem;
+
+    padding:
+        0.45rem 1rem;
+
+    border-radius:
+        0 0 27px 27px;
+
+    background:
+        var(--transfer-soft);
+}
+
+
+.transfer-list__footer-summary {
+    display: flex;
+
+    align-items: center;
+
+    gap: 1rem;
+}
+
+
+.transfer-list__footer p {
+    margin: 0;
+
+    color:
+        var(--transfer-muted);
+
+    font-size:
+        0.92rem;
+}
+
+
+.transfer-list__footer p strong {
+    color:
+        var(--transfer-text);
+}
+
+
+.transfer-list__page-size {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 0.55rem;
+
+    color:
+        var(--transfer-muted);
+
+    font-size:
+        0.86rem;
+
+    font-weight:
+        700;
+
+    white-space:
+        nowrap;
+}
+
+
+.transfer-list__page-size input {
+    width:
+        5rem;
+
+    min-height:
+        2.35rem;
+
+    padding:
+        0 0.7rem;
+
+    border:
+        1px solid var(--transfer-border-strong);
+
+    border-radius:
+        9px;
+
+    outline: none;
+
+    background:
+        var(--transfer-surface-solid);
+
+    color:
+        var(--transfer-text);
+
+    font: inherit;
+
+    font-weight:
+        700;
+
+    text-align:
+        center;
+}
+
+
+.transfer-list__pagination {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap:
+        0.35rem;
+}
+
+
+.transfer-list__pagination button {
+    display: grid;
+
+    min-width:
+        2.65rem;
+
+    height:
+        2.65rem;
+
+    place-items: center;
+
+    padding:
+        0 0.7rem;
+
+    border-radius:
+        10px;
+
+    color:
+        var(--transfer-text);
+
+    font-weight:
+        700;
+}
+
+
+.transfer-list__pagination button:hover:not(:disabled) {
+    background:
+        var(--transfer-hover);
+}
+
+
+.transfer-list__pagination button.is-active {
+    background:
+        var(--transfer-purple);
+
+    color:
+        var(--transfer-on-strong);
+}
+
+
+.transfer-list__pagination button:disabled {
+    opacity:
+        0.35;
+
+    cursor:
+        not-allowed;
+}
+
+
+.transfer-list__page-gap {
+    padding:
+        0 0.3rem;
+
+    color:
+        var(--transfer-muted);
+}
+
+
+/* =========================================================
+   MODAIS
+========================================================= */
+
+.transfer-list__overlay,
+.transfer-list__drawer-backdrop {
+    position: fixed;
+
+    z-index: 1000;
+
+    inset: 0;
+
+    background:
+        color-mix(in srgb,
+            var(--color-text-primary) 42%,
+            transparent);
+
+    backdrop-filter:
+        blur(2px);
+}
+
+
+.transfer-list__overlay {
+    display: grid;
+
+    place-items: center;
+
+    padding:
+        1rem;
+}
+
+
+.transfer-list__dialog {
+    width:
+        min(100%, 680px);
+
+    max-height:
+        min(90vh, 820px);
+
+    overflow:
+        auto;
+
+    padding:
+        1.2rem;
+
+    border-radius:
+        22px;
+
+    background:
+        var(--transfer-surface-solid);
+
+    box-shadow:
+        var(--transfer-shadow-elevated);
+}
+
+
+.transfer-list__dialog--small {
+    width:
+        min(100%, 500px);
+}
+
+
+.transfer-list__dialog-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        1rem;
+
+    margin-bottom:
+        1.1rem;
+
+    padding-bottom:
+        1rem;
+
+    border-bottom:
+        1px solid var(--transfer-border);
+}
+
+
+.transfer-list__dialog-header h2 {
+    margin: 0;
+
+    font-size:
+        1.25rem;
+}
+
+
+.transfer-list__icon-button {
+    display: grid;
+
+    width:
+        2.45rem;
+
+    height:
+        2.45rem;
+
+    place-items: center;
+
+    border-radius:
+        50%;
+
+    color:
+        var(--transfer-muted);
+}
+
+
+.transfer-list__icon-button:hover {
+    background:
+        var(--transfer-hover);
+
+    color:
+        var(--transfer-purple);
+}
+
+
+/* =========================================================
+   FORMULÁRIOS
+========================================================= */
+
+.transfer-list__form {
+    display: grid;
+
+    gap:
+        1rem;
+}
+
+
+.transfer-list__form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2,
+            minmax(0, 1fr));
+
+    gap:
+        1rem;
+}
+
+
+.transfer-list__form-field {
+    display: grid;
+
+    gap:
+        0.4rem;
+}
+
+
+.transfer-list__form-field.is-wide {
+    grid-column:
+        1 / -1;
+}
+
+
+.transfer-list__form-field>span {
+    color:
+        var(--transfer-muted);
+
+    font-size:
+        0.78rem;
+
+    font-weight:
+        800;
+}
+
+
+.transfer-list__form-field input,
+.transfer-list__form-field select {
+    width: 100%;
+
+    min-height:
+        2.8rem;
+
+    padding:
+        0 0.8rem;
+
+    border:
+        1px solid var(--transfer-border-strong);
+
+    border-radius:
+        10px;
+
+    outline: none;
+
+    background:
+        var(--transfer-surface-solid);
+
+    color:
+        var(--transfer-text);
+
+    font: inherit;
+}
+
+
+.transfer-list__checkbox-row {
+    display: flex;
+
+    align-items: center;
+
+    gap:
+        0.65rem;
+
+    color:
+        var(--transfer-text);
+
+    font-size:
+        0.92rem;
+
+    font-weight:
+        600;
+}
+
+
+.transfer-list__checkbox-row input {
+    width:
+        1.05rem;
+
+    height:
+        1.05rem;
+
+    accent-color:
+        var(--transfer-purple);
+}
+
+
+.transfer-list__dialog-actions {
+    display: flex;
+
+    justify-content:
+        flex-end;
+
+    gap:
+        0.7rem;
+
+    margin-top:
+        0.4rem;
+}
+
+
+.transfer-list__button {
+    min-height:
+        2.75rem;
+
+    padding:
+        0.65rem 1rem;
+
+    border:
+        1px solid transparent;
+
+    border-radius:
+        10px;
+
+    font: inherit;
+
+    font-weight:
+        800;
+
+    cursor: pointer;
+}
+
+
+.transfer-list__button--primary {
+    background:
+        var(--transfer-purple);
+
+    color:
+        var(--transfer-on-strong);
+}
+
+
+.transfer-list__button--primary:hover {
+    background:
+        var(--transfer-purple-strong);
+}
+
+
+.transfer-list__button--secondary {
+    border-color:
+        var(--transfer-border-strong);
+
+    background:
+        var(--transfer-surface-solid);
+
+    color:
+        var(--transfer-text);
+}
+
+
+.transfer-list__button--secondary:hover {
+    background:
+        var(--transfer-hover);
+}
+
+
+.transfer-list__button--danger {
+    background:
+        var(--transfer-red);
+
+    color:
+        var(--transfer-on-strong);
+}
+
+
+.transfer-list__button--danger:hover {
+    opacity:
+        0.85;
+}
+
+
+/* =========================================================
+   DETALHES
+========================================================= */
+
+.transfer-list__details-card {
+    display: grid;
+
+    gap:
+        0.4rem;
+
+    margin-bottom:
+        1rem;
+
+    padding:
+        1.1rem;
+
+    border-radius:
+        16px;
+
+    background:
+        var(--transfer-hover);
+}
+
+
+.transfer-list__details-card--compact {
+    margin-bottom: 0;
+}
+
+
+.transfer-list__details-card span {
+    color:
+        var(--transfer-muted);
+
+    font-size:
+        0.82rem;
+
+    font-weight:
+        700;
+}
+
+
+.transfer-list__details-card strong {
+    color:
+        var(--transfer-purple);
+
+    font-size:
+        1.8rem;
+}
+
+
+.transfer-list__details-list {
+    display: grid;
+
+    gap: 0;
+
+    margin: 0;
+}
+
+
+.transfer-list__details-list>div {
+    display: grid;
+
+    grid-template-columns:
+        10rem 1fr;
+
+    gap:
+        1rem;
+
+    padding:
+        0.85rem 0;
+
+    border-bottom:
+        1px solid var(--transfer-border);
+}
+
+
+.transfer-list__details-list dt {
+    color:
+        var(--transfer-muted);
+
+    font-weight:
+        700;
+}
+
+
+.transfer-list__details-list dd {
+    margin: 0;
+
+    color:
+        var(--transfer-text);
+
+    font-weight:
+        600;
+}
+
+
+/* =========================================================
+   ANEXOS
+========================================================= */
+
+.transfer-list__attachments {
+    display: grid;
+
+    gap:
+        1rem;
+}
+
+
+.transfer-list__upload-box {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap:
+        0.65rem;
+
+    min-height:
+        5.5rem;
+
+    padding:
+        1rem;
+
+    border:
+        1.5px dashed color-mix(in srgb,
+            var(--transfer-purple) 65%,
+            var(--transfer-border));
+
+    border-radius:
+        14px;
+
+    background:
+        var(--transfer-soft);
+
+    color:
+        var(--transfer-purple);
+
+    font-weight:
+        700;
+
+    cursor: pointer;
+}
+
+
+.transfer-list__upload-box input {
+    display: none;
+}
+
+
+.transfer-list__attachments ul {
+    display: grid;
+
+    gap:
+        0.55rem;
+
+    margin: 0;
+
+    padding: 0;
+
+    list-style: none;
+}
+
+
+.transfer-list__attachments li {
+    display: grid;
+
+    grid-template-columns:
+        auto minmax(0, 1fr) auto;
+
+    align-items: center;
+
+    gap:
+        0.7rem;
+
+    padding:
+        0.75rem 0.9rem;
+
+    border:
+        1px solid var(--transfer-border);
+
+    border-radius:
+        12px;
+}
+
+
+.transfer-list__attachments li>svg {
+    color:
+        var(--transfer-purple);
+}
+
+
+.transfer-list__attachments li button {
+    display: grid;
+
+    width:
+        2rem;
+
+    height:
+        2rem;
+
+    place-items: center;
+
+    border: 0;
+
+    border-radius:
+        50%;
+
+    background: transparent;
+
+    color:
+        var(--transfer-red);
+
+    cursor: pointer;
+}
+
+
+.transfer-list__muted {
+    margin: 0;
+
+    color:
+        var(--transfer-muted);
+
+    text-align:
+        center;
+}
+
+
+/* =========================================================
+   EXCLUSÃO
+========================================================= */
+
+.transfer-list__delete-copy {
+    display: grid;
+
+    justify-items: center;
+
+    gap:
+        0.75rem;
+
+    padding:
+        0.4rem 0 1rem;
+
+    text-align:
+        center;
+}
+
+
+.transfer-list__danger-icon {
+    display: grid;
+
+    width:
+        3.6rem;
+
+    height:
+        3.6rem;
+
+    place-items: center;
+
+    border-radius:
+        18px;
+
+    background:
+        var(--transfer-danger-bg);
+
+    color:
+        var(--transfer-red);
+
+    font-size:
+        1.35rem;
+}
+
+
+.transfer-list__delete-copy p {
+    margin: 0;
+
+    font-size:
+        1rem;
+}
+
+
+.transfer-list__delete-copy>span {
+    max-width:
+        28rem;
+
+    color:
+        var(--transfer-muted);
+
+    font-size:
+        0.86rem;
+
+    line-height:
+        1.5;
+}
+
+
+/* =========================================================
+   DRAWER
+========================================================= */
+
+.transfer-list__drawer-backdrop {
+    display: flex;
+
+    justify-content:
+        flex-end;
+}
+
+
+.transfer-list__drawer {
+    display: grid;
+
+    grid-template-rows:
+        auto 1fr auto;
+
+    width:
+        min(100%, 430px);
+
+    height:
+        100%;
+
+    background:
+        var(--transfer-surface-solid);
+
+    box-shadow:
+        var(--transfer-shadow-elevated);
+}
+
+
+.transfer-list__drawer>header,
+.transfer-list__drawer>footer {
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+        space-between;
+
+    gap:
+        1rem;
+
+    padding:
+        1.25rem;
+
+    border-bottom:
+        1px solid var(--transfer-border);
+}
+
+
+.transfer-list__drawer>header span {
+    color:
+        var(--transfer-purple);
+
+    font-size:
+        0.7rem;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        0.08em;
+}
+
+
+.transfer-list__drawer h2 {
+    margin: 0;
+
+    font-size:
+        1.25rem;
+}
+
+
+.transfer-list__drawer>footer {
+    justify-content:
+        flex-end;
+
+    border-top:
+        1px solid var(--transfer-border);
+
+    border-bottom: 0;
+}
+
+
+.transfer-list__drawer-body {
+    display: grid;
+
+    align-content:
+        start;
+
+    gap:
+        1.25rem;
+
+    overflow:
+        auto;
+
+    padding:
+        1.25rem;
+}
+
+
+.transfer-list__drawer-grid {
+    display: grid;
+
+    grid-template-columns:
+        1fr;
+
+    gap:
+        1rem;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.transfer-list__toast {
+    position: fixed;
+
+    z-index:
+        3000;
+
+    right:
+        1.25rem;
+
+    bottom:
+        1.25rem;
+
+    max-width:
+        min(92vw, 360px);
+
+    padding:
+        0.85rem 1rem;
+
+    border:
+        1px solid var(--transfer-border);
+
+    border-radius:
+        12px;
+
+    background:
+        var(--transfer-surface-solid);
+
+    color:
+        var(--transfer-text);
+
+    box-shadow:
+        var(--transfer-shadow-elevated);
+
+    font-size:
+        0.9rem;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1050px) {
+    .transfer-list__toolbar {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+    .transfer-list__toolbar-right {
+        width: 100%;
+
+        justify-content:
+            space-between;
+    }
+
+    .transfer-list__tabs {
+        overflow-x:
+            auto;
+
+        max-width:
+            100%;
+    }
+
+    .transfer-list__tabs button {
+        min-width:
+            8.5rem;
+    }
+}
+
+
+@media (max-width: 720px) {
+    .transfer-list-page {
+        padding:
+            calc(var(--transfer-header-offset) + 0.75rem) 0.6rem 0;
+    }
+
+    .transfer-list {
+        border-radius:
+            22px;
+    }
+
+    .transfer-list__title-bar {
+        padding:
+            1.1rem 1rem;
+    }
+
+    .transfer-list__content {
+        padding:
+            0.8rem;
+    }
+
+    .transfer-list__table-scroll {
+        overflow-x:
+            auto;
+
+        overflow-y:
+            hidden;
+
+        -webkit-overflow-scrolling:
+            touch;
+    }
+
+    .transfer-list__table {
+        min-width:
+            980px;
+    }
+
+    .transfer-list__toolbar-right {
+        align-items:
+            stretch;
+
+        flex-direction:
+            column;
+
+        gap:
+            0.65rem;
+    }
+
+    .transfer-list__filters-button {
+        align-self:
+            flex-end;
+    }
+
+    .transfer-list__footer {
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        border-radius:
+            0 0 20px 20px;
+    }
+
+    .transfer-list__footer-summary {
+        width: 100%;
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+
+        gap:
+            0.65rem;
+    }
+
+    .transfer-list__page-size {
+        width:
+            100%;
+
+        justify-content:
+            space-between;
+    }
+
+    .transfer-list__pagination {
+        max-width:
+            100%;
+
+        overflow-x:
+            auto;
+    }
+
+    .transfer-list__form-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .transfer-list__form-field.is-wide {
+        grid-column:
+            auto;
+    }
+
+    .transfer-list__dialog-actions {
+        flex-direction:
+            column-reverse;
+    }
+
+    .transfer-list__dialog-actions .transfer-list__button {
+        width: 100%;
+    }
+
+    .transfer-list__details-list>div {
+        grid-template-columns:
+            1fr;
+
+        gap:
+            0.25rem;
+    }
+}
+
+
+@media (max-width: 420px) {
+    .transfer-list__tabs button {
+        min-width:
+            7.5rem;
+
+        padding-inline:
+            0.7rem;
+    }
+}
