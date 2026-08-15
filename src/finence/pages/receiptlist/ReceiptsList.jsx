@@ -26,23 +26,27 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import './ReceiptsList.css';
+import { receivablesMockData } from "./receivablesMock.js";
+import {
+  MONTHS,
+  createId,
+  parseMonth,
+  formatMonth,
+  formatDate,
+  formatCurrency,
+  normalize,
+  includesNormalized,
+  escapeHtml,
+  getVisiblePages,
+  CALCULATOR_KEYS,
+  normalizeCalculatorExpression,
+  formatCalculatorNumber,
+  evaluateCalculatorExpression
+} from "./receiptUtils.js";
+
 
 import Footer from "../../../global/components/Footer/Footer.jsx";
 
-const MONTHS = [
-  "JAN",
-  "FEV",
-  "MAR",
-  "ABR",
-  "MAI",
-  "JUN",
-  "JUL",
-  "AGO",
-  "SET",
-  "OUT",
-  "NOV",
-  "DEZ",
-];
 
 const PAYMENT_TYPES = ["À vista", "Parcelado", "Recorrente"];
 const PAYMENT_MODES = [
@@ -71,203 +75,19 @@ const CATEGORIES = [
   "Outros",
 ];
 
-const DEMO_EXPENSES = [
-  {
-    id: "exp-001",
-    date: "2026-05-01",
-    description: "#OS-8821",
-    payee: "Ana Costa & Associados",
-    category: "Infraestrutura",
-    value: 180,
-    paymentType: "À vista",
-    paymentMode: "Boleto",
-    paid: true,
-    attachments: [],
-  },
-  {
-    id: "exp-002",
-    date: "2026-05-03",
-    description: "#OS-8821",
-    payee: "Visa Crédito Brasil",
-    category: "Mensalidade",
-    value: 180,
-    paymentType: "Recorrente",
-    paymentMode: "Pix",
-    paid: false,
-    attachments: [],
-  },
-  {
-    id: "exp-003",
-    date: "2026-05-14",
-    description: "#OS-8823",
-    payee: "Juliana Lopes de Almeida",
-    category: "Suprimentos",
-    value: 180,
-    paymentType: "À vista",
-    paymentMode: "Cartão de Débito",
-    paid: false,
-    attachments: [],
-  },
-  {
-    id: "exp-004",
-    date: "2026-05-27",
-    description: "#OS-8821",
-    payee: "Global Soluções LTDA",
-    category: "Tecnologia",
-    value: 180,
-    paymentType: "À vista",
-    paymentMode: "Cartão de Crédito",
-    paid: true,
-    attachments: [],
-  },
-  {
-    id: "exp-005",
-    date: "2026-05-29",
-    description: "Hospedagem do site",
-    payee: "Cloud Services Brasil",
-    category: "Tecnologia",
-    value: 349.9,
-    paymentType: "Recorrente",
-    paymentMode: "Cartão de Crédito",
-    paid: true,
-    attachments: [],
-  },
-  {
-    id: "exp-006",
-    date: "2026-05-30",
-    description: "Materiais de escritório",
-    payee: "Papelaria Central",
-    category: "Suprimentos",
-    value: 226.5,
-    paymentType: "À vista",
-    paymentMode: "Pix",
-    paid: false,
-    attachments: [],
-  },
-];
 
-const createId = () =>
-  typeof crypto !== "undefined" && crypto.randomUUID
-    ? crypto.randomUUID()
-    : `expense-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-const parseMonth = (value) => {
-  if (value instanceof Date && !Number.isNaN(value.getTime())) {
-    return new Date(value.getFullYear(), value.getMonth(), 1);
-  }
 
-  if (typeof value === "string") {
-    const parsed = new Date(`${value.slice(0, 7)}-01T12:00:00`);
-    if (!Number.isNaN(parsed.getTime())) {
-      return new Date(parsed.getFullYear(), parsed.getMonth(), 1);
-    }
-  }
 
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 1);
-};
 
-const formatMonth = (date) => `${MONTHS[date.getMonth()]}/${date.getFullYear()}`;
 
-const formatDate = (value) => {
-  if (!value) return "—";
-  const [year, month, day] = value.split("-");
-  return `${day}/${month}/${year}`;
-};
 
-const formatCurrency = (value) =>
-  new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(Number(value) || 0);
 
-const normalize = (value) =>
-  String(value ?? "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLocaleLowerCase("pt-BR")
-    .trim();
 
-const includesNormalized = (value, query) =>
-  normalize(value).includes(normalize(query));
 
-const escapeHtml = (value) =>
-  String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
 
-const getVisiblePages = (currentPage, totalPages) => {
-  if (totalPages <= 5) {
-    return Array.from({ length: totalPages }, (_, index) => index + 1);
-  }
 
-  const pages = new Set([
-    1,
-    totalPages,
-    currentPage - 1,
-    currentPage,
-    currentPage + 1,
-  ]);
 
-  return [...pages]
-    .filter((page) => page > 0 && page <= totalPages)
-    .sort((a, b) => a - b);
-};
-
-const CALCULATOR_KEYS = [
-  "backspace",
-  "(",
-  ")",
-  "÷",
-  "7",
-  "8",
-  "9",
-  "×",
-  "4",
-  "5",
-  "6",
-  "−",
-  "1",
-  "2",
-  "3",
-  "+",
-  "C",
-  "0",
-  ",",
-  "=",
-];
-
-const normalizeCalculatorExpression = (value) =>
-  String(value ?? "")
-    .replaceAll(",", ".")
-    .replaceAll("×", "*")
-    .replaceAll("÷", "/")
-    .replaceAll("−", "-");
-
-const formatCalculatorNumber = (value) => {
-  const rounded = Math.round((Number(value) + Number.EPSILON) * 100000000) / 100000000;
-  return String(rounded).replace(".", ",");
-};
-
-const evaluateCalculatorExpression = (value) => {
-  const normalized = normalizeCalculatorExpression(value).trim();
-
-  if (!normalized || !/^[0-9+\-*/().\s]+$/.test(normalized)) {
-    throw new Error("Expressão inválida");
-  }
-
-  // A expressão é limitada pelo regex acima a números, parênteses e operadores aritméticos.
-  const result = Function(`"use strict"; return (${normalized});`)();
-
-  if (!Number.isFinite(result)) {
-    throw new Error("Resultado inválido");
-  }
-
-  return result;
-};
 
 const Dialog = ({ title, children, onClose, className = "" }) => (
   <div className="expense-list__overlay" role="presentation" onMouseDown={onClose}>
@@ -276,7 +96,7 @@ const Dialog = ({ title, children, onClose, className = "" }) => (
       role="dialog"
       aria-modal="true"
       aria-label={title}
-      onMouseDown={(event) => event.stopPropagation()}
+      onMouseDown={(event) => event.stopPropagotion()}
     >
       <header className="expense-list__dialog-header">
         <h2>{title}</h2>
@@ -311,23 +131,23 @@ const FilterSelect = ({ value, onChange, children, ariaLabel }) => (
 );
 
 const ReceiptsList = ({
-  expenses = DEMO_EXPENSES,
+  receivables = receivablesMockData,
   initialMonth = "2026-05-01",
   pageSize = 4,
   onMonthChange,
   onTabChange,
   onOpenAdvancedFilters,
   onGenerateReceipt,
-  onEditExpense,
+  onEditReceipt,
   onViewValueDetails,
   onAttachmentsChange,
-  onDuplicateExpense,
-  onMoveExpense,
-  onRecurringExpense,
-  onInstallmentExpense,
-  onDeleteExpense,
+  onDuplicateReceipt,
+  onMoveReceipt,
+  onRecurringReceipt,
+  onInstallmentReceipt,
+  onDeleteReceipt,
 }) => {
-  const [rows, setRows] = useState(() => expenses.map((item) => ({ ...item })));
+  const [rows, setRows] = useState(() => receivables.map((item) => ({ ...item })));
   const [month, setMonth] = useState(() => parseMonth(initialMonth));
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(() => {
@@ -350,21 +170,21 @@ const ReceiptsList = ({
   const [inlineFilters, setInlineFilters] = useState({
     date: "",
     description: "",
-    payee: "",
+    client: "",
     category: "",
     value: "",
     paymentType: "",
-    paymentMode: "",
+    paymentMethod: "",
     paid: "",
   });
   const [draftInlineFilters, setDraftInlineFilters] = useState({
     date: "",
     description: "",
-    payee: "",
+    client: "",
     category: "",
     value: "",
     paymentType: "",
-    paymentMode: "",
+    paymentMethod: "",
     paid: "",
   });
   const [calculator, setCalculator] = useState({
@@ -384,8 +204,8 @@ const ReceiptsList = ({
   });
 
   useEffect(() => {
-    setRows(expenses.map((item) => ({ ...item })));
-  }, [expenses]);
+    setRows(receivables.map((item) => ({ ...item })));
+  }, [receivables]);
 
   useEffect(() => {
     const parsedPageSize = Number(pageSize);
@@ -534,8 +354,8 @@ const ReceiptsList = ({
           return false;
         }
         if (
-          inlineFilters.payee &&
-          !includesNormalized(row.payee, inlineFilters.payee)
+          inlineFilters.client &&
+          !includesNormalized(row.client, inlineFilters.client)
         ) {
           return false;
         }
@@ -566,8 +386,8 @@ const ReceiptsList = ({
           return false;
         }
         if (
-          inlineFilters.paymentMode &&
-          row.paymentMode !== inlineFilters.paymentMode
+          inlineFilters.paymentMethod &&
+          row.paymentMethod !== inlineFilters.paymentMethod
         ) {
           return false;
         }
@@ -783,21 +603,21 @@ const ReceiptsList = ({
     setInlineFilters({
       date: "",
       description: "",
-      payee: "",
+      client: "",
       category: "",
       value: "",
       paymentType: "",
-      paymentMode: "",
+      paymentMethod: "",
       paid: "",
     });
     setDraftInlineFilters({
       date: "",
       description: "",
-      payee: "",
+      client: "",
       category: "",
       value: "",
       paymentType: "",
-      paymentMode: "",
+      paymentMethod: "",
       paid: "",
     });
     setAdvancedFilters({
@@ -823,15 +643,15 @@ const ReceiptsList = ({
     setIsAdvancedOpen(true);
   };
 
-  const getExpense = (id) => rows.find((item) => item.id === id);
+  const getReceipt = (id) => rows.find((item) => item.id === id);
 
   const closeRowMenu = () => {
     setMenuRowId(null);
     setMenuPosition(null);
   };
 
-  const toggleRowMenu = (event, expenseId) => {
-    if (menuRowId === expenseId) {
+  const toggleRowMenu = (event, receiptId) => {
+    if (menuRowId === receiptId) {
       closeRowMenu();
       return;
     }
@@ -856,7 +676,7 @@ const ReceiptsList = ({
       ? triggerRect.top - gap - estimatedMenuHeight
       : triggerRect.bottom + gap;
 
-    setMenuRowId(expenseId);
+    setMenuRowId(receiptId);
     setMenuPosition({
       left,
       top: Math.max(
@@ -869,14 +689,14 @@ const ReceiptsList = ({
     });
   };
 
-  const replaceExpense = (nextExpense) => {
+  const replaceReceipt = (nextReceipt) => {
     setRows((current) =>
-      current.map((item) => (item.id === nextExpense.id ? nextExpense : item)),
+      current.map((item) => (item.id === nextReceipt.id ? nextReceipt : item)),
     );
   };
 
-  const generateReceipt = (expense) => {
-    onGenerateReceipt?.(expense);
+  const generateReceipt = (receipt) => {
+    onGenerateReceipt?.(receipt);
 
     if (onGenerateReceipt) {
       setNotice("Solicitação de recibo enviada.");
@@ -894,7 +714,7 @@ const ReceiptsList = ({
       <html lang="pt-BR">
         <head>
           <meta charset="utf-8" />
-          <title>Recibo - ${escapeHtml(expense.description)}</title>
+          <title>Recibo - ${escapeHtml(receipt.description)}</title>
           <style>
             body { font-family: Arial, sans-serif; margin: 48px; color: #202235; }
             .card { border: 1px solid #dadce8; border-radius: 18px; padding: 28px; }
@@ -903,21 +723,21 @@ const ReceiptsList = ({
             dt { color: #666b7d; font-weight: 700; }
             dd { margin: 0; }
             .amount { font-size: 28px; font-weight: 800; margin: 24px 0; }
-            .status { font-weight: 700; color: ${expense.paid ? "#5d7700" : "#7c5b14"}; }
+            .status { font-weight: 700; color: ${receipt.paid ? "#5d7700" : "#7c5b14"}; }
           </style>
         </head>
         <body>
           <div class="card">
-            <h1>Comprovante de despesa</h1>
-            <p class="amount">${escapeHtml(formatCurrency(expense.value))}</p>
+            <h1>Comprovante de recebimento</h1>
+            <p class="amount">${escapeHtml(formatCurrency(receipt.value))}</p>
             <dl>
-              <dt>Data</dt><dd>${escapeHtml(formatDate(expense.date))}</dd>
-              <dt>Descrição</dt><dd>${escapeHtml(expense.description)}</dd>
-              <dt>Pago a</dt><dd>${escapeHtml(expense.payee)}</dd>
-              <dt>Categoria</dt><dd>${escapeHtml(expense.category)}</dd>
-              <dt>Tipo de pagamento</dt><dd>${escapeHtml(expense.paymentType)}</dd>
-              <dt>Modo de pagamento</dt><dd>${escapeHtml(expense.paymentMode)}</dd>
-              <dt>Status</dt><dd class="status">${expense.paid ? "Pago" : "Pendente"}</dd>
+              <dt>Data</dt><dd>${escapeHtml(formatDate(receipt.date))}</dd>
+              <dt>Descrição</dt><dd>${escapeHtml(receipt.description)}</dd>
+              <dt>Cliente</dt><dd>${escapeHtml(receipt.client)}</dd>
+              <dt>Categoria</dt><dd>${escapeHtml(receipt.category)}</dd>
+              <dt>Tipo de pagamento</dt><dd>${escapeHtml(receipt.paymentType)}</dd>
+              <dt>Forma de pagamento</dt><dd>${escapeHtml(receipt.paymentMethod)}</dd>
+              <dt>Status</dt><dd class="status">${receipt.paid ? "Pago" : "Pendente"}</dd>
             </dl>
           </div>
           <script>window.onload = () => window.print();</script>
@@ -927,30 +747,30 @@ const ReceiptsList = ({
     receiptWindow.document.close();
   };
 
-  const handleEditSubmit = (event, expense) => {
+  const handleEditSubmit = (event, receipt) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const updated = {
-      ...expense,
+      ...receipt,
       date: formData.get("date"),
       description: formData.get("description"),
-      payee: formData.get("payee"),
+      client: formData.get("client"),
       category: formData.get("category"),
       value: Number(formData.get("value")),
       paymentType: formData.get("paymentType"),
-      paymentMode: formData.get("paymentMode"),
+      paymentMethod: formData.get("paymentMethod"),
       paid: formData.get("paid") === "on",
     };
 
-    replaceExpense(updated);
-    onEditExpense?.(updated);
+    replaceReceipt(updated);
+    onEditReceipt?.(updated);
     setDialog(null);
-    setNotice("Despesa atualizada.");
+    setNotice("Recebimento atualizada.");
   };
 
-  const handleAttachmentAdd = (expense, files) => {
+  const handleAttachmentAdd = (receipt, files) => {
     if (!files?.length) return;
-    const newAttachments = [...(expense.attachments ?? [])].concat(
+    const newAttachments = [...(receipt.attachments ?? [])].concat(
       [...files].map((file) => ({
         id: createId(),
         name: file.name,
@@ -958,40 +778,40 @@ const ReceiptsList = ({
         file,
       })),
     );
-    const updated = { ...expense, attachments: newAttachments };
-    replaceExpense(updated);
+    const updated = { ...receipt, attachments: newAttachments };
+    replaceReceipt(updated);
     onAttachmentsChange?.(updated, newAttachments);
-    setDialog({ type: "attachments", expenseId: updated.id });
+    setDialog({ type: "attachments", receiptId: updated.id });
   };
 
-  const duplicateExpense = (expense) => {
+  const duplicateReceipt = (receipt) => {
     const copy = {
-      ...expense,
+      ...receipt,
       id: createId(),
-      description: `${expense.description} (cópia)`,
+      description: `${receipt.description} (cópia)`,
       paid: false,
       attachments: [],
     };
     setRows((current) => [copy, ...current]);
-    onDuplicateExpense?.(copy, expense);
+    onDuplicateReceipt?.(copy, receipt);
     closeRowMenu();
-    setNotice("Despesa duplicada.");
+    setNotice("Recebimento duplicada.");
   };
 
-  const submitMove = (event, expense) => {
+  const submitMove = (event, receipt) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const destination = formData.get("destination");
     const category = formData.get("category");
 
     if (destination === "expenses") {
-      const updated = { ...expense, category };
-      replaceExpense(updated);
-      onMoveExpense?.({ expense: updated, destination, category });
-      setNotice("Despesa reclassificada.");
+      const updated = { ...receipt, category };
+      replaceReceipt(updated);
+      onMoveReceipt?.({ receipt: updated, destination, category });
+      setNotice("Recebimento reclassificada.");
     } else {
-      setRows((current) => current.filter((item) => item.id !== expense.id));
-      onMoveExpense?.({ expense, destination, category: null });
+      setRows((current) => current.filter((item) => item.id !== receipt.id));
+      onMoveReceipt?.({ receipt, destination, category: null });
       setNotice(
         destination === "receipts"
           ? "Item movido para Recebimentos."
@@ -1001,29 +821,29 @@ const ReceiptsList = ({
     setDialog(null);
   };
 
-  const submitRecurring = (event, expense) => {
+  const submitRecurring = (event, receipt) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const updated = {
-      ...expense,
+      ...receipt,
       paymentType: "Recorrente",
       recurrence: {
         frequency: formData.get("frequency"),
         startDate: formData.get("startDate"),
       },
     };
-    replaceExpense(updated);
-    onRecurringExpense?.(updated);
+    replaceReceipt(updated);
+    onRecurringReceipt?.(updated);
     setDialog(null);
-    setNotice("Despesa configurada como recorrente.");
+    setNotice("Recebimento configurada como recorrente.");
   };
 
-  const submitInstallments = (event, expense) => {
+  const submitInstallments = (event, receipt) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const installmentCount = Math.max(2, Number(formData.get("installments")) || 2);
     const firstDate = new Date(`${formData.get("firstDate")}T12:00:00`);
-    const totalCents = Math.round(Number(expense.value) * 100);
+    const totalCents = Math.round(Number(receipt.value) * 100);
     const baseCents = Math.floor(totalCents / installmentCount);
     const remainder = totalCents % installmentCount;
 
@@ -1036,13 +856,13 @@ const ReceiptsList = ({
       const cents = baseCents + (index < remainder ? 1 : 0);
 
       return {
-        ...expense,
-        id: index === 0 ? expense.id : createId(),
+        ...receipt,
+        id: index === 0 ? receipt.id : createId(),
         date: dueDate.toISOString().slice(0, 10),
-        description: `${expense.description} (${index + 1}/${installmentCount})`,
+        description: `${receipt.description} (${index + 1}/${installmentCount})`,
         value: cents / 100,
         paymentType: "Parcelado",
-        paid: index === 0 ? expense.paid : false,
+        paid: index === 0 ? receipt.paid : false,
         installment: {
           current: index + 1,
           total: installmentCount,
@@ -1051,27 +871,27 @@ const ReceiptsList = ({
     });
 
     setRows((current) => [
-      ...current.filter((item) => item.id !== expense.id),
+      ...current.filter((item) => item.id !== receipt.id),
       ...installments,
     ]);
-    onInstallmentExpense?.(installments, expense);
+    onInstallmentReceipt?.(installments, receipt);
     setDialog(null);
-    setNotice(`Despesa dividida em ${installmentCount} parcelas.`);
+    setNotice(`Recebimento dividida em ${installmentCount} parcelas.`);
   };
 
-  const confirmDelete = (expense) => {
-    setRows((current) => current.filter((item) => item.id !== expense.id));
-    onDeleteExpense?.({ ...expense, deletedAt: new Date().toISOString() });
+  const confirmDelete = (receipt) => {
+    setRows((current) => current.filter((item) => item.id !== receipt.id));
+    onDeleteReceipt?.({ ...receipt, deletedAt: new Date().toISOString() });
     setDialog(null);
-    setNotice("Despesa excluída.");
+    setNotice("Recebimento excluída.");
   };
 
-  const activeExpense = dialog?.expenseId ? getExpense(dialog.expenseId) : null;
-  const activeMenuExpense = menuRowId ? getExpense(menuRowId) : null;
+  const activeReceipt = dialog?.receiptId ? getReceipt(dialog.receiptId) : null;
+  const activeMenuReceipt = menuRowId ? getReceipt(menuRowId) : null;
 
   return (
     <main className="expense-list-page">
-      <section className="expense-list" aria-label="Financeiro - Despesas">
+      <section className="expense-list" aria-label="Financeiro - Recebimentos">
         <header className="expense-list__title-bar">
           <div>
             <span className="expense-list__eyebrow">Financeiro</span>
@@ -1101,8 +921,8 @@ const ReceiptsList = ({
 
             <div className="expense-list__toolbar-right">
               <nav className="expense-list__tabs" aria-label="Tipo de movimentação">
-                <button type="button" onClick={() => onTabChange?.("receipts")}>Recebimentos</button>
-                <button type="button" className="is-active" aria-current="page">Despesas</button>
+                <button type="button" className="is-active" aria-current="page">Recebimentos</button>
+                <button type="button" onClick={() => onTabChange?.("expenses")}>Despesas</button>
                 <button type="button" onClick={() => onTabChange?.("transfers")}>Transferências</button>
               </nav>
 
@@ -1126,11 +946,11 @@ const ReceiptsList = ({
                     {[
                       ["date", "Data"],
                       ["description", "Descrição"],
-                      ["payee", "Pago a"],
+                      ["client", "Cliente"],
                       ["category", "Categoria"],
                       ["value", "Valor"],
                       ["paymentType", "Tipo pagamento"],
-                      ["paymentMode", "Modo do pagamento"],
+                      ["paymentMethod", "Forma de pagamento"],
                       ["paid", "Pago?"],
                     ].map(([key, label]) => (
                       <th key={key} scope="col" aria-sort={sort.key === key ? (sort.direction === "asc" ? "ascending" : "descending") : "none"}>
@@ -1168,8 +988,8 @@ const ReceiptsList = ({
                     <th>
                       <input
                         type="search"
-                        value={draftInlineFilters.payee}
-                        onChange={(event) => updateInlineFilter("payee", event.target.value)}
+                        value={draftInlineFilters.client}
+                        onChange={(event) => updateInlineFilter("client", event.target.value)}
                         placeholder="Pesquisar"
                         aria-label="Filtrar por favorecido"
                       />
@@ -1221,8 +1041,8 @@ const ReceiptsList = ({
                     </th>
                     <th>
                       <FilterSelect
-                        value={draftInlineFilters.paymentMode}
-                        onChange={(event) => updateInlineFilter("paymentMode", event.target.value)}
+                        value={draftInlineFilters.paymentMethod}
+                        onChange={(event) => updateInlineFilter("paymentMethod", event.target.value)}
                         ariaLabel="Filtrar por modo de pagamento"
                       >
                         <option value="">Todos</option>
@@ -1236,7 +1056,7 @@ const ReceiptsList = ({
                         ariaLabel="Filtrar por status de pagamento"
                       >
                         <option value="">Todos</option>
-                        <option value="paid">Pagas</option>
+                        <option value="paid">Pagos</option>
                         <option value="pending">Pendentes</option>
                       </FilterSelect>
                     </th>
@@ -1269,39 +1089,39 @@ const ReceiptsList = ({
 
                 <tbody>
                   {visibleRows.length > 0 ? (
-                    visibleRows.map((expense) => (
-                      <tr key={expense.id}>
-                        <td>{formatDate(expense.date)}</td>
-                        <td className="expense-list__description-cell">{expense.description}</td>
-                        <td>{expense.payee}</td>
-                        <td>{expense.category}</td>
-                        <td className="expense-list__value-cell">{formatCurrency(expense.value)}</td>
-                        <td>{expense.paymentType}</td>
-                        <td>{expense.paymentMode}</td>
+                    visibleRows.map((receipt) => (
+                      <tr key={receipt.id}>
+                        <td>{formatDate(receipt.date)}</td>
+                        <td className="expense-list__description-cell">{receipt.description}</td>
+                        <td>{receipt.client}</td>
+                        <td>{receipt.category}</td>
+                        <td className="expense-list__value-cell">{formatCurrency(receipt.value)}</td>
+                        <td>{receipt.paymentType}</td>
+                        <td>{receipt.paymentMethod}</td>
                         <td>
                           <button
                             type="button"
-                            className={`expense-list__paid-status ${expense.paid ? "is-paid" : "is-pending"}`}
+                            className={`expense-list__paid-status ${receipt.paid ? "is-paid" : "is-pending"}`}
                             onClick={() => {
-                              const updated = { ...expense, paid: !expense.paid };
-                              replaceExpense(updated);
-                              onEditExpense?.(updated);
+                              const updated = { ...receipt, paid: !receipt.paid };
+                              replaceReceipt(updated);
+                              onEditReceipt?.(updated);
                             }}
-                            title={expense.paid ? "Marcar como pendente" : "Marcar como paga"}
-                            aria-label={expense.paid ? "Despesa paga" : "Despesa pendente"}
+                            title={receipt.paid ? "Marcar como pendente" : "Marcar como pago"}
+                            aria-label={receipt.paid ? "Recebimento pago" : "Recebimento pendente"}
                           >
-                            {expense.paid ? <FaCheckCircle aria-hidden="true" /> : <FaRegCircle aria-hidden="true" />}
+                            {receipt.paid ? <FaCheckCircle aria-hidden="true" /> : <FaRegCircle aria-hidden="true" />}
                           </button>
                         </td>
                         <td className="expense-list__actions-cell">
                           <div className="expense-list__row-menu" data-expense-row-menu>
                             <button
                               type="button"
-                              className={`expense-list__kebab ${menuRowId === expense.id ? "is-open" : ""}`.trim()}
-                              onClick={(event) => toggleRowMenu(event, expense.id)}
+                              className={`expense-list__kebab ${menuRowId === receipt.id ? "is-open" : ""}`.trim()}
+                              onClick={(event) => toggleRowMenu(event, receipt.id)}
                               aria-haspopup="menu"
-                              aria-expanded={menuRowId === expense.id}
-                              aria-label={`Ações da despesa ${expense.description}`}
+                              aria-expanded={menuRowId === receipt.id}
+                              aria-label={`Ações da recebimento ${receipt.description}`}
                             >
                               <FaEllipsisV aria-hidden="true" />
                             </button>
@@ -1317,11 +1137,11 @@ const ReceiptsList = ({
                           <div className="expense-list__empty-icon">
                             <FaMoneyBillWave aria-hidden="true" />
                           </div>
-                          <h2>Nenhuma despesa neste período</h2>
+                          <h2>Nenhum recebimento neste período</h2>
                           <p>
                             {hasFilters
-                              ? "Não encontramos despesas com os filtros aplicados."
-                              : `Ainda não há despesas registradas em ${formatMonth(month)}.`}
+                              ? "Não encontramos recebimentos com os filtros aplicados."
+                              : `Ainda não há recebimentos registrados em ${formatMonth(month)}.`}
                           </p>
                           {hasFilters ? (
                             <button type="button" onClick={clearFilters}>Limpar filtros</button>
@@ -1343,7 +1163,7 @@ const ReceiptsList = ({
         <footer className="expense-list__footer">
           <div className="expense-list__footer-summary">
             <p>
-              Mostrando <strong>{visibleRows.length}</strong> de <strong>{filteredRows.length}</strong> despesas
+              Mostrando <strong>{visibleRows.length}</strong> de <strong>{filteredRows.length}</strong> recebimentos
             </p>
 
             <label className="expense-list__page-size">
@@ -1368,7 +1188,7 @@ const ReceiptsList = ({
             </label>
           </div>
 
-          <div className="expense-list__pagination" aria-label="Paginação de despesas">
+          <div className="expense-list__pagination" aria-label="Paginação de recebimentos">
             <button
               type="button"
               onClick={() => setPage((current) => Math.max(1, current - 1))}
@@ -1420,7 +1240,7 @@ const ReceiptsList = ({
               <header className="expense-list__calculator-header">
                 <div>
                   <span>Calculadora</span>
-                  <strong>Valor da despesa</strong>
+                  <strong>Valor da recebimento</strong>
                 </div>
                 <button type="button" onClick={closeCalculator} aria-label="Fechar calculadora">
                   <FaTimes aria-hidden="true" />
@@ -1458,7 +1278,7 @@ const ReceiptsList = ({
                     type="button"
                     className={`expense-list__calculator-key ${key === "=" ? "is-equals" : ""} ${key === "C" ? "is-clear" : ""} ${["÷", "×", "−", "+"].includes(key) ? "is-operator" : ""}`.trim()}
                     onClick={() => handleCalculatorKey(key)}
-                    aria-label={key === "backspace" ? "Apagar último caractere" : key}
+                    aria-label={key === "backspace" ? "Apagor último caractere" : key}
                   >
                     {key === "backspace" ? <FaBackspace aria-hidden="true" /> : key}
                   </button>
@@ -1478,7 +1298,7 @@ const ReceiptsList = ({
           )
         : null}
 
-      {menuRowId && activeMenuExpense && menuPosition && typeof document !== "undefined"
+      {menuRowId && activeMenuReceipt && menuPosition && typeof document !== "undefined"
         ? createPortal(
             <div
               className={`expense-list__action-menu expense-list__action-menu--portal ${menuPosition.placement === "above" ? "is-above" : "is-below"}`.trim()}
@@ -1486,43 +1306,43 @@ const ReceiptsList = ({
               role="menu"
               style={{ left: `${menuPosition.left}px`, top: `${menuPosition.top}px` }}
             >
-              <button type="button" role="menuitem" onClick={() => { generateReceipt(activeMenuExpense); closeRowMenu(); }}>
+              <button type="button" role="menuitem" onClick={() => { generateReceipt(activeMenuReceipt); closeRowMenu(); }}>
                 <FaFileInvoice aria-hidden="true" />
                 <span>Gerar recibo</span>
               </button>
-              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "edit", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "edit", receiptId: activeMenuReceipt.id }); closeRowMenu(); }}>
                 <FaPen aria-hidden="true" />
                 <span>Editar detalhes</span>
               </button>
-              <button type="button" role="menuitem" onClick={() => { onViewValueDetails?.(activeMenuExpense); setDialog({ type: "details", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+              <button type="button" role="menuitem" onClick={() => { onViewValueDetails?.(activeMenuReceipt); setDialog({ type: "details", receiptId: activeMenuReceipt.id }); closeRowMenu(); }}>
                 <FaListUl aria-hidden="true" />
                 <span>Detalhar valor</span>
               </button>
-              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "attachments", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "attachments", receiptId: activeMenuReceipt.id }); closeRowMenu(); }}>
                 <FaPaperclip aria-hidden="true" />
                 <span>Anexos</span>
-                {activeMenuExpense.attachments?.length ? <small>{activeMenuExpense.attachments.length}</small> : null}
+                {activeMenuReceipt.attachments?.length ? <small>{activeMenuReceipt.attachments.length}</small> : null}
               </button>
-              <button type="button" role="menuitem" onClick={() => duplicateExpense(activeMenuExpense)}>
+              <button type="button" role="menuitem" onClick={() => duplicateReceipt(activeMenuReceipt)}>
                 <FaCopy aria-hidden="true" />
                 <span>Duplicar</span>
               </button>
-              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "move", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "move", receiptId: activeMenuReceipt.id }); closeRowMenu(); }}>
                 <FaExchangeAlt aria-hidden="true" />
                 <span>Mover para...</span>
               </button>
               <div className="expense-list__menu-divider" />
-              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "recurring", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "recurring", receiptId: activeMenuReceipt.id }); closeRowMenu(); }}>
                 <FaClock aria-hidden="true" />
                 <span>Tornar recorrente...</span>
               </button>
               <div className="expense-list__menu-divider" />
-              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "installments", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+              <button type="button" role="menuitem" onClick={() => { setDialog({ type: "installments", receiptId: activeMenuReceipt.id }); closeRowMenu(); }}>
                 <FaMoneyBillWave aria-hidden="true" />
                 <span>Parcelar...</span>
               </button>
               <div className="expense-list__menu-divider" />
-              <button type="button" role="menuitem" className="is-danger" onClick={() => { setDialog({ type: "delete", expenseId: activeMenuExpense.id }); closeRowMenu(); }}>
+              <button type="button" role="menuitem" className="is-danger" onClick={() => { setDialog({ type: "delete", receiptId: activeMenuReceipt.id }); closeRowMenu(); }}>
                 <FaTrash aria-hidden="true" />
                 <span>Excluir</span>
               </button>
@@ -1537,7 +1357,7 @@ const ReceiptsList = ({
 
       {isAdvancedOpen ? (
         <div className="expense-list__drawer-backdrop" onMouseDown={() => setIsAdvancedOpen(false)} role="presentation">
-          <aside className="expense-list__drawer" onMouseDown={(event) => event.stopPropagation()} aria-label="Filtros avançados">
+          <aside className="expense-list__drawer" onMouseDown={(event) => event.stopPropagotion()} aria-label="Filtros avançados">
             <header>
               <div>
                 <span>HU08-E07</span>
@@ -1566,7 +1386,7 @@ const ReceiptsList = ({
 
               <label className="expense-list__checkbox-row">
                 <input type="checkbox" checked={advancedFilters.onlyWithAttachments} onChange={(event) => setAdvancedFilters((current) => ({ ...current, onlyWithAttachments: event.target.checked }))} />
-                <span>Somente despesas com anexos</span>
+                <span>Somente recebimentos com anexos</span>
               </label>
             </div>
 
@@ -1578,36 +1398,36 @@ const ReceiptsList = ({
         </div>
       ) : null}
 
-      {dialog?.type === "edit" && activeExpense ? (
-        <Dialog title="Editar detalhes da despesa" onClose={() => setDialog(null)}>
-          <form className="expense-list__form" onSubmit={(event) => handleEditSubmit(event, activeExpense)}>
+      {dialog?.type === "edit" && activeReceipt ? (
+        <Dialog title="Editar detalhes da recebimento" onClose={() => setDialog(null)}>
+          <form className="expense-list__form" onSubmit={(event) => handleEditSubmit(event, activeReceipt)}>
             <div className="expense-list__form-grid">
               <Field label="Data">
-                <input name="date" type="date" defaultValue={activeExpense.date} required />
+                <input name="date" type="date" defaultValue={activeReceipt.date} required />
               </Field>
               <Field label="Valor">
-                <input name="value" type="number" step="0.01" min="0" defaultValue={activeExpense.value} required />
+                <input name="value" type="number" step="0.01" min="0" defaultValue={activeReceipt.value} required />
               </Field>
               <Field label="Descrição" className="is-wide">
-                <input name="description" defaultValue={activeExpense.description} required />
+                <input name="description" defaultValue={activeReceipt.description} required />
               </Field>
-              <Field label="Pago a" className="is-wide">
-                <input name="payee" defaultValue={activeExpense.payee} required />
+              <Field label="Cliente" className="is-wide">
+                <input name="client" defaultValue={activeReceipt.client} required />
               </Field>
               <Field label="Categoria">
-                <select name="category" defaultValue={activeExpense.category}>{CATEGORIES.map((category) => <option key={category}>{category}</option>)}</select>
+                <select name="category" defaultValue={activeReceipt.category}>{CATEGORIES.map((category) => <option key={category}>{category}</option>)}</select>
               </Field>
               <Field label="Tipo de pagamento">
-                <select name="paymentType" defaultValue={activeExpense.paymentType}>{PAYMENT_TYPES.map((type) => <option key={type}>{type}</option>)}</select>
+                <select name="paymentType" defaultValue={activeReceipt.paymentType}>{PAYMENT_TYPES.map((type) => <option key={type}>{type}</option>)}</select>
               </Field>
-              <Field label="Modo de pagamento" className="is-wide">
-                <select name="paymentMode" defaultValue={activeExpense.paymentMode}>{PAYMENT_MODES.map((mode) => <option key={mode}>{mode}</option>)}</select>
+              <Field label="Forma de pagamento" className="is-wide">
+                <select name="paymentMethod" defaultValue={activeReceipt.paymentMethod}>{PAYMENT_MODES.map((mode) => <option key={mode}>{mode}</option>)}</select>
               </Field>
             </div>
 
             <label className="expense-list__checkbox-row">
-              <input name="paid" type="checkbox" defaultChecked={activeExpense.paid} />
-              <span>Despesa paga</span>
+              <input name="paid" type="checkbox" defaultChecked={activeReceipt.paid} />
+              <span>Recebimento pago</span>
             </label>
 
             <div className="expense-list__dialog-actions">
@@ -1618,46 +1438,46 @@ const ReceiptsList = ({
         </Dialog>
       ) : null}
 
-      {dialog?.type === "details" && activeExpense ? (
+      {dialog?.type === "details" && activeReceipt ? (
         <Dialog title="Detalhamento do valor" onClose={() => setDialog(null)}>
           <div className="expense-list__details-card">
-            <span>Valor total da despesa</span>
-            <strong>{formatCurrency(activeExpense.value)}</strong>
+            <span>Valor total da recebimento</span>
+            <strong>{formatCurrency(activeReceipt.value)}</strong>
           </div>
           <dl className="expense-list__details-list">
-            <div><dt>Descrição</dt><dd>{activeExpense.description}</dd></div>
-            <div><dt>Favorecido</dt><dd>{activeExpense.payee}</dd></div>
-            <div><dt>Categoria</dt><dd>{activeExpense.category}</dd></div>
-            <div><dt>Tipo</dt><dd>{activeExpense.paymentType}</dd></div>
-            <div><dt>Modo</dt><dd>{activeExpense.paymentMode}</dd></div>
-            <div><dt>Status</dt><dd>{activeExpense.paid ? "Pago" : "Pendente"}</dd></div>
+            <div><dt>Descrição</dt><dd>{activeReceipt.description}</dd></div>
+            <div><dt>Cliente</dt><dd>{activeReceipt.client}</dd></div>
+            <div><dt>Categoria</dt><dd>{activeReceipt.category}</dd></div>
+            <div><dt>Tipo</dt><dd>{activeReceipt.paymentType}</dd></div>
+            <div><dt>Modo</dt><dd>{activeReceipt.paymentMethod}</dd></div>
+            <div><dt>Status</dt><dd>{activeReceipt.paid ? "Pago" : "Pendente"}</dd></div>
           </dl>
         </Dialog>
       ) : null}
 
-      {dialog?.type === "attachments" && activeExpense ? (
-        <Dialog title="Anexos da despesa" onClose={() => setDialog(null)}>
+      {dialog?.type === "attachments" && activeReceipt ? (
+        <Dialog title="Anexos da recebimento" onClose={() => setDialog(null)}>
           <div className="expense-list__attachments">
             <label className="expense-list__upload-box">
               <FaPlus aria-hidden="true" />
               <span>Adicionar nota fiscal, boleto ou comprovante</span>
-              <input type="file" multiple onChange={(event) => handleAttachmentAdd(activeExpense, event.target.files)} />
+              <input type="file" multiple onChange={(event) => handleAttachmentAdd(activeReceipt, event.target.files)} />
             </label>
 
-            {activeExpense.attachments?.length ? (
+            {activeReceipt.attachments?.length ? (
               <ul>
-                {activeExpense.attachments.map((attachment) => (
+                {activeReceipt.attachments.map((attachment) => (
                   <li key={attachment.id ?? attachment.name}>
                     <FaPaperclip aria-hidden="true" />
                     <span>{attachment.name}</span>
                     <button
                       type="button"
                       onClick={() => {
-                        const nextAttachments = activeExpense.attachments.filter((item) => item !== attachment);
-                        const updated = { ...activeExpense, attachments: nextAttachments };
-                        replaceExpense(updated);
+                        const nextAttachments = activeReceipt.attachments.filter((item) => item !== attachment);
+                        const updated = { ...activeReceipt, attachments: nextAttachments };
+                        replaceReceipt(updated);
                         onAttachmentsChange?.(updated, nextAttachments);
-                        setDialog({ type: "attachments", expenseId: updated.id });
+                        setDialog({ type: "attachments", receiptId: updated.id });
                       }}
                       aria-label={`Remover ${attachment.name}`}
                     >
@@ -1667,24 +1487,24 @@ const ReceiptsList = ({
                 ))}
               </ul>
             ) : (
-              <p className="expense-list__muted">Nenhum arquivo anexado a esta despesa.</p>
+              <p className="expense-list__muted">Nenhum arquivo anexado a esta recebimento.</p>
             )}
           </div>
         </Dialog>
       ) : null}
 
-      {dialog?.type === "move" && activeExpense ? (
-        <Dialog title="Mover despesa" onClose={() => setDialog(null)}>
-          <form className="expense-list__form" onSubmit={(event) => submitMove(event, activeExpense)}>
+      {dialog?.type === "move" && activeReceipt ? (
+        <Dialog title="Mover recebimento" onClose={() => setDialog(null)}>
+          <form className="expense-list__form" onSubmit={(event) => submitMove(event, activeReceipt)}>
             <Field label="Mover para">
-              <select name="destination" defaultValue="expenses">
-                <option value="expenses">Despesas (reclassificar)</option>
+              <select name="destination" defaultValue="receivables">
+                <option value="expenses">Recebimentos (reclassificar)</option>
                 <option value="receipts">Recebimentos</option>
                 <option value="transfers">Transferências</option>
               </select>
             </Field>
             <Field label="Categoria de destino">
-              <select name="category" defaultValue={activeExpense.category}>{CATEGORIES.map((category) => <option key={category}>{category}</option>)}</select>
+              <select name="category" defaultValue={activeReceipt.category}>{CATEGORIES.map((category) => <option key={category}>{category}</option>)}</select>
             </Field>
             <div className="expense-list__dialog-actions">
               <button type="button" className="expense-list__button expense-list__button--secondary" onClick={() => setDialog(null)}>Cancelar</button>
@@ -1694,9 +1514,9 @@ const ReceiptsList = ({
         </Dialog>
       ) : null}
 
-      {dialog?.type === "recurring" && activeExpense ? (
+      {dialog?.type === "recurring" && activeReceipt ? (
         <Dialog title="Tornar recorrente" onClose={() => setDialog(null)}>
-          <form className="expense-list__form" onSubmit={(event) => submitRecurring(event, activeExpense)}>
+          <form className="expense-list__form" onSubmit={(event) => submitRecurring(event, activeReceipt)}>
             <Field label="Frequência">
               <select name="frequency" defaultValue="monthly">
                 <option value="weekly">Semanal</option>
@@ -1706,7 +1526,7 @@ const ReceiptsList = ({
               </select>
             </Field>
             <Field label="Iniciar em">
-              <input name="startDate" type="date" defaultValue={activeExpense.date} required />
+              <input name="startDate" type="date" defaultValue={activeReceipt.date} required />
             </Field>
             <div className="expense-list__dialog-actions">
               <button type="button" className="expense-list__button expense-list__button--secondary" onClick={() => setDialog(null)}>Cancelar</button>
@@ -1716,18 +1536,18 @@ const ReceiptsList = ({
         </Dialog>
       ) : null}
 
-      {dialog?.type === "installments" && activeExpense ? (
-        <Dialog title="Parcelar despesa" onClose={() => setDialog(null)}>
-          <form className="expense-list__form" onSubmit={(event) => submitInstallments(event, activeExpense)}>
+      {dialog?.type === "installments" && activeReceipt ? (
+        <Dialog title="Parcelar recebimento" onClose={() => setDialog(null)}>
+          <form className="expense-list__form" onSubmit={(event) => submitInstallments(event, activeReceipt)}>
             <div className="expense-list__details-card expense-list__details-card--compact">
               <span>Valor a parcelar</span>
-              <strong>{formatCurrency(activeExpense.value)}</strong>
+              <strong>{formatCurrency(activeReceipt.value)}</strong>
             </div>
             <Field label="Número de parcelas">
               <input name="installments" type="number" min="2" max="60" defaultValue="2" required />
             </Field>
             <Field label="Vencimento da primeira parcela">
-              <input name="firstDate" type="date" defaultValue={activeExpense.date} required />
+              <input name="firstDate" type="date" defaultValue={activeReceipt.date} required />
             </Field>
             <div className="expense-list__dialog-actions">
               <button type="button" className="expense-list__button expense-list__button--secondary" onClick={() => setDialog(null)}>Cancelar</button>
@@ -1737,16 +1557,16 @@ const ReceiptsList = ({
         </Dialog>
       ) : null}
 
-      {dialog?.type === "delete" && activeExpense ? (
-        <Dialog title="Excluir despesa" onClose={() => setDialog(null)} className="expense-list__dialog--small">
+      {dialog?.type === "delete" && activeReceipt ? (
+        <Dialog title="Excluir recebimento" onClose={() => setDialog(null)} className="expense-list__dialog--small">
           <div className="expense-list__delete-copy">
             <div className="expense-list__danger-icon"><FaTrash aria-hidden="true" /></div>
-            <p>Tem certeza que deseja excluir <strong>{activeExpense.description}</strong>?</p>
-            <span>A exclusão é lógica e pode ser tratada pela API por meio do callback <code>onDeleteExpense</code>.</span>
+            <p>Tem certeza que deseja excluir <strong>{activeReceipt.description}</strong>?</p>
+            <span>A exclusão é lógica e pode ser tratada pela API por meio do callback <code>onDeleteReceipt</code>.</span>
           </div>
           <div className="expense-list__dialog-actions">
             <button type="button" className="expense-list__button expense-list__button--secondary" onClick={() => setDialog(null)}>Cancelar</button>
-            <button type="button" className="expense-list__button expense-list__button--danger" onClick={() => confirmDelete(activeExpense)}>Excluir despesa</button>
+            <button type="button" className="expense-list__button expense-list__button--danger" onClick={() => confirmDelete(activeReceipt)}>Excluir recebimento</button>
           </div>
         </Dialog>
       ) : null}

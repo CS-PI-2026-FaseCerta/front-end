@@ -208,9 +208,9 @@ body:has(.expense-list-page),
 }
 
 .expense-list__tabs button.is-active {
-  background: var(--expense-red);
+  background: var(--expense-green);
   color: var(--expense-on-strong);
-  box-shadow: 0 7px 18px color-mix(in srgb, var(--expense-red) 24%, transparent);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--expense-green) 24%, transparent);
 }
 
 .expense-list__filters-button {
