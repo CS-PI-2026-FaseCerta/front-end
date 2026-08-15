@@ -1727,6 +1727,9 @@ const ExpenseList = ({
               <input name="installments" type="number" min="2" max="60" defaultValue="2" required />
             </Field>
             <Field label="Vencimento da primeira parcela">
+              <small className="expense-list__field-warning">
+                Se o vencimento da primeira parcela não for no mês atual, a despesa será transferida para a tabela do mês escolhido.
+              </small>
               <input name="firstDate" type="date" defaultValue={activeExpense.date} required />
             </Field>
             <div className="expense-list__dialog-actions">

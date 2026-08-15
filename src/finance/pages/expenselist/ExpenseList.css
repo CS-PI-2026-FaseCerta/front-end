@@ -1055,6 +1055,15 @@ body:has(.expense-list-page),
   letter-spacing: 0.03em;
 }
 
+.expense-list__field-warning {
+  display: block;
+  margin: -0.05rem 0 0.1rem;
+  color: var(--expense-red);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
 .expense-list__form-field input,
 .expense-list__form-field select {
   width: 100%;
