@@ -22,6 +22,8 @@ import CustomersListPage from "./home/pages/customers/CustomersListPage.jsx";
 import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx";
 import ProductsListPage from "./home/pages/products/ProductsListPage";
 
+import ExpenseList from "./finance/pages/expenselist/ExpenseList.jsx";
+
 import ServicesListPage from "./home/pages/services/ServicesListPage.jsx";
 import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 
@@ -71,6 +73,7 @@ function App() {
             />
             <Route path={AppRoutes.Servicos} element={<ServicesListPage />} />
             <Route path={AppRoutes.Pedidos} element={<OrdersListPage />} />
+
 
             <Route
               path={AppRoutes.ApplyDiscounts}
@@ -138,15 +141,7 @@ function App() {
             <Route
               path={AppRoutes.Financeiro}
               element={
-                <ProtectedRoute allowedProfiles={["gestor"]} redirectTo="/">
-                  <SectionPage
-                    eyebrow="Financeiro"
-                    title="Financeiro"
-                    description="Área restrita para gestores."
-                    ctaLabel="Voltar ao painel"
-                    ctaPath="/dashboard"
-                  />
-                </ProtectedRoute>
+                <ExpenseList/>
               }
             />
 

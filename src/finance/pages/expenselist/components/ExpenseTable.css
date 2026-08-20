@@ -1,0 +1,261 @@
+.expense-table__filter-row th {
+  position: relative;
+  z-index: 2;
+  padding: 0.55rem 0.65rem;
+  background: var(--finance-filter);
+}
+
+.expense-table__filter-row input,
+.expense-table__filter-row select {
+  width: 100%;
+  min-height: 2.6rem;
+  padding: 0 0.72rem;
+  border: 1px solid var(--finance-border-strong);
+  border-radius: 8px;
+  outline: none;
+  background: var(--finance-surface-solid);
+  color: var(--finance-text);
+  font: inherit;
+  font-size: 0.88rem;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.expense-table__filter-row input::placeholder {
+  color: var(--finance-muted);
+}
+
+.expense-table__filter-row input:focus,
+.expense-table__filter-row select:focus {
+  border-color: var(--finance-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--finance-focus) 16%, transparent);
+}
+
+.expense-table__filter-row th:nth-child(8) .finance-select {
+  min-width: 7.75rem;
+}
+
+.expense-table__filter-row th:nth-child(8) select {
+  padding-left: 0.65rem;
+  padding-right: 1.7rem;
+}
+
+.expense-table__filter-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 5rem;
+}
+
+.expense-table__filter-row th:last-child {
+  padding-inline: 0.45rem;
+}
+
+.expense-table__apply-filter,
+.expense-table__clear-filter,
+.expense-table__calculator-trigger,
+.expense-table__kebab,
+.expense-table__paid-status {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.expense-table__apply-filter,
+.expense-table__clear-filter {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex: 0 0 2.25rem;
+  place-items: center;
+  border-radius: 50%;
+  transition: background-color 150ms ease, color 150ms ease, opacity 150ms ease;
+}
+
+.expense-table__apply-filter {
+  background: var(--list-badge-success-bg);
+  color: var(--finance-success);
+}
+
+.expense-table__clear-filter {
+  background: var(--finance-danger-bg);
+  color: var(--finance-danger);
+}
+
+.expense-table__apply-filter:hover:not(:disabled),
+.expense-table__apply-filter:focus-visible:not(:disabled) {
+  background: color-mix(in srgb, var(--finance-success) 18%, var(--finance-surface-solid));
+}
+
+.expense-table__clear-filter:hover:not(:disabled),
+.expense-table__clear-filter:focus-visible:not(:disabled) {
+  background: color-mix(in srgb, var(--finance-danger) 16%, var(--finance-surface-solid));
+}
+
+.expense-table__apply-filter:disabled,
+.expense-table__clear-filter:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.expense-table__value-filter {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.expense-table__value-filter input {
+  padding-right: 2.65rem;
+}
+
+.expense-table__calculator-trigger {
+  position: absolute;
+  top: 50%;
+  right: 0.28rem;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 7px;
+  color: var(--finance-muted);
+  transform: translateY(-50%);
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.expense-table__calculator-trigger:hover,
+.expense-table__calculator-trigger:focus-visible,
+.expense-table__calculator-trigger.is-open {
+  background: var(--finance-hover);
+  color: var(--finance-primary);
+}
+
+.expense-table__description {
+  color: var(--finance-text) !important;
+  font-weight: 700 !important;
+}
+
+.expense-table__value {
+  white-space: nowrap;
+  font-weight: 800 !important;
+}
+
+.expense-table__paid-status {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 1.45rem;
+}
+
+.expense-table__paid-status.is-paid {
+  color: var(--finance-success);
+}
+
+.expense-table__paid-status.is-pending {
+  color: color-mix(in srgb, var(--finance-muted) 55%, transparent);
+}
+
+.expense-table__paid-status:hover,
+.expense-table__paid-status:focus-visible {
+  background: var(--finance-hover);
+}
+
+.expense-table__actions-cell {
+  position: relative;
+  overflow: visible;
+}
+
+.expense-table__row-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.expense-table__kebab {
+  display: grid;
+  width: 2.4rem;
+  height: 2.4rem;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  color: var(--finance-text);
+  transition: border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+
+.expense-table__kebab:hover,
+.expense-table__kebab:focus-visible,
+.expense-table__kebab.is-open {
+  border-color: var(--finance-primary);
+  color: var(--finance-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--finance-focus) 14%, transparent);
+}
+
+.expense-table__empty-icon {
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  border-radius: 20px;
+  background: var(--list-badge-info-bg);
+  color: var(--finance-primary);
+  font-size: 1.45rem;
+}
+
+@media (max-width: 1250px) {
+  .expense-table__filter-row th {
+    padding-inline: 0.24rem;
+  }
+
+  .expense-table__filter-row input,
+  .expense-table__filter-row select {
+    min-height: 2.35rem;
+    padding-inline: 0.34rem;
+    font-size: 0.76rem;
+  }
+
+  .expense-table__filter-row .finance-select select {
+    padding-right: 1.35rem;
+  }
+
+  .expense-table__filter-row .finance-select__chevron {
+    right: 0.38rem;
+  }
+
+  .expense-table__apply-filter,
+  .expense-table__clear-filter {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-basis: 1.75rem;
+  }
+
+  .expense-table__filter-actions {
+    gap: 0.2rem;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 980px) and (min-width: 721px) {
+  .expense-table__filter-row th {
+    padding: 0.42rem 0.16rem;
+  }
+
+  .expense-table__filter-row input,
+  .expense-table__filter-row select {
+    min-height: 2.2rem;
+    padding-inline: 0.26rem;
+    font-size: 0.7rem;
+  }
+
+  .expense-table__paid-status {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1.2rem;
+  }
+
+  .expense-table__kebab {
+    width: 2rem;
+    height: 2rem;
+  }
+}
