@@ -1,0 +1,234 @@
+.transfer-table__filter-row th {
+    position: relative;
+    z-index: 2;
+    padding: 0.55rem 0.65rem;
+    background: var(--finance-filter);
+}
+
+.transfer-table__filter-row input,
+.transfer-table__filter-row select {
+    width: 100%;
+    min-height: 2.6rem;
+    padding: 0 0.72rem;
+    border: 1px solid var(--finance-border-strong);
+    border-radius: 8px;
+    outline: none;
+    background: var(--finance-surface-solid);
+    color: var(--finance-text);
+    font: inherit;
+    font-size: 0.88rem;
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.transfer-table__filter-row input::placeholder {
+    color: var(--finance-muted);
+}
+
+.transfer-table__filter-row input:focus,
+.transfer-table__filter-row select:focus {
+    border-color: var(--finance-primary);
+    box-shadow:
+        0 0 0 3px color-mix(in srgb,
+            var(--finance-focus) 16%,
+            transparent);
+}
+
+.transfer-table__filter-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-width: 5rem;
+}
+
+.transfer-table__filter-row th:last-child {
+    padding-inline: 0.45rem;
+}
+
+.transfer-table__apply-filter,
+.transfer-table__clear-filter,
+.transfer-table__kebab,
+.transfer-table__paid-status {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.transfer-table__apply-filter,
+.transfer-table__clear-filter {
+    display: grid;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 2.25rem;
+    place-items: center;
+    border-radius: 50%;
+    transition:
+        background-color 150ms ease,
+        color 150ms ease,
+        opacity 150ms ease;
+}
+
+.transfer-table__apply-filter {
+    background: var(--list-badge-success-bg);
+    color: var(--finance-success);
+}
+
+.transfer-table__clear-filter {
+    background: var(--finance-danger-bg);
+    color: var(--finance-danger);
+}
+
+.transfer-table__apply-filter:hover:not(:disabled),
+.transfer-table__apply-filter:focus-visible:not(:disabled) {
+    background:
+        color-mix(in srgb,
+            var(--finance-success) 18%,
+            var(--finance-surface-solid));
+}
+
+.transfer-table__clear-filter:hover:not(:disabled),
+.transfer-table__clear-filter:focus-visible:not(:disabled) {
+    background:
+        color-mix(in srgb,
+            var(--finance-danger) 16%,
+            var(--finance-surface-solid));
+}
+
+.transfer-table__apply-filter:disabled,
+.transfer-table__clear-filter:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+}
+
+.transfer-table__description {
+    color: var(--finance-text) !important;
+    font-weight: 700 !important;
+}
+
+.transfer-table__value {
+    white-space: nowrap;
+    font-weight: 800 !important;
+}
+
+.transfer-table__paid-status {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border-radius: 50%;
+    font-size: 1.35rem;
+}
+
+.transfer-table__paid-status.is-paid {
+    color: var(--finance-success);
+}
+
+.transfer-table__paid-status.is-pending {
+    color: color-mix(in srgb,
+            var(--finance-muted) 55%,
+            transparent);
+}
+
+.transfer-table__paid-status:hover,
+.transfer-table__paid-status:focus-visible {
+    background: var(--finance-hover);
+}
+
+.transfer-table__actions-cell {
+    position: relative;
+    overflow: visible;
+}
+
+.transfer-table__row-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.transfer-table__kebab {
+    display: grid;
+    width: 2.4rem;
+    height: 2.4rem;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    color: var(--finance-text);
+    transition:
+        border-color 150ms ease,
+        color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.transfer-table__kebab:hover,
+.transfer-table__kebab:focus-visible,
+.transfer-table__kebab.is-open {
+    border-color: var(--finance-primary);
+    color: var(--finance-primary);
+    box-shadow:
+        0 0 0 3px color-mix(in srgb,
+            var(--finance-focus) 14%,
+            transparent);
+}
+
+.transfer-table__empty-icon {
+    display: grid;
+    width: 4rem;
+    height: 4rem;
+    place-items: center;
+    border-radius: 20px;
+    background: var(--list-badge-info-bg);
+    color: var(--finance-primary);
+    font-size: 1.45rem;
+}
+
+@media (max-width: 1250px) {
+    .transfer-table__filter-row th {
+        padding-inline: 0.24rem;
+    }
+
+    .transfer-table__filter-row input,
+    .transfer-table__filter-row select {
+        min-height: 2.35rem;
+        padding-inline: 0.34rem;
+        font-size: 0.76rem;
+    }
+
+    .transfer-table__apply-filter,
+    .transfer-table__clear-filter {
+        width: 1.75rem;
+        height: 1.75rem;
+        flex-basis: 1.75rem;
+    }
+
+    .transfer-table__filter-actions {
+        gap: 0.2rem;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 980px) and (min-width: 721px) {
+    .transfer-table__filter-row th {
+        padding: 0.42rem 0.16rem;
+    }
+
+    .transfer-table__filter-row input,
+    .transfer-table__filter-row select {
+        min-height: 2.2rem;
+        padding-inline: 0.26rem;
+        font-size: 0.7rem;
+    }
+
+    .transfer-table__paid-status {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: 1.2rem;
+    }
+
+    .transfer-table__kebab {
+        width: 2rem;
+        height: 2rem;
+    }
+}
