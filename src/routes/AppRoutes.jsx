@@ -16,6 +16,7 @@ export const Clientes = "/clientes";
 export const ProdutosEstoqueNovoItem = "/produtos-estoque/novo-item";
 export const Servicos = "/servicos";
 export const FinanceiroTranferencias = "/financeiro/transferencias"
+export const ListagemDespesas = "/listagem-despesas";
 
 //Não implementados ainda, mas já mapeados para facilitar futuras integrações.
 export const Perfil = "/perfil";

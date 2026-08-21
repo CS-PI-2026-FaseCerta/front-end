@@ -16,16 +16,6 @@ import {
 import FinanceHeader from "../../components/header/FinanceHeader";
 import FinanceFooter from "../../components/footer/FinanceFooter";
 
-import TransferActionMenu from "../../modals/TransferActionMenu";
-
-import TransferEditModal from "../../modals/TransferEditModal";
-import TransferDetailsModal from "../../modals/TransferDetailsModal";
-import TransferAttachmentsModal from "../../modals/TransferAttachmentsModal";
-import TransferMoveModal from "../../modals/TransferMoveModal";
-import TransferRecurringModal from "../../modals/TransferRecurringModal";
-import TransferInstallmentsModal from "../../modals/TransferInstallmentsModal";
-import TransferDeleteModal from "../../modals/TransferDeleteModal";
-
 import "./Transfers.css";
 
 const DEMO_TRANSFERS = [
