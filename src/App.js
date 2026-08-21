@@ -1,6 +1,12 @@
 import "./App.css";
 
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 
 import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
@@ -23,6 +29,7 @@ import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx
 import ProductsListPage from "./home/pages/products/ProductsListPage";
 
 import ExpenseList from "./finance/pages/expenselist/ExpenseList.jsx";
+import ReceipList from "./finance/pages/receiptlist/ReceipList.jsx";
 
 import ServicesListPage from "./home/pages/services/ServicesListPage.jsx";
 import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
@@ -32,10 +39,25 @@ import DashboardLayout from "./global/components/layout/DashboardLayout.jsx";
 import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 
 import ApplyDiscounts from "./home/components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
-
-import ReceiptsList from "./finence/pages/receiptlist/ReceiptsList.jsx";
-
 import * as AppRoutes from "./routes/AppRoutes.jsx";
+
+function FinanceListRoute({ type }) {
+  const navigate = useNavigate();
+  const onTabChange = (tab) => {
+    const paths = {
+      receipts: AppRoutes.FinanceiroRecebimentos,
+      expenses: AppRoutes.Financeiro,
+      transfers: AppRoutes.FinanceiroTransferencias,
+    };
+    if (paths[tab]) navigate(paths[tab]);
+  };
+
+  return type === "receipts" ? (
+    <ReceipList onTabChange={onTabChange} />
+  ) : (
+    <ExpenseList onTabChange={onTabChange} />
+  );
+}
 
 function App() {
   return (
@@ -162,7 +184,26 @@ function App() {
               }
             />
 
-            <Route path={AppRoutes.Financeiro} element={<ExpenseList />} />
+            <Route
+              path={AppRoutes.Financeiro}
+              element={<FinanceListRoute type="expenses" />}
+            />
+            <Route
+              path={AppRoutes.FinanceiroRecebimentos}
+              element={<FinanceListRoute type="receipts" />}
+            />
+            <Route
+              path={AppRoutes.FinanceiroTransferencias}
+              element={
+                <SectionPage
+                  eyebrow="Financeiro"
+                  title="Transferências"
+                  description="A listagem de transferências ainda não foi implementada."
+                  ctaLabel="Voltar ao financeiro"
+                  ctaPath={AppRoutes.Financeiro}
+                />
+              }
+            />
 
             <Route
               path={AppRoutes.FinanceiroDespesasNova}
