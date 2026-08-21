@@ -17,6 +17,7 @@ export const ProdutosEstoqueNovoItem = "/produtos-estoque/novo-item";
 export const Servicos = "/servicos";
 export const ListagemDespesas = "/listagem-despesas";
 export const Financeiro = "/financeiro";
+export const FinanceiroDespesas = "/financeiro/despesas";
 export const FinanceiroRecebimentos = "/financeiro/recebimentos";
 export const FinanceiroTransferencias = "/financeiro/transferencias";
 

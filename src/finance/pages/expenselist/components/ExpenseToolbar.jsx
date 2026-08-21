@@ -24,9 +24,9 @@ export default function ExpenseToolbar({
 
       <div className="expense-toolbar__right">
         <nav className="expense-toolbar__tabs" aria-label="Tipo de movimentação">
-          <button type="button" onClick={() => onTabChange?.("receipts")}>Recebimentos</button>
-          <button type="button" className="is-active" aria-current="page">Despesas</button>
-          <button type="button" onClick={() => onTabChange?.("transfers")}>Transferências</button>
+          <button type="button" data-tab="receipts" onClick={() => onTabChange?.("receipts")}>Recebimentos</button>
+          <button type="button" data-tab="expenses" className="is-active" aria-current="page">Despesas</button>
+          <button type="button" data-tab="transfers" onClick={() => onTabChange?.("transfers")}>Transferências</button>
         </nav>
 
         <button

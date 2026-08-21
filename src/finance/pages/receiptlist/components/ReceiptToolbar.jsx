@@ -30,13 +30,13 @@ export default function ReceiptToolbar({
           className="expense-toolbar__tabs"
           aria-label="Tipo de movimentação"
         >
-          <button type="button" className="is-active" aria-current="page">
+          <button type="button" data-tab="receipts" className="is-active" aria-current="page">
             Recebimentos
           </button>
-          <button type="button" onClick={() => onTabChange?.("expenses")}>
+          <button type="button" data-tab="expenses" onClick={() => onTabChange?.("expenses")}>
             Despesas
           </button>
-          <button type="button" onClick={() => onTabChange?.("transfers")}>
+          <button type="button" data-tab="transfers" onClick={() => onTabChange?.("transfers")}>
             Transferências
           </button>
         </nav>

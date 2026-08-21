@@ -45,8 +45,8 @@ function FinanceListRoute({ type }) {
   const navigate = useNavigate();
   const onTabChange = (tab) => {
     const paths = {
-      receipts: AppRoutes.FinanceiroRecebimentos,
-      expenses: AppRoutes.Financeiro,
+      expenses: AppRoutes.FinanceiroDespesas,
+      receipts: AppRoutes.Financeiro,
       transfers: AppRoutes.FinanceiroTransferencias,
     };
     if (paths[tab]) navigate(paths[tab]);
@@ -186,11 +186,11 @@ function App() {
 
             <Route
               path={AppRoutes.Financeiro}
-              element={<FinanceListRoute type="expenses" />}
+              element={<FinanceListRoute type="receipts" />}
             />
             <Route
-              path={AppRoutes.FinanceiroRecebimentos}
-              element={<FinanceListRoute type="receipts" />}
+              path={AppRoutes.FinanceiroDespesas}
+              element={<FinanceListRoute type="expenses" />}
             />
             <Route
               path={AppRoutes.FinanceiroTransferencias}
