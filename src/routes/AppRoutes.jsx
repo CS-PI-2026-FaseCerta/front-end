@@ -15,8 +15,11 @@ export const ProdutosEstoque = "/produtos-estoque";
 export const Clientes = "/clientes";
 export const ProdutosEstoqueNovoItem = "/produtos-estoque/novo-item";
 export const Servicos = "/servicos";
-export const FinanceiroTranferencias = "/financeiro/transferencias"
 export const ListagemDespesas = "/listagem-despesas";
+export const Financeiro = "/financeiro";
+export const FinanceiroDespesas = "/financeiro/despesas";
+export const FinanceiroRecebimentos = "/financeiro/recebimentos";
+export const FinanceiroTransferencias = "/financeiro/transferencias";
 
 //Não implementados ainda, mas já mapeados para facilitar futuras integrações.
 export const Perfil = "/perfil";
@@ -24,7 +27,7 @@ export const Relatorios = "/relatorios";
 export const Configuracoes = "/configuracoes";
 export const OrdensServico = "/ordens-servico";
 export const OrdensServicoNovo = "/os/novo";
-export const Financeiro = "/financeiro";
+
 export const FinanceiroDespesasNova = "/financeiro/despesas/nova";
 export const Calendario = "/calendario";
 export const Suporte = "/suporte";

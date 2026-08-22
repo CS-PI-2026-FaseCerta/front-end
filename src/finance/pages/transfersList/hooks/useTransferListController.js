@@ -438,7 +438,7 @@ export default function useTransferListController({
     const getTransfer = (id) =>
         rows.find((item) => item.id === id);
 
-    const closeMenu = () => {
+    const closeRowMenu = () => {
         setMenuRowId(null);
         setMenuPosition(null);
     };
@@ -448,7 +448,7 @@ export default function useTransferListController({
         transferId,
     ) => {
         if (menuRowId === transferId) {
-            closeMenu();
+            closeRowMenu();
             return;
         }
 
@@ -507,7 +507,7 @@ export default function useTransferListController({
         type,
         transfer,
     ) => {
-        closeMenu();
+        closeRowMenu();
 
         if (!transfer) return;
 
@@ -535,16 +535,18 @@ export default function useTransferListController({
         );
     };
 
-    const generateReceiptAndClose = (
-        transfer,
-    ) => {
-        closeMenu();
+    const generateReceiptAndClose = (transfer) => {
+        generateReceipt(transfer);
+        closeRowMenu();
+    };
 
+    const generateReceipt = (transfer) => {
         onGenerateReceipt?.(transfer);
 
-        setNotice(
-            "Solicitação de recibo enviada.",
-        );
+        if (onGenerateReceipt) {
+            setNotice("Solicitação de recibo enviada.");
+            return;
+        }
     };
 
     const duplicateTransfer = (
