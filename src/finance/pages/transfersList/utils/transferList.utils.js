@@ -26,6 +26,14 @@ export const parseMonth = (value) => {
 export const formatMonth = (date) =>
     `${MONTHS[date.getMonth()]}/${date.getFullYear()}`;
 
+export const escapeHtml = (value) =>
+    String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
 export const formatDate = (value) => {
     if (!value) return "—";
 

@@ -2,6 +2,7 @@ import React from "react";
 import {
     FaChevronLeft,
     FaChevronRight,
+    FaFilter,
 } from "react-icons/fa";
 import "./TransferToolbar.css";
 
@@ -10,6 +11,8 @@ export default function TransferToolbar({
     onPreviousMonth,
     onNextMonth,
     onTabChange,
+    onOpenFilters,
+    hasFilters,
 }) {
     return (
         <div className="transfer-toolbar">
@@ -36,36 +39,52 @@ export default function TransferToolbar({
                 </button>
             </div>
 
-            <nav
-                className="transfer-toolbar__tabs"
-                aria-label="Tipo de movimentação"
-            >
-                <button
-                    type="button"
-                    onClick={() =>
-                        onTabChange?.("receipts")
-                    }
+            <div className="transfer-toolbar__right">
+                <nav
+                    className="transfer-toolbar__tabs"
+                    aria-label="Tipo de movimentação"
                 >
-                    Recebimentos
-                </button>
+                    <button
+                        type="button"
+                        onClick={() =>
+                            onTabChange?.("receipts")
+                        }
+                    >
+                        Recebimentos
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() =>
+                            onTabChange?.("expenses")
+                        }
+                    >
+                        Despesas
+                    </button>
+
+                    <button
+                        type="button"
+                        className="is-active"
+                        aria-current="page"
+                    >
+                        Transferências
+                    </button>
+                </nav>
 
                 <button
                     type="button"
-                    onClick={() =>
-                        onTabChange?.("expenses")
-                    }
+                    className={`transfer-toolbar__filters ${hasFilters ? "has-filters" : ""
+                        }`.trim()}
+                    onClick={onOpenFilters}
                 >
-                    Despesas
-                </button>
+                    <FaFilter aria-hidden="true" />
+                    <span>Filtros</span>
 
-                <button
-                    type="button"
-                    className="is-active"
-                    aria-current="page"
-                >
-                    Transferências
+                    {hasFilters ? (
+                        <i aria-hidden="true" />
+                    ) : null}
                 </button>
-            </nav>
+            </div>
         </div>
     );
 }

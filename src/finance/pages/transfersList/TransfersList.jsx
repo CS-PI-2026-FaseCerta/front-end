@@ -2,6 +2,7 @@ import React from "react";
 import FinancePage from "../../components/page/FinancePage.jsx";
 import FinanceTableFooter from "../../components/table/FinanceTableFooter.jsx";
 import TransferActionMenu from "./components/TransferActionMenu.jsx";
+import TransferAdvancedFilters from "./components/TransferAdvancedFilters.jsx";
 import TransferTable from "./components/TransferTable.jsx";
 import TransferToolbar from "./components/TransferToolbar.jsx";
 import useTransferListController from "./hooks/useTransferListController.js";
@@ -39,6 +40,8 @@ const TransfersList = (props) => {
                     onPreviousMonth={() => state.changeMonth(-1)}
                     onNextMonth={() => state.changeMonth(1)}
                     onTabChange={props.onTabChange}
+                    onOpenFilters={state.openAdvancedFilters}
+                    hasFilters={state.hasFilters}
                 />
 
                 <TransferTable
@@ -57,6 +60,16 @@ const TransfersList = (props) => {
                     onToggleRowMenu={state.toggleRowMenu}
                     onTogglePaid={state.togglePaid}
                     onRegisterTransfer={props.onRegisterTransfer}
+                />
+
+                <TransferAdvancedFilters
+                    isOpen={state.isAdvancedOpen}
+                    values={state.advancedFilters}
+                    onChange={state.setAdvancedFilters}
+                    onClear={state.clearFilters}
+                    onClose={() =>
+                        state.setIsAdvancedOpen(false)
+                    }
                 />
             </FinancePage>
 

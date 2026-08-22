@@ -9,7 +9,9 @@ import {
 } from "../transferList.constants.js";
 import {
     createId,
+    escapeHtml,
     formatCurrency,
+    formatDate,
     includesNormalized,
     parseMonth,
 } from "../utils/transferList.utils.js";
@@ -60,6 +62,18 @@ export default function useTransferListController({
     const [draftInlineFilters, setDraftInlineFilters] = useState(
         EMPTY_TRANSFER_FILTERS,
     );
+
+    const [isAdvancedOpen, setIsAdvancedOpen] =
+        useState(false);
+
+    const [advancedFilters, setAdvancedFilters] =
+        useState({
+            dateFrom: "",
+            dateTo: "",
+            minValue: "",
+            maxValue: "",
+            onlyWithAttachments: false,
+        });
 
     const [menuRowId, setMenuRowId] = useState(null);
     const [menuPosition, setMenuPosition] = useState(null);
@@ -250,6 +264,43 @@ export default function useTransferListController({
                     return false;
                 }
 
+                if (
+                    advancedFilters.dateFrom &&
+                    row.date < advancedFilters.dateFrom
+                ) {
+                    return false;
+                }
+
+                if (
+                    advancedFilters.dateTo &&
+                    row.date > advancedFilters.dateTo
+                ) {
+                    return false;
+                }
+
+                if (
+                    advancedFilters.minValue &&
+                    Number(row.value) <
+                    Number(advancedFilters.minValue)
+                ) {
+                    return false;
+                }
+
+                if (
+                    advancedFilters.maxValue &&
+                    Number(row.value) >
+                    Number(advancedFilters.maxValue)
+                ) {
+                    return false;
+                }
+
+                if (
+                    advancedFilters.onlyWithAttachments &&
+                    !(row.attachments?.length > 0)
+                ) {
+                    return false;
+                }
+
                 return true;
             })
             .sort((left, right) => {
@@ -293,6 +344,7 @@ export default function useTransferListController({
                     : -comparison;
             });
     }, [
+        advancedFilters,
         inlineFilters,
         month,
         rows,
@@ -324,8 +376,15 @@ export default function useTransferListController({
 
     const hasFilters = useMemo(
         () =>
-            Object.values(inlineFilters).some(Boolean),
-        [inlineFilters],
+            Object.values(inlineFilters).some(Boolean) ||
+            Boolean(
+                advancedFilters.dateFrom ||
+                advancedFilters.dateTo ||
+                advancedFilters.minValue ||
+                advancedFilters.maxValue ||
+                advancedFilters.onlyWithAttachments,
+            ),
+        [advancedFilters, inlineFilters],
     );
 
     const hasDraftInlineFilters = useMemo(
@@ -362,7 +421,20 @@ export default function useTransferListController({
     const clearFilters = () => {
         setInlineFilters(EMPTY_TRANSFER_FILTERS);
         setDraftInlineFilters(EMPTY_TRANSFER_FILTERS);
+
+        setAdvancedFilters({
+            dateFrom: "",
+            dateTo: "",
+            minValue: "",
+            maxValue: "",
+            onlyWithAttachments: false,
+        });
+
         setPage(1);
+    };
+
+    const openAdvancedFilters = () => {
+        setIsAdvancedOpen(true);
     };
 
     const changeMonth = (direction) => {
@@ -547,6 +619,128 @@ export default function useTransferListController({
             setNotice("Solicitação de recibo enviada.");
             return;
         }
+
+        const receiptWindow = window.open(
+            "",
+            "_blank",
+            "width=760,height=820",
+        );
+
+        if (!receiptWindow) {
+            setNotice(
+                "O navegador bloqueou a abertura do recibo.",
+            );
+            return;
+        }
+
+        receiptWindow.document.write(`
+            <!doctype html>
+            <html lang="pt-BR">
+                <head>
+                    <meta charset="utf-8" />
+                    <title>
+                        Recibo - ${escapeHtml(
+            transfer.description,
+        )}
+                    </title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 48px;
+                            color: #202235;
+                        }
+                        .card {
+                            border: 1px solid #dadce8;
+                            border-radius: 18px;
+                            padding: 28px;
+                        }
+                        h1 {
+                            margin-top: 0;
+                            font-size: 24px;
+                        }
+                        dl {
+                            display: grid;
+                            grid-template-columns:
+                                180px 1fr;
+                            gap: 12px 24px;
+                        }
+                        dt {
+                            color: #666b7d;
+                            font-weight: 700;
+                        }
+                        dd {
+                            margin: 0;
+                        }
+                        .amount {
+                            font-size: 28px;
+                            font-weight: 800;
+                            margin: 24px 0;
+                        }
+                        .status {
+                            font-weight: 700;
+                            color: ${transfer.paid
+                ? "#5d7700"
+                : "#7c5b14"
+            };
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="card">
+                        <h1>
+                            Comprovante de transferência
+                        </h1>
+                        <p class="amount">
+                            ${escapeHtml(
+                formatCurrency(
+                    transfer.value,
+                ),
+            )}
+                        </p>
+                        <dl>
+                            <dt>Data</dt>
+                            <dd>
+                                ${escapeHtml(
+                formatDate(
+                    transfer.date,
+                ),
+            )}
+                            </dd>
+                            <dt>Descrição</dt>
+                            <dd>
+                                ${escapeHtml(
+                transfer.description,
+            )}
+                            </dd>
+                            <dt>Conta de origem</dt>
+                            <dd>
+                                ${escapeHtml(
+                transfer.originAccount,
+            )}
+                            </dd>
+                            <dt>Conta de destino</dt>
+                            <dd>
+                                ${escapeHtml(
+                transfer.destinationAccount,
+            )}
+                            </dd>
+                            <dt>Status</dt>
+                            <dd class="status">
+                                ${transfer.paid
+                ? "Efetivada"
+                : "Pendente"
+            }
+                            </dd>
+                        </dl>
+                    </div>
+                    <script>
+                        window.onload = () => window.print();
+                    </script>
+                </body>
+            </html>
+        `);
+
+        receiptWindow.document.close();
     };
 
     const duplicateTransfer = (
@@ -904,6 +1098,11 @@ export default function useTransferListController({
         inlineFilters,
         draftInlineFilters,
 
+        isAdvancedOpen,
+        setIsAdvancedOpen,
+        advancedFilters,
+        setAdvancedFilters,
+
         menuRowId,
         menuPosition,
         activeMenuTransfer,
@@ -921,6 +1120,7 @@ export default function useTransferListController({
         updateInlineFilter,
         applyInlineFilters,
         clearFilters,
+        openAdvancedFilters,
 
         changeMonth,
         toggleSort,
