@@ -113,8 +113,8 @@ export const EXPENSE_TABLE_COLUMNS = [
   { key: "payee", label: "Pago a", width: "13.5%" },
   { key: "category", label: "Categoria", width: "11.5%" },
   { key: "value", label: "Valor", width: "9.5%" },
-  { key: "paymentType", label: "Tipo pagamento", width: "12%" },
-  { key: "paymentMode", label: "Modo do pagamento", width: "12.5%" },
-  { key: "paid", label: "Pago?", width: "8.5%" },
+  { key: "paymentType", label: "Tipo pagamento", width: "11%" },
+  { key: "paymentMode", label: "Modo do pagamento", width: "11.5%" },
+  { key: "paid", label: "Pago?", width: "10.5%" },
   { key: "actions", label: null, ariaLabel: "Ações", sortable: false, width: "10%" },
 ];

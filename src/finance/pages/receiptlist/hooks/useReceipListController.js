@@ -6,7 +6,10 @@ import {
   formatMonth,
   includesNormalized,
   matchesCurrencyFilter,
+  matchesMonthYear,
+  matchesProgressiveMonthYear,
   parseMonth,
+  parseMonthYearFilter,
 } from "../../expenselist/utils/expenseList.utils.js";
 
 const emptyInlineFilters = {
@@ -42,18 +45,20 @@ export default function useReceipListController({
   onGenerateReceipt,
 }) {
   const [rows, setRows] = useState(() => receipts.map(normalizeReceipt));
-  const [month, setMonth] = useState(() => parseMonth(initialMonth));
+  const [month, setMonth] = useState(() => new Date());
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(
-    Number(pageSize) > 0 ? Math.floor(Number(pageSize)) : 4,
-  );
-  const [rowsPerPageInput, setRowsPerPageInput] = useState(
-    String(Number(pageSize) > 0 ? Math.floor(Number(pageSize)) : 4),
-  );
+  
+  const [rowsPerPage, setRowsPerPage] = useState(() => {
+    const saved = localStorage.getItem("financeiro_recebimentos_page_size");
+    const parsed = Number(saved);
+    if (Number.isSafeInteger(parsed) && parsed > 0) return parsed;
+    const initial = Number(pageSize);
+    return Number.isSafeInteger(initial) && initial > 0 ? initial : 4;
+  });
+  
+  const [rowsPerPageInput, setRowsPerPageInput] = useState(() => String(rowsPerPage));
   const [sort, setSort] = useState({ key: "date", direction: "asc" });
   const [inlineFilters, setInlineFilters] = useState(emptyInlineFilters);
-  const [draftInlineFilters, setDraftInlineFilters] =
-    useState(emptyInlineFilters);
   const [advancedFilters, setAdvancedFilters] = useState({
     dateFrom: "",
     dateTo: "",
@@ -162,8 +167,18 @@ export default function useReceipListController({
             rowDate.getMonth() !== month.getMonth()
           )
             return false;
-          if (inlineFilters.date && row.date !== inlineFilters.date)
-            return false;
+          if (inlineFilters.date) {
+            const parsed = parseMonthYearFilter(inlineFilters.date);
+            if (parsed) {
+              if (!matchesMonthYear(row.date, parsed.month, parsed.year)) {
+                return false;
+              }
+            } else {
+              if (!matchesProgressiveMonthYear(row.date, inlineFilters.date)) {
+                return false;
+              }
+            }
+          }
           if (
             inlineFilters.description &&
             !includesNormalized(row.description, inlineFilters.description)
@@ -234,18 +249,23 @@ export default function useReceipListController({
   const hasFilters =
     Object.values(inlineFilters).some(Boolean) ||
     Object.values(advancedFilters).some(Boolean);
-  const hasDraftInlineFilters = Object.values(draftInlineFilters).some(Boolean);
 
-  const updateInlineFilter = (key, value) =>
-    setDraftInlineFilters((current) => ({ ...current, [key]: value }));
-  const applyInlineFilters = () => {
-    setInlineFilters({ ...draftInlineFilters });
+  const updateInlineFilter = (key, value) => {
+    setInlineFilters((current) => ({ ...current, [key]: value }));
     setPage(1);
-    setCalculator((current) => ({ ...current, open: false, error: "" }));
+
+    if (key === "date") {
+      const parsed = parseMonthYearFilter(value);
+      if (parsed) {
+        const newMonth = new Date(parsed.year, parsed.month - 1, 1);
+        setMonth(newMonth);
+        onMonthChange?.(newMonth);
+      }
+    }
   };
+
   const clearFilters = () => {
     setInlineFilters(emptyInlineFilters);
-    setDraftInlineFilters(emptyInlineFilters);
     setAdvancedFilters({
       dateFrom: "",
       dateTo: "",
@@ -315,7 +335,7 @@ export default function useReceipListController({
     const rect = event.currentTarget.getBoundingClientRect();
     setCalculator({
       open: true,
-      expression: draftInlineFilters.value,
+      expression: inlineFilters.value,
       error: "",
       left: rect.left,
       top: rect.bottom + 8,
@@ -341,6 +361,7 @@ export default function useReceipListController({
       setRowsPerPage(value);
       setRowsPerPageInput(String(value));
       setPage(1);
+      localStorage.setItem("financeiro_recebimentos_page_size", String(value));
     } else setRowsPerPageInput(String(rowsPerPage));
   };
 
@@ -395,14 +416,10 @@ export default function useReceipListController({
     setPageSize,
     sort,
     toggleSort,
-    draftInlineFilters,
+    inlineFilters,
     updateInlineFilter,
-    applyInlineFilters,
     clearFilters,
     hasFilters,
-    hasDraftInlineFilters,
-    hasPendingInlineChanges:
-      JSON.stringify(draftInlineFilters) !== JSON.stringify(inlineFilters),
     advancedFilters,
     setAdvancedFilters,
     isAdvancedOpen,
@@ -464,8 +481,49 @@ export default function useReceipListController({
     },
     submitRecurring: (event, row) => {
       event.preventDefault();
-      onRecurringReceipt?.(row);
+      const formData = new FormData(event.currentTarget);
+      const frequency = formData.get("frequency");
+      const startDate = new Date(`${formData.get("startDate")}T12:00:00`);
+      
+      let copiesCount = 0;
+      let monthIncrement = 0;
+      let daysIncrement = 0;
+
+      if (frequency === "weekly") {
+        copiesCount = 12;
+        daysIncrement = 7;
+      } else if (frequency === "monthly") {
+        copiesCount = 6;
+        monthIncrement = 1;
+      } else if (frequency === "quarterly") {
+        copiesCount = 3;
+        monthIncrement = 3;
+      } else if (frequency === "yearly") {
+        copiesCount = 3;
+        monthIncrement = 12;
+      }
+
+      const copies = Array.from({ length: copiesCount }, (_, index) => {
+        const copyDate = new Date(startDate);
+        if (daysIncrement) {
+          copyDate.setDate(copyDate.getDate() + (daysIncrement * (index + 1)));
+        } else if (monthIncrement) {
+          copyDate.setMonth(copyDate.getMonth() + (monthIncrement * (index + 1)));
+        }
+        
+        return {
+          ...row,
+          id: `receipt-${Date.now()}-${index}`,
+          date: copyDate.toISOString().slice(0, 10),
+          paid: false,
+          attachments: [],
+        };
+      });
+
+      setRows((current) => [...current, ...copies]);
+      onRecurringReceipt?.(row, copies);
       setDialog(null);
+      setNotice(`Recorrência criada com ${copiesCount} ocorrências.`);
     },
     submitInstallments: (event, row) => {
       event.preventDefault();

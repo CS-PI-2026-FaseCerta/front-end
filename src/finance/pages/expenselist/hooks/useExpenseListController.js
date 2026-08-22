@@ -7,9 +7,13 @@ import {
   formatCalculatorNumber,
   formatCurrency,
   formatDate,
+  formatMonth,
   includesNormalized,
   matchesCurrencyFilter,
+  matchesMonthYear,
+  matchesProgressiveMonthYear,
   parseMonth,
+  parseMonthYearFilter,
 } from "../utils/expenseList.utils.js";
 
 export default function useExpenseListController({
@@ -30,19 +34,20 @@ export default function useExpenseListController({
   onDeleteExpense,
 }) {
   const [rows, setRows] = useState(() => expenses.map((item) => ({ ...item })));
-  const [month, setMonth] = useState(() => parseMonth(initialMonth));
+  const [month, setMonth] = useState(() => new Date());
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(() => {
+    const saved = localStorage.getItem("financeiro_despesas_page_size");
+    const parsedSaved = Number(saved);
+    if (Number.isFinite(parsedSaved) && parsedSaved > 0) {
+      return Math.floor(parsedSaved);
+    }
     const parsedPageSize = Number(pageSize);
     return Number.isFinite(parsedPageSize) && parsedPageSize > 0
       ? Math.floor(parsedPageSize)
       : 4;
   });
-  const [rowsPerPageInput, setRowsPerPageInput] = useState(() => String(
-    Number.isFinite(Number(pageSize)) && Number(pageSize) > 0
-      ? Math.floor(Number(pageSize))
-      : 4,
-  ));
+  const [rowsPerPageInput, setRowsPerPageInput] = useState(() => String(rowsPerPage));
   const [sort, setSort] = useState({ key: "date", direction: "asc" });
   const [menuRowId, setMenuRowId] = useState(null);
   const [menuPosition, setMenuPosition] = useState(null);
@@ -50,16 +55,6 @@ export default function useExpenseListController({
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [notice, setNotice] = useState("");
   const [inlineFilters, setInlineFilters] = useState({
-    date: "",
-    description: "",
-    payee: "",
-    category: "",
-    value: "",
-    paymentType: "",
-    paymentMode: "",
-    paid: "",
-  });
-  const [draftInlineFilters, setDraftInlineFilters] = useState({
     date: "",
     description: "",
     payee: "",
@@ -205,30 +200,42 @@ export default function useExpenseListController({
   }, [notice]);
 
   const updateInlineFilter = (key, value) => {
-    setDraftInlineFilters((current) => ({ ...current, [key]: value }));
-  };
-
-  const applyInlineFilters = () => {
-    setInlineFilters({ ...draftInlineFilters });
+    setInlineFilters((current) => ({ ...current, [key]: value }));
     setPage(1);
-    setCalculator((current) => ({ ...current, open: false, error: "" }));
+
+    if (key === "date") {
+      const parsed = parseMonthYearFilter(value);
+      if (parsed) {
+        const newMonth = new Date(parsed.year, parsed.month - 1, 1);
+        setMonth(newMonth);
+        onMonthChange?.(newMonth);
+      }
+    }
   };
 
   const filteredRows = useMemo(() => {
-    const year = month.getFullYear();
-    const monthIndex = month.getMonth();
-
     return rows
       .filter((row) => {
         const rowDate = new Date(`${row.date}T12:00:00`);
         if (
-          rowDate.getFullYear() !== year ||
-          rowDate.getMonth() !== monthIndex
+          rowDate.getFullYear() !== month.getFullYear() ||
+          rowDate.getMonth() !== month.getMonth()
         ) {
           return false;
         }
 
-        if (inlineFilters.date && row.date !== inlineFilters.date) return false;
+        if (inlineFilters.date) {
+          const parsed = parseMonthYearFilter(inlineFilters.date);
+          if (parsed) {
+            if (!matchesMonthYear(row.date, parsed.month, parsed.year)) {
+              return false;
+            }
+          } else {
+            if (!matchesProgressiveMonthYear(row.date, inlineFilters.date)) {
+              return false;
+            }
+          }
+        }
         if (
           inlineFilters.description &&
           !includesNormalized(row.description, inlineFilters.description)
@@ -346,6 +353,7 @@ export default function useExpenseListController({
     setRowsPerPage(parsedValue);
     setRowsPerPageInput(String(parsedValue));
     setPage(1);
+    localStorage.setItem("financeiro_despesas_page_size", String(parsedValue));
   };
 
   useEffect(() => {
@@ -365,16 +373,6 @@ export default function useExpenseListController({
     [advancedFilters, inlineFilters],
   );
 
-  const hasDraftInlineFilters = useMemo(
-    () => Object.values(draftInlineFilters).some(Boolean),
-    [draftInlineFilters],
-  );
-
-  const hasPendingInlineChanges = useMemo(
-    () => JSON.stringify(draftInlineFilters) !== JSON.stringify(inlineFilters),
-    [draftInlineFilters, inlineFilters],
-  );
-
   const openCalculator = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const width = 320;
@@ -390,7 +388,7 @@ export default function useExpenseListController({
 
     setCalculator({
       open: true,
-      expression: draftInlineFilters.value || "",
+      expression: inlineFilters.value || "",
       error: "",
       left,
       top: placeAbove ? rect.top - gap : rect.bottom + gap,
@@ -471,16 +469,6 @@ export default function useExpenseListController({
 
   const clearFilters = () => {
     setInlineFilters({
-      date: "",
-      description: "",
-      payee: "",
-      category: "",
-      value: "",
-      paymentType: "",
-      paymentMode: "",
-      paid: "",
-    });
-    setDraftInlineFilters({
       date: "",
       description: "",
       payee: "",
@@ -800,13 +788,10 @@ export default function useExpenseListController({
     setPage,
     sort,
     toggleSort,
-    draftInlineFilters,
+    inlineFilters,
     updateInlineFilter,
-    applyInlineFilters,
     clearFilters,
-    hasPendingInlineChanges,
     hasFilters,
-    hasDraftInlineFilters,
     calculator,
     openCalculator,
     closeCalculator,

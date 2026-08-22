@@ -50,13 +50,10 @@ const ExpenseList = (props) => {
           month={state.month}
           sort={state.sort}
           onSort={state.toggleSort}
-          draftInlineFilters={state.draftInlineFilters}
+          inlineFilters={state.inlineFilters}
           onInlineFilterChange={state.updateInlineFilter}
-          onApplyInlineFilters={state.applyInlineFilters}
           onClearFilters={state.clearFilters}
-          hasPendingInlineChanges={state.hasPendingInlineChanges}
           hasFilters={state.hasFilters}
-          hasDraftInlineFilters={state.hasDraftInlineFilters}
           calculatorOpen={state.calculator.open}
           onOpenCalculator={state.openCalculator}
           menuRowId={state.menuRowId}

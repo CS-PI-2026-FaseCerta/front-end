@@ -20,6 +20,7 @@ import {
   formatCurrency,
   formatDate,
   formatMonth,
+  formatDateFilterMask,
 } from "../../expenselist/utils/expenseList.utils.js";
 import "../../expenselist/components/ExpenseTable.css";
 
@@ -28,13 +29,10 @@ export default function ReceiptTable({
   month,
   sort,
   onSort,
-  draftInlineFilters,
+  inlineFilters,
   onInlineFilterChange,
-  onApplyInlineFilters,
   onClearFilters,
-  hasPendingInlineChanges,
   hasFilters,
-  hasDraftInlineFilters,
   calculatorOpen,
   onOpenCalculator,
   menuRowId,
@@ -42,22 +40,20 @@ export default function ReceiptTable({
   onTogglePaid,
 }) {
   const filterRow = (
-    <tr
-      className="expense-table__filter-row"
-      onKeyDown={(event) => event.key === "Enter" && onApplyInlineFilters()}
-    >
+    <tr className="expense-table__filter-row">
       <th>
         <input
-          type="date"
-          value={draftInlineFilters.date}
-          onChange={(event) => onInlineFilterChange("date", event.target.value)}
+          type="text"
+          placeholder="MM/AAAA"
+          value={inlineFilters.date}
+          onChange={(event) => onInlineFilterChange("date", formatDateFilterMask(event.target.value))}
           aria-label="Filtrar por data"
         />
       </th>
       <th>
         <input
           type="search"
-          value={draftInlineFilters.description}
+          value={inlineFilters.description}
           onChange={(event) =>
             onInlineFilterChange("description", event.target.value)
           }
@@ -68,7 +64,7 @@ export default function ReceiptTable({
       <th>
         <input
           type="search"
-          value={draftInlineFilters.payee}
+          value={inlineFilters.payee}
           onChange={(event) =>
             onInlineFilterChange("payee", event.target.value)
           }
@@ -78,7 +74,7 @@ export default function ReceiptTable({
       </th>
       <th>
         <FinanceSelect
-          value={draftInlineFilters.category}
+          value={inlineFilters.category}
           onChange={(event) =>
             onInlineFilterChange("category", event.target.value)
           }
@@ -95,7 +91,7 @@ export default function ReceiptTable({
           <input
             type="text"
             inputMode="decimal"
-            value={draftInlineFilters.value}
+            value={inlineFilters.value}
             onChange={(event) =>
               onInlineFilterChange("value", event.target.value)
             }
@@ -114,7 +110,7 @@ export default function ReceiptTable({
       </th>
       <th>
         <FinanceSelect
-          value={draftInlineFilters.paymentType}
+          value={inlineFilters.paymentType}
           onChange={(event) =>
             onInlineFilterChange("paymentType", event.target.value)
           }
@@ -128,7 +124,7 @@ export default function ReceiptTable({
       </th>
       <th>
         <FinanceSelect
-          value={draftInlineFilters.paymentMode}
+          value={inlineFilters.paymentMode}
           onChange={(event) =>
             onInlineFilterChange("paymentMode", event.target.value)
           }
@@ -142,7 +138,7 @@ export default function ReceiptTable({
       </th>
       <th>
         <FinanceSelect
-          value={draftInlineFilters.paid}
+          value={inlineFilters.paid}
           onChange={(event) => onInlineFilterChange("paid", event.target.value)}
           aria-label="Filtrar por status"
         >
@@ -151,28 +147,7 @@ export default function ReceiptTable({
           <option value="pending">Pendentes</option>
         </FinanceSelect>
       </th>
-      <th>
-        <div className="expense-table__filter-actions">
-          <button
-            type="button"
-            className="expense-table__apply-filter"
-            onClick={onApplyInlineFilters}
-            aria-label="Aplicar filtros"
-            disabled={!hasPendingInlineChanges}
-          >
-            <FaCheck aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className="expense-table__clear-filter"
-            onClick={onClearFilters}
-            aria-label="Limpar filtros"
-            disabled={!hasFilters && !hasDraftInlineFilters}
-          >
-            <FaTimes aria-hidden="true" />
-          </button>
-        </div>
-      </th>
+      <th></th>
     </tr>
   );
 
@@ -197,10 +172,15 @@ export default function ReceiptTable({
               ? "Não encontramos recebimentos com os filtros aplicados."
               : `Ainda não há recebimentos registrados em ${formatMonth(month)}.`}
           </p>
+          {hasFilters ? (
+            <button type="button" onClick={onClearFilters}>Limpar filtros</button>
+          ) : null}
         </div>
       }
     >
-      {visibleRows.map((receipt) => (
+      {visibleRows.map((receipt) => {
+        if (!receipt) return null;
+        return (
         <tr key={receipt.id}>
           <td>{formatDate(receipt.date)}</td>
           <td className="expense-table__description">{receipt.description}</td>
@@ -242,7 +222,8 @@ export default function ReceiptTable({
             </div>
           </td>
         </tr>
-      ))}
+        );
+      })}
     </FinanceTable>
   );
 }

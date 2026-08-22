@@ -16,7 +16,7 @@ import {
   PAYMENT_MODES,
   PAYMENT_TYPES,
 } from "../expenseList.constants.js";
-import { formatCurrency, formatDate, formatMonth } from "../utils/expenseList.utils.js";
+import { formatCurrency, formatDate, formatMonth, formatDateFilterMask } from "../utils/expenseList.utils.js";
 import "./ExpenseTable.css";
 
 export default function ExpenseTable({
@@ -24,13 +24,10 @@ export default function ExpenseTable({
   month,
   sort,
   onSort,
-  draftInlineFilters,
+  inlineFilters,
   onInlineFilterChange,
-  onApplyInlineFilters,
   onClearFilters,
-  hasPendingInlineChanges,
   hasFilters,
-  hasDraftInlineFilters,
   calculatorOpen,
   onOpenCalculator,
   menuRowId,
@@ -38,24 +35,20 @@ export default function ExpenseTable({
   onTogglePaid,
 }) {
   const filterRow = (
-    <tr
-      className="expense-table__filter-row"
-      onKeyDown={(event) => {
-        if (event.key === "Enter") onApplyInlineFilters();
-      }}
-    >
+    <tr className="expense-table__filter-row">
       <th>
         <input
-          type="date"
-          value={draftInlineFilters.date}
-          onChange={(event) => onInlineFilterChange("date", event.target.value)}
+          type="text"
+          placeholder="MM/AAAA"
+          value={inlineFilters.date}
+          onChange={(event) => onInlineFilterChange("date", formatDateFilterMask(event.target.value))}
           aria-label="Filtrar por data"
         />
       </th>
       <th>
         <input
           type="search"
-          value={draftInlineFilters.description}
+          value={inlineFilters.description}
           onChange={(event) => onInlineFilterChange("description", event.target.value)}
           placeholder="Pesquisar"
           aria-label="Filtrar por descrição"
@@ -64,7 +57,7 @@ export default function ExpenseTable({
       <th>
         <input
           type="search"
-          value={draftInlineFilters.payee}
+          value={inlineFilters.payee}
           onChange={(event) => onInlineFilterChange("payee", event.target.value)}
           placeholder="Pesquisar"
           aria-label="Filtrar por favorecido"
@@ -72,7 +65,7 @@ export default function ExpenseTable({
       </th>
       <th>
         <FinanceSelect
-          value={draftInlineFilters.category}
+          value={inlineFilters.category}
           onChange={(event) => onInlineFilterChange("category", event.target.value)}
           aria-label="Filtrar por categoria"
         >
@@ -85,11 +78,8 @@ export default function ExpenseTable({
           <input
             type="text"
             inputMode="decimal"
-            value={draftInlineFilters.value}
+            value={inlineFilters.value}
             onChange={(event) => onInlineFilterChange("value", event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") onApplyInlineFilters();
-            }}
             placeholder="0,00"
             aria-label="Filtrar por valor"
           />
@@ -107,7 +97,7 @@ export default function ExpenseTable({
       </th>
       <th>
         <FinanceSelect
-          value={draftInlineFilters.paymentType}
+          value={inlineFilters.paymentType}
           onChange={(event) => onInlineFilterChange("paymentType", event.target.value)}
           aria-label="Filtrar por tipo de pagamento"
         >
@@ -117,7 +107,7 @@ export default function ExpenseTable({
       </th>
       <th>
         <FinanceSelect
-          value={draftInlineFilters.paymentMode}
+          value={inlineFilters.paymentMode}
           onChange={(event) => onInlineFilterChange("paymentMode", event.target.value)}
           aria-label="Filtrar por modo de pagamento"
         >
@@ -127,7 +117,7 @@ export default function ExpenseTable({
       </th>
       <th>
         <FinanceSelect
-          value={draftInlineFilters.paid}
+          value={inlineFilters.paid}
           onChange={(event) => onInlineFilterChange("paid", event.target.value)}
           aria-label="Filtrar por status de pagamento"
         >
@@ -136,30 +126,7 @@ export default function ExpenseTable({
           <option value="pending">Pendentes</option>
         </FinanceSelect>
       </th>
-      <th>
-        <div className="expense-table__filter-actions" aria-label="Ações dos filtros inline">
-          <button
-            type="button"
-            className="expense-table__apply-filter"
-            onClick={onApplyInlineFilters}
-            title="Aplicar filtros"
-            aria-label="Aplicar filtros"
-            disabled={!hasPendingInlineChanges}
-          >
-            <FaCheck aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className="expense-table__clear-filter"
-            onClick={onClearFilters}
-            title="Limpar todos os filtros"
-            aria-label="Limpar todos os filtros"
-            disabled={!hasFilters && !hasDraftInlineFilters}
-          >
-            <FaTimes aria-hidden="true" />
-          </button>
-        </div>
-      </th>
+      <th></th>
     </tr>
   );
 
@@ -192,10 +159,12 @@ export default function ExpenseTable({
       tableClassName="expense-table"
       mobileMinWidth="920px"
     >
-      {visibleRows.map((expense) => (
-        <tr key={expense.id}>
-          <td>{formatDate(expense.date)}</td>
-          <td className="expense-table__description">{expense.description}</td>
+      {visibleRows.map((expense) => {
+        if (!expense) return null;
+        return (
+          <tr key={expense.id}>
+            <td>{formatDate(expense.date)}</td>
+            <td className="expense-table__description">{expense.description}</td>
           <td>{expense.payee}</td>
           <td>{expense.category}</td>
           <td className="expense-table__value">{formatCurrency(expense.value)}</td>
@@ -229,7 +198,8 @@ export default function ExpenseTable({
             </div>
           </td>
         </tr>
-      ))}
+        );
+      })}
     </FinanceTable>
   );
 }

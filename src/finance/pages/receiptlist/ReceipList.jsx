@@ -46,7 +46,6 @@ export default function ReceipList(props) {
           {...state}
           onSort={state.toggleSort}
           onInlineFilterChange={state.updateInlineFilter}
-          onApplyInlineFilters={state.applyInlineFilters}
           onClearFilters={state.clearFilters}
           onOpenCalculator={state.openCalculator}
           onToggleRowMenu={state.toggleRowMenu}
@@ -60,6 +59,7 @@ export default function ReceipList(props) {
         onUseValue={state.useCalculatorValue}
       />
       <ExpenseActionMenu
+        isReceipt={true}
         expense={state.activeMenuExpense}
         position={state.menuPosition}
         onGenerateReceipt={state.generateReceiptAndClose}
@@ -88,6 +88,7 @@ export default function ReceipList(props) {
         onClose={() => state.setIsAdvancedOpen(false)}
       />
       <ExpenseDialogs
+        isReceipt={true}
         dialog={state.dialog}
         expense={state.activeExpense}
         onClose={() => state.setDialog(null)}
