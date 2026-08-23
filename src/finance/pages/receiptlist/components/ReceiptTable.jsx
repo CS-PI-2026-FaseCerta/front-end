@@ -12,10 +12,10 @@ import FinanceSelect from "../../../components/form/FinanceSelect.jsx";
 import FinanceTable from "../../../components/table/FinanceTable.jsx";
 import {
   CATEGORIES,
-  EXPENSE_TABLE_COLUMNS,
+  RECEIP_TABLE_COLUMNS,
   PAYMENT_MODES,
   PAYMENT_TYPES,
-} from "../../expenselist/expenseList.constants.js";
+} from "../receipList.constants.js";
 import {
   formatCurrency,
   formatDate,
@@ -153,7 +153,7 @@ export default function ReceiptTable({
 
   return (
     <FinanceTable
-      columns={EXPENSE_TABLE_COLUMNS}
+      columns={RECEIP_TABLE_COLUMNS}
       sort={sort}
       onSort={onSort}
       filterRow={filterRow}
