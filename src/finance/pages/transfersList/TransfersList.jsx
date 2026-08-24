@@ -114,26 +114,17 @@ const TransfersList = (props) => {
                     }
                 />
 
-                <TransferAdvancedFilters
-                    isOpen={
-                        state.isAdvancedOpen
-                    }
-                    values={
-                        state.advancedFilters
-                    }
-                    onChange={
-                        state.setAdvancedFilters
-                    }
-                    onClear={
-                        state.clearFilters
-                    }
-                    onClose={() =>
-                        state.setIsAdvancedOpen(
-                            false,
-                        )
-                    }
-                />
             </FinancePage>
+
+            <TransferAdvancedFilters
+                isOpen={state.isAdvancedOpen}
+                values={state.advancedFilters}
+                onChange={state.setAdvancedFilters}
+                onClear={state.clearFilters}
+                onClose={() =>
+                    state.setIsAdvancedOpen(false)
+                }
+            />
 
             <TransferActionMenu
                 transfer={
