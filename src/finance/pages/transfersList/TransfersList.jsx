@@ -11,7 +11,10 @@ import { formatMonth } from "./utils/transferList.utils.js";
 import "./TransfersList.css";
 
 const TransfersList = (props) => {
-    const state = useTransferListController(props);
+    const state =
+        useTransferListController(
+            props,
+        );
 
     return (
         <>
@@ -23,81 +26,169 @@ const TransfersList = (props) => {
                 panelClassName="transfers-list"
                 footer={
                     <FinanceTableFooter
-                        visibleCount={state.visibleRows.length}
-                        totalCount={state.filteredRows.length}
+                        visibleCount={
+                            state.visibleRows
+                                .length
+                        }
+                        totalCount={
+                            state.filteredRows
+                                .length
+                        }
                         itemLabel="transferências"
-                        rowsPerPageInput={state.rowsPerPageInput}
-                        onRowsPerPageInputChange={state.setRowsPerPageInput}
-                        onCommitRowsPerPage={state.commitRowsPerPage}
+                        rowsPerPageInput={
+                            state.rowsPerPageInput
+                        }
+                        onRowsPerPageInputChange={
+                            state.setRowsPerPageInput
+                        }
+                        onCommitRowsPerPage={
+                            state.commitRowsPerPage
+                        }
                         page={state.page}
-                        totalPages={state.totalPages}
-                        onPageChange={state.setPage}
+                        totalPages={
+                            state.totalPages
+                        }
+                        onPageChange={
+                            state.setPage
+                        }
                     />
                 }
             >
                 <TransferToolbar
-                    monthLabel={formatMonth(state.month)}
-                    onPreviousMonth={() => state.changeMonth(-1)}
-                    onNextMonth={() => state.changeMonth(1)}
-                    onTabChange={props.onTabChange}
-                    onOpenFilters={state.openAdvancedFilters}
-                    hasFilters={state.hasFilters}
+                    monthLabel={formatMonth(
+                        state.month,
+                    )}
+                    onPreviousMonth={() =>
+                        state.changeMonth(
+                            -1,
+                        )
+                    }
+                    onNextMonth={() =>
+                        state.changeMonth(
+                            1,
+                        )
+                    }
+                    onTabChange={
+                        props.onTabChange
+                    }
+                    onOpenFilters={
+                        state.openAdvancedFilters
+                    }
+                    hasFilters={
+                        state.hasFilters
+                    }
                 />
 
                 <TransferTable
-                    visibleRows={state.visibleRows}
+                    visibleRows={
+                        state.visibleRows
+                    }
                     month={state.month}
                     sort={state.sort}
-                    onSort={state.toggleSort}
-                    draftInlineFilters={state.draftInlineFilters}
-                    onInlineFilterChange={state.updateInlineFilter}
-                    onApplyInlineFilters={state.applyInlineFilters}
-                    onClearFilters={state.clearFilters}
-                    hasPendingInlineChanges={state.hasPendingInlineChanges}
-                    hasFilters={state.hasFilters}
-                    hasDraftInlineFilters={state.hasDraftInlineFilters}
-                    menuRowId={state.menuRowId}
-                    onToggleRowMenu={state.toggleRowMenu}
-                    onTogglePaid={state.togglePaid}
-                    onRegisterTransfer={props.onRegisterTransfer}
+                    onSort={
+                        state.toggleSort
+                    }
+                    inlineFilters={
+                        state.inlineFilters
+                    }
+                    onInlineFilterChange={
+                        state.updateInlineFilter
+                    }
+                    onClearFilters={
+                        state.clearFilters
+                    }
+                    hasFilters={
+                        state.hasFilters
+                    }
+                    menuRowId={
+                        state.menuRowId
+                    }
+                    onToggleRowMenu={
+                        state.toggleRowMenu
+                    }
+                    onTogglePaid={
+                        state.togglePaid
+                    }
+                    onRegisterTransfer={
+                        props.onRegisterTransfer
+                    }
                 />
 
                 <TransferAdvancedFilters
-                    isOpen={state.isAdvancedOpen}
-                    values={state.advancedFilters}
-                    onChange={state.setAdvancedFilters}
-                    onClear={state.clearFilters}
+                    isOpen={
+                        state.isAdvancedOpen
+                    }
+                    values={
+                        state.advancedFilters
+                    }
+                    onChange={
+                        state.setAdvancedFilters
+                    }
+                    onClear={
+                        state.clearFilters
+                    }
                     onClose={() =>
-                        state.setIsAdvancedOpen(false)
+                        state.setIsAdvancedOpen(
+                            false,
+                        )
                     }
                 />
             </FinancePage>
 
             <TransferActionMenu
-                transfer={state.activeMenuTransfer}
-                position={state.menuPosition}
-                onGenerateReceipt={state.generateReceiptAndClose}
+                transfer={
+                    state.activeMenuTransfer
+                }
+                position={
+                    state.menuPosition
+                }
+                onGenerateReceipt={
+                    state.generateReceiptAndClose
+                }
                 onEdit={(transfer) =>
-                    state.openTransferDialog("edit", transfer)
+                    state.openTransferDialog(
+                        "edit",
+                        transfer,
+                    )
                 }
                 onDetails={(transfer) =>
-                    state.openTransferDialog("details", transfer)
+                    state.openTransferDialog(
+                        "details",
+                        transfer,
+                    )
                 }
                 onAttachments={(transfer) =>
-                    state.openTransferDialog("attachments", transfer)
+                    state.openTransferDialog(
+                        "attachments",
+                        transfer,
+                    )
                 }
-                onDuplicate={state.duplicateTransfer}
+                onDuplicate={
+                    state.duplicateTransfer
+                }
                 onMove={(transfer) =>
-                    state.openTransferDialog("move", transfer)
+                    state.openTransferDialog(
+                        "move",
+                        transfer,
+                    )
                 }
                 onRecurring={(transfer) =>
-                    state.openTransferDialog("recurring", transfer)
+                    state.openTransferDialog(
+                        "recurring",
+                        transfer,
+                    )
                 }
                 onInstallments={(transfer) =>
-                    state.openTransferDialog("installments", transfer)
+                    state.openTransferDialog(
+                        "installments",
+                        transfer,
+                    )
                 }
                 onDelete={(transfer) =>
-                    state.openTransferDialog("delete", transfer)
+                    state.openTransferDialog(
+                        "delete",
+                        transfer,
+                    )
                 }
             />
 
@@ -112,15 +203,35 @@ const TransfersList = (props) => {
 
             <TransferDialogs
                 dialog={state.dialog}
-                transfer={state.activeTransfer}
-                onClose={() => state.setDialog(null)}
-                onEditSubmit={state.handleEditSubmit}
-                onAttachmentAdd={state.handleAttachmentAdd}
-                onAttachmentRemove={state.handleAttachmentRemove}
-                onMoveSubmit={state.submitMove}
-                onRecurringSubmit={state.submitRecurring}
-                onInstallmentsSubmit={state.submitInstallments}
-                onDeleteConfirm={state.confirmDelete}
+                transfer={
+                    state.activeTransfer
+                }
+                onClose={() =>
+                    state.setDialog(
+                        null,
+                    )
+                }
+                onEditSubmit={
+                    state.handleEditSubmit
+                }
+                onAttachmentAdd={
+                    state.handleAttachmentAdd
+                }
+                onAttachmentRemove={
+                    state.handleAttachmentRemove
+                }
+                onMoveSubmit={
+                    state.submitMove
+                }
+                onRecurringSubmit={
+                    state.submitRecurring
+                }
+                onInstallmentsSubmit={
+                    state.submitInstallments
+                }
+                onDeleteConfirm={
+                    state.confirmDelete
+                }
             />
         </>
     );

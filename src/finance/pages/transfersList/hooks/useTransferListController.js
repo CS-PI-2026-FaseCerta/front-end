@@ -16,9 +16,46 @@ import {
     parseMonth,
 } from "../utils/transferList.utils.js";
 
+const ROWS_PER_PAGE_STORAGE_KEY =
+    "finance_transfers_rows_per_page";
+
+const EMPTY_ADVANCED_FILTERS = {
+    dateFrom: "",
+    dateTo: "",
+    minValue: "",
+    maxValue: "",
+    onlyWithAttachments: false,
+};
+
+const getStoredRowsPerPage = (fallback) => {
+    const normalizedFallback =
+        Number.isSafeInteger(Number(fallback)) &&
+            Number(fallback) > 0
+            ? Math.floor(Number(fallback))
+            : 4;
+
+    if (typeof window === "undefined") {
+        return normalizedFallback;
+    }
+
+    try {
+        const stored = Number(
+            window.localStorage.getItem(
+                ROWS_PER_PAGE_STORAGE_KEY,
+            ),
+        );
+
+        return Number.isSafeInteger(stored) && stored > 0
+            ? stored
+            : normalizedFallback;
+    } catch {
+        return normalizedFallback;
+    }
+};
+
 export default function useTransferListController({
     transfers = DEMO_TRANSFERS,
-    initialMonth = "2026-05-01",
+    initialMonth,
     pageSize = 4,
     onMonthChange,
     onRegisterTransfer,
@@ -40,15 +77,19 @@ export default function useTransferListController({
     );
 
     const [month, setMonth] = useState(() =>
-        parseMonth(initialMonth),
+        parseMonth(initialMonth ?? new Date()),
     );
+
+    const initialRowsPerPage =
+        getStoredRowsPerPage(pageSize);
+
+    const [rowsPerPage, setRowsPerPage] =
+        useState(initialRowsPerPage);
+
+    const [rowsPerPageInput, setRowsPerPageInput] =
+        useState(String(initialRowsPerPage));
 
     const [page, setPage] = useState(1);
-
-    const [rowsPerPage, setRowsPerPage] = useState(pageSize);
-    const [rowsPerPageInput, setRowsPerPageInput] = useState(
-        String(pageSize),
-    );
 
     const [sort, setSort] = useState({
         key: "date",
@@ -59,24 +100,17 @@ export default function useTransferListController({
         EMPTY_TRANSFER_FILTERS,
     );
 
-    const [draftInlineFilters, setDraftInlineFilters] = useState(
-        EMPTY_TRANSFER_FILTERS,
-    );
-
     const [isAdvancedOpen, setIsAdvancedOpen] =
         useState(false);
 
     const [advancedFilters, setAdvancedFilters] =
-        useState({
-            dateFrom: "",
-            dateTo: "",
-            minValue: "",
-            maxValue: "",
-            onlyWithAttachments: false,
-        });
+        useState(EMPTY_ADVANCED_FILTERS);
 
-    const [menuRowId, setMenuRowId] = useState(null);
-    const [menuPosition, setMenuPosition] = useState(null);
+    const [menuRowId, setMenuRowId] =
+        useState(null);
+
+    const [menuPosition, setMenuPosition] =
+        useState(null);
 
     const [dialog, setDialog] = useState(null);
 
@@ -95,7 +129,9 @@ export default function useTransferListController({
         const closeMenu = (event) => {
             if (
                 event.target instanceof Element &&
-                event.target.closest("[data-transfer-row-menu]")
+                event.target.closest(
+                    "[data-transfer-row-menu]",
+                )
             ) {
                 return;
             }
@@ -149,14 +185,17 @@ export default function useTransferListController({
     }, []);
 
     useEffect(() => {
-        if (!notice) return undefined;
+        if (!notice) {
+            return undefined;
+        }
 
         const timeout = window.setTimeout(
             () => setNotice(""),
             3200,
         );
 
-        return () => window.clearTimeout(timeout);
+        return () =>
+            window.clearTimeout(timeout);
     }, [notice]);
 
     const filteredRows = useMemo(() => {
@@ -170,15 +209,19 @@ export default function useTransferListController({
                 );
 
                 if (
-                    rowDate.getFullYear() !== year ||
-                    rowDate.getMonth() !== monthIndex
+                    Number.isNaN(rowDate.getTime())
                 ) {
                     return false;
                 }
 
+                /*
+                 * A tabela sempre representa o mês atualmente
+                 * selecionado. O filtro de data, quando preenchido,
+                 * altera o mês através de updateInlineFilter().
+                 */
                 if (
-                    inlineFilters.date &&
-                    row.date !== inlineFilters.date
+                    rowDate.getFullYear() !== year ||
+                    rowDate.getMonth() !== monthIndex
                 ) {
                     return false;
                 }
@@ -227,7 +270,8 @@ export default function useTransferListController({
                                 .replace(",", ".")
                             : rawQuery;
 
-                    const numericValue = Number(row.value);
+                    const numericValue =
+                        Number(row.value);
 
                     const candidates = [
                         String(numericValue),
@@ -236,14 +280,19 @@ export default function useTransferListController({
                     ].map((value) =>
                         value
                             .replace(/\s/g, "")
-                            .toLocaleLowerCase("pt-BR"),
+                            .toLocaleLowerCase(
+                                "pt-BR",
+                            ),
                     );
 
                     if (
-                        !candidates.some((candidate) =>
-                            candidate.includes(
-                                normalizedQuery.toLocaleLowerCase("pt-BR"),
-                            ),
+                        !candidates.some(
+                            (candidate) =>
+                                candidate.includes(
+                                    normalizedQuery.toLocaleLowerCase(
+                                        "pt-BR",
+                                    ),
+                                ),
                         )
                     ) {
                         return false;
@@ -266,14 +315,16 @@ export default function useTransferListController({
 
                 if (
                     advancedFilters.dateFrom &&
-                    row.date < advancedFilters.dateFrom
+                    row.date <
+                    advancedFilters.dateFrom
                 ) {
                     return false;
                 }
 
                 if (
                     advancedFilters.dateTo &&
-                    row.date > advancedFilters.dateTo
+                    row.date >
+                    advancedFilters.dateTo
                 ) {
                     return false;
                 }
@@ -281,7 +332,9 @@ export default function useTransferListController({
                 if (
                     advancedFilters.minValue &&
                     Number(row.value) <
-                    Number(advancedFilters.minValue)
+                    Number(
+                        advancedFilters.minValue,
+                    )
                 ) {
                     return false;
                 }
@@ -289,7 +342,9 @@ export default function useTransferListController({
                 if (
                     advancedFilters.maxValue &&
                     Number(row.value) >
-                    Number(advancedFilters.maxValue)
+                    Number(
+                        advancedFilters.maxValue,
+                    )
                 ) {
                     return false;
                 }
@@ -304,8 +359,11 @@ export default function useTransferListController({
                 return true;
             })
             .sort((left, right) => {
-                const leftValue = left[sort.key];
-                const rightValue = right[sort.key];
+                const leftValue =
+                    left[sort.key];
+
+                const rightValue =
+                    right[sort.key];
 
                 if (
                     leftValue == null &&
@@ -314,14 +372,22 @@ export default function useTransferListController({
                     return 0;
                 }
 
-                if (leftValue == null) return 1;
-                if (rightValue == null) return -1;
+                if (leftValue == null) {
+                    return 1;
+                }
+
+                if (rightValue == null) {
+                    return -1;
+                }
 
                 let comparison;
 
-                if (typeof leftValue === "number") {
+                if (
+                    typeof leftValue === "number"
+                ) {
                     comparison =
-                        leftValue - Number(rightValue);
+                        leftValue -
+                        Number(rightValue);
                 } else if (
                     typeof leftValue === "boolean"
                 ) {
@@ -329,14 +395,17 @@ export default function useTransferListController({
                         Number(leftValue) -
                         Number(rightValue);
                 } else {
-                    comparison = String(leftValue).localeCompare(
-                        String(rightValue),
-                        "pt-BR",
-                        {
-                            numeric: true,
-                            sensitivity: "base",
-                        },
-                    );
+                    comparison =
+                        String(
+                            leftValue,
+                        ).localeCompare(
+                            String(rightValue),
+                            "pt-BR",
+                            {
+                                numeric: true,
+                                sensitivity: "base",
+                            },
+                        );
                 }
 
                 return sort.direction === "asc"
@@ -354,7 +423,8 @@ export default function useTransferListController({
     const totalPages = Math.max(
         1,
         Math.ceil(
-            filteredRows.length / rowsPerPage,
+            filteredRows.length /
+            rowsPerPage,
         ),
     );
 
@@ -363,10 +433,13 @@ export default function useTransferListController({
         totalPages,
     );
 
-    const visibleRows = filteredRows.slice(
-        (safePage - 1) * rowsPerPage,
-        safePage * rowsPerPage,
-    );
+    const visibleRows =
+        filteredRows.slice(
+            (safePage - 1) *
+            rowsPerPage,
+            safePage *
+            rowsPerPage,
+        );
 
     useEffect(() => {
         if (page !== safePage) {
@@ -376,7 +449,9 @@ export default function useTransferListController({
 
     const hasFilters = useMemo(
         () =>
-            Object.values(inlineFilters).some(Boolean) ||
+            Object.values(
+                inlineFilters,
+            ).some(Boolean) ||
             Boolean(
                 advancedFilters.dateFrom ||
                 advancedFilters.dateTo ||
@@ -384,51 +459,47 @@ export default function useTransferListController({
                 advancedFilters.maxValue ||
                 advancedFilters.onlyWithAttachments,
             ),
-        [advancedFilters, inlineFilters],
-    );
-
-    const hasDraftInlineFilters = useMemo(
-        () =>
-            Object.values(draftInlineFilters).some(Boolean),
-        [draftInlineFilters],
-    );
-
-    const hasPendingInlineChanges = useMemo(
-        () =>
-            JSON.stringify(draftInlineFilters) !==
-            JSON.stringify(inlineFilters),
         [
-            draftInlineFilters,
+            advancedFilters,
             inlineFilters,
         ],
     );
 
-    const updateInlineFilter = (key, value) => {
-        setDraftInlineFilters((current) => ({
-            ...current,
-            [key]: value,
-        }));
-    };
-
-    const applyInlineFilters = () => {
-        setInlineFilters({
-            ...draftInlineFilters,
-        });
+    const updateInlineFilter = (
+        key,
+        value,
+    ) => {
+        setInlineFilters(
+            (current) => ({
+                ...current,
+                [key]: value,
+            }),
+        );
 
         setPage(1);
+
+        if (key === "date" && value) {
+            const nextMonth =
+                parseMonth(
+                    `${value}-01`,
+                );
+
+            setMonth(nextMonth);
+
+            onMonthChange?.(
+                nextMonth,
+            );
+        }
     };
 
     const clearFilters = () => {
-        setInlineFilters(EMPTY_TRANSFER_FILTERS);
-        setDraftInlineFilters(EMPTY_TRANSFER_FILTERS);
+        setInlineFilters(
+            EMPTY_TRANSFER_FILTERS,
+        );
 
-        setAdvancedFilters({
-            dateFrom: "",
-            dateTo: "",
-            minValue: "",
-            maxValue: "",
-            onlyWithAttachments: false,
-        });
+        setAdvancedFilters(
+            EMPTY_ADVANCED_FILTERS,
+        );
 
         setPage(1);
     };
@@ -438,29 +509,44 @@ export default function useTransferListController({
     };
 
     const changeMonth = (direction) => {
-        const nextMonth = new Date(
-            month.getFullYear(),
-            month.getMonth() + direction,
-            1,
-        );
+        const nextMonth =
+            new Date(
+                month.getFullYear(),
+                month.getMonth() +
+                direction,
+                1,
+            );
 
         setMonth(nextMonth);
         setPage(1);
+
         setMenuRowId(null);
         setMenuPosition(null);
 
-        onMonthChange?.(nextMonth);
+        setInlineFilters(
+            (current) => ({
+                ...current,
+                date: "",
+            }),
+        );
+
+        onMonthChange?.(
+            nextMonth,
+        );
     };
 
     const toggleSort = (key) => {
-        setSort((current) => ({
-            key,
-            direction:
-                current.key === key &&
-                    current.direction === "asc"
-                    ? "desc"
-                    : "asc",
-        }));
+        setSort(
+            (current) => ({
+                key,
+                direction:
+                    current.key === key &&
+                        current.direction ===
+                        "asc"
+                        ? "desc"
+                        : "asc",
+            }),
+        );
 
         setPage(1);
     };
@@ -469,46 +555,84 @@ export default function useTransferListController({
         const normalizedInput =
             rowsPerPageInput.trim();
 
-        if (!/^\d+$/.test(normalizedInput)) {
+        if (
+            !/^\d+$/.test(
+                normalizedInput,
+            )
+        ) {
             setRowsPerPageInput(
-                String(rowsPerPage),
+                String(
+                    rowsPerPage,
+                ),
             );
+
             return;
         }
 
-        const parsedValue = Number(
-            normalizedInput,
-        );
+        const parsedValue =
+            Number(
+                normalizedInput,
+            );
 
         if (
-            !Number.isSafeInteger(parsedValue) ||
+            !Number.isSafeInteger(
+                parsedValue,
+            ) ||
             parsedValue < 1
         ) {
             setRowsPerPageInput(
-                String(rowsPerPage),
+                String(
+                    rowsPerPage,
+                ),
             );
+
             return;
         }
 
-        setRowsPerPage(parsedValue);
-        setRowsPerPageInput(
-            String(parsedValue),
+        setRowsPerPage(
+            parsedValue,
         );
+
+        setRowsPerPageInput(
+            String(
+                parsedValue,
+            ),
+        );
+
         setPage(1);
+
+        try {
+            window.localStorage.setItem(
+                ROWS_PER_PAGE_STORAGE_KEY,
+                String(
+                    parsedValue,
+                ),
+            );
+        } catch {
+            // LocalStorage indisponível.
+        }
     };
 
-    const replaceTransfer = (transfer) => {
-        setRows((current) =>
-            current.map((item) =>
-                item.id === transfer.id
-                    ? transfer
-                    : item,
-            ),
+    const replaceTransfer = (
+        transfer,
+    ) => {
+        setRows(
+            (current) =>
+                current.map(
+                    (item) =>
+                        item.id ===
+                            transfer.id
+                            ? transfer
+                            : item,
+                ),
         );
     };
 
     const getTransfer = (id) =>
-        rows.find((item) => item.id === id);
+        rows.find(
+            (item) =>
+                item.id === id,
+        );
 
     const closeRowMenu = () => {
         setMenuRowId(null);
@@ -519,7 +643,10 @@ export default function useTransferListController({
         event,
         transferId,
     ) => {
-        if (menuRowId === transferId) {
+        if (
+            menuRowId ===
+            transferId
+        ) {
             closeRowMenu();
             return;
         }
@@ -533,29 +660,36 @@ export default function useTransferListController({
         const gap = 8;
 
         const availableBelow =
-            window.innerHeight - rect.bottom;
+            window.innerHeight -
+            rect.bottom;
 
-        const availableAbove = rect.top;
+        const availableAbove =
+            rect.top;
 
         const placeAbove =
-            availableBelow < estimatedMenuHeight &&
-            availableAbove > availableBelow;
+            availableBelow <
+            estimatedMenuHeight &&
+            availableAbove >
+            availableBelow;
 
         const left = Math.max(
             viewportPadding,
             Math.min(
-                rect.right - menuWidth,
+                rect.right -
+                menuWidth,
                 window.innerWidth -
                 menuWidth -
                 viewportPadding,
             ),
         );
 
-        const idealTop = placeAbove
-            ? rect.top -
-            gap -
-            estimatedMenuHeight
-            : rect.bottom + gap;
+        const idealTop =
+            placeAbove
+                ? rect.top -
+                gap -
+                estimatedMenuHeight
+                : rect.bottom +
+                gap;
 
         const top = Math.max(
             viewportPadding,
@@ -567,7 +701,9 @@ export default function useTransferListController({
             ),
         );
 
-        setMenuRowId(transferId);
+        setMenuRowId(
+            transferId,
+        );
 
         setMenuPosition({
             left,
@@ -581,24 +717,42 @@ export default function useTransferListController({
     ) => {
         closeRowMenu();
 
-        if (!transfer) return;
+        if (!transfer) {
+            return;
+        }
+
+        if (type === "details") {
+            onViewTransfer?.(
+                transfer,
+            );
+        }
 
         setDialog({
             type,
-            transferId: transfer.id,
+            transferId:
+                transfer.id,
         });
     };
 
-    const togglePaid = (transfer) => {
-        if (!transfer) return;
+    const togglePaid = (
+        transfer,
+    ) => {
+        if (!transfer) {
+            return;
+        }
 
         const updated = {
             ...transfer,
             paid: !transfer.paid,
         };
 
-        replaceTransfer(updated);
-        onEditTransfer?.(updated);
+        replaceTransfer(
+            updated,
+        );
+
+        onEditTransfer?.(
+            updated,
+        );
 
         setNotice(
             updated.paid
@@ -607,29 +761,43 @@ export default function useTransferListController({
         );
     };
 
-    const generateReceiptAndClose = (transfer) => {
-        generateReceipt(transfer);
+    const generateReceiptAndClose = (
+        transfer,
+    ) => {
+        generateReceipt(
+            transfer,
+        );
+
         closeRowMenu();
     };
 
-    const generateReceipt = (transfer) => {
-        onGenerateReceipt?.(transfer);
+    const generateReceipt = (
+        transfer,
+    ) => {
+        onGenerateReceipt?.(
+            transfer,
+        );
 
         if (onGenerateReceipt) {
-            setNotice("Solicitação de recibo enviada.");
+            setNotice(
+                "Solicitação de recibo enviada.",
+            );
+
             return;
         }
 
-        const receiptWindow = window.open(
-            "",
-            "_blank",
-            "width=760,height=820",
-        );
+        const receiptWindow =
+            window.open(
+                "",
+                "_blank",
+                "width=760,height=820",
+            );
 
         if (!receiptWindow) {
             setNotice(
                 "O navegador bloqueou a abertura do recibo.",
             );
+
             return;
         }
 
@@ -643,39 +811,46 @@ export default function useTransferListController({
             transfer.description,
         )}
                     </title>
+
                     <style>
                         body {
                             font-family: Arial, sans-serif;
                             margin: 48px;
                             color: #202235;
                         }
+
                         .card {
                             border: 1px solid #dadce8;
                             border-radius: 18px;
                             padding: 28px;
                         }
+
                         h1 {
                             margin-top: 0;
                             font-size: 24px;
                         }
+
                         dl {
                             display: grid;
-                            grid-template-columns:
-                                180px 1fr;
+                            grid-template-columns: 180px 1fr;
                             gap: 12px 24px;
                         }
+
                         dt {
                             color: #666b7d;
                             font-weight: 700;
                         }
+
                         dd {
                             margin: 0;
                         }
+
                         .amount {
                             font-size: 28px;
                             font-weight: 800;
                             margin: 24px 0;
                         }
+
                         .status {
                             font-weight: 700;
                             color: ${transfer.paid
@@ -685,11 +860,13 @@ export default function useTransferListController({
                         }
                     </style>
                 </head>
+
                 <body>
                     <div class="card">
                         <h1>
                             Comprovante de transferência
                         </h1>
+
                         <p class="amount">
                             ${escapeHtml(
                 formatCurrency(
@@ -697,6 +874,7 @@ export default function useTransferListController({
                 ),
             )}
                         </p>
+
                         <dl>
                             <dt>Data</dt>
                             <dd>
@@ -706,24 +884,28 @@ export default function useTransferListController({
                 ),
             )}
                             </dd>
+
                             <dt>Descrição</dt>
                             <dd>
                                 ${escapeHtml(
                 transfer.description,
             )}
                             </dd>
+
                             <dt>Conta de origem</dt>
                             <dd>
                                 ${escapeHtml(
                 transfer.originAccount,
             )}
                             </dd>
+
                             <dt>Conta de destino</dt>
                             <dd>
                                 ${escapeHtml(
                 transfer.destinationAccount,
             )}
                             </dd>
+
                             <dt>Status</dt>
                             <dd class="status">
                                 ${transfer.paid
@@ -733,8 +915,10 @@ export default function useTransferListController({
                             </dd>
                         </dl>
                     </div>
+
                     <script>
-                        window.onload = () => window.print();
+                        window.onload = () =>
+                            window.print();
                     </script>
                 </body>
             </html>
@@ -754,10 +938,12 @@ export default function useTransferListController({
             attachments: [],
         };
 
-        setRows((current) => [
-            copy,
-            ...current,
-        ]);
+        setRows(
+            (current) => [
+                copy,
+                ...current,
+            ],
+        );
 
         onDuplicateTransfer?.(
             copy,
@@ -775,31 +961,51 @@ export default function useTransferListController({
     ) => {
         event.preventDefault();
 
-        if (!transfer) return;
+        if (!transfer) {
+            return;
+        }
 
-        const formData = new FormData(
-            event.currentTarget,
-        );
+        const formData =
+            new FormData(
+                event.currentTarget,
+            );
 
         const updated = {
             ...transfer,
-            date: formData.get("date"),
-            description: formData.get("description"),
-            originAccount: formData.get(
-                "originAccount",
-            ),
-            destinationAccount: formData.get(
-                "destinationAccount",
-            ),
+            date:
+                formData.get(
+                    "date",
+                ),
+            description:
+                formData.get(
+                    "description",
+                ),
+            originAccount:
+                formData.get(
+                    "originAccount",
+                ),
+            destinationAccount:
+                formData.get(
+                    "destinationAccount",
+                ),
             value: Number(
-                formData.get("value"),
+                formData.get(
+                    "value",
+                ),
             ),
             paid:
-                formData.get("paid") === "on",
+                formData.get(
+                    "paid",
+                ) === "on",
         };
 
-        replaceTransfer(updated);
-        onEditTransfer?.(updated);
+        replaceTransfer(
+            updated,
+        );
+
+        onEditTransfer?.(
+            updated,
+        );
 
         setDialog(null);
 
@@ -808,23 +1014,31 @@ export default function useTransferListController({
         );
     };
 
-    const createAttachmentId = () =>
-        typeof crypto !== "undefined" &&
-            crypto.randomUUID
-            ? crypto.randomUUID()
-            : `${Date.now()}-${Math.random()}`;
+    const createAttachmentId =
+        () =>
+            typeof crypto !==
+                "undefined" &&
+                crypto.randomUUID
+                ? crypto.randomUUID()
+                : `${Date.now()}-${Math.random()}`;
 
     const handleAttachmentAdd = (
         transfer,
         fileList,
     ) => {
-        if (!transfer || !fileList?.length) {
+        if (
+            !transfer ||
+            !fileList?.length
+        ) {
             return;
         }
 
         const attachments = [
-            ...(transfer.attachments ?? []),
-            ...Array.from(fileList).map(
+            ...(transfer.attachments ??
+                []),
+            ...Array.from(
+                fileList,
+            ).map(
                 (file) => ({
                     id: createAttachmentId(),
                     name: file.name,
@@ -839,7 +1053,9 @@ export default function useTransferListController({
             attachments,
         };
 
-        replaceTransfer(updated);
+        replaceTransfer(
+            updated,
+        );
 
         onAttachmentsChange?.(
             updated,
@@ -848,7 +1064,8 @@ export default function useTransferListController({
 
         setDialog({
             type: "attachments",
-            transferId: updated.id,
+            transferId:
+                updated.id,
         });
 
         setNotice(
@@ -860,14 +1077,20 @@ export default function useTransferListController({
         transfer,
         attachment,
     ) => {
-        if (!transfer || !attachment) {
+        if (
+            !transfer ||
+            !attachment
+        ) {
             return;
         }
 
         const attachments = (
-            transfer.attachments ?? []
+            transfer.attachments ??
+            []
         ).filter(
-            (item) => item.id !== attachment.id,
+            (item) =>
+                item.id !==
+                attachment.id,
         );
 
         const updated = {
@@ -875,7 +1098,9 @@ export default function useTransferListController({
             attachments,
         };
 
-        replaceTransfer(updated);
+        replaceTransfer(
+            updated,
+        );
 
         onAttachmentsChange?.(
             updated,
@@ -884,7 +1109,8 @@ export default function useTransferListController({
 
         setDialog({
             type: "attachments",
-            transferId: updated.id,
+            transferId:
+                updated.id,
         });
     };
 
@@ -894,24 +1120,34 @@ export default function useTransferListController({
     ) => {
         event.preventDefault();
 
-        if (!transfer) return;
+        if (!transfer) {
+            return;
+        }
 
-        const formData = new FormData(
-            event.currentTarget,
-        );
+        const formData =
+            new FormData(
+                event.currentTarget,
+            );
 
         const updated = {
             ...transfer,
-            originAccount: formData.get(
-                "originAccount",
-            ),
-            destinationAccount: formData.get(
-                "destinationAccount",
-            ),
+            originAccount:
+                formData.get(
+                    "originAccount",
+                ),
+            destinationAccount:
+                formData.get(
+                    "destinationAccount",
+                ),
         };
 
-        replaceTransfer(updated);
-        onMoveTransfer?.(updated);
+        replaceTransfer(
+            updated,
+        );
+
+        onMoveTransfer?.(
+            updated,
+        );
 
         setDialog(null);
 
@@ -926,31 +1162,252 @@ export default function useTransferListController({
     ) => {
         event.preventDefault();
 
-        if (!transfer) return;
+        if (!transfer) {
+            return;
+        }
 
-        const formData = new FormData(
-            event.currentTarget,
-        );
+        const formData =
+            new FormData(
+                event.currentTarget,
+            );
 
-        const updated = {
-            ...transfer,
-            recurring: {
-                frequency: formData.get(
-                    "frequency",
-                ),
-                startDate: formData.get(
-                    "startDate",
-                ),
+        const frequency =
+            formData.get(
+                "frequency",
+            );
+
+        const startDateValue =
+            formData.get(
+                "startDate",
+            );
+
+        if (!startDateValue) {
+            return;
+        }
+
+        const limits = {
+            weekly: {
+                months: 3,
+                step: "week",
+            },
+            monthly: {
+                months: 6,
+                step: "month",
+            },
+            quarterly: {
+                months: 9,
+                step: "quarter",
+            },
+            yearly: {
+                months: 36,
+                step: "year",
             },
         };
 
-        replaceTransfer(updated);
-        onRecurringTransfer?.(updated);
+        const recurrenceLimit =
+            limits[frequency] ??
+            limits.monthly;
+
+        const startDate =
+            new Date(
+                `${startDateValue}T12:00:00`,
+            );
+
+        if (
+            Number.isNaN(
+                startDate.getTime(),
+            )
+        ) {
+            return;
+        }
+
+        const addMonths = (
+            date,
+            months,
+        ) => {
+            const result =
+                new Date(
+                    date.getFullYear(),
+                    date.getMonth() +
+                    months,
+                    1,
+                );
+
+            const lastDay =
+                new Date(
+                    result.getFullYear(),
+                    result.getMonth() +
+                    1,
+                    0,
+                ).getDate();
+
+            result.setDate(
+                Math.min(
+                    date.getDate(),
+                    lastDay,
+                ),
+            );
+
+            return result;
+        };
+
+        const generated = [];
+
+        if (
+            recurrenceLimit.step ===
+            "week"
+        ) {
+            const endDate =
+                addMonths(
+                    startDate,
+                    recurrenceLimit.months,
+                );
+
+            for (
+                let date =
+                    new Date(
+                        startDate,
+                    );
+                ;
+                date.setDate(
+                    date.getDate() +
+                    7,
+                )
+            ) {
+                const nextDate =
+                    new Date(
+                        date,
+                    );
+
+                nextDate.setDate(
+                    nextDate.getDate() +
+                    7,
+                );
+
+                if (
+                    nextDate >=
+                    endDate
+                ) {
+                    break;
+                }
+
+                generated.push(
+                    nextDate,
+                );
+            }
+        } else {
+            const stepMonths =
+                recurrenceLimit.step ===
+                    "quarter"
+                    ? 3
+                    : recurrenceLimit.step ===
+                        "year"
+                        ? 12
+                        : 1;
+
+            const occurrenceCount =
+                recurrenceLimit.step ===
+                    "quarter"
+                    ? 3
+                    : recurrenceLimit.step ===
+                        "year"
+                        ? 3
+                        : 6;
+
+            for (
+                let index = 1;
+                index <=
+                occurrenceCount;
+                index += 1
+            ) {
+                generated.push(
+                    addMonths(
+                        startDate,
+                        index *
+                        stepMonths,
+                    ),
+                );
+            }
+        }
+
+        const copies =
+            generated
+                .filter(
+                    (date) =>
+                        date
+                            .toISOString()
+                            .slice(
+                                0,
+                                10,
+                            ) !==
+                        transfer.date,
+                )
+                .map(
+                    (date) => ({
+                        ...transfer,
+                        id: createId(),
+                        date: date
+                            .toISOString()
+                            .slice(
+                                0,
+                                10,
+                            ),
+                        description: `${transfer.description} (recorrente)`,
+                        attachments: [],
+                        paid: false,
+                        recurring: {
+                            frequency,
+                            startDate:
+                                startDateValue,
+                            sourceId:
+                                transfer.id,
+                        },
+                    }),
+                );
+
+        const updatedOriginal = {
+            ...transfer,
+            recurring: {
+                frequency,
+                startDate:
+                    startDateValue,
+            },
+        };
+
+        setRows(
+            (current) => {
+                const withoutFutureCopies =
+                    current.filter(
+                        (item) =>
+                            !(
+                                item.recurring
+                                    ?.sourceId ===
+                                transfer.id
+                            ),
+                    );
+
+                return [
+                    ...withoutFutureCopies.map(
+                        (item) =>
+                            item.id ===
+                                transfer.id
+                                ? updatedOriginal
+                                : item,
+                    ),
+                    ...copies,
+                ];
+            },
+        );
+
+        onRecurringTransfer?.(
+            updatedOriginal,
+            copies,
+        );
 
         setDialog(null);
 
         setNotice(
-            "Transferência configurada como recorrente.",
+            `${copies.length} ocorrência(s) recorrente(s) criada(s).`,
         );
     };
 
@@ -960,21 +1417,31 @@ export default function useTransferListController({
     ) => {
         event.preventDefault();
 
-        if (!transfer) return;
+        if (!transfer) {
+            return;
+        }
 
-        const formData = new FormData(
-            event.currentTarget,
-        );
+        const formData =
+            new FormData(
+                event.currentTarget,
+            );
 
-        const installments = Number(
-            formData.get("installments"),
-        );
+        const installments =
+            Number(
+                formData.get(
+                    "installments",
+                ),
+            );
 
         const firstDate =
-            formData.get("firstDate");
+            formData.get(
+                "firstDate",
+            );
 
         if (
-            !Number.isInteger(installments) ||
+            !Number.isInteger(
+                installments,
+            ) ||
             installments < 2 ||
             installments > 60 ||
             !firstDate
@@ -982,60 +1449,86 @@ export default function useTransferListController({
             return;
         }
 
-        const totalCents = Math.round(
-            Number(transfer.value) * 100,
-        );
+        const totalCents =
+            Math.round(
+                Number(
+                    transfer.value,
+                ) * 100,
+            );
 
-        const baseCents = Math.floor(
-            totalCents / installments,
-        );
+        const baseCents =
+            Math.floor(
+                totalCents /
+                installments,
+            );
 
         const remainder =
-            totalCents % installments;
+            totalCents %
+            installments;
 
-        const first = new Date(
-            `${firstDate}T12:00:00`,
+        const first =
+            new Date(
+                `${firstDate}T12:00:00`,
+            );
+
+        const generated =
+            Array.from(
+                {
+                    length:
+                        installments,
+                },
+                (_, index) => {
+                    const date =
+                        new Date(
+                            first.getFullYear(),
+                            first.getMonth() +
+                            index,
+                            first.getDate(),
+                        );
+
+                    const cents =
+                        baseCents +
+                        (index <
+                            remainder
+                            ? 1
+                            : 0);
+
+                    return {
+                        ...transfer,
+                        id:
+                            index ===
+                                0
+                                ? transfer.id
+                                : createId(),
+                        date: date
+                            .toISOString()
+                            .slice(
+                                0,
+                                10,
+                            ),
+                        description: `${transfer.description} (${index + 1}/${installments})`,
+                        value:
+                            cents /
+                            100,
+                        paid:
+                            index ===
+                                0
+                                ? transfer.paid
+                                : false,
+                    };
+                },
+            );
+
+        setRows(
+            (current) => [
+                ...current.filter(
+                    (item) =>
+                        item.id !==
+                        transfer.id,
+                ),
+                ...generated,
+            ],
         );
-
-        const generated = Array.from(
-            { length: installments },
-            (_, index) => {
-                const date = new Date(
-                    first.getFullYear(),
-                    first.getMonth() + index,
-                    first.getDate(),
-                );
-
-                const cents =
-                    baseCents +
-                    (index < remainder ? 1 : 0);
-
-                return {
-                    ...transfer,
-                    id:
-                        index === 0
-                            ? transfer.id
-                            : createId(),
-                    date: date
-                        .toISOString()
-                        .slice(0, 10),
-                    description: `${transfer.description} (${index + 1}/${installments})`,
-                    value: cents / 100,
-                    paid:
-                        index === 0
-                            ? transfer.paid
-                            : false,
-                };
-            },
-        );
-
-        setRows((current) => [
-            ...current.filter(
-                (item) =>
-                    item.id !== transfer.id,
-            ),
-            ...generated,
-        ]);
 
         onInstallmentTransfer?.(
             generated,
@@ -1052,13 +1545,17 @@ export default function useTransferListController({
     const confirmDelete = (
         transfer,
     ) => {
-        if (!transfer) return;
+        if (!transfer) {
+            return;
+        }
 
-        setRows((current) =>
-            current.filter(
-                (item) =>
-                    item.id !== transfer.id,
-            ),
+        setRows(
+            (current) =>
+                current.filter(
+                    (item) =>
+                        item.id !==
+                        transfer.id,
+                ),
         );
 
         onDeleteTransfer?.({
@@ -1074,21 +1571,29 @@ export default function useTransferListController({
         );
     };
 
-    const activeTransfer = dialog?.transferId
-        ? getTransfer(dialog.transferId)
-        : null;
+    const activeTransfer =
+        dialog?.transferId
+            ? getTransfer(
+                dialog.transferId,
+            )
+            : null;
 
-    const activeMenuTransfer = menuRowId
-        ? getTransfer(menuRowId)
-        : null;
+    const activeMenuTransfer =
+        menuRowId
+            ? getTransfer(
+                menuRowId,
+            )
+            : null;
 
     return {
         rows,
         month,
         page,
         setPage,
+
         rowsPerPageInput,
         setRowsPerPageInput,
+
         sort,
         filteredRows,
         visibleRows,
@@ -1096,10 +1601,10 @@ export default function useTransferListController({
         safePage,
 
         inlineFilters,
-        draftInlineFilters,
 
         isAdvancedOpen,
         setIsAdvancedOpen,
+
         advancedFilters,
         setAdvancedFilters,
 
@@ -1114,11 +1619,8 @@ export default function useTransferListController({
         notice,
 
         hasFilters,
-        hasDraftInlineFilters,
-        hasPendingInlineChanges,
 
         updateInlineFilter,
-        applyInlineFilters,
         clearFilters,
         openAdvancedFilters,
 
