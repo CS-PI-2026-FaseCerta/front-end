@@ -1,11 +1,16 @@
 import React from "react";
 import FinanceField from "../../../components/form/FinanceField.jsx";
 import FinanceModal from "../../../components/modal/FinanceModal.jsx";
+import { formatCurrency } from "../utils/expenseList.utils.js";
 
-export default function RecurringExpenseModal({ isOpen, expense, onClose, onSubmit }) {
+export default function RecurringExpenseModal({ isReceipt, isOpen, expense, onClose, onSubmit }) {
   return (
-    <FinanceModal isOpen={isOpen} title="Tornar recorrente" onClose={onClose}>
+    <FinanceModal isOpen={isOpen} title={isReceipt ? "Tornar recebimento recorrente" : "Tornar despesa recorrente"} onClose={onClose}>
       <form className="finance-form" onSubmit={(event) => onSubmit(event, expense)}>
+        <div className="expense-modal__details-card expense-modal__details-card--compact">
+          <span>{isReceipt ? "Valor do recebimento original" : "Valor da despesa original"}</span>
+          <strong>{formatCurrency(expense?.value)}</strong>
+        </div>
         <FinanceField label="Frequência">
           <select name="frequency" defaultValue="monthly">
             <option value="weekly">Semanal</option>
@@ -19,7 +24,7 @@ export default function RecurringExpenseModal({ isOpen, expense, onClose, onSubm
         </FinanceField>
         <div className="finance-modal-actions">
           <button type="button" className="finance-button finance-button--secondary" onClick={onClose}>Cancelar</button>
-          <button type="submit" className="finance-button finance-button--primary">Confirmar recorrência</button>
+          <button type="submit" className="finance-button finance-button--primary">Tornar recorrente</button>
         </div>
       </form>
     </FinanceModal>
