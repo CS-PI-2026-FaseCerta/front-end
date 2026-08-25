@@ -1,8 +1,13 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { receivablesMockData } from "../receivablesMock.js";
+import { createRecurringRows, recurringOccurrencesCount } from "../../../utils/recurrence.js";
+
 import {
-  formatCalculatorNumber,
+  escapeHtml,
   evaluateCalculatorExpression,
+  formatCalculatorNumber,
+  formatCurrency,
+  formatDate,
   formatMonth,
   includesNormalized,
   matchesCurrencyFilter,
@@ -30,6 +35,9 @@ const normalizeReceipt = (receipt) => ({
   attachments: receipt.attachments ?? [],
 });
 
+const PAGE_SIZE_STORAGE_KEY = "financeiro_despesas_page_size";
+const LEGACY_PAGE_SIZE_STORAGE_KEY = "financeiro_recebimentos_page_size";
+
 export default function useReceipListController({
   receipts = receivablesMockData,
   initialMonth = "2026-05-01",
@@ -49,7 +57,9 @@ export default function useReceipListController({
   const [page, setPage] = useState(1);
   
   const [rowsPerPage, setRowsPerPage] = useState(() => {
-    const saved = localStorage.getItem("financeiro_recebimentos_page_size");
+    const saved =
+      localStorage.getItem(PAGE_SIZE_STORAGE_KEY) ??
+      localStorage.getItem(LEGACY_PAGE_SIZE_STORAGE_KEY);
     const parsed = Number(saved);
     if (Number.isSafeInteger(parsed) && parsed > 0) return parsed;
     const initial = Number(pageSize);
@@ -189,8 +199,17 @@ export default function useReceipListController({
             !includesNormalized(row.payee, inlineFilters.payee)
           )
             return false;
-          if (inlineFilters.category && row.category !== inlineFilters.category)
-            return false;
+          if (inlineFilters.category) {
+            const isServiceOrder =
+              String(row.category ?? "").toLocaleLowerCase("pt-BR") ===
+              "ordem de serviço";
+            if (
+              (inlineFilters.category === "Ordem de serviço" && !isServiceOrder) ||
+              (inlineFilters.category === "Outro" && isServiceOrder)
+            ) {
+              return false;
+            }
+          }
           if (
             inlineFilters.value &&
             !matchesCurrencyFilter(row.value, inlineFilters.value)
@@ -361,7 +380,7 @@ export default function useReceipListController({
       setRowsPerPage(value);
       setRowsPerPageInput(String(value));
       setPage(1);
-      localStorage.setItem("financeiro_recebimentos_page_size", String(value));
+      localStorage.setItem(PAGE_SIZE_STORAGE_KEY, String(value));
     } else setRowsPerPageInput(String(rowsPerPage));
   };
 
@@ -471,9 +490,58 @@ export default function useReceipListController({
     confirmDelete: remove,
     generateReceiptAndClose: (row) => {
       onGenerateReceipt?.(row);
+
+      if (onGenerateReceipt) {
+        setNotice("Solicitação de recibo enviada.");
+        closeMenu();
+        return;
+      }
+
+      const receiptWindow = window.open("", "_blank", "width=760,height=820");
       closeMenu();
-      setNotice("Solicitação de recibo enviada.");
+      if (!receiptWindow) {
+        setNotice("O navegador bloqueou a abertura do recibo.");
+        return;
+      }
+
+      receiptWindow.document.write(`
+        <!doctype html>
+        <html lang="pt-BR">
+          <head>
+            <meta charset="utf-8" />
+            <title>Recibo - ${escapeHtml(row.description)}</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 48px; color: #202235; }
+              .card { border: 1px solid #dadce8; border-radius: 18px; padding: 28px; }
+              h1 { margin-top: 0; font-size: 24px; }
+              dl { display: grid; grid-template-columns: 180px 1fr; gap: 12px 24px; }
+              dt { color: #666b7d; font-weight: 700; }
+              dd { margin: 0; }
+              .amount { font-size: 28px; font-weight: 800; margin: 24px 0; }
+              .status { font-weight: 700; color: ${row.paid ? "#5d7700" : "#7c5b14"}; }
+            </style>
+          </head>
+          <body>
+            <div class="card">
+              <h1>Comprovante de recebimento</h1>
+              <p class="amount">${escapeHtml(formatCurrency(row.value))}</p>
+              <dl>
+                <dt>Data</dt><dd>${escapeHtml(formatDate(row.date))}</dd>
+                <dt>Descrição</dt><dd>${escapeHtml(row.description)}</dd>
+                <dt>Recebido de</dt><dd>${escapeHtml(row.payee)}</dd>
+                <dt>Categoria</dt><dd>${escapeHtml(row.category)}</dd>
+                <dt>Tipo de pagamento</dt><dd>${escapeHtml(row.paymentType)}</dd>
+                <dt>Modo de pagamento</dt><dd>${escapeHtml(row.paymentMode)}</dd>
+                <dt>Status</dt><dd class="status">${row.paid ? "Recebido" : "Pendente"}</dd>
+              </dl>
+            </div>
+            <script>window.onload = () => window.print();</script>
+          </body>
+        </html>
+      `);
+      receiptWindow.document.close();
     },
+    
     submitMove: (event, row) => {
       event.preventDefault();
       onMoveReceipt?.(row);
@@ -483,47 +551,13 @@ export default function useReceipListController({
       event.preventDefault();
       const formData = new FormData(event.currentTarget);
       const frequency = formData.get("frequency");
-      const startDate = new Date(`${formData.get("startDate")}T12:00:00`);
       
-      let copiesCount = 0;
-      let monthIncrement = 0;
-      let daysIncrement = 0;
-
-      if (frequency === "weekly") {
-        copiesCount = 12;
-        daysIncrement = 7;
-      } else if (frequency === "monthly") {
-        copiesCount = 6;
-        monthIncrement = 1;
-      } else if (frequency === "quarterly") {
-        copiesCount = 3;
-        monthIncrement = 3;
-      } else if (frequency === "yearly") {
-        copiesCount = 3;
-        monthIncrement = 12;
-      }
-
-      const copies = Array.from({ length: copiesCount }, (_, index) => {
-        const copyDate = new Date(startDate);
-        if (daysIncrement) {
-          copyDate.setDate(copyDate.getDate() + (daysIncrement * (index + 1)));
-        } else if (monthIncrement) {
-          copyDate.setMonth(copyDate.getMonth() + (monthIncrement * (index + 1)));
-        }
-        
-        return {
-          ...row,
-          id: `receipt-${Date.now()}-${index}`,
-          date: copyDate.toISOString().slice(0, 10),
-          paid: false,
-          attachments: [],
-        };
-      });
+      const copies = createRecurringRows(row, frequency, formData.get("startDate"));
 
       setRows((current) => [...current, ...copies]);
       onRecurringReceipt?.(row, copies);
       setDialog(null);
-      setNotice(`Recorrência criada com ${copiesCount} ocorrências.`);
+      setNotice(`Recorrência criada com ${recurringOccurrencesCount(frequency)} ocorrências.`);
     },
     submitInstallments: (event, row) => {
       event.preventDefault();

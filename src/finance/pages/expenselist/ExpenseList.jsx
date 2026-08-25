@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FinancePage from "../../components/page/FinancePage.jsx";
 import FinanceTableFooter from "../../components/table/FinanceTableFooter.jsx";
 import ExpenseActionMenu from "./components/ExpenseActionMenu.jsx";
@@ -8,11 +8,34 @@ import ExpenseTable from "./components/ExpenseTable.jsx";
 import ExpenseToolbar from "./components/ExpenseToolbar.jsx";
 import useExpenseListController from "./hooks/useExpenseListController.js";
 import ExpenseDialogs from "./modals/ExpenseDialogs.jsx";
+import { DEMO_EXPENSES } from "./expenseList.constants.js";
+import { createRecurringRows } from "../../utils/recurrence.js";
 import { formatMonth } from "./utils/expenseList.utils.js";
 import "./ExpenseList.css";
 
 const ExpenseList = (props) => {
-  const state = useExpenseListController(props);
+  const [expenses, setExpenses] = useState(() => props.expenses ?? DEMO_EXPENSES);
+  useEffect(() => {
+    if (props.expenses) setExpenses(props.expenses);
+  }, [props.expenses]);
+
+  const state = useExpenseListController({
+    ...props,
+    expenses,
+    onRecurringExpense: (updatedExpense) => {
+      const occurrences = createRecurringRows(
+        updatedExpense,
+        updatedExpense.recurrence?.frequency,
+        updatedExpense.recurrence?.startDate,
+      );
+      setExpenses((current) => [
+        ...current.filter((expense) => expense.id !== updatedExpense.id),
+        updatedExpense,
+        ...occurrences,
+      ]);
+      props.onRecurringExpense?.(updatedExpense, occurrences);
+    },
+  });
 
   return (
     <>

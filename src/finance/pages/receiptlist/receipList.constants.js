@@ -20,8 +20,8 @@ export const PAYMENT_MODES = [
 ];
 
 export const CATEGORIES = [
-  "Ordem de Serviço",
-  "Outros",
+  "Ordem de serviço",
+  "Outro",
 ];
 
 export const RECEIP_TABLE_COLUMNS = [
