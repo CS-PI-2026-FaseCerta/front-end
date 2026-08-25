@@ -14,6 +14,7 @@ import {
 import {
     formatCurrency,
     formatDate,
+    formatDateFilterMask,
     formatMonth,
 } from "../utils/transferList.utils.js";
 import "./TransferTable.css";
@@ -36,12 +37,16 @@ export default function TransferTable({
         <tr className="transfer-table__filter-row">
             <th>
                 <input
-                    type="month"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="MM/AAAA"
                     value={inlineFilters.date}
                     onChange={(event) =>
                         onInlineFilterChange(
                             "date",
-                            event.target.value,
+                            formatDateFilterMask(
+                                event.target.value,
+                            ),
                         )
                     }
                     aria-label="Filtrar por data"

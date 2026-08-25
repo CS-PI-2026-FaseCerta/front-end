@@ -20,16 +20,24 @@ export default function ExpenseAdvancedFilters({
       title="Filtros avançados"
       ariaLabel="Filtros avançados"
       onClose={onClose}
-      footer={(
+      footer={
         <>
-          <button type="button" className="finance-button finance-button--secondary" onClick={onClear}>
+          <button
+            type="button"
+            className="finance-button finance-button--secondary"
+            onClick={onClear}
+          >
             Limpar filtros
           </button>
-          <button type="button" className="finance-button finance-button--primary" onClick={onClose}>
+          <button
+            type="button"
+            className="finance-button finance-button--primary"
+            onClick={onClose}
+          >
             Aplicar filtros
           </button>
         </>
-      )}
+      }
     >
       <div className="expense-advanced-filters__grid">
         <FinanceField label="Data inicial">
@@ -72,7 +80,9 @@ export default function ExpenseAdvancedFilters({
         <input
           type="checkbox"
           checked={values.onlyWithAttachments}
-          onChange={(event) => update("onlyWithAttachments", event.target.checked)}
+          onChange={(event) =>
+            update("onlyWithAttachments", event.target.checked)
+          }
         />
         <span>Somente despesas com anexos</span>
       </label>

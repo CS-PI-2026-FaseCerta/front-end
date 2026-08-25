@@ -113,16 +113,25 @@ const TransfersList = (props) => {
                         props.onRegisterTransfer
                     }
                 />
-
             </FinancePage>
 
             <TransferAdvancedFilters
-                isOpen={state.isAdvancedOpen}
-                values={state.advancedFilters}
-                onChange={state.setAdvancedFilters}
-                onClear={state.clearFilters}
+                isOpen={
+                    state.isAdvancedOpen
+                }
+                values={
+                    state.advancedFilters
+                }
+                onChange={
+                    state.setAdvancedFilters
+                }
+                onClear={
+                    state.clearFilters
+                }
                 onClose={() =>
-                    state.setIsAdvancedOpen(false)
+                    state.setIsAdvancedOpen(
+                        false,
+                    )
                 }
             />
 
@@ -132,6 +141,9 @@ const TransfersList = (props) => {
                 }
                 position={
                     state.menuPosition
+                }
+                onClose={
+                    state.closeRowMenu
                 }
                 onGenerateReceipt={
                     state.generateReceiptAndClose

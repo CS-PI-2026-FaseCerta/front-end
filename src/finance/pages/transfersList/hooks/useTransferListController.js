@@ -13,7 +13,11 @@ import {
     formatCurrency,
     formatDate,
     includesNormalized,
+    matchesCurrencyFilter,
+    matchesMonthYear,
+    matchesProgressiveMonthYear,
     parseMonth,
+    parseMonthYearFilter,
 } from "../utils/transferList.utils.js";
 
 const ROWS_PER_PAGE_STORAGE_KEY =
@@ -58,7 +62,6 @@ export default function useTransferListController({
     initialMonth,
     pageSize = 4,
     onMonthChange,
-    onRegisterTransfer,
     onGenerateReceipt,
     onEditTransfer,
     onViewTransfer,
@@ -214,16 +217,37 @@ export default function useTransferListController({
                     return false;
                 }
 
-                /*
-                 * A tabela sempre representa o mês atualmente
-                 * selecionado. O filtro de data, quando preenchido,
-                 * altera o mês através de updateInlineFilter().
-                 */
                 if (
                     rowDate.getFullYear() !== year ||
                     rowDate.getMonth() !== monthIndex
                 ) {
                     return false;
+                }
+
+                if (inlineFilters.date) {
+                    const parsed =
+                        parseMonthYearFilter(
+                            inlineFilters.date,
+                        );
+
+                    if (parsed) {
+                        if (
+                            !matchesMonthYear(
+                                row.date,
+                                parsed.month,
+                                parsed.year,
+                            )
+                        ) {
+                            return false;
+                        }
+                    } else if (
+                        !matchesProgressiveMonthYear(
+                            row.date,
+                            inlineFilters.date,
+                        )
+                    ) {
+                        return false;
+                    }
                 }
 
                 if (
@@ -256,47 +280,14 @@ export default function useTransferListController({
                     return false;
                 }
 
-                if (inlineFilters.value) {
-                    const rawQuery = String(
+                if (
+                    inlineFilters.value &&
+                    !matchesCurrencyFilter(
+                        row.value,
                         inlineFilters.value,
                     )
-                        .trim()
-                        .replace(/\s/g, "");
-
-                    const normalizedQuery =
-                        rawQuery.includes(",")
-                            ? rawQuery
-                                .replace(/\./g, "")
-                                .replace(",", ".")
-                            : rawQuery;
-
-                    const numericValue =
-                        Number(row.value);
-
-                    const candidates = [
-                        String(numericValue),
-                        numericValue.toFixed(2),
-                        formatCurrency(numericValue),
-                    ].map((value) =>
-                        value
-                            .replace(/\s/g, "")
-                            .toLocaleLowerCase(
-                                "pt-BR",
-                            ),
-                    );
-
-                    if (
-                        !candidates.some(
-                            (candidate) =>
-                                candidate.includes(
-                                    normalizedQuery.toLocaleLowerCase(
-                                        "pt-BR",
-                                    ),
-                                ),
-                        )
-                    ) {
-                        return false;
-                    }
+                ) {
+                    return false;
                 }
 
                 if (
@@ -478,17 +469,26 @@ export default function useTransferListController({
 
         setPage(1);
 
-        if (key === "date" && value) {
-            const nextMonth =
-                parseMonth(
-                    `${value}-01`,
+        if (key === "date") {
+            const parsed =
+                parseMonthYearFilter(
+                    value,
                 );
 
-            setMonth(nextMonth);
+            if (parsed) {
+                const nextMonth =
+                    new Date(
+                        parsed.year,
+                        parsed.month - 1,
+                        1,
+                    );
 
-            onMonthChange?.(
-                nextMonth,
-            );
+                setMonth(nextMonth);
+
+                onMonthChange?.(
+                    nextMonth,
+                );
+            }
         }
     };
 
@@ -604,12 +604,12 @@ export default function useTransferListController({
         try {
             window.localStorage.setItem(
                 ROWS_PER_PAGE_STORAGE_KEY,
-                String(
-                    parsedValue,
-                ),
+                String(parsedValue),
             );
         } catch {
-            // LocalStorage indisponível.
+            setNotice(
+                "Preferência de paginação aplicada somente nesta sessão.",
+            );
         }
     };
 
@@ -1586,7 +1586,6 @@ export default function useTransferListController({
             : null;
 
     return {
-        rows,
         month,
         page,
         setPage,
@@ -1629,6 +1628,7 @@ export default function useTransferListController({
         commitRowsPerPage,
 
         toggleRowMenu,
+        closeRowMenu,
         openTransferDialog,
         togglePaid,
 

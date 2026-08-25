@@ -46,6 +46,7 @@ export default function TransferToolbar({
                 >
                     <button
                         type="button"
+                        data-tab="receipts"
                         onClick={() =>
                             onTabChange?.("receipts")
                         }
@@ -55,6 +56,7 @@ export default function TransferToolbar({
 
                     <button
                         type="button"
+                        data-tab="expenses"
                         onClick={() =>
                             onTabChange?.("expenses")
                         }
@@ -64,6 +66,7 @@ export default function TransferToolbar({
 
                     <button
                         type="button"
+                        data-tab="transfers"
                         className="is-active"
                         aria-current="page"
                     >
@@ -73,7 +76,9 @@ export default function TransferToolbar({
 
                 <button
                     type="button"
-                    className={`transfer-toolbar__filters ${hasFilters ? "has-filters" : ""
+                    className={`transfer-toolbar__filters ${hasFilters
+                            ? "has-filters"
+                            : ""
                         }`.trim()}
                     onClick={onOpenFilters}
                 >
