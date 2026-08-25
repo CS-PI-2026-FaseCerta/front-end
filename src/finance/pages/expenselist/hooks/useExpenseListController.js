@@ -47,7 +47,9 @@ export default function useExpenseListController({
       ? Math.floor(parsedPageSize)
       : 4;
   });
-  const [rowsPerPageInput, setRowsPerPageInput] = useState(() => String(rowsPerPage));
+  const [rowsPerPageInput, setRowsPerPageInput] = useState(() =>
+    String(rowsPerPage),
+  );
   const [sort, setSort] = useState({ key: "date", direction: "asc" });
   const [menuRowId, setMenuRowId] = useState(null);
   const [menuPosition, setMenuPosition] = useState(null);
@@ -83,16 +85,6 @@ export default function useExpenseListController({
   useEffect(() => {
     setRows(expenses.map((item) => ({ ...item })));
   }, [expenses]);
-
-  useEffect(() => {
-    const parsedPageSize = Number(pageSize);
-    if (!Number.isFinite(parsedPageSize) || parsedPageSize <= 0) return;
-
-    const normalizedPageSize = Math.floor(parsedPageSize);
-    setRowsPerPage(normalizedPageSize);
-    setRowsPerPageInput(String(normalizedPageSize));
-    setPage(1);
-  }, [pageSize]);
 
   useEffect(() => {
     const closeMenu = (event) => {
@@ -141,7 +133,10 @@ export default function useExpenseListController({
     const viewportPadding = 12;
     const gap = 8;
     const menuRect = menuElement.getBoundingClientRect();
-    const menuHeight = Math.min(menuRect.height, window.innerHeight - viewportPadding * 2);
+    const menuHeight = Math.min(
+      menuRect.height,
+      window.innerHeight - viewportPadding * 2,
+    );
     const availableBelow =
       window.innerHeight - menuPosition.triggerBottom - gap - viewportPadding;
     const availableAbove = menuPosition.triggerTop - gap - viewportPadding;
@@ -160,7 +155,10 @@ export default function useExpenseListController({
     setMenuPosition((current) => {
       if (!current) return current;
       const nextPlacement = placeAbove ? "above" : "below";
-      if (Math.abs(current.top - top) < 0.5 && current.placement === nextPlacement) {
+      if (
+        Math.abs(current.top - top) < 0.5 &&
+        current.placement === nextPlacement
+      ) {
         return current;
       }
       return { ...current, top, placement: nextPlacement };
@@ -248,13 +246,13 @@ export default function useExpenseListController({
         ) {
           return false;
         }
-        if (
-          inlineFilters.category &&
-          row.category !== inlineFilters.category
-        ) {
+        if (inlineFilters.category && row.category !== inlineFilters.category) {
           return false;
         }
-        if (inlineFilters.value && !matchesCurrencyFilter(row.value, inlineFilters.value)) {
+        if (
+          inlineFilters.value &&
+          !matchesCurrencyFilter(row.value, inlineFilters.value)
+        ) {
           return false;
         }
         if (
@@ -269,16 +267,10 @@ export default function useExpenseListController({
         ) {
           return false;
         }
-        if (
-          inlineFilters.paid === "paid" &&
-          !row.paid
-        ) {
+        if (inlineFilters.paid === "paid" && !row.paid) {
           return false;
         }
-        if (
-          inlineFilters.paid === "pending" &&
-          row.paid
-        ) {
+        if (inlineFilters.paid === "pending" && row.paid) {
           return false;
         }
 
@@ -365,10 +357,10 @@ export default function useExpenseListController({
       Object.values(inlineFilters).some(Boolean) ||
       Boolean(
         advancedFilters.dateFrom ||
-          advancedFilters.dateTo ||
-          advancedFilters.minValue ||
-          advancedFilters.maxValue ||
-          advancedFilters.onlyWithAttachments,
+        advancedFilters.dateTo ||
+        advancedFilters.minValue ||
+        advancedFilters.maxValue ||
+        advancedFilters.onlyWithAttachments,
       ),
     [advancedFilters, inlineFilters],
   );
@@ -380,7 +372,8 @@ export default function useExpenseListController({
     const gap = 8;
     const viewportPadding = 12;
     const availableBelow = window.innerHeight - rect.bottom;
-    const placeAbove = availableBelow < estimatedHeight && rect.top > availableBelow;
+    const placeAbove =
+      availableBelow < estimatedHeight && rect.top > availableBelow;
     const left = Math.max(
       viewportPadding,
       Math.min(rect.right - width, window.innerWidth - width - viewportPadding),
@@ -404,7 +397,11 @@ export default function useExpenseListController({
     try {
       const result = evaluateCalculatorExpression(expression);
       const formatted = formatCalculatorNumber(result);
-      setCalculator((current) => ({ ...current, expression: formatted, error: "" }));
+      setCalculator((current) => ({
+        ...current,
+        expression: formatted,
+        error: "",
+      }));
       return formatted;
     } catch (error) {
       setCalculator((current) => ({ ...current, error: "Expressão inválida" }));
@@ -450,7 +447,11 @@ export default function useExpenseListController({
   };
 
   const changeMonth = (direction) => {
-    const nextMonth = new Date(month.getFullYear(), month.getMonth() + direction, 1);
+    const nextMonth = new Date(
+      month.getFullYear(),
+      month.getMonth() + direction,
+      1,
+    );
     setMonth(nextMonth);
     setPage(1);
     setMenuRowId(null);
@@ -485,7 +486,12 @@ export default function useExpenseListController({
       maxValue: "",
       onlyWithAttachments: false,
     });
-    setCalculator((current) => ({ ...current, open: false, expression: "", error: "" }));
+    setCalculator((current) => ({
+      ...current,
+      open: false,
+      expression: "",
+      error: "",
+    }));
     setPage(1);
   };
 
@@ -529,7 +535,10 @@ export default function useExpenseListController({
       ),
     );
 
-    const estimatedMenuHeight = Math.min(430, window.innerHeight - viewportPadding * 2);
+    const estimatedMenuHeight = Math.min(
+      430,
+      window.innerHeight - viewportPadding * 2,
+    );
     const initialTop = placeAbove
       ? triggerRect.top - gap - estimatedMenuHeight
       : triggerRect.bottom + gap;
@@ -539,7 +548,10 @@ export default function useExpenseListController({
       left,
       top: Math.max(
         viewportPadding,
-        Math.min(initialTop, window.innerHeight - viewportPadding - estimatedMenuHeight),
+        Math.min(
+          initialTop,
+          window.innerHeight - viewportPadding - estimatedMenuHeight,
+        ),
       ),
       placement: placeAbove ? "above" : "below",
       triggerTop: triggerRect.top,
@@ -643,7 +655,9 @@ export default function useExpenseListController({
   };
 
   const handleAttachmentRemove = (expense, attachment) => {
-    const nextAttachments = (expense.attachments ?? []).filter((item) => item !== attachment);
+    const nextAttachments = (expense.attachments ?? []).filter(
+      (item) => item !== attachment,
+    );
     const updated = { ...expense, attachments: nextAttachments };
     replaceExpense(updated);
     onAttachmentsChange?.(updated, nextAttachments);
@@ -707,34 +721,40 @@ export default function useExpenseListController({
   const submitInstallments = (event, expense) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const installmentCount = Math.max(2, Number(formData.get("installments")) || 2);
+    const installmentCount = Math.max(
+      2,
+      Number(formData.get("installments")) || 2,
+    );
     const firstDate = new Date(`${formData.get("firstDate")}T12:00:00`);
     const totalCents = Math.round(Number(expense.value) * 100);
     const baseCents = Math.floor(totalCents / installmentCount);
     const remainder = totalCents % installmentCount;
 
-    const installments = Array.from({ length: installmentCount }, (_, index) => {
-      const dueDate = new Date(
-        firstDate.getFullYear(),
-        firstDate.getMonth() + index,
-        firstDate.getDate(),
-      );
-      const cents = baseCents + (index < remainder ? 1 : 0);
+    const installments = Array.from(
+      { length: installmentCount },
+      (_, index) => {
+        const dueDate = new Date(
+          firstDate.getFullYear(),
+          firstDate.getMonth() + index,
+          firstDate.getDate(),
+        );
+        const cents = baseCents + (index < remainder ? 1 : 0);
 
-      return {
-        ...expense,
-        id: index === 0 ? expense.id : createId(),
-        date: dueDate.toISOString().slice(0, 10),
-        description: `${expense.description} (${index + 1}/${installmentCount})`,
-        value: cents / 100,
-        paymentType: "Parcelado",
-        paid: index === 0 ? expense.paid : false,
-        installment: {
-          current: index + 1,
-          total: installmentCount,
-        },
-      };
-    });
+        return {
+          ...expense,
+          id: index === 0 ? expense.id : createId(),
+          date: dueDate.toISOString().slice(0, 10),
+          description: `${expense.description} (${index + 1}/${installmentCount})`,
+          value: cents / 100,
+          paymentType: "Parcelado",
+          paid: index === 0 ? expense.paid : false,
+          installment: {
+            current: index + 1,
+            total: installmentCount,
+          },
+        };
+      },
+    );
 
     setRows((current) => [
       ...current.filter((item) => item.id !== expense.id),
