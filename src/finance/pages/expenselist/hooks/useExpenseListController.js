@@ -37,7 +37,7 @@ export default function useExpenseListController({
   const [month, setMonth] = useState(() => new Date());
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(() => {
-    const saved = localStorage.getItem("financeiro_despesas_page_size");
+    const saved = localStorage.getItem("finance_tables_page_size");
     const parsedSaved = Number(saved);
     if (Number.isFinite(parsedSaved) && parsedSaved > 0) {
       return Math.floor(parsedSaved);
@@ -345,7 +345,7 @@ export default function useExpenseListController({
     setRowsPerPage(parsedValue);
     setRowsPerPageInput(String(parsedValue));
     setPage(1);
-    localStorage.setItem("financeiro_despesas_page_size", String(parsedValue));
+    localStorage.setItem("finance_tables_page_size", String(parsedValue));
   };
 
   useEffect(() => {

@@ -29,6 +29,7 @@ import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx
 import ProductsListPage from "./home/pages/products/ProductsListPage";
 
 import ExpenseList from "./finance/pages/expenselist/ExpenseList.jsx";
+import TransfersList from "./finance/pages/transfersList/TransfersList.jsx";
 import ReceipList from "./finance/pages/receiptlist/ReceipList.jsx";
 
 import ServicesListPage from "./home/pages/services/ServicesListPage.jsx";
@@ -43,20 +44,32 @@ import * as AppRoutes from "./routes/AppRoutes.jsx";
 
 function FinanceListRoute({ type }) {
   const navigate = useNavigate();
+
   const onTabChange = (tab) => {
     const paths = {
       expenses: AppRoutes.FinanceiroDespesas,
       receipts: AppRoutes.Financeiro,
       transfers: AppRoutes.FinanceiroTransferencias,
     };
-    if (paths[tab]) navigate(paths[tab]);
+
+    if (paths[tab]) {
+      navigate(paths[tab]);
+    }
   };
 
-  return type === "receipts" ? (
-    <ReceipList onTabChange={onTabChange} />
-  ) : (
-    <ExpenseList onTabChange={onTabChange} />
-  );
+  if (type === "receipts") {
+    return <ReceipList onTabChange={onTabChange} />;
+  }
+
+  if (type === "expenses") {
+    return <ExpenseList onTabChange={onTabChange} />;
+  }
+
+  if (type === "transfers") {
+    return <TransfersList onTabChange={onTabChange} />;
+  }
+
+  return null;
 }
 
 function App() {
@@ -69,11 +82,17 @@ function App() {
 
           {/* Auth */}
           <Route path={AppRoutes.Login} element={<Login />} />
+
           <Route
             path={AppRoutes.UserRegistration}
             element={<UserRegistration />}
           />
-          <Route path={AppRoutes.ChangePassword} element={<ChangePassword />} />
+
+          <Route
+            path={AppRoutes.ChangePassword}
+            element={<ChangePassword />}
+          />
+
           <Route
             path={AppRoutes.RecoverPassword}
             element={<RecoverPassword />}
@@ -84,33 +103,60 @@ function App() {
             path={AppRoutes.RegisterService}
             element={<RegisterService />}
           />
+
           <Route
             path={AppRoutes.RegisterProduct}
             element={<RegisterProduct />}
           />
-          <Route path={AppRoutes.ServiceInsert} element={<ServiceInsert />} />
+
+          <Route
+            path={AppRoutes.ServiceInsert}
+            element={<ServiceInsert />}
+          />
+
           <Route
             path={AppRoutes.RegisterClient}
             element={<RegisterCustomer />}
           />
-          <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
+
+          <Route
+            path={AppRoutes.RegisterCity}
+            element={<RegisterCity />}
+          />
 
           {/* Loading */}
-          <Route path={AppRoutes.Loading} element={<LoadingOverlay />} />
+          <Route
+            path={AppRoutes.Loading}
+            element={<LoadingOverlay />}
+          />
 
           {/* Dashboard layout (rotas autenticadas) */}
           <Route element={<DashboardLayout />}>
-            <Route path={AppRoutes.Dashboard} element={<Dashboard />} />
+            <Route
+              path={AppRoutes.Dashboard}
+              element={<Dashboard />}
+            />
 
             {/* Listas principais */}
-            <Route path={AppRoutes.Clientes} element={<CustomersListPage />} />
+            <Route
+              path={AppRoutes.Clientes}
+              element={<CustomersListPage />}
+            />
 
             <Route
               path={AppRoutes.ProdutosEstoque}
               element={<ProductsListPage />}
             />
-            <Route path={AppRoutes.Servicos} element={<ServicesListPage />} />
-            <Route path={AppRoutes.Pedidos} element={<OrdersListPage />} />
+
+            <Route
+              path={AppRoutes.Servicos}
+              element={<ServicesListPage />}
+            />
+
+            <Route
+              path={AppRoutes.Pedidos}
+              element={<OrdersListPage />}
+            />
 
             <Route
               path={AppRoutes.ApplyDiscounts}
@@ -118,7 +164,6 @@ function App() {
             />
 
             {/* Módulos futuros / placeholders */}
-
             <Route
               path={AppRoutes.OrdensServico}
               element={
@@ -188,21 +233,15 @@ function App() {
               path={AppRoutes.Financeiro}
               element={<FinanceListRoute type="receipts" />}
             />
+
             <Route
               path={AppRoutes.FinanceiroDespesas}
               element={<FinanceListRoute type="expenses" />}
             />
+
             <Route
               path={AppRoutes.FinanceiroTransferencias}
-              element={
-                <SectionPage
-                  eyebrow="Financeiro"
-                  title="Transferências"
-                  description="A listagem de transferências ainda não foi implementada."
-                  ctaLabel="Voltar ao financeiro"
-                  ctaPath={AppRoutes.Financeiro}
-                />
-              }
+              element={<FinanceListRoute type="transfers" />}
             />
 
             <Route
@@ -220,7 +259,10 @@ function App() {
           </Route>
 
           {/* fallback global */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
         </Routes>
       </BrowserRouter>
     </div>

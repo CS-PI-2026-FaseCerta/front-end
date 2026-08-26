@@ -35,8 +35,7 @@ const normalizeReceipt = (receipt) => ({
   attachments: receipt.attachments ?? [],
 });
 
-const PAGE_SIZE_STORAGE_KEY = "financeiro_despesas_page_size";
-const LEGACY_PAGE_SIZE_STORAGE_KEY = "financeiro_recebimentos_page_size";
+const PAGE_SIZE_STORAGE_KEY = "finance_tables_page_size";
 
 export default function useReceipListController({
   receipts = receivablesMockData,
@@ -58,8 +57,7 @@ export default function useReceipListController({
   
   const [rowsPerPage, setRowsPerPage] = useState(() => {
     const saved =
-      localStorage.getItem(PAGE_SIZE_STORAGE_KEY) ??
-      localStorage.getItem(LEGACY_PAGE_SIZE_STORAGE_KEY);
+      localStorage.getItem(PAGE_SIZE_STORAGE_KEY);
     const parsed = Number(saved);
     if (Number.isSafeInteger(parsed) && parsed > 0) return parsed;
     const initial = Number(pageSize);
