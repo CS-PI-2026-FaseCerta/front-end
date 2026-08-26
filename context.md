@@ -1,0 +1,369 @@
+# Contexto do Projeto FaseCerta
+
+## 1. Visão Geral do Projeto
+
+O FaseCerta é um sistema front-end em desenvolvimento voltado para organização operacional de uma rotina de campo e de gestão. A interface foi estruturada para apoiar o acesso rápido a módulos, formulários e áreas de navegação com base no perfil do usuário autenticado.
+
+O objetivo do sistema é centralizar o acesso às principais funções do dia a dia, como consulta de módulos, cadastros e atalhos operacionais, com uma experiência visual padronizada e organizada por contexto de uso.
+
+O público-alvo atual é composto por dois perfis:
+
+- Gestor: acompanha áreas administrativas e operacionais mais amplas.
+- Técnico em campo: acessa as funções voltadas à execução e apoio operacional.
+
+## 2. Funcionalidades Atuais
+
+### Login com mockAuth
+
+O login já está implementado com uma autenticação mock local. O fluxo utiliza `mockAuth` para validar credenciais, recuperar o usuário atual e simular uma sessão autenticada.
+
+### Lembre de mim
+
+O formulário de login possui a opção de "Lembre de mim". Quando ativada, a aplicação grava os dados no `localStorage` para preencher novamente os campos na próxima visita.
+
+### Dashboard com módulos
+
+A tela de dashboard exibe cartões de módulos com navegação para as áreas do sistema. Os módulos visíveis são filtrados de acordo com o perfil autenticado.
+
+### Renderização por perfil
+
+A exibição da interface varia conforme o perfil do usuário. O código atual distingue principalmente:
+
+- gestor
+- tecnico
+
+O módulo financeiro, por exemplo, é tratado como área restrita ao gestor.
+
+### Atalhos rápidos
+
+Existe um carrossel de atalhos rápidos no dashboard para ações frequentes. Ele lista ações permitidas para o perfil atual e oferece navegação direta para rotas relacionadas.
+
+### Personalização de atalhos
+
+A personalização de atalhos já existe. O usuário pode abrir um modal, selecionar quais atalhos quer manter visíveis e salvar a preferência no `localStorage`.
+
+### Tema dark/light persistente
+
+O sistema possui alternância entre tema claro e escuro. A escolha é persistida no `localStorage` e aplicada no elemento raiz do documento por meio do atributo `data-theme`.
+
+### Sidebar / menu lateral
+
+O dashboard conta com um menu lateral em formato de drawer. Ele apresenta preferências e caminhos operacionais de acordo com o perfil do usuário, além de permitir sair da sessão mock.
+
+### Formulários padronizados
+
+Os formulários seguem uma base visual comum por meio de `Form.css`, com reaproveitamento de classes e consistência de espaçamento, botões, inputs e feedbacks de validação.
+
+### Integração entre dashboard e formulários
+
+O dashboard e as telas de formulário já estão conectados por rotas e links internos. Os atalhos rápidos, o menu lateral e os botões de retorno levam para telas existentes ou para páginas placeholder quando a área ainda não foi implementada.
+
+## 3. Controle de Acesso
+
+O controle de acesso atual é feito somente no front-end e depende do perfil salvo na sessão mock.
+
+### Gestor
+
+- Vê os módulos liberados para gestão.
+- Tem acesso ao módulo financeiro.
+- Pode visualizar atalhos específicos relacionados à operação administrativa.
+
+### Técnico
+
+- Vê os módulos liberados para execução em campo.
+- Não visualiza o módulo financeiro.
+- Recebe apenas atalhos e itens de menu compatíveis com seu perfil.
+
+### Observação importante
+
+Esse controle é apenas visual e estrutural. Como não existe backend real, as permissões não são seguras e não substituem autenticação ou autorização reais.
+
+## 4. Estrutura de Pastas
+
+A organização atual está concentrada em `src/`, com separação por responsabilidade.
+
+### `auth/`
+
+Concentra o fluxo de autenticação mock e telas relacionadas, como login, cadastro de usuário e alteração de senha.
+
+### `home/`
+
+Agrupa o dashboard, seus componentes visuais, dados de módulos, atalhos rápidos, menu lateral e utilitários usados na área principal do sistema.
+
+### `form/`
+
+Contém telas de cadastro e formulários operacionais, como cadastro de serviço e cadastro de cidade.
+
+### `global/`
+
+Guarda componentes e recursos compartilhados entre várias telas, como o header global, estilos de formulário e o hook de tema.
+
+### `routes/`
+
+Centraliza a definição das rotas da aplicação.
+
+### `public/`
+
+Armazena arquivos públicos do build, como `index.html`, `manifest.json` e `robots.txt`.
+
+### `build/`
+
+Contém a saída gerada da aplicação já compilada.
+
+### Pastas citadas, mas ainda não presentes no código atual
+
+- `components/`: normalmente seria usada para componentes reutilizáveis de uso amplo.
+- `pages/`: no projeto atual a lógica equivalente existe de forma distribuída em subpastas por domínio.
+- `features/`: poderia concentrar funcionalidades por domínio, caso a aplicação cresça.
+- `services/`: seria adequada para integrações com API, persistência e chamadas externas.
+- `hooks/`: já existe na prática em `src/global/hooks/` para comportamento reutilizável.
+- `utils/`: já existe na prática em `src/home/utils/` para regras auxiliares.
+- `docs/`: pode receber documentação complementar do projeto no futuro.
+
+## 5. Padrões Utilizados
+
+- Uso de variáveis CSS em `:root` para padronizar cores, sombras e superfícies.
+- Separação de estilos por contexto, como `Auth.css`, `Form.css`, `Dashboard.css` e arquivos específicos por componente.
+- Componentização para isolar responsabilidades e facilitar manutenção.
+- Reutilização de lógica com hooks, como `useTheme`.
+- Reuso de dados e regras em arquivos de apoio, como módulos, rotas e atalhos.
+- Evitar duplicação de comportamento e estrutura visual sempre que possível.
+
+## 6. Limitações Atuais
+
+- Não existe backend real integrado.
+- A autenticação é mock e depende de dados locais.
+- As permissões são apenas front-end e não oferecem segurança real.
+- Parte das rotas ainda usa páginas placeholder até a implementação das telas definitivas.
+
+## 7. Próximos Passos Sugeridos
+
+- Integrar o front-end com um backend real.
+- Trocar a autenticação mock por autenticação verdadeira.
+- Persistir dados em banco ou API.
+- Substituir placeholders por telas funcionais para todas as áreas do sistema.
+- Melhorar a experiência de uso com feedbacks, estados de carregamento e validações mais completas.
+
+## 8. Observação Final
+
+O código atual já entrega uma base consistente de navegação, identidade visual, controle de tema e organização por perfil. A evolução natural do projeto é conectar essa estrutura a serviços reais de autenticação, autorização e persistência de dados.
+
+## 9. Listagens Genéricas (GenericListPage, GenericTable, EmptyState)
+
+Esta seção documenta a implementação recente de uma estrutura reutilizável de listagens que centraliza paginação, filtros, ordenação e apresentação de estados vazios. A intenção é fornecer um padrão consistente para tabelas de Ordens de Serviço, Clientes, Serviços, Estoque, Peças e futuras entidades.
+
+### Componentes principais
+
+- `GenericListPage` (src/global/components/lists/GenericListPage.jsx): componente de alto nível que compõe toolbar, filtros, busca, paginação e provê o estado compartilhado de consulta (search, filters, page, pageSize, sort). É responsável por aplicar filtros, ordenação (client-side por enquanto) e paginação antes de renderizar a tabela.
+- `GenericTable` (src/global/components/lists/GenericTable.jsx): renderiza a tabela HTML a partir de `columns` e `rows`. Lida com apresentação (badges, ações por linha, responsividade) e emite interações do usuário (clique para ordenar). Mantém-se agnóstico sobre fonte de dados.
+- `EmptyState` (src/global/components/lists/EmptyState.jsx): componente reutilizável para exibir estado vazio ou erros com ação primária/secundária.
+
+### Objetivo da arquitetura
+
+- Reutilização: uma única implementação para atender listagens de diferentes domínios (OS, Clientes, Serviços, Peças, etc.).
+- Evitar duplicação: concentra lógica comum (filtros, paginação, ordenação) em helpers e componentes compartilhados.
+- Facilitar integração futura com backend: a API de `GenericListPage` já expõe metadados de ordenação (`sort`, `sortKey`, `sortDirection`, `sortParams`) e aceita configuração por `defaultSort` para facilitar migração para ordenação/paginação server-side.
+
+### Funcionalidades implementadas
+
+- Paginação client-side (helpers em `src/global/components/lists/listHelpers.js`).
+- Ordenação dinâmica por coluna (client-side), com suporte a `sortType` por coluna: `string`, `number`, `date`, `status` e `currency`.
+- Filtros e busca integrados (`filterRows` em `listHelpers.js`).
+- Empty State com mensagem, ícone e ação.
+- Ações por linha com suporte a ícones e `iconOnly`.
+- Tooltips e atributos ARIA para acessibilidade.
+- Filtro de status com ordem configurável via `sortOrder` nas colunas.
+- `defaultSort` para definir coluna e direção iniciais.
+- Responsividade e preservação do alinhamento de headers e ícones.
+- Suporte a tema (dark/light) por variáveis CSS no `:root`.
+
+### Como criar uma nova listagem usando a estrutura
+
+1. Defina `columns` (ex.: `src/home/pages/<module>/<module>.columns.js`):
+
+```js
+export const columns = [
+  {
+    key: "id",
+    header: "ID",
+    accessor: "id",
+    sortable: true,
+    sortType: "number",
+  },
+  {
+    key: "name",
+    header: "Nome",
+    accessor: "name",
+    sortable: true,
+    sortType: "string",
+  },
+  {
+    key: "createdAt",
+    header: "Criado em",
+    accessor: (r) => new Date(r.createdAt).toLocaleDateString(),
+    sortAccessor: (r) => r.createdAt,
+    sortable: true,
+    sortType: "date",
+  },
+];
+```
+
+2. Prepare `mockData` ou fonte de dados (array de objetos). Use keys compatíveis com `accessor`/`sortAccessor`.
+
+3. Defina `filters` (opcionais) em um arquivo auxiliar e passe para `GenericListPage`.
+
+4. Defina `rowActions` se desejar ações por linha (editar, excluir, visualizar). Exemplo de ação com ícone e `iconOnly`:
+
+```js
+rowActions = [
+  {
+    key: "edit",
+    label: "Editar",
+    icon: FaPen,
+    iconOnly: true,
+    onClick: (row) => {},
+  },
+];
+```
+
+5. Instancie `GenericListPage` na página:
+
+```jsx
+<GenericListPage
+  title="Minha Lista"
+  columns={columns}
+  data={myRows}
+  filters={myFilters}
+  rowActions={rowActions}
+  defaultSort={{ key: "createdAt", direction: "desc" }}
+/>
+```
+
+### Onde ficam os componentes e responsabilidades
+
+- `src/global/components/lists/listHelpers.js`: funções utilitárias — `filterRows`, `paginateRows`, `sortRows`, helpers de normalização e ordenação.
+- `src/global/components/lists/GenericListPage.jsx`: composição, estado da query (search/filters/page/pageSize/sort), chamada de `onQueryChange` e integração com `GenericTable`.
+- `src/global/components/lists/GenericTable.jsx`: renderização da tabela, cabeçalhos ordenáveis, ícones de sort, ações por linha.
+- `src/global/components/lists/GenericTable.css`: estilos do componente e variáveis CSS.
+- `src/global/components/lists/EmptyState.jsx`: componente de estado vazio/erro.
+- Exemplos de uso estão em `src/home/pages/*` (ex.: `pedidos/`).
+
+### Pontos preparados para futura integração backend/API
+
+- `GenericListPage` já emite `onQueryChange` com payload que inclui `searchTerm`, `filters`, `page`, `pageSize`, `sort` e `sortParams` prontos para montar query string (ex.: `?sort=name&order=desc`).
+- `listHelpers.sortRows` e `filterRows` são utilizados apenas para client-side por enquanto; ao migrar para backend, basta aplicar filtros e ordenação na API e injetar os resultados em `data` (desabilitar `clientSide`).
+- Colunas suportam `sortAccessor` e `sortOrder` para mapear valores exibidos para valores usados pela API.
+- Há comentários `TODO` indicando onde reaproveitar `sortParams` para consultas remotas.
+
+## 10. Exportação
+
+> Observação: mantivemos toda a documentação anterior — essa seção complementa o contexto com a implementação de listagens genéricas e como usá-las.
+
+## 10. Navegação e DashboardLayout
+
+Esta seção documenta a arquitetura visual unificada que centralizou Sidebar, Header, e Footer no `DashboardLayout`.
+
+### Objetivo da refatoração
+
+- Padronizar toda a infraestrutura visual (`Dashboard`, `SectionPage`, `GenericListPage`, formulários autenticados) para compartilhar o mesmo ambiente base.
+- Prevenir a quebra do layout horizontal (Footer subindo em resolução Desktop) causada por uso incorreto de `flex-direction: row`.
+- Evitar a duplicação de chamadas ao Header e Sidebar e inconsistências de estado no Menu Mobile (Drawer).
+
+### Como o DashboardLayout funciona
+
+- `DashboardLayout.jsx` é um componente "Wrapper".
+- Ele renderiza a `Sidebar`, o `HeaderDashBoard` e o `Footer`.
+- Ele envolve a sua `children` ou o `<Outlet />` do React Router (para uso direto no `App.js`) em um `.dashboard-layout__content`.
+- O layout utiliza classes específicas (`.dashboard-layout--sidebar-open`) para calcular as larguras (usando `margin-left` ao invés de transições internas no Flexbox).
+
+### Integração nas Rotas (`App.js`)
+
+As rotas do projeto foram divididas em duas camadas no `App.js`:
+
+1. **Public/Auth Routes**: rotas limpas sem o Wrapper (`/login`, recuperação de senha, overlay, etc).
+2. **Authenticated Dashboard Routes**: todas as rotas operacionais englobadas dentro de `<Route element={<DashboardLayout />}>`.
+
+Isto inclui:
+
+- **Telas Reais**: `/pedidos`, `/cadastroCliente`, `/cadastroServico`, `/cadastroCidade`, `/cadastroProduto`.
+- **Placeholders (`SectionPage`)**: `/clientes`, `/servicos`, `/estoque`, `/ordens-servico`, `/calendario`, `/suporte`, `/perfil`, `/relatorios`, `/configuracoes`, etc.
+
+### Acessibilidade (a11y)
+
+- **Escape (Esc)**: a `Sidebar` possui um `useEffect` que mapeia a tecla Escape para fechar automaticamente o Menu Lateral em resoluções onde atua como Drawer (Mobile e Tablet).
+- **Tab e Enter**: O fluxo normal do DOM foi garantido.
+- **Outlines (Focus-Visible)**: Foi adicionado em `.sidebar-drawer__link:focus-visible` e afins o uso de `outline: 2px solid var(--color-primary)` para navegação exclusiva por teclado.
+- **Tooltips Customizados**: Ao invés do tradicional e estático `title=""` fornecido pelo HTML (que muitas vezes é inconsistente), foi construído um `.sidebar-drawer__tooltip` utilizando CSS absoluto que se torna visível (`opacity: 1`) quando a Sidebar está recolhida e o usuário foca (`focus-visible`) ou passa o mouse (`hover`) nos ícones.
+  Utilitário global de exportação de dados:
+  `src/utils/exportCsv.js`
+
+Responsabilidades:
+
+- Exportação genérica de dados para formato CSV.
+- Arquitetura reutilizável por qualquer módulo (ex: Listagens, Relatórios).
+- Estrutura preparada para futura transição/suporte de exportação gerada via backend.
+
+## 11. Loading Global
+
+Componente visual de bloqueio e carregamento:
+`src/global/components/loading/LoadingOverlay.jsx`
+
+Responsabilidades:
+
+- Bloqueio visual durante operações assíncronas (como salvar dados, exportação ou processamento pesado).
+- Reutilização ampla em relatórios, exportações e operações de cadastro.
+- Feedback essencial para UX em integrações futuras com backend.
+
+## 12. Módulo de Clientes
+
+O Módulo de Clientes atua como prova de conceito sólida da arquitetura reutilizável, consumindo diretamente as abstrações globais criadas. A tela de clientes e seu fluxo de cadastro utilizam integralmente:
+
+- A infraestrutura genérica de listagem (`GenericListPage`, `GenericTable`, `EmptyState`).
+- Exportação de tabela via `exportCsv.js`.
+- Indicadores visuais (`LoadingOverlay`).
+- A nova arquitetura de formulários.
+
+## 13. Arquitetura de Formulários
+
+O padrão oficial adotado para criação de formulários de cadastro segue o princípio de separação entre Lógica do Formulário e Wrappers de Visualização.
+
+Estrutura base adotada:
+
+- `RegisterEntityForm`: O formulário puro com estado, validações e inputs (ex: `RegisterCustomerForm.jsx`, `RegisterCityForm.jsx`). Depende exclusivamente das classes globais do `Form.css`.
+- `RegisterEntity`: Wrapper de Página, encapsulando o formulário com Header/Footer para a experiência padrão de navegação e mobile (ex: `RegisterCustomer.jsx`).
+- `RegisterEntityModal`: Wrapper de Modal, permitindo que o MESMO formulário puro seja aberto em overlay para experiências Desktop mais dinâmicas (ex: `RegisterCustomerModal.jsx`).
+
+Objetivos da arquitetura:
+
+- Reutilização de 100% da lógica e UI do formulário para Página e Modal.
+- Desktop = Modal / Mobile = Página.
+- Integração facilitada com os botões de ação ("Novo Cadastro") da `GenericListPage`.
+
+## 14. Services
+
+Padrão arquitetural adotado para comunicação externa:
+
+- Chamadas externas e consultas a APIs (ex: ViaCEP) devem ficar isoladas na pasta `services/` (ex: `src/services/addressService.js`).
+- Componentes React **não devem** conter chamadas `fetch` ou `axios` diretamente.
+- O isolamento dessa camada prepara o terreno para a conexão direta e escalável com a API oficial do backend em Spring Boot.
+
+## 15. Próximos Passos (Roadmap)
+
+Os avanços arquiteturais de front-end preparam a aplicação para a evolução plena:
+
+- Integração real com backend Spring Boot.
+- Implementação de fluxos de importação de dados.
+- Exportação avançada de relatórios (XLS, PDF estruturados).
+- Geração de relatórios analíticos e painéis do Gestor.
+- Persistência efetiva dos dados de todas as tabelas genéricas e formulários.
+- Controle real de permissões restritivas por perfil a nível de backend e roteamento.
+
+## 16. Histórico de Correções Estruturais (Pós-Merge)
+
+Após um evento de resolução de conflitos (merge), a estrutura de roteamento original do projeto sofreu degradação, gerando as seguintes inconsistências:
+- O arquivo `App.js` aglutinou duas versões do array de rotas, isolando a grande maioria das páginas fora do `DashboardLayout`.
+- Arquivos de formulários (como `RegisterCity.jsx`) reintroduziram chamadas manuais para os componentes globais (`Header`, `Footer`).
+- Rotas antigas e superadas (ex: `/servicos-estoque`) ressurgiram em `AppRoutes.jsx`.
+
+**Resolução Arquitetural Consolidada**:
+Foi realizada uma purga minuciosa do código legado no roteamento. O `DashboardLayout` foi confirmado como o invólucro (wrapper) definitivo para as telas internas do sistema, assegurando que o Header, Sidebar e Footer sejam instanciados e gerenciados apenas neste componente raiz. Toda a estrutura de rotas autenticadas em `App.js` foi unificada sob a árvore do layout, e páginas como formulários herdaram essa apresentação sem duplicação de componentes globais. As rotas obsoletas reavivadas pelo merge foram removidas definitivamente em favor da separação modular (`/estoque`, `/servicos`, etc.).

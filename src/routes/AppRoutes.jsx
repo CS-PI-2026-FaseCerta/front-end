@@ -1,0 +1,33 @@
+export const Login = "/login";
+export const UserRegistration = "/cadastroUsuario";
+export const ChangePassword = "/alterarSenha";
+export const RecoverPassword = "/recuperarSenha";
+export const RegisterService = "/cadastroServico/:id?";
+export const ServiceInsert = "/inserirServico";
+export const RegisterCity = "/cadastroCidade";
+export const RegisterProduct = "/cadastroProduto";
+export const RegisterClient = "/cadastroCliente";
+export const Dashboard = "/dashboard";
+export const ApplyDiscounts = "/aplicarDesconto";
+export const Loading = "/loading";
+export const Pedidos = "/pedidos";
+export const ProdutosEstoque = "/produtos-estoque";
+export const Clientes = "/clientes";
+export const ProdutosEstoqueNovoItem = "/produtos-estoque/novo-item";
+export const Servicos = "/servicos";
+export const ListagemDespesas = "/listagem-despesas";
+export const Financeiro = "/financeiro";
+export const FinanceiroDespesas = "/financeiro/despesas";
+export const FinanceiroRecebimentos = "/financeiro/recebimentos";
+export const FinanceiroTransferencias = "/financeiro/transferencias";
+
+//Não implementados ainda, mas já mapeados para facilitar futuras integrações.
+export const Perfil = "/perfil";
+export const Relatorios = "/relatorios";
+export const Configuracoes = "/configuracoes";
+export const OrdensServico = "/ordens-servico";
+export const OrdensServicoNovo = "/os/novo";
+
+export const FinanceiroDespesasNova = "/financeiro/despesas/nova";
+export const Calendario = "/calendario";
+export const Suporte = "/suporte";

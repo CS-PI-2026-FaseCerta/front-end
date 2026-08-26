@@ -1,0 +1,311 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --primary-color: #433f9b;
+  --primary-hover-color: #7165ff;
+  --background-color: #f3f7fb;
+  --card-background: #ffffff;
+  --input-background: #eef4fa;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --border-color: #d5dee8;
+  --error-color: #e53e3e;
+  --error-color-hover: #c53030;
+  --error-bg: #fee2e2;
+  --error-border-color: #fca5a5;
+  --success-color: #2f9e44;
+
+  --color-bg: var(--background-color);
+  --color-surface: var(--card-background);
+  --color-surface-muted: var(--input-background);
+  --color-primary: var(--primary-color);
+  --color-primary-hover: var(--primary-hover-color);
+  --color-accent: #f59e0b;
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border: var(--border-color);
+  --color-highlight: #dff5f2;
+  --color-highlight-strong: #b7ece4;
+  --color-focus: #2563eb;
+
+  --header-surface: rgba(248, 251, 255, 0.92);
+  --header-border-color: rgba(148, 163, 184, 0.35);
+  --header-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --control-bg-hover: rgba(70, 64, 174, 0.1);
+  --control-bg-active: rgba(70, 64, 174, 0.14);
+  --control-border-hover: rgba(70, 64, 174, 0.32);
+  --panel-surface: rgba(255, 255, 255, 0.85);
+  --panel-border-color: rgba(70, 64, 174, 0.18);
+  --section-surface: rgba(255, 255, 255, 0.92);
+  --card-module-bg: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.96) 0%,
+    rgba(245, 249, 255, 0.94) 100%
+  );
+  --dashboard-page-bg:
+    radial-gradient(
+      circle at top left,
+      rgba(50, 46, 138, 0.12),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(245, 158, 11, 0.12),
+      transparent 24%
+    ),
+    linear-gradient(180deg, #f7fbff 0%, #edf4fb 100%);
+  --summary-surface-bg: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(232, 236, 255, 0.92)
+  );
+
+  --list-page-bg:
+    radial-gradient(
+      circle at top left,
+      color-mix(in srgb, var(--color-primary) 11%, transparent),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--color-accent) 11%, transparent),
+      transparent 24%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-surface) 96%, var(--color-bg)) 0%,
+      var(--color-bg) 100%
+    );
+  --list-shell-surface: color-mix(
+    in srgb,
+    var(--color-surface) 94%,
+    transparent
+  );
+  --list-shell-border: color-mix(in srgb, var(--color-border) 76%, transparent);
+  --list-card-muted-surface: color-mix(
+    in srgb,
+    var(--color-surface-muted) 84%,
+    transparent
+  );
+  --list-hover-surface: color-mix(
+    in srgb,
+    var(--color-primary) 7%,
+    var(--color-surface)
+  );
+  --list-border-soft: color-mix(in srgb, var(--color-border) 66%, transparent);
+  --list-badge-neutral-bg: color-mix(
+    in srgb,
+    var(--color-text-secondary) 12%,
+    transparent
+  );
+  --list-badge-neutral-text: var(--color-text-secondary);
+  --list-badge-success-bg: color-mix(
+    in srgb,
+    var(--success-color) 15%,
+    transparent
+  );
+  --list-badge-success-text: var(--success-color);
+  --list-badge-info-bg: color-mix(
+    in srgb,
+    var(--color-primary) 14%,
+    transparent
+  );
+  --list-badge-info-text: var(--color-primary);
+  --list-badge-warning-bg: color-mix(
+    in srgb,
+    var(--color-accent) 18%,
+    transparent
+  );
+  --list-badge-warning-text: var(--color-accent);
+  --list-badge-danger-bg: color-mix(
+    in srgb,
+    var(--error-color) 15%,
+    transparent
+  );
+  --list-badge-danger-text: var(--error-color);
+  --list-badge-surface-bg: color-mix(
+    in srgb,
+    var(--color-surface) 72%,
+    var(--color-bg)
+  );
+  --list-badge-surface-text: var(--color-text-primary);
+
+  --shadow-card: 0 12px 32px rgba(15, 23, 42, 0.08);
+  --shadow-card-strong: 0 16px 40px rgba(15, 23, 42, 0.12);
+  --shadow-elevated: 0 20px 60px rgba(15, 23, 42, 0.14);
+}
+
+[data-theme="dark"] {
+  --background-color: #0f172a;
+  --card-background: #111b2f;
+  --input-background: #1a2942;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --border-color: #334155;
+  --primary-color: #7c83ff;
+  --primary-hover-color: #9ea3ff;
+  --color-accent: #fbbf24;
+  --error-bg: rgba(229, 62, 62, 0.16);
+  --error-border-color: rgba(229, 62, 62, 0.5);
+  --success-color: #7ddf97;
+  --color-focus: #93c5fd;
+
+  --header-surface: rgba(15, 23, 42, 0.88);
+  --header-border-color: rgba(148, 163, 184, 0.2);
+  --header-shadow: 0 10px 26px rgba(2, 6, 23, 0.42);
+  --control-bg-hover: rgba(124, 131, 255, 0.16);
+  --control-bg-active: rgba(124, 131, 255, 0.22);
+  --control-border-hover: rgba(124, 131, 255, 0.35);
+  --panel-surface: rgba(15, 23, 42, 0.78);
+  --panel-border-color: rgba(124, 131, 255, 0.25);
+  --section-surface: rgba(15, 23, 42, 0.88);
+  --card-module-bg: linear-gradient(
+    180deg,
+    rgba(24, 37, 62, 0.96) 0%,
+    rgba(17, 27, 47, 0.94) 100%
+  );
+  --dashboard-page-bg:
+    radial-gradient(
+      circle at top left,
+      rgba(124, 131, 255, 0.2),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(251, 191, 36, 0.14),
+      transparent 26%
+    ),
+    linear-gradient(180deg, #0f172a 0%, #111827 100%);
+  --summary-surface-bg: linear-gradient(
+    135deg,
+    rgba(17, 27, 47, 0.95),
+    rgba(28, 43, 73, 0.9)
+  );
+
+  --list-page-bg:
+    radial-gradient(
+      circle at top left,
+      color-mix(in srgb, var(--primary-color) 20%, transparent),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--color-accent) 14%, transparent),
+      transparent 26%
+    ),
+    linear-gradient(
+      180deg,
+      var(--background-color) 0%,
+      color-mix(in srgb, var(--background-color) 88%, var(--color-primary)) 100%
+    );
+  --list-shell-surface: color-mix(
+    in srgb,
+    var(--color-surface) 88%,
+    transparent
+  );
+  --list-shell-border: color-mix(in srgb, var(--color-border) 70%, transparent);
+  --list-card-muted-surface: color-mix(
+    in srgb,
+    var(--color-surface-muted) 78%,
+    transparent
+  );
+  --list-hover-surface: color-mix(
+    in srgb,
+    var(--color-primary) 12%,
+    var(--color-surface)
+  );
+  --list-border-soft: color-mix(in srgb, var(--color-border) 72%, transparent);
+  --list-badge-neutral-bg: color-mix(
+    in srgb,
+    var(--color-text-secondary) 18%,
+    transparent
+  );
+  --list-badge-neutral-text: var(--color-text-secondary);
+  --list-badge-success-bg: color-mix(
+    in srgb,
+    var(--success-color) 18%,
+    transparent
+  );
+  --list-badge-success-text: var(--success-color);
+  --list-badge-info-bg: color-mix(
+    in srgb,
+    var(--color-primary) 18%,
+    transparent
+  );
+  --list-badge-info-text: var(--color-primary);
+  --list-badge-warning-bg: color-mix(
+    in srgb,
+    var(--color-accent) 18%,
+    transparent
+  );
+  --list-badge-warning-text: var(--color-accent);
+  --list-badge-danger-bg: color-mix(
+    in srgb,
+    var(--error-color) 18%,
+    transparent
+  );
+  --list-badge-danger-text: var(--error-color);
+  --list-badge-surface-bg: color-mix(
+    in srgb,
+    var(--color-surface) 74%,
+    var(--background-color)
+  );
+  --list-badge-surface-text: var(--color-text-primary);
+
+  --shadow-card: 0 16px 32px rgba(2, 6, 23, 0.42);
+  --shadow-card-strong: 0 22px 38px rgba(2, 6, 23, 0.52);
+  --shadow-elevated: 0 30px 70px rgba(2, 6, 23, 0.56);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+.back-button:hover {
+  cursor: pointer;
+}
+
+:where(
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  summary,
+  [role="button"],
+  [role="link"],
+  [tabindex]:not([tabindex="-1"])
+):focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}

@@ -1,0 +1,9 @@
+.expense-advanced-filters__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.expense-advanced-filters__attachments {
+  margin-top: 0;
+}
