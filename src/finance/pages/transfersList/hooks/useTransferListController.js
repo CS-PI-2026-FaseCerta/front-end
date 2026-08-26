@@ -20,8 +20,8 @@ import {
     parseMonthYearFilter,
 } from "../utils/transferList.utils.js";
 
-const ROWS_PER_PAGE_STORAGE_KEY =
-    "finance_transfers_rows_per_page";
+const PAGE_SIZE_STORAGE_KEY =
+    "finance_tables_page_size";
 
 const EMPTY_ADVANCED_FILTERS = {
     dateFrom: "",
@@ -45,7 +45,7 @@ const getStoredRowsPerPage = (fallback) => {
     try {
         const stored = Number(
             window.localStorage.getItem(
-                ROWS_PER_PAGE_STORAGE_KEY,
+                PAGE_SIZE_STORAGE_KEY,
             ),
         );
 
@@ -603,7 +603,7 @@ export default function useTransferListController({
 
         try {
             window.localStorage.setItem(
-                ROWS_PER_PAGE_STORAGE_KEY,
+                PAGE_SIZE_STORAGE_KEY,
                 String(parsedValue),
             );
         } catch {
