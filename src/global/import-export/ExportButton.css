@@ -1,0 +1,72 @@
+.global-export-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.global-export-button__format {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 7.1rem;
+}
+
+.global-export-button__format > span {
+  color: var(--color-text-secondary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.global-export-button__format select {
+  min-height: 2.9rem;
+  border: 1px solid var(--list-border-soft);
+  border-radius: 16px;
+  background: var(--list-card-muted-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  padding: 0 0.9rem;
+}
+
+.global-export-button__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 2.9rem;
+  padding: 0.8rem 1.05rem;
+  border: 1px solid var(--list-border-soft);
+  border-radius: 999px;
+  background: var(--list-card-muted-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease;
+}
+
+.global-export-button__action:hover,
+.global-export-button__action:focus-visible {
+  transform: translateY(-1px);
+  background: var(--list-hover-surface);
+}
+
+.global-export-button__action:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 720px) {
+  .global-export-button {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .global-export-button__format,
+  .global-export-button__action {
+    width: 100%;
+  }
+}

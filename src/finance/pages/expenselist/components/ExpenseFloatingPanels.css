@@ -1,0 +1,245 @@
+.expense-calculator {
+  position: fixed;
+  z-index: 1350;
+  width: 20rem;
+  max-width: calc(100vw - 24px);
+  padding: 0.75rem;
+  border: 1px solid var(--finance-border);
+  border-radius: 18px;
+  background: var(--finance-surface-solid);
+  color: var(--finance-text);
+  box-shadow: var(--finance-shadow-elevated);
+}
+
+.expense-calculator__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.15rem 0.15rem 0.7rem;
+}
+
+.expense-calculator__header > div {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.expense-calculator__header span {
+  color: var(--finance-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.expense-calculator__header strong {
+  font-size: 0.96rem;
+}
+
+.expense-calculator__header > button {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--finance-muted);
+  cursor: pointer;
+}
+
+.expense-calculator__header > button:hover,
+.expense-calculator__header > button:focus-visible {
+  background: var(--finance-hover);
+  color: var(--finance-primary);
+}
+
+.expense-calculator__display {
+  display: grid;
+  gap: 0.28rem;
+  margin-bottom: 0.7rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--finance-border-strong);
+  border-radius: 12px;
+  background: var(--finance-soft);
+}
+
+.expense-calculator__display:focus-within {
+  border-color: var(--finance-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--finance-focus) 14%, transparent);
+}
+
+.expense-calculator__display.has-error {
+  border-color: var(--finance-danger);
+}
+
+.expense-calculator__display input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--finance-text);
+  font: inherit;
+  font-size: 1.35rem;
+  font-weight: 800;
+  text-align: right;
+}
+
+.expense-calculator__display span {
+  min-height: 1rem;
+  color: var(--finance-muted);
+  font-size: 0.68rem;
+  text-align: right;
+}
+
+.expense-calculator__display.has-error span {
+  color: var(--finance-danger);
+}
+
+.expense-calculator__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.expense-calculator__key {
+  display: grid;
+  min-height: 3rem;
+  place-items: center;
+  border: 1px solid var(--finance-border);
+  border-radius: 11px;
+  background: var(--finance-surface-solid);
+  color: var(--finance-text);
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 120ms ease, background-color 120ms ease, color 120ms ease;
+}
+
+.expense-calculator__key:hover,
+.expense-calculator__key:focus-visible {
+  background: var(--finance-hover);
+  transform: translateY(-1px);
+}
+
+.expense-calculator__key.is-operator {
+  background: var(--list-badge-info-bg);
+  color: var(--finance-primary);
+}
+
+.expense-calculator__key.is-clear {
+  background: var(--finance-danger-bg);
+  color: var(--finance-danger);
+}
+
+.expense-calculator__key.is-equals {
+  border-color: transparent;
+  background: var(--finance-primary);
+  color: var(--finance-on-strong);
+}
+
+.expense-calculator__key.is-equals:hover,
+.expense-calculator__key.is-equals:focus-visible {
+  background: var(--finance-primary-strong);
+}
+
+.expense-calculator__use {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.7rem;
+  border: 0;
+  border-radius: 11px;
+  background: var(--finance-primary);
+  color: var(--finance-on-strong);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.expense-calculator__use:hover,
+.expense-calculator__use:focus-visible {
+  background: var(--finance-primary-strong);
+}
+
+.expense-action-menu {
+  position: fixed;
+  z-index: 1200;
+  width: 17.25rem;
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.45rem;
+  border: 1px solid var(--finance-border);
+  border-radius: 12px;
+  background: var(--finance-surface-solid);
+  color: var(--finance-text);
+  box-shadow: var(--finance-shadow-elevated);
+  overscroll-behavior: contain;
+}
+
+.expense-action-menu button {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.8rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--finance-text);
+  font: inherit;
+  font-size: 0.92rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.expense-action-menu button svg {
+  color: var(--finance-primary);
+  font-size: 1.15rem;
+}
+
+.expense-action-menu button small {
+  display: grid;
+  min-width: 1.3rem;
+  height: 1.3rem;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--list-badge-info-bg);
+  color: var(--finance-primary);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.expense-action-menu button:hover,
+.expense-action-menu button:focus-visible {
+  background: var(--finance-hover);
+}
+
+.expense-action-menu button.is-danger,
+.expense-action-menu button.is-danger svg {
+  color: var(--finance-danger);
+}
+
+.expense-action-menu button.is-danger:hover,
+.expense-action-menu button.is-danger:focus-visible {
+  background: var(--finance-danger-bg);
+}
+
+.expense-action-menu__divider {
+  height: 1px;
+  margin: 0.35rem -0.45rem;
+  background: var(--finance-border);
+}
+
+@media (max-width: 420px) {
+  .expense-calculator {
+    width: calc(100vw - 16px);
+  }
+}

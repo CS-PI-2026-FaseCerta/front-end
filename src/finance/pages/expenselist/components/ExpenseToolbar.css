@@ -1,0 +1,153 @@
+.expense-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.expense-toolbar__month {
+  display: inline-grid;
+  grid-template-columns: 2.25rem minmax(8rem, auto) 2.25rem;
+  align-items: center;
+  min-height: 2.6rem;
+  padding: 0.15rem;
+  border-radius: 999px;
+  background: var(--finance-soft);
+}
+
+.expense-toolbar__month button,
+.expense-toolbar__tabs button,
+.expense-toolbar__filters {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.expense-toolbar__month button {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--finance-muted);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.expense-toolbar__month button:hover,
+.expense-toolbar__month button:focus-visible {
+  background: var(--finance-hover);
+  color: var(--finance-primary);
+}
+
+.expense-toolbar__month strong {
+  padding: 0.52rem 1.05rem;
+  border-radius: 999px;
+  background: var(--finance-primary);
+  color: var(--finance-on-strong);
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.expense-toolbar__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.35rem;
+}
+
+.expense-toolbar__tabs {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: var(--finance-soft);
+}
+
+.expense-toolbar__tabs button {
+  min-width: 9rem;
+  padding: 0.78rem 1.1rem;
+  border-radius: 999px;
+  color: var(--finance-muted);
+  font-weight: 700;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.expense-toolbar__tabs button:hover,
+.expense-toolbar__tabs button:focus-visible {
+  background: var(--finance-hover);
+}
+
+.expense-toolbar__tabs button.is-active {
+  background: var(--finance-danger);
+  color: var(--finance-on-strong);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--finance-danger) 24%, transparent);
+}
+.expense-toolbar__tabs button.is-active[data-tab="receipts"] {
+  background: var(--success-color);
+  color: var(--finance-on-strong);
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--success-color) 24%, transparent);
+}
+
+
+
+.expense-toolbar__filters {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.6rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 12px;
+  color: var(--finance-muted);
+  font-weight: 700;
+}
+
+.expense-toolbar__filters:hover,
+.expense-toolbar__filters:focus-visible {
+  background: var(--finance-soft);
+  color: var(--finance-primary);
+}
+
+.expense-toolbar__filters i {
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 50%;
+  background: var(--finance-danger);
+}
+
+@media (max-width: 1050px) {
+  .expense-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .expense-toolbar__right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .expense-toolbar__tabs {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  .expense-toolbar__tabs button {
+    min-width: 8.5rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .expense-toolbar__right {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .expense-toolbar__filters {
+    align-self: flex-end;
+  }
+}

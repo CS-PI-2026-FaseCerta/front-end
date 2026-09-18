@@ -1,0 +1,19 @@
+.transfers-list-page {
+    isolation: isolate;
+}
+
+.transfers-list__toast {
+    position: fixed;
+    z-index: 1500;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    max-width: min(92vw, 380px);
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--finance-border);
+    border-radius: 12px;
+    background: var(--finance-surface-solid);
+    color: var(--finance-text);
+    box-shadow: var(--finance-shadow-elevated);
+    font-size: 0.9rem;
+    font-weight: 700;
+}

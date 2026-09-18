@@ -1,0 +1,9 @@
+.label-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.label-group label {
+  margin-bottom: 0;
+}

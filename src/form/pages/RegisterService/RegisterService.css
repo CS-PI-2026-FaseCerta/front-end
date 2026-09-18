@@ -1,0 +1,89 @@
+.register-service-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  background: var(--dashboard-page-bg);
+  padding: 0;
+}
+
+.service-page-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.service-form-card {
+  width: 100%;
+  max-width: 640px;
+  background: var(--color-surface);
+  padding: 32px;
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  margin: 80px auto 0;
+}
+
+.service-form-card .card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.service-form-card .card-header h1 {
+  margin: 0;
+  text-align: center;
+  width: 100%;
+  padding-right: 2rem;
+  color: var(--color-text-primary);
+}
+
+.service-form-card .back-button {
+  border: none;
+  background-color: transparent;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  transition: 0.2s;
+  border-radius: 1rem;
+}
+
+/* .service-form-card .back-button:hover {
+  background-color: var(--control-bg-hover);
+  cursor: pointer;
+} */
+
+.service-form-card .back-button-icon {
+  color: var(--color-primary);
+}
+
+.service-form-card .input-group:last-of-type {
+  margin-bottom: 8px;
+}
+
+.form-button:hover {
+  cursor: pointer;
+}
+
+.form-button:disabled {
+  cursor: not-allowed;
+}
+
+.register-service-modal-container h2 {
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .service-form-card {
+    padding: 24px;
+    border-radius: 18px;
+  }
+}
