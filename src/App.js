@@ -14,6 +14,8 @@ import Dashboard from "./home/pages/Dashboard.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RecoverPassword from "./auth/pages/recoverpassword/RecoverPassword.jsx";
+import PaymentMethods from "./auth/pages/paymentMethods/PaymentMethods.jsx";
+import PaymentTerms from "./auth/pages/paymentTerms/PaymentTerms.jsx";
 
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
@@ -135,6 +137,16 @@ function App() {
             <Route
               path={AppRoutes.Dashboard}
               element={<Dashboard />}
+            />
+
+            <Route
+              path={AppRoutes.PaymentTerms}
+              element={<PaymentTerms />}
+            />
+
+            <Route
+              path={AppRoutes.PaymentMethods}
+              element={<PaymentMethods />}
             />
 
             {/* Listas principais */}
