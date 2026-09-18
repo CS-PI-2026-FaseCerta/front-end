@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react"; 
 import { deleteExpense, getExpense, listExpenses, updateExpense } from "../../../services/despesasService.js";
 import { labelFor, PAYMENT_MODES, PAYMENT_TYPES } from "../expenseList.constants.js";
 import { parseMonthYearFilter } from "../utils/expenseList.utils.js";
 
 const toUiExpense = (item) => ({
-  id: item.id, date: item.data, description: item.descricao, payee: item.pago_a,
+  id: item.id, date: item.data, description: item.descricao, payee: item.pago_a, 
   category: item.categoria, value: Number(item.valor), paymentType: labelFor(PAYMENT_TYPES, item.tipo_pagamento),
   paymentTypeValue: item.tipo_pagamento, paymentMode: labelFor(PAYMENT_MODES, item.modo_pagamento),
   paymentModeValue: item.modo_pagamento, paid: Boolean(item.pago), attachments: [],
@@ -16,9 +16,9 @@ const monthRange = (date) => {
   return [iso(first), iso(last)];
 };
 
-export default function useExpenseListController({ pageSize = 20, onMonthChange } = {}) {
-  const [rows, setRows] = useState([]); const [month, setMonth] = useState(() => new Date());
-  const [page, setPage] = useState(1); const [rowsPerPage, setRowsPerPage] = useState(pageSize);
+export default function useExpenseListController({ pageSize = 20, onMonthChange } = {}) { 
+  const [rows, setRows] = useState([]); const [month, setMonth] = useState(() => new Date()); 
+  const [page, setPage] = useState(1); const [rowsPerPage, setRowsPerPage] = useState(pageSize); 
   const [rowsPerPageInput, setRowsPerPageInput] = useState(String(pageSize)); const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1); const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState(""); const [menuRowId, setMenuRowId] = useState(null); const [menuPosition, setMenuPosition] = useState(null);

@@ -10,7 +10,7 @@ import useExpenseListController from "./hooks/useExpenseListController.js";
 import ExpenseDialogs from "./modals/ExpenseDialogs.jsx";
 import LoadingOverlay from "../../../global/components/loading/LoadingOverlay.jsx";
 import { getCurrentRoles } from "../../services/despesasService.js";
-import { formatMonth } from "./utils/expenseList.utils.js";
+import { formatMonth } from "./utils/expenseList.utils.js"; 
 import "./ExpenseList.css";
 
 const ExpenseList = (props) => {
