@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./PaymentMethods.css";
 import "../../../global/components/form/Form.css";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
+import {
+    getPaymentData,
+    savePaymentMethods,
+} from "../../../home/pages/orders/payment/paymentStorage";
 
 const PAYMENT_METHODS = [
     { id: "boleto", label: "Boleto" },
@@ -22,6 +26,12 @@ export default function PaymentMethods() {
     const [selectedMethods, setSelectedMethods] = useState([]);
     const [successMessage, setSuccessMessage] = useState("");
 
+    useEffect(() => {
+        const paymentData = getPaymentData();
+
+        setSelectedMethods(paymentData.methods || []);
+    }, []);
+
     const toggleMethod = (id) => {
         setSelectedMethods((prev) =>
             prev.includes(id)
@@ -38,6 +48,8 @@ export default function PaymentMethods() {
         if (!isFormValid) {
             return;
         }
+
+        savePaymentMethods(selectedMethods);
 
         setSuccessMessage("Meios de pagamento salvos com sucesso!");
 

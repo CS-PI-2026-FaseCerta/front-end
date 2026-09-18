@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./PaymentTerms.css";
 import "../../../global/components/form/Form.css";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
-
+import {
+  getPaymentData,
+  savePaymentTerms,
+} from "../../../home/pages/orders/payment/paymentStorage";
 const QUICK_INSTALLMENTS = ["2x", "3x"];
 
 export default function PaymentTerms() {
@@ -17,6 +20,20 @@ export default function PaymentTerms() {
   const [installmentsText, setInstallmentsText] = useState("");
   const [details, setDetails] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    const paymentData = getPaymentData();
+    const terms = paymentData.terms;
+
+    setPaymentType(terms.paymentType || "cash");
+    setDownPayment(terms.downPayment || "");
+    setInstallmentsText(terms.installments || "");
+    setDetails(terms.details || "");
+
+    if (terms.installments === "2x" || terms.installments === "3x") {
+      setSelectedQuickInstallment(terms.installments);
+    }
+  }, []);
 
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
@@ -88,7 +105,7 @@ export default function PaymentTerms() {
 
     const paymentTerms = buildPaymentTerms();
 
-    console.log("Condições de pagamento:", paymentTerms);
+    savePaymentTerms(paymentTerms);
 
     setSuccessMessage("Condições de pagamento salvas com sucesso!");
 
