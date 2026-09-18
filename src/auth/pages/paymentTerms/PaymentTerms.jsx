@@ -3,7 +3,6 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./PaymentTerms.css";
 import "../../../global/components/form/Form.css";
-
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
 
@@ -17,26 +16,30 @@ export default function PaymentTerms() {
   const [selectedQuickInstallment, setSelectedQuickInstallment] = useState("");
   const [installmentsText, setInstallmentsText] = useState("");
   const [details, setDetails] = useState("");
-
   const [successMessage, setSuccessMessage] = useState("");
 
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
-    const float = (Number(number) / 100).toFixed(2);
 
-    return Number(float).toLocaleString("pt-BR", {
+    if (!number) {
+      return "";
+    }
+
+    return (Number(number) / 100).toLocaleString("pt-BR", {
       style: "currency",
       currency: "BRL",
     });
   };
 
   const handleDownPaymentChange = (e) => {
-    const raw = e.target.value;
-    if (raw === "") {
+    const value = e.target.value;
+
+    if (value === "") {
       setDownPayment("");
       return;
     }
-    setDownPayment(formatCurrency(raw));
+
+    setDownPayment(formatCurrency(value));
   };
 
   const handleQuickInstallmentClick = (option) => {
@@ -46,6 +49,7 @@ export default function PaymentTerms() {
 
   const handleInstallmentsTextChange = (e) => {
     const value = e.target.value;
+
     setInstallmentsText(value);
 
     if (value !== selectedQuickInstallment) {
@@ -61,14 +65,30 @@ export default function PaymentTerms() {
     setPaymentType("installments");
   };
 
+  const hasInstallmentCondition = installmentsText.trim().length > 0;
+
   const isFormValid =
     paymentType === "cash" ||
-    (paymentType === "installments" && installmentsText.trim() !== "");
+    (paymentType === "installments" && hasInstallmentCondition);
+
+  const buildPaymentTerms = () => ({
+    paymentType,
+    downPayment: paymentType === "installments" ? downPayment : "",
+    installments:
+      paymentType === "installments" ? installmentsText.trim() : "",
+    details: details.trim(),
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!isFormValid) return;
+    if (!isFormValid) {
+      return;
+    }
+
+    const paymentTerms = buildPaymentTerms();
+
+    console.log("Condições de pagamento:", paymentTerms);
 
     setSuccessMessage("Condições de pagamento salvas com sucesso!");
 
@@ -80,6 +100,7 @@ export default function PaymentTerms() {
   return (
     <div className="service-page">
       <Header />
+
       <div className="service-page-content">
         <main className="service-form-card">
           <div className="card-header">
@@ -87,32 +108,41 @@ export default function PaymentTerms() {
               type="button"
               className="back-button"
               onClick={() => navigate(-1)}
+              aria-label="Voltar"
             >
               <FaArrowLeft size={20} className="back-button-icon" />
             </button>
+
             <h1>Condições de Pagamento</h1>
           </div>
 
-          <form className="form" onSubmit={handleSubmit}>
+          <form
+            className="form"
+            onSubmit={handleSubmit}
+            noValidate
+          >
             <div className="input-group">
               <div className="payment-type-toggle">
                 <button
                   type="button"
-                  className={`payment-type-option ${
-                    paymentType === "cash" ? "payment-type-option-active" : ""
-                  }`}
+                  className={`payment-type-option ${paymentType === "cash"
+                      ? "payment-type-option-active"
+                      : ""
+                    }`}
                   onClick={handleSelectCash}
+                  aria-pressed={paymentType === "cash"}
                 >
                   À vista
                 </button>
+
                 <button
                   type="button"
-                  className={`payment-type-option ${
-                    paymentType === "installments"
+                  className={`payment-type-option ${paymentType === "installments"
                       ? "payment-type-option-active"
                       : ""
-                  }`}
+                    }`}
                   onClick={handleSelectInstallments}
+                  aria-pressed={paymentType === "installments"}
                 >
                   Parcelas
                 </button>
@@ -122,9 +152,20 @@ export default function PaymentTerms() {
             {paymentType === "installments" && (
               <>
                 <div className="input-group">
-                  <label className="form-label">ENTRADA</label>
-                  <span className="form-sublabel">Qual o valor de entrada?</span>
+                  <label
+                    className="form-label"
+                    htmlFor="downPayment"
+                  >
+                    ENTRADA
+                  </label>
+
+                  <span className="form-sublabel">
+                    Qual o valor de entrada?
+                  </span>
+
                   <input
+                    id="downPayment"
+                    name="downPayment"
                     className="form-input"
                     type="text"
                     placeholder="Insira a entrada aqui"
@@ -134,31 +175,46 @@ export default function PaymentTerms() {
                 </div>
 
                 <div className="input-group">
-                  <label className="form-label">PARCELAS</label>
-                  <span className="form-sublabel">Quantas parcelas?</span>
+                  <label
+                    className="form-label"
+                    htmlFor="installments"
+                  >
+                    PARCELAS
+                  </label>
+
+                  <span className="form-sublabel">
+                    Quantas parcelas?
+                  </span>
 
                   <div className="installments-row">
                     {QUICK_INSTALLMENTS.map((option) => (
                       <button
                         key={option}
                         type="button"
-                        className={`installment-quick-button ${
-                          selectedQuickInstallment === option
+                        className={`installment-quick-button ${selectedQuickInstallment === option
                             ? "installment-quick-button-active"
                             : ""
-                        }`}
-                        onClick={() => handleQuickInstallmentClick(option)}
+                          }`}
+                        onClick={() =>
+                          handleQuickInstallmentClick(option)
+                        }
+                        aria-pressed={
+                          selectedQuickInstallment === option
+                        }
                       >
                         {option}
                       </button>
                     ))}
 
                     <input
+                      id="installments"
+                      name="installments"
                       className="form-input installments-free-input"
                       type="text"
                       placeholder="Insira as parcelas aqui"
                       value={installmentsText}
                       onChange={handleInstallmentsTextChange}
+                      aria-required="true"
                     />
                   </div>
                 </div>
@@ -166,8 +222,16 @@ export default function PaymentTerms() {
             )}
 
             <div className="input-group">
-              <label className="form-label">DETALHES</label>
+              <label
+                className="form-label"
+                htmlFor="details"
+              >
+                DETALHES
+              </label>
+
               <textarea
+                id="details"
+                name="details"
                 className="form-textarea"
                 placeholder="Opcional"
                 value={details}
@@ -175,16 +239,23 @@ export default function PaymentTerms() {
               />
             </div>
 
-            <button type="submit" className="form-button" disabled={!isFormValid}>
-              Salvar Condições de Pagamento
+            <button
+              type="submit"
+              className="form-button"
+              disabled={!isFormValid}
+            >
+              SALVAR CONDIÇÕES DE PAGAMENTO
             </button>
 
             {successMessage && (
-              <p className="form-success">{successMessage}</p>
+              <p className="form-success">
+                {successMessage}
+              </p>
             )}
           </form>
         </main>
       </div>
+
       <Footer />
     </div>
   );
