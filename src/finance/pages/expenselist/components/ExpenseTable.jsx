@@ -102,7 +102,7 @@ export default function ExpenseTable({
           aria-label="Filtrar por tipo de pagamento"
         >
           <option value="">Todos</option>
-          {PAYMENT_TYPES.map((type) => <option key={type}>{type}</option>)}
+          {PAYMENT_TYPES.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
         </FinanceSelect>
       </th>
       <th>
@@ -112,7 +112,7 @@ export default function ExpenseTable({
           aria-label="Filtrar por modo de pagamento"
         >
           <option value="">Todos</option>
-          {PAYMENT_MODES.map((mode) => <option key={mode}>{mode}</option>)}
+          {PAYMENT_MODES.map((mode) => <option key={mode.value} value={mode.value}>{mode.label}</option>)}
         </FinanceSelect>
       </th>
       <th>
