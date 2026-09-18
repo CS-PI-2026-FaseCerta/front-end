@@ -1,4 +1,12 @@
-import { FaBoxOpen, FaClipboardList, FaUsers, FaWallet, FaWrench, FaFileAlt } from "react-icons/fa";
+import {
+  FaBoxOpen,
+  FaClipboardList,
+  FaUsers,
+  FaWallet,
+  FaWrench,
+  FaFileAlt,
+  FaMoneyBillWave,
+} from "react-icons/fa";
 
 export const MODULES = [
   {
@@ -83,7 +91,31 @@ export const MODULES = [
       gestor: 7,
       tecnico: 5,
     },
-  }
+  },
+  {
+    id: "condicoes-pagamento",
+    title: "Condições de Pagamento (Provisório!)",
+    description: "Defina as condições de parcelamento e faturamento da OS.",
+    path: "/termos-pagamento",
+    icon: <FaMoneyBillWave />,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 8,
+      tecnico: 6,
+    },
+  },
+  {
+    id: "meios-pagamento",
+    title: "Meios de Pagamento (Provisório!)",
+    description: "Defina os meios de pagamento aceitos para a OS.",
+    path: "/metodo-pagamento",
+    icon: <FaMoneyBillWave />,
+    allowedProfiles: ["gestor", "tecnico"],
+    order: {
+      gestor: 9,
+      tecnico: 7,
+    },
+  },
 ];
 
 export const getVisibleModulesByProfile = (profile) =>
