@@ -35,6 +35,49 @@ export const formatCurrency = (value) =>
     currency: "BRL",
   }).format(Number(value) || 0);
 
+export const formatDateFilterMask = (value) => {
+  if (!value) return "";
+  const raw = value.replace(/\D/g, "");
+  if (raw.length === 0) return "";
+  
+  let month = raw.slice(0, 2);
+  const year = raw.slice(2, 6);
+  
+  if (month.length === 2) {
+    const m = parseInt(month, 10);
+    if (m < 1) month = "01";
+    if (m > 12) month = "12";
+  }
+  
+  if (raw.length > 2) {
+    return `${month}/${year}`;
+  }
+  return month;
+};
+
+export const parseMonthYearFilter = (value) => {
+  const match = String(value ?? "").match(/^(\d{2})[-/]?(\d{4})$/);
+  if (!match) return null;
+  const month = parseInt(match[1], 10);
+  const year = parseInt(match[2], 10);
+  if (month < 1 || month > 12) return null;
+  return { month, year };
+};
+
+export const matchesMonthYear = (dateString, filterMonth, filterYear) => {
+  if (!dateString) return false;
+  const d = new Date(`${dateString}T12:00:00`);
+  return d.getMonth() + 1 === filterMonth && d.getFullYear() === filterYear;
+};
+
+export const matchesProgressiveMonthYear = (dateString, filterString) => {
+  if (!dateString || !filterString) return false;
+  const d = new Date(`${dateString}T12:00:00`);
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const y = d.getFullYear();
+  return `${m}/${y}`.includes(filterString);
+};
+
 const normalize = (value) =>
   String(value ?? "")
     .normalize("NFD")

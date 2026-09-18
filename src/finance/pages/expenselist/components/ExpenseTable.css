@@ -24,6 +24,8 @@
   color: var(--finance-muted);
 }
 
+
+
 .expense-table__filter-row input:focus,
 .expense-table__filter-row select:focus {
   border-color: var(--finance-primary);

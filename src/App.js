@@ -1,6 +1,12 @@
 import "./App.css";
 
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
 
 import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
@@ -23,6 +29,8 @@ import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx
 import ProductsListPage from "./home/pages/products/ProductsListPage";
 
 import ExpenseList from "./finance/pages/expenselist/ExpenseList.jsx";
+import TransfersList from "./finance/pages/transfersList/TransfersList.jsx";
+import ReceipList from "./finance/pages/receiptlist/ReceipList.jsx";
 
 import ServicesListPage from "./home/pages/services/ServicesListPage.jsx";
 import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
@@ -32,62 +40,130 @@ import DashboardLayout from "./global/components/layout/DashboardLayout.jsx";
 import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 
 import ApplyDiscounts from "./home/components/submodule/pages/ApplyDiscounts/ApplyDiscounts.jsx";
-
-import PaymentMethods from "./auth/pages/paymentMethods/PaymentMethods.jsx";
-import PaymentTerms from "./auth/pages/paymentTerms/PaymentTerms.jsx";
-
 import * as AppRoutes from "./routes/AppRoutes.jsx";
 
+function FinanceListRoute({ type }) {
+  const navigate = useNavigate();
+
+  const onTabChange = (tab) => {
+    const paths = {
+      expenses: AppRoutes.FinanceiroDespesas,
+      receipts: AppRoutes.Financeiro,
+      transfers: AppRoutes.FinanceiroTransferencias,
+    };
+
+    if (paths[tab]) {
+      navigate(paths[tab]);
+    }
+  };
+
+  if (type === "receipts") {
+    return <ReceipList onTabChange={onTabChange} />;
+  }
+
+  if (type === "expenses") {
+    return <ExpenseList onTabChange={onTabChange} />;
+  }
+
+  if (type === "transfers") {
+    return <TransfersList onTabChange={onTabChange} />;
+  }
+
+  return null;
+}
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-
           {/* Redirect raiz */}
           <Route path="/" element={<Navigate to={AppRoutes.Login} />} />
 
           {/* Auth */}
           <Route path={AppRoutes.Login} element={<Login />} />
-          <Route path={AppRoutes.UserRegistration} element={<UserRegistration />} />
-          <Route path={AppRoutes.ChangePassword} element={<ChangePassword />} />
-          <Route path={AppRoutes.RecoverPassword} element={<RecoverPassword />} />
+
+          <Route
+            path={AppRoutes.UserRegistration}
+            element={<UserRegistration />}
+          />
+
+          <Route
+            path={AppRoutes.ChangePassword}
+            element={<ChangePassword />}
+          />
+
+          <Route
+            path={AppRoutes.RecoverPassword}
+            element={<RecoverPassword />}
+          />
 
           {/* Forms públicos/independentes */}
-          <Route path={AppRoutes.RegisterService} element={<RegisterService />} />
-          <Route path={AppRoutes.RegisterProduct} element={<RegisterProduct />} />
-          <Route path={AppRoutes.ServiceInsert} element={<ServiceInsert />} />
-          <Route path={AppRoutes.RegisterClient} element={<RegisterCustomer />} />
-          <Route path={AppRoutes.RegisterCity} element={<RegisterCity />} />
-          <Route path={AppRoutes.PaymentMethods} element={<PaymentMethods />} />
-          <Route path={AppRoutes.PaymentTerms} element={<PaymentTerms />} />
+          <Route
+            path={AppRoutes.RegisterService}
+            element={<RegisterService />}
+          />
+
+          <Route
+            path={AppRoutes.RegisterProduct}
+            element={<RegisterProduct />}
+          />
+
+          <Route
+            path={AppRoutes.ServiceInsert}
+            element={<ServiceInsert />}
+          />
+
+          <Route
+            path={AppRoutes.RegisterClient}
+            element={<RegisterCustomer />}
+          />
+
+          <Route
+            path={AppRoutes.RegisterCity}
+            element={<RegisterCity />}
+          />
 
           {/* Loading */}
-          <Route path={AppRoutes.Loading} element={<LoadingOverlay />} />
+          <Route
+            path={AppRoutes.Loading}
+            element={<LoadingOverlay />}
+          />
 
           {/* Dashboard layout (rotas autenticadas) */}
           <Route element={<DashboardLayout />}>
-            <Route path={AppRoutes.Dashboard} element={<Dashboard />} />
+            <Route
+              path={AppRoutes.Dashboard}
+              element={<Dashboard />}
+            />
 
             {/* Listas principais */}
-            <Route path={AppRoutes.Clientes} element={<CustomersListPage />} />
+            <Route
+              path={AppRoutes.Clientes}
+              element={<CustomersListPage />}
+            />
 
             <Route
               path={AppRoutes.ProdutosEstoque}
               element={<ProductsListPage />}
             />
-            <Route path={AppRoutes.Servicos} element={<ServicesListPage />} />
-            <Route path={AppRoutes.Pedidos} element={<OrdersListPage />} />
 
+            <Route
+              path={AppRoutes.Servicos}
+              element={<ServicesListPage />}
+            />
+
+            <Route
+              path={AppRoutes.Pedidos}
+              element={<OrdersListPage />}
+            />
 
             <Route
               path={AppRoutes.ApplyDiscounts}
               element={<ApplyDiscounts />}
             />
 
-            {/* Módulos futuros / placeholders */}          
-
+            {/* Módulos futuros / placeholders */}
             <Route
               path={AppRoutes.OrdensServico}
               element={
@@ -114,41 +190,58 @@ function App() {
               }
             />
 
-            <Route path={AppRoutes.Perfil} element={
-              <SectionPage
-                eyebrow="Perfil"
-                title="Perfil e preferências de acesso"
-                description="Configurações de usuário."
-                ctaLabel="Voltar ao painel"
-                ctaPath="/dashboard"
-              />
-            } />
+            <Route
+              path={AppRoutes.Perfil}
+              element={
+                <SectionPage
+                  eyebrow="Perfil"
+                  title="Perfil e preferências de acesso"
+                  description="Configurações de usuário."
+                  ctaLabel="Voltar ao painel"
+                  ctaPath="/dashboard"
+                />
+              }
+            />
 
-            <Route path={AppRoutes.Relatorios} element={
-              <SectionPage
-                eyebrow="Relatórios"
-                title="Relatórios"
-                description="Indicadores e análises."
-                ctaLabel="Voltar ao painel"
-                ctaPath="/dashboard"
-              />
-            } />
+            <Route
+              path={AppRoutes.Relatorios}
+              element={
+                <SectionPage
+                  eyebrow="Relatórios"
+                  title="Relatórios"
+                  description="Indicadores e análises."
+                  ctaLabel="Voltar ao painel"
+                  ctaPath="/dashboard"
+                />
+              }
+            />
 
-            <Route path={AppRoutes.Configuracoes} element={
-              <SectionPage
-                eyebrow="Configurações"
-                title="Configurações"
-                description="Ajustes do sistema."
-                ctaLabel="Voltar ao painel"
-                ctaPath="/dashboard"
-              />
-            } />
+            <Route
+              path={AppRoutes.Configuracoes}
+              element={
+                <SectionPage
+                  eyebrow="Configurações"
+                  title="Configurações"
+                  description="Ajustes do sistema."
+                  ctaLabel="Voltar ao painel"
+                  ctaPath="/dashboard"
+                />
+              }
+            />
 
             <Route
               path={AppRoutes.Financeiro}
-              element={
-                <ExpenseList/>
-              }
+              element={<FinanceListRoute type="receipts" />}
+            />
+
+            <Route
+              path={AppRoutes.FinanceiroDespesas}
+              element={<FinanceListRoute type="expenses" />}
+            />
+
+            <Route
+              path={AppRoutes.FinanceiroTransferencias}
+              element={<FinanceListRoute type="transfers" />}
             />
 
             <Route
@@ -166,8 +259,10 @@ function App() {
           </Route>
 
           {/* fallback global */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
         </Routes>
       </BrowserRouter>
     </div>

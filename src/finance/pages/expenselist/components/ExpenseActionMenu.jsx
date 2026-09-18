@@ -14,6 +14,7 @@ import {
 import "./ExpenseFloatingPanels.css";
 
 export default function ExpenseActionMenu({
+  isReceipt,
   expense,
   position,
   onGenerateReceipt,
@@ -41,7 +42,7 @@ export default function ExpenseActionMenu({
       </button>
       <button type="button" role="menuitem" onClick={() => onEdit(expense)}>
         <FaPen aria-hidden="true" />
-        <span>Editar detalhes</span>
+        <span>{isReceipt ? "Editar recebimento" : "Editar detalhes"}</span>
       </button>
       <button type="button" role="menuitem" onClick={() => onDetails(expense)}>
         <FaListUl aria-hidden="true" />
@@ -68,7 +69,7 @@ export default function ExpenseActionMenu({
       <div className="expense-action-menu__divider" />
       <button type="button" role="menuitem" onClick={() => onInstallments(expense)}>
         <FaMoneyBillWave aria-hidden="true" />
-        <span>Parcelar...</span>
+        <span>{isReceipt ? "Parcelar recebimento" : "Parcelar despesa"}</span>
       </button>
       <div className="expense-action-menu__divider" />
       <button type="button" role="menuitem" className="is-danger" onClick={() => onDelete(expense)}>

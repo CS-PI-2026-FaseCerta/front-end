@@ -1,8 +1,8 @@
 import React from "react";
 import { FaChevronLeft, FaChevronRight, FaFilter } from "react-icons/fa";
-import "./ExpenseToolbar.css";
+import "../../expenselist/components/ExpenseToolbar.css";
 
-export default function ExpenseToolbar({
+export default function ReceiptToolbar({
   monthLabel,
   onPreviousMonth,
   onNextMonth,
@@ -13,7 +13,11 @@ export default function ExpenseToolbar({
   return (
     <div className="expense-toolbar">
       <div className="expense-toolbar__month" aria-label="Navegação por mês">
-        <button type="button" onClick={onPreviousMonth} aria-label="Mês anterior">
+        <button
+          type="button"
+          onClick={onPreviousMonth}
+          aria-label="Mês anterior"
+        >
           <FaChevronLeft aria-hidden="true" />
         </button>
         <strong>{monthLabel}</strong>
@@ -21,14 +25,21 @@ export default function ExpenseToolbar({
           <FaChevronRight aria-hidden="true" />
         </button>
       </div>
-
       <div className="expense-toolbar__right">
-        <nav className="expense-toolbar__tabs" aria-label="Tipo de movimentação">
-          <button type="button" data-tab="receipts" onClick={() => onTabChange?.("receipts")}>Recebimentos</button>
-          <button type="button" data-tab="expenses" className="is-active" aria-current="page">Despesas</button>
-          <button type="button" data-tab="transfers" onClick={() => onTabChange?.("transfers")}>Transferências</button>
+        <nav
+          className="expense-toolbar__tabs"
+          aria-label="Tipo de movimentação"
+        >
+          <button type="button" data-tab="receipts" className="is-active" aria-current="page">
+            Recebimentos
+          </button>
+          <button type="button" data-tab="expenses" onClick={() => onTabChange?.("expenses")}>
+            Despesas
+          </button>
+          <button type="button" data-tab="transfers" onClick={() => onTabChange?.("transfers")}>
+            Transferências
+          </button>
         </nav>
-
         <button
           type="button"
           className={`expense-toolbar__filters ${hasFilters ? "has-filters" : ""}`.trim()}

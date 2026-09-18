@@ -1,9 +1,9 @@
 import React from "react";
 import FinanceDrawer from "../../../components/drawer/FinanceDrawer.jsx";
 import FinanceField from "../../../components/form/FinanceField.jsx";
-import "./ExpenseAdvancedFilters.css";
+import "./TransferAdvancedFilters.css";
 
-export default function ExpenseAdvancedFilters({
+export default function TransferAdvancedFilters({
   isOpen,
   values,
   onChange,
@@ -11,7 +11,10 @@ export default function ExpenseAdvancedFilters({
   onClose,
 }) {
   const update = (key, value) => {
-    onChange((current) => ({ ...current, [key]: value }));
+    onChange((current) => ({
+      ...current,
+      [key]: value,
+    }));
   };
 
   return (
@@ -29,6 +32,7 @@ export default function ExpenseAdvancedFilters({
           >
             Limpar filtros
           </button>
+
           <button
             type="button"
             className="finance-button finance-button--primary"
@@ -39,52 +43,83 @@ export default function ExpenseAdvancedFilters({
         </>
       }
     >
-      <div className="expense-advanced-filters__grid">
+      <div className="transfer-advanced-filters__grid">
         <FinanceField label="Data inicial">
           <input
             type="date"
             value={values.dateFrom}
-            onChange={(event) => update("dateFrom", event.target.value)}
+            onChange={(event) =>
+              update(
+                "dateFrom",
+                event.target.value,
+              )
+            }
           />
         </FinanceField>
+
         <FinanceField label="Data final">
           <input
             type="date"
             value={values.dateTo}
-            onChange={(event) => update("dateTo", event.target.value)}
+            onChange={(event) =>
+              update(
+                "dateTo",
+                event.target.value,
+              )
+            }
           />
         </FinanceField>
+
         <FinanceField label="Valor mínimo">
           <input
             type="number"
             min="0"
             step="0.01"
             value={values.minValue}
-            onChange={(event) => update("minValue", event.target.value)}
+            onChange={(event) =>
+              update(
+                "minValue",
+                event.target.value,
+              )
+            }
             placeholder="0,00"
           />
         </FinanceField>
+
         <FinanceField label="Valor máximo">
           <input
             type="number"
             min="0"
             step="0.01"
             value={values.maxValue}
-            onChange={(event) => update("maxValue", event.target.value)}
+            onChange={(event) =>
+              update(
+                "maxValue",
+                event.target.value,
+              )
+            }
             placeholder="0,00"
           />
         </FinanceField>
       </div>
 
-      <label className="finance-checkbox-row expense-advanced-filters__attachments">
+      <label className="finance-checkbox-row transfer-advanced-filters__attachments">
         <input
           type="checkbox"
-          checked={values.onlyWithAttachments}
+          checked={
+            values.onlyWithAttachments
+          }
           onChange={(event) =>
-            update("onlyWithAttachments", event.target.checked)
+            update(
+              "onlyWithAttachments",
+              event.target.checked,
+            )
           }
         />
-        <span>Somente despesas com anexos</span>
+
+        <span>
+          Somente transferências com anexos
+        </span>
       </label>
     </FinanceDrawer>
   );

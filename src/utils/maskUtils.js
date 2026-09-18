@@ -39,7 +39,6 @@ export const isValidCPF = (cpf) => {
     const strCPF = cpf.replace(/\D/g, "");
     if (strCPF.length !== 11) return false;
 
-    // Modificado: Bloqueia repetidos, EXCETO se for tudo zero (000.000.000-00 passa)
     if (/^([1-9])\1{10}$/.test(strCPF)) return false;
 
     let soma = 0;
@@ -67,7 +66,6 @@ export const isValidCNPJ = (cnpj) => {
     const strCNPJ = cnpj.replace(/\D/g, "");
     if (strCNPJ.length !== 14) return false;
 
-    // Modificado: Bloqueia repetidos, EXCETO se for tudo zero (00.000.000/0000-00 passa)
     if (/^([1-9])\1{13}$/.test(strCNPJ)) return false;
 
     let tamanho = strCNPJ.length - 2;
@@ -104,6 +102,16 @@ export const isValidPhone = (phone) => {
 };
 
 export const isValidCEP = (cep) => {
-    const strCEP = cep.replace(/\D/g, "");
-    return strCEP.length === 8;
+  const strCEP = cep.replace(/\D/g, "");
+  return strCEP.length === 8;
+};
+
+export const formatCurrency = (value) => {
+  if (!value) return "";
+  let v = value.toString().replace(/\D/g, "");
+  if (v === "") return "";
+  v = (parseInt(v, 10) / 100).toFixed(2);
+  v = v.replace(".", ",");
+  v = v.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+  return `R$ ${v}`;
 };

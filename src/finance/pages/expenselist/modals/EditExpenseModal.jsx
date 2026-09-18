@@ -3,9 +3,11 @@ import FinanceField from "../../../components/form/FinanceField.jsx";
 import FinanceModal from "../../../components/modal/FinanceModal.jsx";
 import { CATEGORIES, PAYMENT_MODES, PAYMENT_TYPES } from "../expenseList.constants.js";
 
-export default function EditExpenseModal({ isOpen, expense, onClose, onSubmit }) {
+export default function EditExpenseModal({ isReceipt, isOpen, expense, onClose, onSubmit }) {
+  const categoriesList = isReceipt ? ["Ordem de serviço", "Outro"] : CATEGORIES;
+
   return (
-    <FinanceModal isOpen={isOpen} title="Editar detalhes da despesa" onClose={onClose}>
+    <FinanceModal isOpen={isOpen} title={isReceipt ? "Editar recebimento" : "Editar detalhes da despesa"} onClose={onClose}>
       <form className="finance-form" onSubmit={(event) => onSubmit(event, expense)}>
         <div className="finance-form__grid">
           <FinanceField label="Data">
@@ -17,12 +19,12 @@ export default function EditExpenseModal({ isOpen, expense, onClose, onSubmit })
           <FinanceField label="Descrição" className="is-wide">
             <input name="description" defaultValue={expense?.description} required />
           </FinanceField>
-          <FinanceField label="Pago a" className="is-wide">
+          <FinanceField label={isReceipt ? "Recebido de" : "Pago a"} className="is-wide">
             <input name="payee" defaultValue={expense?.payee} required />
           </FinanceField>
           <FinanceField label="Categoria">
             <select name="category" defaultValue={expense?.category}>
-              {CATEGORIES.map((category) => <option key={category}>{category}</option>)}
+              {categoriesList.map((category) => <option key={category}>{category}</option>)}
             </select>
           </FinanceField>
           <FinanceField label="Tipo de pagamento">
@@ -39,7 +41,7 @@ export default function EditExpenseModal({ isOpen, expense, onClose, onSubmit })
 
         <label className="finance-checkbox-row">
           <input name="paid" type="checkbox" defaultChecked={expense?.paid} />
-          <span>Despesa paga</span>
+          <span>{isReceipt ? "Recebimento pago" : "Despesa paga"}</span>
         </label>
 
         <div className="finance-modal-actions">

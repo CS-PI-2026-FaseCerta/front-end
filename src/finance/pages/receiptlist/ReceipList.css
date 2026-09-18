@@ -1,0 +1,7 @@
+@import "../expenselist/ExpenseList.css";
+
+.receipt-list-page {
+  isolation: isolate;
+}
+
+

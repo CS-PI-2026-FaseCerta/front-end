@@ -68,7 +68,7 @@ body:has(.finance-page),
   border-bottom: 1px solid var(--finance-border);
 }
 
-.finance-page-header > div {
+.finance-page-header>div {
   display: grid;
   gap: 0.25rem;
 }
@@ -92,13 +92,16 @@ body:has(.finance-page),
   padding: 1rem 1rem 0.9rem;
 }
 
-[data-theme="dark"] .finance-page input[type="date"]::-webkit-calendar-picker-indicator {
+[data-theme="dark"] .finance-page input[type="date"]::-webkit-calendar-picker-indicator,
+[data-theme="dark"] .finance-surface-theme input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1) brightness(2);
   opacity: 1;
 }
 
 @supports (-moz-appearance: none) {
-  [data-theme="dark"] .finance-page input[type="date"] {
+
+  [data-theme="dark"] .finance-page input[type="date"],
+  [data-theme="dark"] .finance-surface-theme input[type="date"] {
     color-scheme: dark;
   }
 }
