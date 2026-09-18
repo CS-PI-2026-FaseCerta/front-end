@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  FaCalculator,
   FaCheck,
   FaCheckCircle,
   FaEllipsisV,
@@ -45,24 +44,8 @@ export default function ExpenseTable({
           aria-label="Filtrar por data"
         />
       </th>
-      <th>
-        <input
-          type="search"
-          value={inlineFilters.description}
-          onChange={(event) => onInlineFilterChange("description", event.target.value)}
-          placeholder="Pesquisar"
-          aria-label="Filtrar por descrição"
-        />
-      </th>
-      <th>
-        <input
-          type="search"
-          value={inlineFilters.payee}
-          onChange={(event) => onInlineFilterChange("payee", event.target.value)}
-          placeholder="Pesquisar"
-          aria-label="Filtrar por favorecido"
-        />
-      </th>
+      <th aria-label="Filtro por descrição indisponível">—</th>
+      <th aria-label="Filtro por favorecido indisponível">—</th>
       <th>
         <FinanceSelect
           value={inlineFilters.category}
@@ -73,28 +56,7 @@ export default function ExpenseTable({
           {CATEGORIES.map((category) => <option key={category}>{category}</option>)}
         </FinanceSelect>
       </th>
-      <th>
-        <div className="expense-table__value-filter" data-expense-calculator>
-          <input
-            type="text"
-            inputMode="decimal"
-            value={inlineFilters.value}
-            onChange={(event) => onInlineFilterChange("value", event.target.value)}
-            placeholder="0,00"
-            aria-label="Filtrar por valor"
-          />
-          <button
-            type="button"
-            className={`expense-table__calculator-trigger ${calculatorOpen ? "is-open" : ""}`.trim()}
-            onClick={onOpenCalculator}
-            title="Abrir calculadora"
-            aria-label="Abrir calculadora de valor"
-            aria-expanded={calculatorOpen}
-          >
-            <FaCalculator aria-hidden="true" />
-          </button>
-        </div>
-      </th>
+      <th aria-label="Filtro por valor indisponível">—</th>
       <th>
         <FinanceSelect
           value={inlineFilters.paymentType}

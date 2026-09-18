@@ -8,6 +8,15 @@ export function getAuthToken() {
       const token = storage.getItem(key);
       if (token) return token;
     }
+
+    // O fluxo de login persiste a sessão em `user`; use o JWT dessa mesma fonte.
+    try {
+      const user = JSON.parse(storage.getItem("user") || "null");
+      const token = user?.token || user?.accessToken || user?.access_token || user?.jwt;
+      if (token) return token;
+    } catch {
+      // Sessão inválida não deve impedir a tentativa de autenticação pelas demais fontes.
+    }
   }
   return null;
 }
@@ -20,9 +29,16 @@ function redirectOnUnauthorized(response) {
 
 async function request(path, options = {}) {
   const token = getAuthToken();
+  if (!token) {
+    window.location.assign("/login");
+    const error = new Error("Sessão expirada. Faça login novamente.");
+    error.status = 401;
+    throw error;
+  }
+
   const headers = new Headers(options.headers || {});
   headers.set("Content-Type", "application/json");
-  if (token) headers.set("Authorization", `Bearer ${token}`);
+  headers.set("Authorization", `Bearer ${token}`);
 
   const response = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
   redirectOnUnauthorized(response);

@@ -11,7 +11,7 @@
   max-width: min(92vw, 360px);
   padding: 0.85rem 1rem;
   border: 1px solid var(--finance-border);
-  border-radius: 12px; 
+  border-radius: 12px;
   background: var(--finance-surface-solid);
   color: var(--finance-text);
   box-shadow: var(--finance-shadow-elevated);

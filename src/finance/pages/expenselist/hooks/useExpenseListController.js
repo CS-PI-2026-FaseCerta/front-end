@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from "react"; 
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { deleteExpense, getExpense, listExpenses, updateExpense } from "../../../services/despesasService.js";
 import { labelFor, PAYMENT_MODES, PAYMENT_TYPES } from "../expenseList.constants.js";
 import { parseMonthYearFilter } from "../utils/expenseList.utils.js";
 
 const toUiExpense = (item) => ({
-  id: item.id, date: item.data, description: item.descricao, payee: item.pago_a, 
+  id: item.id, date: item.data, description: item.descricao, payee: item.pago_a,
   category: item.categoria, value: Number(item.valor), paymentType: labelFor(PAYMENT_TYPES, item.tipo_pagamento),
   paymentTypeValue: item.tipo_pagamento, paymentMode: labelFor(PAYMENT_MODES, item.modo_pagamento),
   paymentModeValue: item.modo_pagamento, paid: Boolean(item.pago), attachments: [],
@@ -16,15 +16,15 @@ const monthRange = (date) => {
   return [iso(first), iso(last)];
 };
 
-export default function useExpenseListController({ pageSize = 20, onMonthChange } = {}) { 
-  const [rows, setRows] = useState([]); const [month, setMonth] = useState(() => new Date()); 
-  const [page, setPage] = useState(1); const [rowsPerPage, setRowsPerPage] = useState(pageSize); 
+export default function useExpenseListController({ pageSize = 20, onMonthChange } = {}) {
+  const [rows, setRows] = useState([]); const [month, setMonth] = useState(() => new Date());
+  const [page, setPage] = useState(1); const [rowsPerPage, setRowsPerPage] = useState(pageSize);
   const [rowsPerPageInput, setRowsPerPageInput] = useState(String(pageSize)); const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1); const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState(""); const [menuRowId, setMenuRowId] = useState(null); const [menuPosition, setMenuPosition] = useState(null);
   const [dialog, setDialog] = useState(null); const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-  const [inlineFilters, setInlineFilters] = useState({ date:"", description:"", payee:"", category:"", value:"", paymentType:"", paymentMode:"", paid:"" });
-  const [advancedFilters, setAdvancedFilters] = useState({ dateFrom:"", dateTo:"", minValue:"", maxValue:"", onlyWithAttachments:false });
+  const [inlineFilters, setInlineFilters] = useState({ date:"", category:"", paymentType:"", paymentMode:"", paid:"" });
+  const [advancedFilters, setAdvancedFilters] = useState({ dateFrom:"", dateTo:"" });
   const [sort] = useState({ key:"date", direction:"desc" });
   const calculator = { open:false, expression:"", error:"", left:0, top:0, placement:"below" };
 
@@ -45,7 +45,7 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
 
   const updateInlineFilter = (key,value) => { setInlineFilters(c=>({...c,[key]:value})); setPage(1); if(key==="date"){ const p=parseMonthYearFilter(value); if(p){const d=new Date(p.year,p.month-1,1);setMonth(d);onMonthChange?.(d);} } };
   const changeMonth = (delta) => { const d=new Date(month.getFullYear(),month.getMonth()+delta,1); setMonth(d);setPage(1);onMonthChange?.(d); };
-  const clearFilters = () => { setInlineFilters({date:"",description:"",payee:"",category:"",value:"",paymentType:"",paymentMode:"",paid:""}); setAdvancedFilters({dateFrom:"",dateTo:"",minValue:"",maxValue:"",onlyWithAttachments:false}); setPage(1); };
+  const clearFilters = () => { setInlineFilters({date:"",category:"",paymentType:"",paymentMode:"",paid:""}); setAdvancedFilters({dateFrom:"",dateTo:""}); setPage(1); };
   const hasFilters = Boolean(inlineFilters.category || inlineFilters.paid || inlineFilters.paymentType || inlineFilters.paymentMode || advancedFilters.dateFrom || advancedFilters.dateTo);
   const commitRowsPerPage = () => { const n=Number(rowsPerPageInput); if(Number.isInteger(n)&&n>0){setRowsPerPage(n);setPage(1);}else setRowsPerPageInput(String(rowsPerPage)); };
   const toggleRowMenu = (event,id) => { if(menuRowId===id){setMenuRowId(null);return;} const r=event.currentTarget.getBoundingClientRect();setMenuRowId(id);setMenuPosition({left:Math.max(12,r.right-276),top:r.bottom+8}); };
