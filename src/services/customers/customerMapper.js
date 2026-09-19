@@ -63,9 +63,16 @@ export const mapCustomerToForm = (customer = {}) => {
     ? firstValue(customer.cnpj, customer.documento, customer.cpfCnpj)
     : firstValue(customer.cpf, customer.documento, customer.cpfCnpj);
 
-  return {
+    return {
+    id: customer.id,
     tipo,
-    nomeOuRazao: firstValue(customer.nome, customer.razao_social, customer.razaoSocial, customer.nome_completo, customer.name),
+    nomeOuRazao: firstValue(
+      customer.nome,
+      customer.razao_social,
+      customer.razaoSocial,
+      customer.nome_completo,
+      customer.name
+    ),
     documento: document,
     telefone: firstValue(customer.telefone, customer.phone),
     cep: firstValue(customer.cep),
@@ -75,8 +82,14 @@ export const mapCustomerToForm = (customer = {}) => {
     bairro: firstValue(customer.bairro),
     cidade: firstValue(customer.cidade, customer.localidade),
     estado: firstValue(customer.estado, customer.uf),
-    inscricaoEstadual: firstValue(customer.inscricao_estadual, customer.inscricaoEstadual),
-    inscricaoMunicipal: firstValue(customer.inscricao_municipal, customer.inscricaoMunicipal),
+    inscricaoEstadual: firstValue(
+      customer.inscricao_estadual,
+      customer.inscricaoEstadual
+    ),
+    inscricaoMunicipal: firstValue(
+      customer.inscricao_municipal,
+      customer.inscricaoMunicipal
+    ),
     anotacoes: firstValue(customer.anotacoes),
   };
 };

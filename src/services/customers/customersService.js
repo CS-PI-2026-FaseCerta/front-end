@@ -49,4 +49,6 @@ class CustomersService extends BaseService {
   }
 }
 
-export default new CustomersService();
+const customersService = new CustomersService();
+
+export default customersService;

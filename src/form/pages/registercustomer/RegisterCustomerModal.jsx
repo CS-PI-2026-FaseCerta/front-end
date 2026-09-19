@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Modal from "../../../global/components/modal/Modal.jsx";
 import RegisterCustomerForm from "./RegisterCustomerForm.jsx";
 
@@ -13,14 +13,10 @@ export default function RegisterCustomerModal({
   loading = false,
   errorMessage = "",
 }) {
-  const [successMessage, setSuccessMessage] = useState("");
+  
 
   const handleSuccess = (data = {}) => {
-    setSuccessMessage(
-      data.tipo === "PF"
-        ? "Cliente (PF) cadastrado com sucesso!"
-        : "Empresa (PJ) cadastrada com sucesso!"
-    );
+    
 
     if (onSuccessCallback) {
       onSuccessCallback(data);
@@ -32,7 +28,7 @@ export default function RegisterCustomerModal({
   };
 
   const handleCancel = () => {
-    setSuccessMessage("");
+    
 
     if (onClose) {
       onClose();
@@ -46,11 +42,7 @@ export default function RegisterCustomerModal({
           {mode === "edit" ? "Editar Cliente" : "Cadastrar Cliente"}
         </h2>
 
-        {successMessage && (
-          <div className="form-success register-customer-success-margin">
-            {successMessage}
-          </div>
-        )}
+      
 
         {loading ? (
           <p>Carregando dados do cliente...</p>
