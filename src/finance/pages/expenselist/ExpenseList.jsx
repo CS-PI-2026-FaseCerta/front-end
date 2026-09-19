@@ -52,14 +52,10 @@ const ExpenseList = (props) => {
         <ExpenseTable
           visibleRows={state.visibleRows}
           month={state.month}
-          sort={state.sort}
-          onSort={state.toggleSort}
           inlineFilters={state.inlineFilters}
           onInlineFilterChange={state.updateInlineFilter}
           onClearFilters={state.clearFilters}
           hasFilters={state.hasFilters}
-          calculatorOpen={state.calculator.open}
-          onOpenCalculator={state.openCalculator}
           menuRowId={state.menuRowId}
           onToggleRowMenu={state.toggleRowMenu}
           onTogglePaid={state.togglePaid}
@@ -98,7 +94,7 @@ const ExpenseList = (props) => {
       <ExpenseAdvancedFilters
         isOpen={state.isAdvancedOpen}
         values={state.advancedFilters}
-        onChange={state.setAdvancedFilters}
+        onChange={state.updateAdvancedFilters}
         onClear={state.clearFilters}
         onClose={() => state.setIsAdvancedOpen(false)}
       />

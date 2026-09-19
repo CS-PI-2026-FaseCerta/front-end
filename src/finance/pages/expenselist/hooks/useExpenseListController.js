@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { deleteExpense, getExpense, listExpenses, updateExpense } from "../../../services/despesasService.js";
 import { labelFor, PAYMENT_MODES, PAYMENT_TYPES } from "../expenseList.constants.js";
 import { parseMonthYearFilter } from "../utils/expenseList.utils.js";
@@ -25,10 +25,11 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
   const [dialog, setDialog] = useState(null); const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [inlineFilters, setInlineFilters] = useState({ date:"", category:"", paymentType:"", paymentMode:"", paid:"" });
   const [advancedFilters, setAdvancedFilters] = useState({ dateFrom:"", dateTo:"" });
-  const [sort] = useState({ key:"date", direction:"desc" });
   const calculator = { open:false, expression:"", error:"", left:0, top:0, placement:"below" };
+  const latestListRequestRef = useRef(0);
 
   const load = useCallback(async () => {
+    const requestId = ++latestListRequestRef.current;
     const [monthStart, monthEnd] = monthRange(month);
     setLoading(true);
     try {
@@ -36,15 +37,21 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
         pago:inlineFilters.paid === "paid" ? true : inlineFilters.paid === "pending" ? false : "",
         tipo_pagamento:inlineFilters.paymentType, modo_pagamento:inlineFilters.paymentMode,
         data_inicial:advancedFilters.dateFrom || monthStart, data_final:advancedFilters.dateTo || monthEnd });
+      if (requestId !== latestListRequestRef.current) return;
       setRows((data.items || []).map(toUiExpense)); setTotal(data.total || 0); setTotalPages(Math.max(1, data.totalPages || 1));
-    } catch (error) { setRows([]); setTotal(0); setTotalPages(1); setNotice(error.message); }
-    finally { setLoading(false); }
+    } catch (error) {
+      if (requestId !== latestListRequestRef.current) return;
+      setRows([]); setTotal(0); setTotalPages(1); setNotice(error.message);
+    } finally {
+      if (requestId === latestListRequestRef.current) setLoading(false);
+    }
   }, [page, rowsPerPage, month, inlineFilters.category, inlineFilters.paid, inlineFilters.paymentType, inlineFilters.paymentMode, advancedFilters.dateFrom, advancedFilters.dateTo]);
   useEffect(() => { load(); }, [load]);
   useEffect(() => { if (!notice) return; const t=setTimeout(()=>setNotice(""),4000); return()=>clearTimeout(t); },[notice]);
 
   const updateInlineFilter = (key,value) => { setInlineFilters(c=>({...c,[key]:value})); setPage(1); if(key==="date"){ const p=parseMonthYearFilter(value); if(p){const d=new Date(p.year,p.month-1,1);setMonth(d);onMonthChange?.(d);} } };
   const changeMonth = (delta) => { const d=new Date(month.getFullYear(),month.getMonth()+delta,1); setMonth(d);setPage(1);onMonthChange?.(d); };
+  const updateAdvancedFilters = (updater) => { setAdvancedFilters(current => typeof updater === "function" ? updater(current) : updater); setPage(1); };
   const clearFilters = () => { setInlineFilters({date:"",category:"",paymentType:"",paymentMode:"",paid:""}); setAdvancedFilters({dateFrom:"",dateTo:""}); setPage(1); };
   const hasFilters = Boolean(inlineFilters.category || inlineFilters.paid || inlineFilters.paymentType || inlineFilters.paymentMode || advancedFilters.dateFrom || advancedFilters.dateTo);
   const commitRowsPerPage = () => { const n=Number(rowsPerPageInput); if(Number.isInteger(n)&&n>0){setRowsPerPage(n);setPage(1);}else setRowsPerPageInput(String(rowsPerPage)); };
@@ -55,5 +62,5 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
   const togglePaid = async (expense) => { try{const saved=toUiExpense(await updateExpense(expense.id,{pago:!expense.paid}));setRows(c=>c.map(r=>r.id===saved.id?saved:r));}catch(e){setNotice(e.message);} };
   const confirmDelete = async (expense) => { setLoading(true);try{await deleteExpense(expense.id);setDialog(null);setNotice("Despesa excluída.");await load();}catch(e){setNotice(e.status===403?"Você não tem autorização para excluir despesas.":e.message);}finally{setLoading(false);} };
   const outOfScope=()=>{closeMenu();setNotice("Ação fora do escopo desta integração.");};
-  return {month,page,totalPages,visibleRows:rows,filteredRows:{length:total},rowsPerPageInput,setRowsPerPageInput,commitRowsPerPage,setPage,sort,toggleSort:()=>{},inlineFilters,updateInlineFilter,clearFilters,hasFilters,calculator,openCalculator:()=>{},closeCalculator:()=>{},updateCalculatorExpression:()=>{},handleCalculatorKey:()=>{},useCalculatorValue:()=>{},menuRowId,menuPosition,toggleRowMenu,activeMenuExpense:getRow(menuRowId),generateReceiptAndClose:outOfScope,openExpenseDialog,duplicateExpense:outOfScope,togglePaid,notice,isAdvancedOpen,setIsAdvancedOpen,advancedFilters,setAdvancedFilters,openAdvancedFilters:()=>setIsAdvancedOpen(true),dialog,activeExpense:getRow(dialog?.expenseId),setDialog,handleEditSubmit,handleAttachmentAdd:outOfScope,handleAttachmentRemove:outOfScope,submitMove:outOfScope,submitRecurring:outOfScope,submitInstallments:outOfScope,confirmDelete,changeMonth,loading,reload:load};
+  return {month,page,totalPages,visibleRows:rows,filteredRows:{length:total},rowsPerPageInput,setRowsPerPageInput,commitRowsPerPage,setPage,inlineFilters,updateInlineFilter,clearFilters,hasFilters,calculator,openCalculator:()=>{},closeCalculator:()=>{},updateCalculatorExpression:()=>{},handleCalculatorKey:()=>{},useCalculatorValue:()=>{},menuRowId,menuPosition,toggleRowMenu,activeMenuExpense:getRow(menuRowId),generateReceiptAndClose:outOfScope,openExpenseDialog,duplicateExpense:outOfScope,togglePaid,notice,isAdvancedOpen,setIsAdvancedOpen,advancedFilters,updateAdvancedFilters,openAdvancedFilters:()=>setIsAdvancedOpen(true),dialog,activeExpense:getRow(dialog?.expenseId),setDialog,handleEditSubmit,handleAttachmentAdd:outOfScope,handleAttachmentRemove:outOfScope,submitMove:outOfScope,submitRecurring:outOfScope,submitInstallments:outOfScope,confirmDelete,changeMonth,loading,reload:load};
 }

@@ -1,11 +1,9 @@
 import React from "react";
 import {
-  FaCheck,
   FaCheckCircle,
   FaEllipsisV,
   FaMoneyBillWave,
   FaRegCircle,
-  FaTimes,
 } from "react-icons/fa";
 import FinanceSelect from "../../../components/form/FinanceSelect.jsx";
 import FinanceTable from "../../../components/table/FinanceTable.jsx";
@@ -21,14 +19,10 @@ import "./ExpenseTable.css";
 export default function ExpenseTable({
   visibleRows,
   month,
-  sort,
-  onSort,
   inlineFilters,
   onInlineFilterChange,
   onClearFilters,
   hasFilters,
-  calculatorOpen,
-  onOpenCalculator,
   menuRowId,
   onToggleRowMenu,
   onTogglePaid,
@@ -112,8 +106,6 @@ export default function ExpenseTable({
   return (
     <FinanceTable
       columns={EXPENSE_TABLE_COLUMNS}
-      sort={sort}
-      onSort={onSort}
       filterRow={filterRow}
       hasRows={visibleRows.length > 0}
       emptyState={emptyState}
