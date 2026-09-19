@@ -1,4 +1,4 @@
-import api, { getAuthToken } from "../../config/axios.js";
+import api, { getAuthToken } from "../../config/axiosConfig.js";
 
 export async function listExpenses({
   page = 1,
