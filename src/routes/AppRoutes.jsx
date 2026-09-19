@@ -34,3 +34,4 @@ export const Suporte = "/suporte";
 
 export const PaymentMethods = "/metodo-pagamento";
 export const PaymentTerms = "/termos-pagamento";
+export const OrderSummary = "/os/:id/resumo";

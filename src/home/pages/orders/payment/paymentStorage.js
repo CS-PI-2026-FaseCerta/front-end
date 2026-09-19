@@ -1,15 +1,5 @@
 const PAYMENT_STORAGE_KEY = "fasecerta.os.payment";
 
-const PAYMENT_METHOD_LABELS = {
-    boleto: "Boleto",
-    bank_transfer: "Transferência bancária",
-    cash: "Dinheiro",
-    check: "Cheque",
-    credit_card: "Cartão de crédito",
-    debit_card: "Cartão de débito",
-    pix: "PIX",
-};
-
 const DEFAULT_PAYMENT_DATA = {
     terms: {
         paymentType: "cash",
@@ -20,9 +10,25 @@ const DEFAULT_PAYMENT_DATA = {
     methods: [],
 };
 
-const readPaymentData = () => {
+const PAYMENT_METHOD_LABELS = {
+    boleto: "Boleto",
+    bank_transfer: "Transferência bancária",
+    cash: "Dinheiro",
+    check: "Cheque",
+    credit_card: "Cartão de crédito",
+    debit_card: "Cartão de débito",
+    pix: "PIX",
+};
+
+const getStorageKey = (orderId) => {
+    return `${PAYMENT_STORAGE_KEY}.${orderId}`;
+};
+
+const readPaymentData = (orderId) => {
     try {
-        const storedData = localStorage.getItem(PAYMENT_STORAGE_KEY);
+        const storedData = localStorage.getItem(
+            getStorageKey(orderId)
+        );
 
         if (!storedData) {
             return DEFAULT_PAYMENT_DATA;
@@ -44,19 +50,19 @@ const readPaymentData = () => {
     }
 };
 
-const writePaymentData = (data) => {
+const writePaymentData = (orderId, data) => {
     localStorage.setItem(
-        PAYMENT_STORAGE_KEY,
-        JSON.stringify(data),
+        getStorageKey(orderId),
+        JSON.stringify(data)
     );
 };
 
-export const getPaymentData = () => {
-    return readPaymentData();
+export const getPaymentData = (orderId) => {
+    return readPaymentData(orderId);
 };
 
-export const savePaymentTerms = (terms) => {
-    const currentData = readPaymentData();
+export const savePaymentTerms = (orderId, terms) => {
+    const currentData = readPaymentData(orderId);
 
     const nextData = {
         ...currentData,
@@ -66,26 +72,26 @@ export const savePaymentTerms = (terms) => {
         },
     };
 
-    writePaymentData(nextData);
+    writePaymentData(orderId, nextData);
 
     return nextData;
 };
 
-export const savePaymentMethods = (methods) => {
-    const currentData = readPaymentData();
+export const savePaymentMethods = (orderId, methods) => {
+    const currentData = readPaymentData(orderId);
 
     const nextData = {
         ...currentData,
         methods: Array.isArray(methods) ? methods : [],
     };
 
-    writePaymentData(nextData);
+    writePaymentData(orderId, nextData);
 
     return nextData;
 };
 
-export const clearPaymentData = () => {
-    localStorage.removeItem(PAYMENT_STORAGE_KEY);
+export const clearPaymentData = (orderId) => {
+    localStorage.removeItem(getStorageKey(orderId));
 };
 
 export const getPaymentMethodLabel = (methodId) => {

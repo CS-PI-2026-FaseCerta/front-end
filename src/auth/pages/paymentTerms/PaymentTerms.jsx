@@ -3,8 +3,6 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./PaymentTerms.css";
 import "../../../global/components/form/Form.css";
-import Header from "../../../global/components/header/Header.jsx";
-import Footer from "../../../global/components/Footer/Footer.jsx";
 import {
   getPaymentData,
   savePaymentTerms,
@@ -116,7 +114,6 @@ export default function PaymentTerms() {
 
   return (
     <div className="service-page">
-      <Header />
 
       <div className="service-page-content">
         <main className="service-form-card">
@@ -273,7 +270,6 @@ export default function PaymentTerms() {
         </main>
       </div>
 
-      <Footer />
     </div>
   );
 }

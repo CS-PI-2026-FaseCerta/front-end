@@ -16,6 +16,7 @@ import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RecoverPassword from "./auth/pages/recoverpassword/RecoverPassword.jsx";
 import PaymentMethods from "./auth/pages/paymentMethods/PaymentMethods.jsx";
 import PaymentTerms from "./auth/pages/paymentTerms/PaymentTerms.jsx";
+import OrderSummaryPage from "./home/pages/orders/OrderSummaryPage.jsx";
 
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
@@ -168,6 +169,11 @@ function App() {
             <Route
               path={AppRoutes.Pedidos}
               element={<OrdersListPage />}
+            />
+
+            <Route
+              path={AppRoutes.OrderSummary}
+              element={<OrderSummaryPage />}
             />
 
             <Route
