@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getAddressByCep } from "../../../services/addressService";
+import customersService from "../../../services/customers/customersService";
+import { getCustomerErrorMessage } from "../../../services/customers/customerErrors";
 import {
   formatCPF,
   formatCNPJ,
@@ -16,8 +18,8 @@ const ESTADOS_BR = [
   "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO",
 ];
 
-export default function RegisterCustomerForm({ onSuccess, onCancel }) {
-  const [tipo, setTipo] = useState("PF"); // "PF" ou "PJ"
+export default function RegisterCustomerForm({ onSuccess, onCancel, initialData, mode = "create" }) {
+  const [tipo, setTipo] = useState(initialData?.tipo || "PF");
   
   const [form, setForm] = useState({
     nomeOuRazao: "",
@@ -33,12 +35,22 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
     inscricaoEstadual: "", // Apenas PJ
     inscricaoMunicipal: "", // Apenas PJ
     anotacoes: "",
+  ...initialData,
   });
 
   const [errors, setErrors] = useState({});
   const [loadingCep, setLoadingCep] = useState(false);
   const [cepMessage, setCepMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    if (!initialData) return;
+    setTipo(initialData.tipo || "PF");
+    setForm((current) => ({ ...current, ...initialData }));
+    setErrors({});
+    setFormError("");
+  }, [initialData]);
 
   const handleChange = (field, value) => {
     let newValue = value;
@@ -53,6 +65,7 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
     }
     
     setForm((prev) => ({ ...prev, [field]: newValue }));
+    setFormError("");
     
     // Limpa o erro ao digitar
     if (errors[field]) {
@@ -123,9 +136,10 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
     setTipo(novoTipo);
     setForm((prev) => ({ ...prev, documento: "", inscricaoEstadual: "", inscricaoMunicipal: "" }));
     setErrors((prev) => ({ ...prev, documento: null, nomeOuRazao: null }));
+    setFormError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate before submit
@@ -143,11 +157,18 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
     }
 
     setIsSaving(true);
-    // Simular chamada backend
-    setTimeout(() => {
+    setFormError("");
+    try {
+      const payload = { ...form, tipo };
+      const savedCustomer = mode === "edit"
+        ? await customersService.updateCustomer(initialData.id, payload)
+        : await customersService.createCustomer(payload);
       setIsSaving(false);
-      if (onSuccess) onSuccess({ tipo, ...form });
-    }, 1000);
+      if (onSuccess) onSuccess(savedCustomer);
+    } catch (error) {
+      setIsSaving(false);
+      setFormError(getCustomerErrorMessage(error, "Não foi possível salvar o cliente."));
+    }
   };
 
   return (
@@ -407,6 +428,8 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
         </div>
       )}
 
+      {formError && <div className="form-error-inline">{formError}</div>}
+
       <div className="input-group">
         <label htmlFor="anotacoes" className="form-label">
           ANOTAÇÕES
@@ -440,7 +463,7 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
           className="form-button"
           disabled={isSaving}
         >
-          {isSaving ? "SALVANDO..." : (tipo === "PF" ? "CADASTRAR CLIENTE" : "CADASTRAR EMPRESA")}
+          {isSaving ? "SALVANDO..." : mode === "edit" ? "SALVAR ALTERAÇÕES" : (tipo === "PF" ? "CADASTRAR CLIENTE" : "CADASTRAR EMPRESA")}
         </button>
       </div>
     </form>

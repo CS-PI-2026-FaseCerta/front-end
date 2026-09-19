@@ -13,11 +13,8 @@ export default function RegisterCustomer() {
 
   const handleSuccess = (data) => {
     setSuccessMessage(data.tipo === "PF" ? "Cliente (PF) cadastrado com sucesso!" : "Empresa (PJ) cadastrada com sucesso!");
-    // Aqui no futuro será feito o redirect ou refresh dependendo da UX desejada
-    setTimeout(() => {
-      setSuccessMessage("");
-      navigate("/dashboard");
-    }, 2000);
+    setSuccessMessage(data.tipo === "PF" ? "Cliente (PF) cadastrado com sucesso!" : "Empresa (PJ) cadastrada com sucesso!");
+    navigate("/clientes");
   };
 
   return (
