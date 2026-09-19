@@ -247,7 +247,7 @@ function App() {
 
             <Route
               path={AppRoutes.FinanceiroDespesasNova}
-              element={<NewExpense />}
+element={<ProtectedRoute allowedProfiles={["gestor"]}><NewExpense /></ProtectedRoute>}
             />
           </Route>
 
