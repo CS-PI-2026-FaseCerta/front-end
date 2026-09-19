@@ -14,7 +14,7 @@ export const customersColumns = [
     header: "ID",
     accessor: "id", 
     sortable: true,
-    sortType: "number",
+    sortType: "string",
     width: "92px",
   },
   {
