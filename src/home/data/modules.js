@@ -48,8 +48,7 @@ export const MODULES = [
   {
     id: "produtos-estoque",
     title: "Estoque",
-    description:
-      "Gerencie e centralize produtos, materiais, custos de compra e venda, além de quantidade em estoque com visão integrada.",
+    description: "Gerencie e centralize produtos, materiais, custos de compra e venda, além de quantidade em estoque com visão integrada.",
     path: "/produtos-estoque",
     icon: <FaBoxOpen />,
     allowedProfiles: ["gestor", "tecnico"],
@@ -90,30 +89,6 @@ export const MODULES = [
     order: {
       gestor: 7,
       tecnico: 5,
-    },
-  },
-  {
-    id: "condicoes-pagamento",
-    title: "Condições de Pagamento (Provisório!)",
-    description: "Defina as condições de parcelamento e faturamento da OS.",
-    path: "/termos-pagamento",
-    icon: <FaMoneyBillWave />,
-    allowedProfiles: ["gestor", "tecnico"],
-    order: {
-      gestor: 8,
-      tecnico: 6,
-    },
-  },
-  {
-    id: "meios-pagamento",
-    title: "Meios de Pagamento (Provisório!)",
-    description: "Defina os meios de pagamento aceitos para a OS.",
-    path: "/metodo-pagamento",
-    icon: <FaMoneyBillWave />,
-    allowedProfiles: ["gestor", "tecnico"],
-    order: {
-      gestor: 9,
-      tecnico: 7,
     },
   },
 ];
