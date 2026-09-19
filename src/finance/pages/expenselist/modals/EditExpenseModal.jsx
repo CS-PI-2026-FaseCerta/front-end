@@ -14,7 +14,7 @@ export default function EditExpenseModal({ isReceipt, isOpen, expense, onClose, 
             <input name="date" type="date" defaultValue={expense?.date} required />
           </FinanceField>
           <FinanceField label="Valor">
-            <input name="value" type="number" step="0.01" min="0" defaultValue={expense?.value} required />
+            <input name="value" type="number" step="0.01" min="0.01" defaultValue={expense?.value} required />
           </FinanceField>
           <FinanceField label="Descrição" className="is-wide">
             <input name="description" defaultValue={expense?.description} required />
@@ -28,13 +28,13 @@ export default function EditExpenseModal({ isReceipt, isOpen, expense, onClose, 
             </select>
           </FinanceField>
           <FinanceField label="Tipo de pagamento">
-            <select name="paymentType" defaultValue={expense?.paymentType}>
-              {PAYMENT_TYPES.map((type) => <option key={type}>{type}</option>)}
+            <select name="paymentType" defaultValue={expense?.paymentTypeValue}>
+              {PAYMENT_TYPES.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
             </select>
           </FinanceField>
           <FinanceField label="Modo de pagamento" className="is-wide">
-            <select name="paymentMode" defaultValue={expense?.paymentMode}>
-              {PAYMENT_MODES.map((mode) => <option key={mode}>{mode}</option>)}
+            <select name="paymentMode" defaultValue={expense?.paymentModeValue}>
+              {PAYMENT_MODES.map((mode) => <option key={mode.value} value={mode.value}>{mode.label}</option>)}
             </select>
           </FinanceField>
         </div>

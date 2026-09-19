@@ -29,6 +29,7 @@ import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx
 import ProductsListPage from "./home/pages/products/ProductsListPage";
 
 import ExpenseList from "./finance/pages/expenselist/ExpenseList.jsx";
+import NewExpense from "./finance/pages/expenseform/NewExpense.jsx";
 import TransfersList from "./finance/pages/transfersList/TransfersList.jsx";
 import ReceipList from "./finance/pages/receiptlist/ReceipList.jsx";
 
@@ -246,15 +247,7 @@ function App() {
 
             <Route
               path={AppRoutes.FinanceiroDespesasNova}
-              element={
-                <SectionPage
-                  eyebrow="Despesas"
-                  title="Cadastrar Despesa"
-                  description="Fallback temporário."
-                  ctaLabel="Voltar ao painel"
-                  ctaPath="/dashboard"
-                />
-              }
+element={<ProtectedRoute allowedProfiles={["gestor"]}><NewExpense /></ProtectedRoute>}
             />
           </Route>
 

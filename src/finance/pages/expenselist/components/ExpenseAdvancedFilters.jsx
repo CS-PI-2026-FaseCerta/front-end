@@ -54,38 +54,8 @@ export default function ExpenseAdvancedFilters({
             onChange={(event) => update("dateTo", event.target.value)}
           />
         </FinanceField>
-        <FinanceField label="Valor mínimo">
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={values.minValue}
-            onChange={(event) => update("minValue", event.target.value)}
-            placeholder="0,00"
-          />
-        </FinanceField>
-        <FinanceField label="Valor máximo">
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={values.maxValue}
-            onChange={(event) => update("maxValue", event.target.value)}
-            placeholder="0,00"
-          />
-        </FinanceField>
       </div>
 
-      <label className="finance-checkbox-row expense-advanced-filters__attachments">
-        <input
-          type="checkbox"
-          checked={values.onlyWithAttachments}
-          onChange={(event) =>
-            update("onlyWithAttachments", event.target.checked)
-          }
-        />
-        <span>Somente despesas com anexos</span>
-      </label>
     </FinanceDrawer>
   );
 }

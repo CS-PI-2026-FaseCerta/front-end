@@ -1,12 +1,9 @@
 import React from "react";
 import {
-  FaCalculator,
-  FaCheck,
   FaCheckCircle,
   FaEllipsisV,
   FaMoneyBillWave,
   FaRegCircle,
-  FaTimes,
 } from "react-icons/fa";
 import FinanceSelect from "../../../components/form/FinanceSelect.jsx";
 import FinanceTable from "../../../components/table/FinanceTable.jsx";
@@ -22,14 +19,10 @@ import "./ExpenseTable.css";
 export default function ExpenseTable({
   visibleRows,
   month,
-  sort,
-  onSort,
   inlineFilters,
   onInlineFilterChange,
   onClearFilters,
   hasFilters,
-  calculatorOpen,
-  onOpenCalculator,
   menuRowId,
   onToggleRowMenu,
   onTogglePaid,
@@ -45,24 +38,8 @@ export default function ExpenseTable({
           aria-label="Filtrar por data"
         />
       </th>
-      <th>
-        <input
-          type="search"
-          value={inlineFilters.description}
-          onChange={(event) => onInlineFilterChange("description", event.target.value)}
-          placeholder="Pesquisar"
-          aria-label="Filtrar por descrição"
-        />
-      </th>
-      <th>
-        <input
-          type="search"
-          value={inlineFilters.payee}
-          onChange={(event) => onInlineFilterChange("payee", event.target.value)}
-          placeholder="Pesquisar"
-          aria-label="Filtrar por favorecido"
-        />
-      </th>
+      <th aria-label="Filtro por descrição indisponível">—</th>
+      <th aria-label="Filtro por favorecido indisponível">—</th>
       <th>
         <FinanceSelect
           value={inlineFilters.category}
@@ -73,28 +50,7 @@ export default function ExpenseTable({
           {CATEGORIES.map((category) => <option key={category}>{category}</option>)}
         </FinanceSelect>
       </th>
-      <th>
-        <div className="expense-table__value-filter" data-expense-calculator>
-          <input
-            type="text"
-            inputMode="decimal"
-            value={inlineFilters.value}
-            onChange={(event) => onInlineFilterChange("value", event.target.value)}
-            placeholder="0,00"
-            aria-label="Filtrar por valor"
-          />
-          <button
-            type="button"
-            className={`expense-table__calculator-trigger ${calculatorOpen ? "is-open" : ""}`.trim()}
-            onClick={onOpenCalculator}
-            title="Abrir calculadora"
-            aria-label="Abrir calculadora de valor"
-            aria-expanded={calculatorOpen}
-          >
-            <FaCalculator aria-hidden="true" />
-          </button>
-        </div>
-      </th>
+      <th aria-label="Filtro por valor indisponível">—</th>
       <th>
         <FinanceSelect
           value={inlineFilters.paymentType}
@@ -102,7 +58,7 @@ export default function ExpenseTable({
           aria-label="Filtrar por tipo de pagamento"
         >
           <option value="">Todos</option>
-          {PAYMENT_TYPES.map((type) => <option key={type}>{type}</option>)}
+          {PAYMENT_TYPES.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
         </FinanceSelect>
       </th>
       <th>
@@ -112,7 +68,7 @@ export default function ExpenseTable({
           aria-label="Filtrar por modo de pagamento"
         >
           <option value="">Todos</option>
-          {PAYMENT_MODES.map((mode) => <option key={mode}>{mode}</option>)}
+          {PAYMENT_MODES.map((mode) => <option key={mode.value} value={mode.value}>{mode.label}</option>)}
         </FinanceSelect>
       </th>
       <th>
@@ -150,8 +106,6 @@ export default function ExpenseTable({
   return (
     <FinanceTable
       columns={EXPENSE_TABLE_COLUMNS}
-      sort={sort}
-      onSort={onSort}
       filterRow={filterRow}
       hasRows={visibleRows.length > 0}
       emptyState={emptyState}

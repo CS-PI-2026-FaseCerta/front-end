@@ -26,6 +26,7 @@ export default function ExpenseActionMenu({
   onRecurring,
   onInstallments,
   onDelete,
+  canDelete = false,
 }) {
   if (!expense || !position || typeof document === "undefined") return null;
 
@@ -72,10 +73,12 @@ export default function ExpenseActionMenu({
         <span>{isReceipt ? "Parcelar recebimento" : "Parcelar despesa"}</span>
       </button>
       <div className="expense-action-menu__divider" />
-      <button type="button" role="menuitem" className="is-danger" onClick={() => onDelete(expense)}>
-        <FaTrash aria-hidden="true" />
-        <span>Excluir</span>
-      </button>
+{canDelete ? (
+        <button type="button" role="menuitem" className="is-danger" onClick={() => onDelete(expense)}>
+          <FaTrash aria-hidden="true" />
+          <span>Excluir</span>
+        </button>
+      ) : null}
     </div>,
     document.body,
   );

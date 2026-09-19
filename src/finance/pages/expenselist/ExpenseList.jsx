@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import FinancePage from "../../components/page/FinancePage.jsx";
 import FinanceTableFooter from "../../components/table/FinanceTableFooter.jsx";
 import ExpenseActionMenu from "./components/ExpenseActionMenu.jsx";
@@ -8,37 +8,18 @@ import ExpenseTable from "./components/ExpenseTable.jsx";
 import ExpenseToolbar from "./components/ExpenseToolbar.jsx";
 import useExpenseListController from "./hooks/useExpenseListController.js";
 import ExpenseDialogs from "./modals/ExpenseDialogs.jsx";
-import { DEMO_EXPENSES } from "./expenseList.constants.js";
-import { createRecurringRows } from "../../utils/recurrence.js";
+import LoadingOverlay from "../../../global/components/loading/LoadingOverlay.jsx";
+import { getCurrentRoles } from "../../services/despesasService.js";
 import { formatMonth } from "./utils/expenseList.utils.js";
 import "./ExpenseList.css";
 
 const ExpenseList = (props) => {
-  const [expenses, setExpenses] = useState(() => props.expenses ?? DEMO_EXPENSES);
-  useEffect(() => {
-    if (props.expenses) setExpenses(props.expenses);
-  }, [props.expenses]);
-
-  const state = useExpenseListController({
-    ...props,
-    expenses,
-    onRecurringExpense: (updatedExpense) => {
-      const occurrences = createRecurringRows(
-        updatedExpense,
-        updatedExpense.recurrence?.frequency,
-        updatedExpense.recurrence?.startDate,
-      );
-      setExpenses((current) => [
-        ...current.filter((expense) => expense.id !== updatedExpense.id),
-        updatedExpense,
-        ...occurrences,
-      ]);
-      props.onRecurringExpense?.(updatedExpense, occurrences);
-    },
-  });
+  const state = useExpenseListController(props);
+  const canDelete = getCurrentRoles().includes("ADMIN");
 
   return (
     <>
+      {state.loading ? <LoadingOverlay label="Carregando despesas" description="Aguarde a resposta da API." /> : null}
       <FinancePage
         title="FINANCEIRO"
         eyebrow="Financeiro"
@@ -71,14 +52,10 @@ const ExpenseList = (props) => {
         <ExpenseTable
           visibleRows={state.visibleRows}
           month={state.month}
-          sort={state.sort}
-          onSort={state.toggleSort}
           inlineFilters={state.inlineFilters}
           onInlineFilterChange={state.updateInlineFilter}
           onClearFilters={state.clearFilters}
           hasFilters={state.hasFilters}
-          calculatorOpen={state.calculator.open}
-          onOpenCalculator={state.openCalculator}
           menuRowId={state.menuRowId}
           onToggleRowMenu={state.toggleRowMenu}
           onTogglePaid={state.togglePaid}
@@ -105,6 +82,7 @@ const ExpenseList = (props) => {
         onRecurring={(expense) => state.openExpenseDialog("recurring", expense)}
         onInstallments={(expense) => state.openExpenseDialog("installments", expense)}
         onDelete={(expense) => state.openExpenseDialog("delete", expense)}
+        canDelete={canDelete}
       />
 
       {state.notice ? (
@@ -116,7 +94,7 @@ const ExpenseList = (props) => {
       <ExpenseAdvancedFilters
         isOpen={state.isAdvancedOpen}
         values={state.advancedFilters}
-        onChange={state.setAdvancedFilters}
+        onChange={state.updateAdvancedFilters}
         onClear={state.clearFilters}
         onClose={() => state.setIsAdvancedOpen(false)}
       />

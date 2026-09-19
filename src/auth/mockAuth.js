@@ -79,6 +79,11 @@ const saveCurrentUser = (user) => {
     perfil: user.perfil,
   };
 
+  // Se o fluxo de autenticação real fornecer um JWT, preserve-o junto à sessão.
+  // O mock local não fabrica tokens: apenas persiste um token real quando recebido.
+  const token = user.token || user.accessToken || user.access_token || user.jwt;
+  if (token) sanitizedUser.token = token;
+
   window.localStorage.setItem(
     CURRENT_USER_STORAGE_KEY,
     JSON.stringify(sanitizedUser),

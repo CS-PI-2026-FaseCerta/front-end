@@ -1,120 +1,30 @@
-export const MONTHS = [
-  "JAN", "FEV", "MAR", "ABR", "MAI", "JUN",
-  "JUL", "AGO", "SET", "OUT", "NOV", "DEZ",
+export const MONTHS = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
+
+export const PAYMENT_TYPES = [
+  { value: "A_VISTA", label: "À vista" },
+  { value: "PARCELADO", label: "Parcelado" },
+  { value: "RECORRENTE", label: "Recorrente" },
 ];
-
-export const PAYMENT_TYPES = ["À vista", "Parcelado", "Recorrente"];
-
 export const PAYMENT_MODES = [
-  "Boleto",
-  "Carteira Digital",
-  "Cartão Pré-pago",
-  "Cartão de Crédito",
-  "Cartão de Débito",
-  "Cheque",
-  "Criptomoeda",
-  "Depósito Bancário",
-  "Dinheiro",
-  "Pix",
-  "Transferência Bancária",
+  { value: "CARTAO_CREDITO", label: "Cartão de Crédito" },
+  { value: "CARTAO_DEBITO", label: "Cartão de Débito" },
+  { value: "PIX", label: "Pix" },
+  { value: "DINHEIRO", label: "Dinheiro" },
+  { value: "BOLETO", label: "Boleto" },
+  { value: "TRANSFERENCIA", label: "Transferência" },
 ];
-
-export const CATEGORIES = [
-  "Infraestrutura",
-  "Mensalidade",
-  "Suprimentos",
-  "Tecnologia",
-  "Marketing",
-  "Impostos",
-  "Serviços",
-  "Pessoal",
-  "Viagens",
-  "Outros",
-];
-
-export const DEMO_EXPENSES = [
-  {
-    id: "exp-001",
-    date: "2026-05-01",
-    description: "#OS-8821",
-    payee: "Ana Costa & Associados",
-    category: "Infraestrutura",
-    value: 180,
-    paymentType: "À vista",
-    paymentMode: "Boleto",
-    paid: true,
-    attachments: [],
-  },
-  {
-    id: "exp-002",
-    date: "2026-05-03",
-    description: "#OS-8821",
-    payee: "Visa Crédito Brasil",
-    category: "Mensalidade",
-    value: 180,
-    paymentType: "Recorrente",
-    paymentMode: "Pix",
-    paid: false,
-    attachments: [],
-  },
-  {
-    id: "exp-003",
-    date: "2026-05-14",
-    description: "#OS-8823",
-    payee: "Juliana Lopes de Almeida",
-    category: "Suprimentos",
-    value: 180,
-    paymentType: "À vista",
-    paymentMode: "Cartão de Débito",
-    paid: false,
-    attachments: [],
-  },
-  {
-    id: "exp-004",
-    date: "2026-05-27",
-    description: "#OS-8821",
-    payee: "Global Soluções LTDA",
-    category: "Tecnologia",
-    value: 180,
-    paymentType: "À vista",
-    paymentMode: "Cartão de Crédito",
-    paid: true,
-    attachments: [],
-  },
-  {
-    id: "exp-005",
-    date: "2026-05-29",
-    description: "Hospedagem do site",
-    payee: "Cloud Services Brasil",
-    category: "Tecnologia",
-    value: 349.9,
-    paymentType: "Recorrente",
-    paymentMode: "Cartão de Crédito",
-    paid: true,
-    attachments: [],
-  },
-  {
-    id: "exp-006",
-    date: "2026-05-30",
-    description: "Materiais de escritório",
-    payee: "Papelaria Central",
-    category: "Suprimentos",
-    value: 226.5,
-    paymentType: "À vista",
-    paymentMode: "Pix",
-    paid: false,
-    attachments: [],
-  },
-];
+export const CATEGORIES = ["ALIMENTACAO", "GASOLINA", "LUZ", "INTERNET", "ALUGUEL", "AGUA", "DESPESA", "PRO_LABORE", "OUTROS"];
 
 export const EXPENSE_TABLE_COLUMNS = [
-  { key: "date", label: "Data", width: "8.5%" },
-  { key: "description", label: "Descrição", width: "14%" },
-  { key: "payee", label: "Pago a", width: "13.5%" },
-  { key: "category", label: "Categoria", width: "11.5%" },
-  { key: "value", label: "Valor", width: "9.5%" },
-  { key: "paymentType", label: "Tipo pagamento", width: "11%" },
-  { key: "paymentMode", label: "Modo do pagamento", width: "11.5%" },
-  { key: "paid", label: "Pago?", width: "10.5%" },
-  { key: "actions", label: null, ariaLabel: "Ações", sortable: false, width: "10%" },
+  { key: "date", label: "Data", sortable: false },
+  { key: "description", label: "Descrição", sortable: false },
+  { key: "payee", label: "Pago a", sortable: false },
+  { key: "category", label: "Categoria", sortable: false },
+  { key: "value", label: "Valor", sortable: false },
+  { key: "paymentType", label: "Tipo de pagamento", sortable: false },
+  { key: "paymentMode", label: "Modo de pagamento", sortable: false },
+  { key: "paid", label: "Pago", sortable: false },
+  { key: "actions", label: "", sortable: false },
 ];
+
+export const labelFor = (options, value) => options.find((item) => item.value === value)?.label || value;
