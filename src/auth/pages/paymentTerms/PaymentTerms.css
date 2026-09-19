@@ -1,5 +1,5 @@
-.service-page {
-  min-height: 70vh;
+.payment-terms-page {
+  min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -7,10 +7,9 @@
   align-items: stretch;
   background: var(--dashboard-page-bg);
   padding: 0;
-  margin-top: 115px;
 }
 
-.service-page-content {
+.payment-terms-page-content {
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -19,7 +18,7 @@
   padding: 20px;
 }
 
-.service-form-card {
+.payment-terms-form-card {
   width: 100%;
   max-width: 640px;
   background: var(--color-surface);
@@ -29,13 +28,13 @@
   margin: 80px auto 0;
 }
 
-.service-form-card .card-header {
+.payment-terms-card-header {
   display: flex;
   align-items: center;
   margin-bottom: 1.5rem;
 }
 
-.service-form-card .card-header h1 {
+.payment-terms-card-header h1 {
   margin: 0;
   text-align: center;
   width: 100%;
@@ -43,7 +42,7 @@
   color: var(--color-text-primary);
 }
 
-.service-form-card .back-button {
+.payment-terms-back-button {
   border: none;
   background-color: transparent;
   width: 2rem;
@@ -56,33 +55,31 @@
   border-radius: 1rem;
 }
 
-.service-form-card .back-button-icon {
-  color: var(--color-primary);
-}
-
-.service-form-card .input-group:last-of-type {
-  margin-bottom: 8px;
-}
-
-.form-button:hover {
+.payment-terms-back-button:hover {
   cursor: pointer;
 }
 
-.form-button:disabled {
-  cursor: not-allowed;
+.payment-terms-back-button-icon {
+  color: var(--color-primary);
 }
 
-@media (max-width: 768px) {
-  .service-form-card {
-    padding: 24px;
-    border-radius: 18px;
-  }
+.payment-terms-form-card .input-group:last-of-type {
+  margin-bottom: 8px;
+}
+
+.payment-terms-page .form-button:hover {
+  cursor: pointer;
+}
+
+.payment-terms-page .form-button:disabled {
+  cursor: not-allowed;
 }
 
 .payment-type-toggle {
   display: flex;
   gap: 12px;
 }
+
 .payment-type-option {
   flex: 1;
   padding: 14px 16px;
@@ -97,10 +94,12 @@
     box-shadow 0.2s ease,
     background-color 0.2s ease;
 }
+
 .payment-type-option:hover {
   cursor: pointer;
   border-color: var(--control-border-hover);
 }
+
 .payment-type-option-active {
   border-color: var(--color-primary);
   color: var(--color-primary);
@@ -119,6 +118,7 @@
   display: flex;
   gap: 12px;
 }
+
 .installment-quick-button {
   flex: 0 0 auto;
   min-width: 64px;
@@ -134,26 +134,38 @@
     box-shadow 0.2s ease,
     background-color 0.2s ease;
 }
+
 .installment-quick-button:hover {
   cursor: pointer;
   border-color: var(--control-border-hover);
 }
+
 .installment-quick-button-active {
   border-color: var(--color-primary);
   color: var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-primary);
 }
+
 .installments-free-input {
   flex: 1;
+}
+
+@media (max-width: 768px) {
+  .payment-terms-form-card {
+    padding: 24px;
+    border-radius: 18px;
+  }
 }
 
 @media (max-width: 480px) {
   .payment-type-toggle {
     flex-direction: column;
   }
+
   .installments-row {
     flex-wrap: wrap;
   }
+
   .installments-free-input {
     flex: 1 1 100%;
   }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./PaymentMethods.css";
 import "../../../global/components/form/Form.css";
 import {
@@ -41,9 +41,9 @@ const PAYMENT_METHODS = [
 
 export default function PaymentMethods() {
     const navigate = useNavigate();
-    const location = useLocation();
+    const { id } = useParams();
 
-    const orderId = location.state?.orderId || "OS-1024";
+    const orderId = id;
 
     const [selectedMethods, setSelectedMethods] =
         useState([]);
@@ -51,6 +51,10 @@ export default function PaymentMethods() {
         useState("");
 
     useEffect(() => {
+        if (!orderId) {
+            return;
+        }
+
         const paymentData = getPaymentData(orderId);
 
         setSelectedMethods(paymentData.methods || []);
@@ -73,7 +77,7 @@ export default function PaymentMethods() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!isFormValid) {
+        if (!orderId || !isFormValid) {
             return;
         }
 
@@ -92,21 +96,24 @@ export default function PaymentMethods() {
         }, 1000);
     };
 
-    return (
-        <div className="service-page">
+    if (!orderId) {
+        return null;
+    }
 
-            <div className="service-page-content">
-                <main className="service-form-card">
-                    <div className="card-header">
+    return (
+        <div className="payment-methods-page">
+            <div className="payment-methods-page-content">
+                <main className="payment-methods-form-card">
+                    <div className="payment-methods-card-header">
                         <button
                             type="button"
-                            className="back-button"
+                            className="payment-methods-back-button"
                             onClick={() => navigate(-1)}
                             aria-label="Voltar"
                         >
                             <FaArrowLeft
                                 size={20}
-                                className="back-button-icon"
+                                className="payment-methods-back-button-icon"
                             />
                         </button>
 
@@ -155,7 +162,6 @@ export default function PaymentMethods() {
                     </form>
                 </main>
             </div>
-
         </div>
     );
 }

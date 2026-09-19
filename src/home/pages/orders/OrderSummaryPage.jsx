@@ -2,9 +2,6 @@ import React, { useEffect, useState } from "react";
 import { FaArrowLeft, FaCreditCard } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 
-import Header from "../../../global/components/header/Header.jsx";
-import Footer from "../../../global/components/Footer/Footer.jsx";
-
 import {
     getPaymentData,
     getPaymentMethodsSummary,
@@ -33,6 +30,10 @@ const OrderSummaryPage = () => {
     );
 
     useEffect(() => {
+        if (!id) {
+            return;
+        }
+
         setPaymentData(getPaymentData(id));
     }, [id]);
 
@@ -41,42 +42,28 @@ const OrderSummaryPage = () => {
     };
 
     const handlePaymentTerms = () => {
-        navigate("/termos-pagamento", {
-            state: {
-                orderId: id,
-            },
-        });
+        navigate(`/os/${id}/termos-pagamento`);
     };
 
     const handlePaymentMethods = () => {
-        navigate("/metodo-pagamento", {
-            state: {
-                orderId: id,
-            },
-        });
+        navigate(`/os/${id}/metodo-pagamento`);
     };
 
     if (!order) {
         return (
-            <div className="order-summary-page">
-                <Header />
+            <main className="order-summary-content">
+                <section className="order-summary-card">
+                    <h1>Ordem de Serviço não encontrada</h1>
 
-                <main className="order-summary-content">
-                    <section className="order-summary-card">
-                        <h1>Ordem de Serviço não encontrada</h1>
-
-                        <button
-                            type="button"
-                            className="order-summary-button"
-                            onClick={handleBack}
-                        >
-                            Voltar para Ordens de Serviço
-                        </button>
-                    </section>
-                </main>
-
-                <Footer />
-            </div>
+                    <button
+                        type="button"
+                        className="order-summary-button"
+                        onClick={handleBack}
+                    >
+                        Voltar para Ordens de Serviço
+                    </button>
+                </section>
+            </main>
         );
     }
 
@@ -92,143 +79,139 @@ const OrderSummaryPage = () => {
     );
 
     return (
-        <div className="order-summary-page">
+        <main className="order-summary-content">
+            <section className="order-summary-card">
+                <div className="order-summary-header">
+                    <button
+                        type="button"
+                        className="order-summary-back"
+                        onClick={handleBack}
+                        aria-label="Voltar"
+                    >
+                        <FaArrowLeft />
+                    </button>
 
-            <main className="order-summary-content">
-                <section className="order-summary-card">
-                    <div className="order-summary-header">
-                        <button
-                            type="button"
-                            className="order-summary-back"
-                            onClick={handleBack}
-                            aria-label="Voltar"
-                        >
-                            <FaArrowLeft />
-                        </button>
+                    <div>
+                        <span className="order-summary-eyebrow">
+                            Ordem de Serviço
+                        </span>
+
+                        <h1>OS #{order.numero}</h1>
+                    </div>
+                </div>
+
+                <section className="order-summary-section">
+                    <h2>Resumo da OS</h2>
+
+                    <div className="order-summary-grid">
+                        <div>
+                            <span>Cliente</span>
+                            <strong>{order.cliente}</strong>
+                        </div>
 
                         <div>
-                            <span className="order-summary-eyebrow">
-                                Ordem de Serviço
-                            </span>
+                            <span>Categoria</span>
+                            <strong>{order.categoria}</strong>
+                        </div>
 
-                            <h1>OS #{order.numero}</h1>
+                        <div>
+                            <span>Status</span>
+                            <strong>{order.status.label}</strong>
+                        </div>
+
+                        <div>
+                            <span>Responsável</span>
+                            <strong>{order.responsavel}</strong>
+                        </div>
+
+                        <div>
+                            <span>Valor</span>
+                            <strong>{order.valor}</strong>
                         </div>
                     </div>
+                </section>
 
-                    <section className="order-summary-section">
-                        <h2>Resumo da OS</h2>
+                <section className="order-summary-section">
+                    <div className="order-summary-section-header">
+                        <div>
+                            <span className="order-summary-eyebrow">
+                                Financeiro
+                            </span>
 
-                        <div className="order-summary-grid">
-                            <div>
-                                <span>Cliente</span>
-                                <strong>{order.cliente}</strong>
-                            </div>
-
-                            <div>
-                                <span>Categoria</span>
-                                <strong>{order.categoria}</strong>
-                            </div>
-
-                            <div>
-                                <span>Status</span>
-                                <strong>{order.status.label}</strong>
-                            </div>
-
-                            <div>
-                                <span>Responsável</span>
-                                <strong>{order.responsavel}</strong>
-                            </div>
-
-                            <div>
-                                <span>Valor</span>
-                                <strong>{order.valor}</strong>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section className="order-summary-section">
-                        <div className="order-summary-section-header">
-                            <div>
-                                <span className="order-summary-eyebrow">
-                                    Financeiro
-                                </span>
-
-                                <h2>Detalhes financeiros</h2>
-                            </div>
-
-                            <FaCreditCard />
+                            <h2>Detalhes financeiros</h2>
                         </div>
 
-                        <div className="financial-summary">
-                            <div className="financial-summary-item">
-                                <span>Condições de pagamento</span>
+                        <FaCreditCard />
+                    </div>
 
-                                <strong>{paymentTypeLabel}</strong>
-                            </div>
+                    <div className="financial-summary">
+                        <div className="financial-summary-item">
+                            <span>Condições de pagamento</span>
 
-                            {paymentTerms.paymentType === "installments" &&
-                                paymentTerms.installments && (
-                                    <div className="financial-summary-item">
-                                        <span>Parcelamento</span>
+                            <strong>{paymentTypeLabel}</strong>
+                        </div>
 
-                                        <strong>
-                                            {paymentTerms.installments}
-                                        </strong>
-                                    </div>
-                                )}
-
-                            {paymentTerms.paymentType === "installments" &&
-                                paymentTerms.downPayment && (
-                                    <div className="financial-summary-item">
-                                        <span>Entrada</span>
-
-                                        <strong>
-                                            {paymentTerms.downPayment}
-                                        </strong>
-                                    </div>
-                                )}
-
-                            {paymentTerms.details && (
+                        {paymentTerms.paymentType === "installments" &&
+                            paymentTerms.installments && (
                                 <div className="financial-summary-item">
-                                    <span>Detalhes</span>
+                                    <span>Parcelamento</span>
 
                                     <strong>
-                                        {paymentTerms.details}
+                                        {paymentTerms.installments}
                                     </strong>
                                 </div>
                             )}
 
+                        {paymentTerms.paymentType === "installments" &&
+                            paymentTerms.downPayment && (
+                                <div className="financial-summary-item">
+                                    <span>Entrada</span>
+
+                                    <strong>
+                                        {paymentTerms.downPayment}
+                                    </strong>
+                                </div>
+                            )}
+
+                        {paymentTerms.details && (
                             <div className="financial-summary-item">
-                                <span>Meios de pagamento</span>
+                                <span>Detalhes</span>
 
                                 <strong>
-                                    {methodsSummary || "Nenhum meio selecionado"}
+                                    {paymentTerms.details}
                                 </strong>
                             </div>
-                        </div>
+                        )}
 
-                        <div className="order-summary-actions">
-                            <button
-                                type="button"
-                                className="order-summary-button"
-                                onClick={handlePaymentTerms}
-                            >
-                                Editar condições
-                            </button>
+                        <div className="financial-summary-item">
+                            <span>Meios de pagamento</span>
 
-                            <button
-                                type="button"
-                                className="order-summary-button"
-                                onClick={handlePaymentMethods}
-                            >
-                                Editar meios de pagamento
-                            </button>
+                            <strong>
+                                {methodsSummary || "Nenhum meio selecionado"}
+                            </strong>
                         </div>
-                    </section>
+                    </div>
+
+                    <div className="order-summary-actions">
+                        <button
+                            type="button"
+                            className="order-summary-button"
+                            onClick={handlePaymentTerms}
+                        >
+                            Editar condições
+                        </button>
+
+                        <button
+                            type="button"
+                            className="order-summary-button"
+                            onClick={handlePaymentMethods}
+                        >
+                            Editar meios de pagamento
+                        </button>
+                    </div>
                 </section>
-            </main>
-
-        </div>
+            </section>
+        </main>
     );
 };
 

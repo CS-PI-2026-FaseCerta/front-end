@@ -22,7 +22,6 @@ import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
 
 import SectionPage from "./home/pages/SectionPage.jsx";
-import protectedRoute from "./home/components/protectedRoute.jsx";
 
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
