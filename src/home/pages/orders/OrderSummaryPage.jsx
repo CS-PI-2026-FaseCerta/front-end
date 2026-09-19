@@ -7,7 +7,7 @@ import {
     getPaymentMethodsSummary,
 } from "./payment/paymentStorage";
 
-import { pedidosMockData } from "./pedidos.mock";
+import { ordersMockData } from "./Orders.mock";
 
 import "./OrderSummaryPage.css";
 
@@ -25,7 +25,7 @@ const OrderSummaryPage = () => {
         methods: [],
     });
 
-    const order = pedidosMockData.find(
+    const order = ordersMockData.find(
         (item) => item.id === id
     );
 
