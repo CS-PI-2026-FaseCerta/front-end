@@ -1,26 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./PaymentTerms.css";
 import "../../../global/components/form/Form.css";
 import {
   getPaymentData,
   savePaymentTerms,
 } from "../../../home/pages/orders/payment/paymentStorage";
+
 const QUICK_INSTALLMENTS = ["2x", "3x"];
 
 export default function PaymentTerms() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const orderId = location.state?.orderId || "OS-1024";
 
   const [paymentType, setPaymentType] = useState("cash");
   const [downPayment, setDownPayment] = useState("");
-  const [selectedQuickInstallment, setSelectedQuickInstallment] = useState("");
+  const [selectedQuickInstallment, setSelectedQuickInstallment] =
+    useState("");
   const [installmentsText, setInstallmentsText] = useState("");
   const [details, setDetails] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    const paymentData = getPaymentData();
+    const paymentData = getPaymentData(orderId);
     const terms = paymentData.terms;
 
     setPaymentType(terms.paymentType || "cash");
@@ -28,10 +33,15 @@ export default function PaymentTerms() {
     setInstallmentsText(terms.installments || "");
     setDetails(terms.details || "");
 
-    if (terms.installments === "2x" || terms.installments === "3x") {
+    if (
+      terms.installments === "2x" ||
+      terms.installments === "3x"
+    ) {
       setSelectedQuickInstallment(terms.installments);
+    } else {
+      setSelectedQuickInstallment("");
     }
-  }, []);
+  }, [orderId]);
 
   const formatCurrency = (value) => {
     const number = value.replace(/\D/g, "");
@@ -80,17 +90,24 @@ export default function PaymentTerms() {
     setPaymentType("installments");
   };
 
-  const hasInstallmentCondition = installmentsText.trim().length > 0;
+  const hasInstallmentCondition =
+    installmentsText.trim().length > 0;
 
   const isFormValid =
     paymentType === "cash" ||
-    (paymentType === "installments" && hasInstallmentCondition);
+    (paymentType === "installments" &&
+      hasInstallmentCondition);
 
   const buildPaymentTerms = () => ({
     paymentType,
-    downPayment: paymentType === "installments" ? downPayment : "",
+    downPayment:
+      paymentType === "installments"
+        ? downPayment
+        : "",
     installments:
-      paymentType === "installments" ? installmentsText.trim() : "",
+      paymentType === "installments"
+        ? installmentsText.trim()
+        : "",
     details: details.trim(),
   });
 
@@ -103,13 +120,16 @@ export default function PaymentTerms() {
 
     const paymentTerms = buildPaymentTerms();
 
-    savePaymentTerms(paymentTerms);
+    savePaymentTerms(orderId, paymentTerms);
 
-    setSuccessMessage("Condições de pagamento salvas com sucesso!");
+    setSuccessMessage(
+      "Condições de pagamento salvas com sucesso!"
+    );
 
     setTimeout(() => {
       setSuccessMessage("");
-    }, 2000);
+      navigate(`/os/${orderId}/resumo`);
+    }, 1000);
   };
 
   return (
@@ -124,7 +144,10 @@ export default function PaymentTerms() {
               onClick={() => navigate(-1)}
               aria-label="Voltar"
             >
-              <FaArrowLeft size={20} className="back-button-icon" />
+              <FaArrowLeft
+                size={20}
+                className="back-button-icon"
+              />
             </button>
 
             <h1>Condições de Pagamento</h1>
@@ -156,7 +179,9 @@ export default function PaymentTerms() {
                       : ""
                     }`}
                   onClick={handleSelectInstallments}
-                  aria-pressed={paymentType === "installments"}
+                  aria-pressed={
+                    paymentType === "installments"
+                  }
                 >
                   Parcelas
                 </button>
@@ -249,7 +274,9 @@ export default function PaymentTerms() {
                 className="form-textarea"
                 placeholder="Opcional"
                 value={details}
-                onChange={(e) => setDetails(e.target.value)}
+                onChange={(e) =>
+                  setDetails(e.target.value)
+                }
               />
             </div>
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./PaymentMethods.css";
 import "../../../global/components/form/Form.css";
 import {
@@ -9,33 +9,63 @@ import {
 } from "../../../home/pages/orders/payment/paymentStorage";
 
 const PAYMENT_METHODS = [
-    { id: "boleto", label: "Boleto" },
-    { id: "bank_transfer", label: "Transferência bancária" },
-    { id: "cash", label: "Dinheiro" },
-    { id: "check", label: "Cheque" },
-    { id: "credit_card", label: "Cartão de crédito" },
-    { id: "debit_card", label: "Cartão de débito" },
-    { id: "pix", label: "PIX" },
+    {
+        id: "boleto",
+        label: "Boleto",
+    },
+    {
+        id: "bank_transfer",
+        label: "Transferência bancária",
+    },
+    {
+        id: "cash",
+        label: "Dinheiro",
+    },
+    {
+        id: "check",
+        label: "Cheque",
+    },
+    {
+        id: "credit_card",
+        label: "Cartão de crédito",
+    },
+    {
+        id: "debit_card",
+        label: "Cartão de débito",
+    },
+    {
+        id: "pix",
+        label: "PIX",
+    },
 ];
 
 export default function PaymentMethods() {
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const [selectedMethods, setSelectedMethods] = useState([]);
-    const [successMessage, setSuccessMessage] = useState("");
+    const orderId = location.state?.orderId || "OS-1024";
+
+    const [selectedMethods, setSelectedMethods] =
+        useState([]);
+    const [successMessage, setSuccessMessage] =
+        useState("");
 
     useEffect(() => {
-        const paymentData = getPaymentData();
+        const paymentData = getPaymentData(orderId);
 
         setSelectedMethods(paymentData.methods || []);
-    }, []);
+    }, [orderId]);
 
     const toggleMethod = (id) => {
-        setSelectedMethods((prev) =>
-            prev.includes(id)
-                ? prev.filter((item) => item !== id)
-                : [...prev, id]
-        );
+        setSelectedMethods((previousMethods) => {
+            if (previousMethods.includes(id)) {
+                return previousMethods.filter(
+                    (method) => method !== id
+                );
+            }
+
+            return [...previousMethods, id];
+        });
     };
 
     const isFormValid = selectedMethods.length > 0;
@@ -47,13 +77,19 @@ export default function PaymentMethods() {
             return;
         }
 
-        savePaymentMethods(selectedMethods);
+        savePaymentMethods(
+            orderId,
+            selectedMethods
+        );
 
-        setSuccessMessage("Meios de pagamento salvos com sucesso!");
+        setSuccessMessage(
+            "Meios de pagamento salvos com sucesso!"
+        );
 
         setTimeout(() => {
             setSuccessMessage("");
-        }, 2000);
+            navigate(`/os/${orderId}/resumo`);
+        }, 1000);
     };
 
     return (
@@ -108,7 +144,7 @@ export default function PaymentMethods() {
                             className="form-button"
                             disabled={!isFormValid}
                         >
-                            Salvar Meios de Pagamento
+                            SALVAR MEIOS DE PAGAMENTO
                         </button>
 
                         {successMessage && (
