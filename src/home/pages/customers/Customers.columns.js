@@ -1,27 +1,19 @@
-const parseCurrencyValue = (value) => {
-  const text = String(value ?? "")
-    .replace(/\s/g, "")
-    .replace(/[^\d,.-]/g, "")
-    .replace(/\./g, "")
-    .replace(/,/g, ".");
 
-  return Number(text) || 0;
-};
 
 export const customersColumns = [
   {
     key: "id",
     header: "ID",
-    accessor: "id", 
-    sortable: true,
-    sortType: "number",
+    accessor: "id",
+    sortable: false,
+    sortType: "string",
     width: "92px",
   },
   {
     key: "name",
     header: "Nome",
     accessor: "name",
-    sortable: true,
+    sortable: false,
     sortType: "string",
     searchable: true,
   },
@@ -29,7 +21,7 @@ export const customersColumns = [
     key: "cpf/cnpj",
     header: "CPF/CNPJ",
     accessor: "cpfCnpj",
-    sortable: true,
+    sortable: false,
     sortType: "string",
     searchable: true,
   },
@@ -37,7 +29,7 @@ export const customersColumns = [
     key: "telefone",
     header: "Telefone",
     accessor: "telefone",
-    sortable: true,
+    sortable: false,
     sortType: "string",
     searchable: true,
   },
