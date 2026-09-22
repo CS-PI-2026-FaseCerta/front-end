@@ -41,7 +41,7 @@ const api = axios.create({
 //   return config;
 // });
 
-// Comentado temporariamente enquanto o não há token implementado.
+// Comentado temporariamente enquanto não há token implementado.
 
 api.interceptors.request.use((config) => {
   const token = getAuthToken();
