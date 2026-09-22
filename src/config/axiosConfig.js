@@ -27,21 +27,8 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// api.interceptors.request.use((config) => {
-//   const token = getAuthToken();
-
-//   if (!token) {
-//     window.location.assign("/login");
-//     const error = new Error("Sessão expirada. Faça login novamente.");
-//     error.status = 401;
-//     return Promise.reject(error);
-//   }
-
-//   config.headers.Authorization = `Bearer ${token}`;
-//   return config;
-// });
-
-// Comentado temporariamente enquanto não há token implementado.
+// Adiciona o JWT somente quando ele estiver disponível.
+// O backend ainda não exige token nesta etapa da integração.
 
 api.interceptors.request.use((config) => {
   const token = getAuthToken();

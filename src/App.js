@@ -23,6 +23,8 @@ import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
 
 import SectionPage from "./home/pages/SectionPage.jsx";
 
+import ProtectedRoute from "./home/components/protectedRoute.jsx";
+
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
 
@@ -254,7 +256,11 @@ function App() {
 
             <Route
               path={AppRoutes.FinanceiroDespesas}
-              element={<FinanceListRoute type="expenses" />}
+              element={
+                <ProtectedRoute allowedProfiles={["gestor"]}>
+                  <FinanceListRoute type="expenses" />
+                </ProtectedRoute>
+              }
             />
 
             <Route
@@ -264,7 +270,11 @@ function App() {
 
             <Route
               path={AppRoutes.FinanceiroDespesasNova}
-element={<ProtectedRoute allowedProfiles={["gestor"]}><NewExpense /></ProtectedRoute>}
+              element={
+                <ProtectedRoute allowedProfiles={["gestor"]}>
+                  <NewExpense />
+                </ProtectedRoute>
+              }
             />
           </Route>
 
