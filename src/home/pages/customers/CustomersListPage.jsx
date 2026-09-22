@@ -41,6 +41,7 @@ const CustomersListPage = () => {
 
   const requestId = useRef(0);
   const debounceId = useRef(null);
+  const editRequestId = useRef(0);
 
   /**
    * Carrega os clientes utilizando a consulta atual.
@@ -150,40 +151,53 @@ const CustomersListPage = () => {
    * Edição do cliente.
    */
   const handleEdit = async (customer) => {
-    setSelectedCustomer(customer);
+  const requestNumber = ++editRequestId.current;
 
-    setEditData(null);
-    setEditError("");
-    setEditLoading(true);
+  setSelectedCustomer(customer);
+  setEditData(null);
+  setEditError("");
+  setEditLoading(true);
+  setIsCustomerModalOpen(true);
 
-    setIsCustomerModalOpen(true);
+  try {
+    const detail = await customersService.getCustomerById(customer.id);
 
-    try {
-      const detail = await customersService.getCustomerById(customer.id);
+    if (requestNumber !== editRequestId.current) {
+      return;
+    }
 
-      setEditData(mapCustomerToForm(detail));
-    } catch (requestError) {
-      setEditError(
-        getCustomerErrorMessage(
-          requestError,
-          "Não foi possível carregar o cliente."
-        )
-      );
-    } finally {
+    setEditData(mapCustomerToForm(detail));
+  } catch (requestError) {
+    if (requestNumber !== editRequestId.current) {
+      return;
+    }
+
+    setEditError(
+      getCustomerErrorMessage(
+        requestError,
+        "Não foi possível carregar o cliente."
+      )
+    );
+  } finally {
+    if (requestNumber === editRequestId.current) {
       setEditLoading(false);
     }
-  };
+  }
+};
 
   /**
    * Fecha o modal de cadastro/edição.
    */
   const closeCustomerModal = () => {
-    setIsCustomerModalOpen(false);
-    setSelectedCustomer(null);
-    setEditData(null);
-    setEditError("");
-    setEditLoading(false);
-  };
+  // Invalida qualquer GET de edição ainda pendente.
+  editRequestId.current += 1;
+
+  setIsCustomerModalOpen(false);
+  setSelectedCustomer(null);
+  setEditData(null);
+  setEditError("");
+  setEditLoading(false);
+};
 
   /**
    * Abre confirmação de exclusão.
@@ -192,6 +206,17 @@ const CustomersListPage = () => {
     setSelectedCustomer(customer);
     setIsDeleteModalOpen(true);
   };
+
+  const openCreateCustomerModal = () => {
+  // Invalida qualquer resposta de edição anterior.
+  editRequestId.current += 1;
+
+  setSelectedCustomer(null);
+  setEditData(null);
+  setEditError("");
+  setEditLoading(false);
+  setIsCustomerModalOpen(true);
+};
 
   /**
    * Confirma exclusão.
@@ -249,22 +274,17 @@ const CustomersListPage = () => {
           placeholder: "Buscar por nome ou CPF/CNPJ...",
         }}
         actions={[
-          {
-            key: "novo-cliente",
-            label: "Novo Cliente",
-            icon: FaPlus,
-            onCreate: {
-              mobile: AppRoutes.RegisterClient,
-              desktop: () => {
-                setSelectedCustomer(null);
-                setEditData(null);
-                setEditError("");
-                setIsCustomerModalOpen(true);
+            {
+              key: "novo-cliente",
+              label: "Novo Cliente",
+              icon: FaPlus,
+              onCreate: {
+                mobile: AppRoutes.RegisterClient,
+                desktop: openCreateCustomerModal,
               },
+              variant: "primary",
             },
-            variant: "primary",
-          },
-        ]}
+          ]}
         rowActions={[
           {
             key: "visualizar",
@@ -291,12 +311,7 @@ const CustomersListPage = () => {
           actionLabel: "Criar novo cliente",
           onCreate: {
             mobile: AppRoutes.RegisterClient,
-            desktop: () => {
-              setSelectedCustomer(null);
-              setEditData(null);
-              setEditError("");
-              setIsCustomerModalOpen(true);
-            },
+            desktop: openCreateCustomerModal,
           },
         }}
       />
