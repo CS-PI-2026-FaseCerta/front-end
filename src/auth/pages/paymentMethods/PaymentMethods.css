@@ -1,0 +1,110 @@
+.payment-methods-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  background: var(--dashboard-page-bg);
+  padding: 0;
+}
+
+.payment-methods-page-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.payment-methods-form-card {
+  width: 100%;
+  max-width: 640px;
+  background: var(--color-surface);
+  padding: 32px;
+  border-radius: 24px;
+  box-shadow: var(--shadow-card);
+  margin: 80px auto 0;
+}
+
+.payment-methods-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.payment-methods-card-header h1 {
+  margin: 0;
+  text-align: center;
+  width: 100%;
+  padding-right: 2rem;
+  color: var(--color-text-primary);
+}
+
+.payment-methods-back-button {
+  border: none;
+  background-color: transparent;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  transition: 0.2s;
+  border-radius: 1rem;
+}
+
+.payment-methods-back-button:hover {
+  cursor: pointer;
+}
+
+.payment-methods-back-button-icon {
+  color: var(--color-primary);
+}
+
+.payment-methods-page .form-button:hover {
+  cursor: pointer;
+}
+
+.payment-methods-page .form-button:disabled {
+  cursor: not-allowed;
+}
+
+.payment-methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.payment-methods-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 16px;
+  color: var(--color-text-primary);
+}
+
+.payment-methods-option:last-child {
+  border-bottom: none;
+}
+
+.payment-methods-option:hover {
+  cursor: pointer;
+}
+
+.payment-methods-option input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .payment-methods-form-card {
+    padding: 24px;
+    border-radius: 18px;
+    margin-top: 40px;
+  }
+}
