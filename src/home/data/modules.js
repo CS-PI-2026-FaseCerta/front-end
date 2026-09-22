@@ -1,4 +1,12 @@
-import { FaBoxOpen, FaClipboardList, FaUsers, FaWallet, FaWrench, FaFileAlt } from "react-icons/fa";
+import {
+  FaBoxOpen,
+  FaClipboardList,
+  FaUsers,
+  FaWallet,
+  FaWrench,
+  FaFileAlt,
+  FaMoneyBillWave,
+} from "react-icons/fa";
 
 export const MODULES = [
   {
@@ -40,8 +48,7 @@ export const MODULES = [
   {
     id: "produtos-estoque",
     title: "Estoque",
-    description:
-      "Gerencie e centralize produtos, materiais, custos de compra e venda, além de quantidade em estoque com visão integrada.",
+    description: "Gerencie e centralize produtos, materiais, custos de compra e venda, além de quantidade em estoque com visão integrada.",
     path: "/produtos-estoque",
     icon: <FaBoxOpen />,
     allowedProfiles: ["gestor", "tecnico"],
@@ -83,7 +90,7 @@ export const MODULES = [
       gestor: 7,
       tecnico: 5,
     },
-  }
+  },
 ];
 
 export const getVisibleModulesByProfile = (profile) =>

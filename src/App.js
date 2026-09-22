@@ -14,12 +14,14 @@ import Dashboard from "./home/pages/Dashboard.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RecoverPassword from "./auth/pages/recoverpassword/RecoverPassword.jsx";
+import PaymentMethods from "./auth/pages/paymentMethods/PaymentMethods.jsx";
+import PaymentTerms from "./auth/pages/paymentTerms/PaymentTerms.jsx";
+import OrderSummaryPage from "./home/pages/orders/OrderSummaryPage.jsx";
 
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
 
 import SectionPage from "./home/pages/SectionPage.jsx";
-import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
 
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
@@ -138,6 +140,16 @@ function App() {
               element={<Dashboard />}
             />
 
+            <Route
+              path={AppRoutes.PaymentTerms}
+              element={<PaymentTerms />}
+            />
+
+            <Route
+              path={AppRoutes.PaymentMethods}
+              element={<PaymentMethods />}
+            />
+
             {/* Listas principais */}
             <Route
               path={AppRoutes.Clientes}
@@ -157,6 +169,11 @@ function App() {
             <Route
               path={AppRoutes.Pedidos}
               element={<OrdersListPage />}
+            />
+
+            <Route
+              path={AppRoutes.OrderSummary}
+              element={<OrderSummaryPage />}
             />
 
             <Route
