@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 
@@ -9,38 +9,36 @@ import "./RegisterCustomer.css";
 
 export default function RegisterCustomer() {
   const navigate = useNavigate();
-  const [successMessage, setSuccessMessage] = useState("");
 
-  const handleSuccess = (data) => {
-    setSuccessMessage(data.tipo === "PF" ? "Cliente (PF) cadastrado com sucesso!" : "Empresa (PJ) cadastrada com sucesso!");
-    setSuccessMessage(data.tipo === "PF" ? "Cliente (PF) cadastrado com sucesso!" : "Empresa (PJ) cadastrada com sucesso!");
+  const handleSuccess = () => {
     navigate("/clientes");
   };
 
   return (
     <div className="register-customer-page">
       <Header />
+
       <main className="register-customer-content">
         <div className="register-customer-card">
-          <div className="card-header"> 
+          <div className="card-header">
             <button
               className="back-button"
               onClick={() => navigate(-1)}
+              type="button"
             >
               <FaArrowLeft size={20} />
             </button>
+
             <h1>Cadastrar Cliente</h1>
           </div>
 
-          {successMessage && (
-            <div className="form-success register-customer-success-margin">
-              {successMessage}
-            </div>
-          )}
-
-          <RegisterCustomerForm onSuccess={handleSuccess} onCancel={() => navigate(-1)} />
+          <RegisterCustomerForm
+            onSuccess={handleSuccess}
+            onCancel={() => navigate(-1)}
+          />
         </div>
       </main>
+
       <Footer />
     </div>
   );

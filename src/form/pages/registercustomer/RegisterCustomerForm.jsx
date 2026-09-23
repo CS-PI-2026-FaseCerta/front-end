@@ -62,6 +62,7 @@ const EMPTY_FORM = {
 export default function RegisterCustomerForm({
   onSuccess,
   onCancel,
+  onSavingChange,
   initialData,
   mode = "create",
 }) {
@@ -76,6 +77,9 @@ export default function RegisterCustomerForm({
   const [loadingCep, setLoadingCep] = useState(false);
   const [cepMessage, setCepMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+    useEffect(() => {
+    onSavingChange?.(isSaving);
+    }, [isSaving, onSavingChange]);
   const [formError, setFormError] = useState("");
 
   useEffect(() => {

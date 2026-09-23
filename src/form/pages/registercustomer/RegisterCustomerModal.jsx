@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "../../../global/components/modal/Modal.jsx";
 import RegisterCustomerForm from "./RegisterCustomerForm.jsx";
 
@@ -13,10 +13,17 @@ export default function RegisterCustomerModal({
   loading = false,
   errorMessage = "",
 }) {
-  
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) {
+      setIsSaving(false);
+    }
+  }, [isOpen]);
 
   const handleSuccess = (data = {}) => {
-    
+    // A requisição já terminou com sucesso neste ponto.
+    setIsSaving(false);
 
     if (onSuccessCallback) {
       onSuccessCallback(data);
@@ -28,7 +35,9 @@ export default function RegisterCustomerModal({
   };
 
   const handleCancel = () => {
-    
+    if (isSaving) {
+      return;
+    }
 
     if (onClose) {
       onClose();
@@ -36,13 +45,16 @@ export default function RegisterCustomerModal({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCancel}>
+    <Modal
+      isOpen={isOpen}
+      onClose={isSaving ? undefined : handleCancel}
+    >
       <div className="register-customer-modal-container">
         <h2>
-          {mode === "edit" ? "Editar Cliente" : "Cadastrar Cliente"}
+          {mode === "edit"
+            ? "Editar Cliente"
+            : "Cadastrar Cliente"}
         </h2>
-
-      
 
         {loading ? (
           <p>Carregando dados do cliente...</p>
@@ -64,6 +76,7 @@ export default function RegisterCustomerModal({
           <RegisterCustomerForm
             onSuccess={handleSuccess}
             onCancel={handleCancel}
+            onSavingChange={setIsSaving}
             initialData={initialData}
             mode={mode}
           />
