@@ -222,26 +222,29 @@ const CustomersListPage = () => {
    * Confirma exclusão.
    */
   const confirmDelete = async (id) => {
-    try {
-      await customersService.deleteCustomer(id);
+  try {
+    await customersService.deleteCustomer(id);
 
-      /**
-       * Atualiza a página atual depois da exclusão.
-       */
+    const shouldGoToPreviousPage =
+      customers.length === 1 &&
+      currentQuery.current.page > 1;
+
+    const nextQuery = {
+      ...currentQuery.current,
+      page: shouldGoToPreviousPage
+        ? currentQuery.current.page - 1
+        : currentQuery.current.page,
+    };
+
+    loadCustomers(nextQuery);
+  } catch (requestError) {
+    if (requestError?.response?.status === 404) {
       loadCustomers(currentQuery.current);
-    } catch (requestError) {
-      /**
-       * Se o cliente já tiver sido removido,
-       * atualizamos a lista para refletir o estado real.
-       */
-      if (requestError?.response?.status === 404) {
-        loadCustomers(currentQuery.current);
-      }
-
-      throw requestError;
     }
-  };
 
+    throw requestError;
+  }
+};
   /**
    * Fecha modal de exclusão.
    */
