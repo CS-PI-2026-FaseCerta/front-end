@@ -26,7 +26,7 @@ export default function ExpenseActionMenu({
   onRecurring,
   onInstallments,
   onDelete,
-  canDelete = false,
+  canDelete = true,
 }) {
   if (!expense || !position || typeof document === "undefined") return null;
 
