@@ -9,7 +9,7 @@ export default function DeleteExpenseModal({ isReceipt, isOpen, expense, onClose
       <div className="expense-modal__delete-copy">
         <div className="expense-modal__danger-icon"><FaTrash aria-hidden="true" /></div>
         <p>Tem certeza que deseja excluir <strong>{expense?.description}</strong>?</p>
-        <span>Confirme a remoção desta despesa.</span>
+        <span>Confirme a remoção {isReceipt ? "deste recebimento" : "desta despesa"}.</span>
       </div>
       <div className="finance-modal-actions">
         <button type="button" className="finance-button finance-button--secondary" onClick={onClose}>Cancelar</button>
