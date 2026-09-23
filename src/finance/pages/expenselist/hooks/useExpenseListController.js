@@ -38,7 +38,11 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
         tipo_pagamento:inlineFilters.paymentType, modo_pagamento:inlineFilters.paymentMode,
         data_inicial:advancedFilters.dateFrom || monthStart, data_final:advancedFilters.dateTo || monthEnd });
       if (requestId !== latestListRequestRef.current) return;
-      setRows((data.items || []).map(toUiExpense)); setTotal(data.total || 0); setTotalPages(Math.max(1, data.totalPages || 1));
+      const nextTotalPages = Math.max(1, data.totalPages || 1);
+      setRows((data.items || []).map(toUiExpense));
+      setTotal(data.total || 0);
+      setTotalPages(nextTotalPages);
+      setPage((current) => Math.min(current, nextTotalPages));
     } catch (error) {
       if (requestId !== latestListRequestRef.current) return;
       setRows([]); setTotal(0); setTotalPages(1); setNotice(error.message);
