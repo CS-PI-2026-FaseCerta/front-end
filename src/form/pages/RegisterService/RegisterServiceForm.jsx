@@ -1,257 +1,253 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import servicosService from "../../../services/servicos/servicosService";
+import { getServiceErrorMessage } from "../../../services/servicos/servicosErrors";
 
-export default function RegisterServiceForm({ serviceId, onSuccess, onCancel }) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [billingType, setBillingType] = useState("fixed");
-  const [value, setValue] = useState("");
+const EMPTY_FORM = {
+  nome: "",
+  descricao: "",
+  categoria: "",
+  tipo_cobranca: "REAL",
+  valor_base: "",
+};
 
-  const [isLoading, setIsLoading] = useState(false);
+const validateValue = (value) => {
+  const normalized = String(value ?? "").trim().replace(",", ".");
 
-  const isEdit = Boolean(serviceId);
+  if (!normalized) return "Campo obrigatório";
+  if (normalized.startsWith("-")) return "O valor não pode ser negativo";
+  if (!/^\d+(?:\.\d{1,2})?$/.test(normalized)) {
+    return "Informe um valor numérico com no máximo duas casas decimais";
+  }
 
-  const formatCurrency = (value) => {
-    const number = value.replace(/\D/g, "");
-    const float = (Number(number) / 100).toFixed(2);
+  const numericValue = Number(normalized);
+  if (!Number.isFinite(numericValue)) return "Informe um valor numérico válido";
 
-    return Number(float).toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    });
+  const [integerPart] = normalized.split(".");
+  if (integerPart.length > 17) {
+    return "O valor deve possuir no máximo 17 dígitos inteiros";
+  }
+
+  return "";
+};
+
+export default function RegisterServiceForm({
+  onSuccess,
+  onCancel,
+  onSavingChange,
+  initialData,
+  mode = "create",
+}) {
+  const [form, setForm] = useState({ ...EMPTY_FORM, ...initialData });
+  const [errors, setErrors] = useState({});
+  const [formError, setFormError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  const isEdit = mode === "edit";
+
+  useEffect(() => {
+    setForm({ ...EMPTY_FORM, ...initialData });
+    setErrors({});
+    setFormError("");
+  }, [initialData]);
+
+  useEffect(() => {
+    onSavingChange?.(isSaving);
+  }, [isSaving, onSavingChange]);
+
+  const isFormValid = useMemo(() => {
+    return (
+      form.nome.trim() !== "" &&
+      form.categoria.trim() !== "" &&
+      (form.tipo_cobranca === "REAL" || form.tipo_cobranca === "US") &&
+      validateValue(form.valor_base) === "" &&
+      !isSaving
+    );
+  }, [form, isSaving]);
+
+  const handleChange = (field, value) => {
+    setForm((current) => ({ ...current, [field]: value }));
+    setFormError("");
+
+    if (errors[field]) {
+      setErrors((current) => ({ ...current, [field]: "" }));
+    }
   };
 
-  const formatUnitValue = (value) => {
-    const number = value.replace(/\D/g, "");
-    const float = (Number(number) / 100).toFixed(2);
-    return float.replace(".", ",");
+  const validateForm = () => {
+    const nextErrors = {};
+
+    if (!form.nome.trim()) nextErrors.nome = "Campo obrigatório";
+    if (form.nome.trim().length > 255) {
+      nextErrors.nome = "O nome não pode exceder 255 caracteres";
+    }
+
+    if (!form.categoria.trim()) nextErrors.categoria = "Campo obrigatório";
+    if (form.categoria.trim().length > 255) {
+      nextErrors.categoria = "A categoria não pode exceder 255 caracteres";
+    }
+
+    if (form.tipo_cobranca !== "REAL" && form.tipo_cobranca !== "US") {
+      nextErrors.tipo_cobranca = "Selecione REAL ou US";
+    }
+
+    const valueError = validateValue(form.valor_base);
+    if (valueError) nextErrors.valor_base = valueError;
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
-  const handleValueChange = (e) => {
-    const raw = e.target.value;
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    if (billingType === "hourly") {
-      const formatted = formatUnitValue(raw);
-      setValue(formatted === "0,00" && raw === "" ? "" : formatted);
+    if (!validateForm()) return;
+
+    if (isEdit && !initialData?.id) {
+      setFormError("Não foi possível identificar o serviço para edição.");
       return;
     }
 
-    const formatted = formatCurrency(raw);
-    setValue(formatted);
-  };
+    setIsSaving(true);
+    setFormError("");
 
-  const numericValue = Number(value.replace(/\D/g, "")) / 100;
+    try {
+      const savedService = isEdit
+        ? await servicosService.updateService(initialData.id, form)
+        : await servicosService.createService(form);
 
-  const isFormValid =
-    name.trim() !== "" &&
-    value !== "" &&
-    value !== "R$ 0,00" &&
-    value !== "0,00" &&
-    !isLoading;
-
-  useEffect(() => {
-    if (!serviceId) return;
-
-    const selecionados =
-      JSON.parse(localStorage.getItem("servicosSelecionados")) || [];
-
-    const servico = selecionados.find(
-      (s) => String(s.id) === String(serviceId)
-    );
-
-    if (!servico) return;
-
-    const serviceBillingType = servico.billingType || "fixed";
-
-    setName(servico.descricao || "");
-    setDescription(servico.obs || "");
-    setBillingType(serviceBillingType);
-
-    if (serviceBillingType === "hourly") {
-      setValue(
-        Number(servico.preco || 0)
-          .toFixed(2)
-          .replace(".", ",")
+      onSuccess?.({ ...savedService, isEdit });
+    } catch (error) {
+      setFormError(
+        getServiceErrorMessage(error, "Não foi possível salvar o serviço."),
       );
-    } else {
-      setValue(
-        Number(servico.preco || 0).toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        })
-      );
+    } finally {
+      setIsSaving(false);
     }
-  }, [serviceId]);
-
-  const resetForm = () => {
-    setName("");
-    setDescription("");
-    setValue("");
-    setBillingType("fixed");
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!isFormValid) return;
-
-    setIsLoading(true);
-
-    const serviceData = {
-      id: serviceId,
-      name,
-      description,
-      billingType,
-      value: numericValue,
-      isEdit,
-    };
-
-    setTimeout(() => {
-      setIsLoading(false);
-
-      if (onSuccess) {
-        onSuccess(serviceData);
-      }
-
-      resetForm();
-    }, 1500);
-  };
-
-  const handleBillingTypeChange = (type) => {
-    setBillingType(type);
-    setValue("");
   };
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
+    <form className="form" onSubmit={handleSubmit} noValidate>
       <div className="input-group">
         <label htmlFor="serviceName" className="form-label">
           NOME DO SERVIÇO
         </label>
-
         <input
           id="serviceName"
-          className="form-input"
+          className={`form-input ${errors.nome ? "input-error" : ""}`.trim()}
           type="text"
           placeholder="Ex: Manutenção Elétrica"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          disabled={isLoading}
+          value={form.nome}
+          onChange={(event) => handleChange("nome", event.target.value)}
+          disabled={isSaving}
+          maxLength={255}
         />
+        {errors.nome ? <span className="form-error-inline">{errors.nome}</span> : null}
       </div>
 
       <div className="input-group">
         <label htmlFor="serviceDescription" className="form-label">
           DESCRIÇÃO
         </label>
-
         <textarea
           id="serviceDescription"
           className="form-textarea"
           placeholder="Descreva os detalhes do serviço oferecido..."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          disabled={isLoading}
+          value={form.descricao}
+          onChange={(event) => handleChange("descricao", event.target.value)}
+          disabled={isSaving}
         />
       </div>
 
       <div className="input-group">
-        <label className="form-label">
-          TIPO DE COBRANÇA
+        <label htmlFor="serviceCategory" className="form-label">
+          CATEGORIA
         </label>
+        <input
+          id="serviceCategory"
+          className={`form-input ${errors.categoria ? "input-error" : ""}`.trim()}
+          type="text"
+          placeholder="Ex: Manutenção"
+          value={form.categoria}
+          onChange={(event) => handleChange("categoria", event.target.value)}
+          disabled={isSaving}
+          maxLength={255}
+        />
+        {errors.categoria ? (
+          <span className="form-error-inline">{errors.categoria}</span>
+        ) : null}
+      </div>
 
+      <div className="input-group">
+        <span className="form-label">TIPO DE COBRANÇA</span>
         <div className="form-radio-group">
-          <label
-            className="form-radio-option"
-            tabIndex={isLoading ? -1 : 0}
-            style={{
-              pointerEvents: isLoading ? "none" : "auto",
-              opacity: isLoading ? 0.7 : 1,
-            }}
-            onKeyDown={(e) => {
-              if (isLoading) return;
-
-              if (e.key === " " || e.key === "Enter") {
-                e.preventDefault();
-                handleBillingTypeChange("fixed");
-              }
-            }}
-          >
+          <label className="form-radio-option">
             <input
               type="radio"
               name="billing"
-              value="fixed"
-              checked={billingType === "fixed"}
-              onChange={() => handleBillingTypeChange("fixed")}
-              disabled={isLoading}
-              tabIndex={-1}
+              value="REAL"
+              checked={form.tipo_cobranca === "REAL"}
+              onChange={() => handleChange("tipo_cobranca", "REAL")}
+              disabled={isSaving}
             />
-            Preço Fixo
+            Preço Fixo (REAL)
           </label>
 
-          <label
-            className="form-radio-option"
-            tabIndex={isLoading ? -1 : 0}
-            style={{
-              pointerEvents: isLoading ? "none" : "auto",
-              opacity: isLoading ? 0.7 : 1,
-            }}
-            onKeyDown={(e) => {
-              if (isLoading) return;
-
-              if (e.key === " " || e.key === "Enter") {
-                e.preventDefault();
-                handleBillingTypeChange("hourly");
-              }
-            }}
-          >
+          <label className="form-radio-option">
             <input
               type="radio"
               name="billing"
-              value="hourly"
-              checked={billingType === "hourly"}
-              onChange={() => handleBillingTypeChange("hourly")}
-              disabled={isLoading}
-              tabIndex={-1}
+              value="US"
+              checked={form.tipo_cobranca === "US"}
+              onChange={() => handleChange("tipo_cobranca", "US")}
+              disabled={isSaving}
             />
-            Por Unidade de Serviço
+            Por Unidade de Serviço (US)
           </label>
         </div>
+        {errors.tipo_cobranca ? (
+          <span className="form-error-inline">{errors.tipo_cobranca}</span>
+        ) : null}
       </div>
 
       <div className="input-group">
         <label htmlFor="serviceValue" className="form-label">
-          VALOR {billingType === "hourly" ? "(U.S)" : "(R$)"}
+          VALOR BASE (R$)
         </label>
-
         <input
           id="serviceValue"
-          className="form-input"
+          className={`form-input ${errors.valor_base ? "input-error" : ""}`.trim()}
           type="text"
-          value={value}
-          onChange={handleValueChange}
-          placeholder={billingType === "hourly" ? "0,00" : "R$ 0,00"}
-          disabled={isLoading}
+          inputMode="decimal"
+          value={form.valor_base}
+          onChange={(event) => handleChange("valor_base", event.target.value)}
+          placeholder="0,00"
+          disabled={isSaving}
         />
+        {errors.valor_base ? (
+          <span className="form-error-inline">{errors.valor_base}</span>
+        ) : null}
       </div>
 
+      {formError ? <div className="form-error-inline">{formError}</div> : null}
+
       <div className="form-actions">
-        {onCancel && (
+        {onCancel ? (
           <button
             type="button"
             className="form-button form-button-secondary"
             onClick={onCancel}
-            disabled={isLoading}
+            disabled={isSaving}
           >
             Cancelar
           </button>
-        )}
+        ) : null}
 
         <button
           type="submit"
           className="form-button"
-          disabled={!isFormValid || isLoading}
+          disabled={!isFormValid || isSaving}
         >
-          {isLoading
+          {isSaving
             ? "SALVANDO..."
             : isEdit
               ? "ATUALIZAR SERVIÇO"
