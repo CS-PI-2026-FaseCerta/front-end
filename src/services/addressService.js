@@ -6,6 +6,7 @@ export async function getAddressByCep(cep) {
 
     try {
         const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+
         if (!response.ok) {
             throw new Error("Erro na comunicação com o ViaCEP");
         }
@@ -22,6 +23,7 @@ export async function getAddressByCep(cep) {
             localidade: data.localidade || "",
             uf: data.uf || "",
         };
+        
     } catch (error) {
         throw new Error(error.message || "Falha ao buscar CEP");
     }

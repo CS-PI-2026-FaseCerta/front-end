@@ -25,4 +25,5 @@ export const getServiceErrorMessage = (
   if (apiMessage) return apiMessage;
   if (!error?.response) return "Não foi possível conectar ao servidor.";
   return fallback;
+  
 };

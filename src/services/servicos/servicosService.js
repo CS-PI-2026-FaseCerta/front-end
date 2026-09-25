@@ -51,4 +51,5 @@ class ServicosService extends BaseService {
 
 const servicosService = new ServicosService();
 
+
 export default servicosService;

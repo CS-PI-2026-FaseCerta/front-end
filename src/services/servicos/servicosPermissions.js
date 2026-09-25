@@ -6,4 +6,5 @@ const WRITE_PROFILES = new Set(["admin", "gestor"]);
 export const canManageServices = () => {
   const profile = getCurrentUser()?.perfil;
   return WRITE_PROFILES.has(String(profile ?? "").trim().toLowerCase());
+  
 };
