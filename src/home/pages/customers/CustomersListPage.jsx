@@ -1,15 +1,264 @@
-import React, { useState } from "react";
-import { FaPen, FaClipboardList, FaPlus, FaTrash } from "react-icons/fa";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  FaPen,
+  FaClipboardList,
+  FaPlus,
+  FaTrash,
+} from "react-icons/fa";
+
 import GenericListPage from "../../../global/components/lists/GenericListPage";
-import { customersMockData } from "./Customers.mock";
 import { customersColumns } from "./Customers.columns";
 import RegisterCustomerModal from "../../../form/pages/registercustomer/RegisterCustomerModal.jsx";
+import DeleteCustomerModal from "./DeleteCustomerModal.jsx";
+
+import customersService from "../../../services/customers/customersService";
+import { getCustomerErrorMessage } from "../../../services/customers/customerErrors";
+import { mapCustomerToForm } from "../../../services/customers/customerMapper";
 
 import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 const CustomersListPage = () => {
-  const items = customersMockData;
+  const [customers, setCustomers] = useState([]);
+  const [totalItems, setTotalItems] = useState(0);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  const [editData, setEditData] = useState(null);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState("");
+
+  const currentQuery = useRef({
+    searchTerm: "",
+    page: 1,
+    pageSize: 10,
+  });
+
+  const requestId = useRef(0);
+  const debounceId = useRef(null);
+  const editRequestId = useRef(0);
+
+  /**
+   * Carrega os clientes utilizando a consulta atual.
+   *
+   * - Pesquisa possui debounce de 400ms.
+   * - Paginação é executada imediatamente.
+   * - Não existe retry automático.
+   * - Requisições antigas não sobrescrevem resultados mais novos.
+   */
+  const loadCustomers = useCallback((query = currentQuery.current) => {
+    const normalizedQuery = {
+      searchTerm: query?.searchTerm ?? "",
+      page: query?.page ?? 1,
+      pageSize: query?.pageSize ?? 10,
+    };
+
+    currentQuery.current = normalizedQuery;
+
+    const requestNumber = ++requestId.current;
+
+    const delay = normalizedQuery.searchTerm ? 400 : 0;
+
+    window.clearTimeout(debounceId.current);
+
+    debounceId.current = window.setTimeout(async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const result = await customersService.listCustomers({
+          page: normalizedQuery.page,
+          limit: normalizedQuery.pageSize,
+          ...customersService.buildSearchParams(
+            normalizedQuery.searchTerm
+          ),
+        });
+
+        /**
+         * Caso outra consulta tenha sido iniciada depois desta,
+         * ignoramos o resultado antigo.
+         */
+        if (requestNumber !== requestId.current) {
+          return;
+        }
+
+        setCustomers(result?.items ?? []);
+        setTotalItems(result?.totalItems ?? 0);
+      } catch (requestError) {
+        /**
+         * Ignora erro de uma requisição antiga.
+         */
+        if (requestNumber !== requestId.current) {
+          return;
+        }
+
+        setCustomers([]);
+        setTotalItems(0);
+
+        setError({
+          title: "Não foi possível carregar os clientes",
+          message: getCustomerErrorMessage(
+            requestError,
+            "Não foi possível conectar à API de clientes."
+          ),
+        });
+      } finally {
+        if (requestNumber === requestId.current) {
+          setLoading(false);
+        }
+      }
+    }, delay);
+  }, []);
+
+  /**
+   * Limpa o debounce quando a página for desmontada.
+   */
+  useEffect(() => {
+    return () => {
+      window.clearTimeout(debounceId.current);
+    };
+  }, []);
+
+  /**
+   * Chamado pelo GenericListPage quando:
+   *
+   * - busca muda;
+   * - página muda;
+   * - quantidade de registros muda.
+   */
+  const handleQueryChange = useCallback(
+    (query) => {
+      loadCustomers(query);
+    },
+    [loadCustomers]
+  );
+
+  /**
+   * Retry somente quando o usuário solicitar.
+   *
+   * Não existe tentativa automática após erro.
+   */
+  const handleRetry = useCallback(() => {
+    loadCustomers(currentQuery.current);
+  }, [loadCustomers]);
+
+  /**
+   * Edição do cliente.
+   */
+  const handleEdit = async (customer) => {
+  const requestNumber = ++editRequestId.current;
+
+  setSelectedCustomer(customer);
+  setEditData(null);
+  setEditError("");
+  setEditLoading(true);
+  setIsCustomerModalOpen(true);
+
+  try {
+    const detail = await customersService.getCustomerById(customer.id);
+
+    if (requestNumber !== editRequestId.current) {
+      return;
+    }
+
+    setEditData(mapCustomerToForm(detail));
+  } catch (requestError) {
+    if (requestNumber !== editRequestId.current) {
+      return;
+    }
+
+    setEditError(
+      getCustomerErrorMessage(
+        requestError,
+        "Não foi possível carregar o cliente."
+      )
+    );
+  } finally {
+    if (requestNumber === editRequestId.current) {
+      setEditLoading(false);
+    }
+  }
+};
+
+  /**
+   * Fecha o modal de cadastro/edição.
+   */
+  const closeCustomerModal = () => {
+  // Invalida qualquer GET de edição ainda pendente.
+  editRequestId.current += 1;
+
+  setIsCustomerModalOpen(false);
+  setSelectedCustomer(null);
+  setEditData(null);
+  setEditError("");
+  setEditLoading(false);
+};
+
+  /**
+   * Abre confirmação de exclusão.
+   */
+  const handleDelete = (customer) => {
+    setSelectedCustomer(customer);
+    setIsDeleteModalOpen(true);
+  };
+
+  const openCreateCustomerModal = () => {
+  // Invalida qualquer resposta de edição anterior.
+  editRequestId.current += 1;
+
+  setSelectedCustomer(null);
+  setEditData(null);
+  setEditError("");
+  setEditLoading(false);
+  setIsCustomerModalOpen(true);
+};
+
+  /**
+   * Confirma exclusão.
+   */
+  const confirmDelete = async (id) => {
+  try {
+    await customersService.deleteCustomer(id);
+
+    const shouldGoToPreviousPage =
+      customers.length === 1 &&
+      currentQuery.current.page > 1;
+
+    const nextQuery = {
+      ...currentQuery.current,
+      page: shouldGoToPreviousPage
+        ? currentQuery.current.page - 1
+        : currentQuery.current.page,
+    };
+
+    loadCustomers(nextQuery);
+  } catch (requestError) {
+    if (requestError?.response?.status === 404) {
+      loadCustomers(currentQuery.current);
+    }
+
+    throw requestError;
+  }
+};
+  /**
+   * Fecha modal de exclusão.
+   */
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setSelectedCustomer(null);
+  };
+
+  /**
+   * Atualiza a lista depois de cadastro/edição.
+   */
+  const handleCustomerSuccess = useCallback(() => {
+    loadCustomers(currentQuery.current);
+  }, [loadCustomers]);
 
   return (
     <>
@@ -17,30 +266,35 @@ const CustomersListPage = () => {
         title="Clientes"
         description="Gerencie e acompanhe todos os clientes em tempo real."
         columns={customersColumns}
-        data={items}
-        defaultSort={{
-          key: "id",
-          direction: "asc",
+        data={customers}
+        clientSide={false}
+        totalItems={totalItems}
+        loading={loading}
+        error={error}
+        onRetry={handleRetry}
+        onQueryChange={handleQueryChange}
+        search={{
+          placeholder: "Buscar por nome ou CPF/CNPJ...",
         }}
         actions={[
-          {
-            key: "novo-cliente",
-            label: "Novo Cliente",
-            icon: FaPlus,
-            onCreate: {
-              mobile: AppRoutes.RegisterClient,
-              desktop: () => setIsCustomerModalOpen(true),
+            {
+              key: "novo-cliente",
+              label: "Novo Cliente",
+              icon: FaPlus,
+              onCreate: {
+                mobile: AppRoutes.RegisterClient,
+                desktop: openCreateCustomerModal,
+              },
+              variant: "primary",
             },
-            variant: "primary",
-          },
-        ]}
+          ]}
         rowActions={[
           {
             key: "visualizar",
             title: "Editar",
             icon: FaPen,
             iconOnly: true,
-            onClick: () => { },
+            onClick: handleEdit,
             variant: "ghost",
           },
           {
@@ -48,7 +302,7 @@ const CustomersListPage = () => {
             title: "Excluir",
             icon: FaTrash,
             iconOnly: true,
-            onClick: () => { },
+            onClick: handleDelete,
             variant: "ghost",
           },
         ]}
@@ -60,13 +314,26 @@ const CustomersListPage = () => {
           actionLabel: "Criar novo cliente",
           onCreate: {
             mobile: AppRoutes.RegisterClient,
-            desktop: () => setIsCustomerModalOpen(true),
+            desktop: openCreateCustomerModal,
           },
         }}
       />
+
       <RegisterCustomerModal
         isOpen={isCustomerModalOpen}
-        onClose={() => setIsCustomerModalOpen(false)}
+        onClose={closeCustomerModal}
+        onSuccessCallback={handleCustomerSuccess}
+        mode={selectedCustomer ? "edit" : "create"}
+        initialData={editData}
+        loading={editLoading}
+        errorMessage={editError}
+      />
+
+      <DeleteCustomerModal
+        customer={selectedCustomer}
+        isOpen={isDeleteModalOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
       />
     </>
   );
