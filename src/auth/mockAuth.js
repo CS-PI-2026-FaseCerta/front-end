@@ -10,6 +10,7 @@ export const PERFIL_LABELS = {
 const USERS_STORAGE_KEY = "mockAuthUsers";
 const CURRENT_USER_STORAGE_KEY = "user";
 const REMEMBER_ME_STORAGE_KEY = "rememberMe";
+const AUTH_TOKEN_STORAGE_KEYS = ["token", "accessToken", "access_token", "jwt"];
 
 const GENERIC_LOGIN_ERROR_MESSAGE =
     "E-mail/Nome de Usuário ou senha incorretos";
@@ -79,10 +80,15 @@ const saveCurrentUser = (user) => {
         perfil: user.perfil,
     };
 
-    window.localStorage.setItem(
-        CURRENT_USER_STORAGE_KEY,
-        JSON.stringify(sanitizedUser),
-    );
+  // Se o fluxo de autenticação real fornecer um JWT, preserve-o junto à sessão.
+  // O mock local não fabrica tokens: apenas persiste um token real quando recebido.
+  const token = user.token || user.accessToken || user.access_token || user.jwt;
+  if (token) sanitizedUser.token = token;
+
+  window.localStorage.setItem(
+    CURRENT_USER_STORAGE_KEY,
+    JSON.stringify(sanitizedUser),
+  );
 };
 
 export const getCurrentUser = () => {
@@ -148,12 +154,16 @@ export const getRememberMe = () => {
 };
 
 export const clearSession = () => {
-    if (typeof window === "undefined" || !window.localStorage) {
+    if (typeof window === "undefined") {
         return;
     }
 
-    // Remove apenas sessao autenticada. Dados de "Lembre de mim" permanecem para UX.
-    window.localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
+    // Remove a sessao autenticada e qualquer JWT persistido separadamente.
+    // Dados de "Lembre de mim" permanecem para UX.
+    for (const storage of [window.localStorage, window.sessionStorage]) {
+        storage.removeItem(CURRENT_USER_STORAGE_KEY);
+        AUTH_TOKEN_STORAGE_KEYS.forEach((key) => storage.removeItem(key));
+    }
 };
 
 export const getUsers = () => {

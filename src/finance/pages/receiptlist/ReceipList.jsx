@@ -81,6 +81,7 @@ export default function ReceipList(props) {
         </div>
       ) : null}
       <ExpenseAdvancedFilters
+        isReceipt
         isOpen={state.isAdvancedOpen}
         values={state.advancedFilters}
         onChange={state.setAdvancedFilters}

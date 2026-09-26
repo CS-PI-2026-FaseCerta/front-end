@@ -23,6 +23,8 @@ import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
 
 import SectionPage from "./home/pages/SectionPage.jsx";
 
+import ProtectedRoute from "./home/components/protectedRoute.jsx";
+
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
 
@@ -31,6 +33,7 @@ import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx
 import ProductsListPage from "./home/pages/products/ProductsListPage";
 
 import ExpenseList from "./finance/pages/expenselist/ExpenseList.jsx";
+import NewExpense from "./finance/pages/expenseform/NewExpense.jsx";
 import TransfersList from "./finance/pages/transfersList/TransfersList.jsx";
 import ReceipList from "./finance/pages/receiptlist/ReceipList.jsx";
 
@@ -253,7 +256,11 @@ function App() {
 
             <Route
               path={AppRoutes.FinanceiroDespesas}
-              element={<FinanceListRoute type="expenses" />}
+              element={
+                <ProtectedRoute allowedProfiles={["gestor"]}>
+                  <FinanceListRoute type="expenses" />
+                </ProtectedRoute>
+              }
             />
 
             <Route
@@ -264,13 +271,9 @@ function App() {
             <Route
               path={AppRoutes.FinanceiroDespesasNova}
               element={
-                <SectionPage
-                  eyebrow="Despesas"
-                  title="Cadastrar Despesa"
-                  description="Fallback temporário."
-                  ctaLabel="Voltar ao painel"
-                  ctaPath="/dashboard"
-                />
+                <ProtectedRoute allowedProfiles={["gestor"]}>
+                  <NewExpense />
+                </ProtectedRoute>
               }
             />
           </Route>
