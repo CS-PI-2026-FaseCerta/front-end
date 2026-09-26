@@ -57,7 +57,7 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
   const changeMonth = (delta) => { const d=new Date(month.getFullYear(),month.getMonth()+delta,1); setMonth(d);setPage(1);onMonthChange?.(d); };
   const updateAdvancedFilters = (updater) => { setAdvancedFilters(current => typeof updater === "function" ? updater(current) : updater); setPage(1); };
   const clearFilters = () => { setInlineFilters({date:"",category:"",paymentType:"",paymentMode:"",paid:""}); setAdvancedFilters({dateFrom:"",dateTo:""}); setPage(1); };
-  const hasFilters = Boolean(inlineFilters.category || inlineFilters.paid || inlineFilters.paymentType || inlineFilters.paymentMode || advancedFilters.dateFrom || advancedFilters.dateTo);
+  const hasFilters = Boolean(inlineFilters.date || inlineFilters.category || inlineFilters.paid || inlineFilters.paymentType || inlineFilters.paymentMode || advancedFilters.dateFrom || advancedFilters.dateTo);
   const commitRowsPerPage = () => { const n=Number(rowsPerPageInput); if(Number.isInteger(n)&&n>0){setRowsPerPage(n);setPage(1);}else setRowsPerPageInput(String(rowsPerPage)); };
   const toggleRowMenu = (event,id) => { if(menuRowId===id){setMenuRowId(null);return;} const r=event.currentTarget.getBoundingClientRect(); const menuHeight=Math.min(430,window.innerHeight-24); const left=Math.max(12,Math.min(r.right-276,window.innerWidth-12-276)); const top=Math.max(12,Math.min(r.bottom+8,window.innerHeight-12-menuHeight));setMenuRowId(id);setMenuPosition({left,top}); };
   const closeMenu=()=>{setMenuRowId(null);setMenuPosition(null)}; const getRow=(id)=>rows.find(r=>r.id===id);
