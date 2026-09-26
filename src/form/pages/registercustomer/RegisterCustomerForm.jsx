@@ -188,12 +188,22 @@ export default function RegisterCustomerForm({
       }
     }
 
-    if (field === "cep" && value) {
-      if (!isValidCEP(value)) {
-        newErrors.cep = "CEP incompleto";
+    if (field === "cep") {
+      if (!value) {
+        newErrors.cep = "Campo obrigatório";
+      } else if (!isValidCEP(value)) {
+        newErrors.cep = "CEP inválido";
       } else {
         delete newErrors.cep;
         fetchAddress(value);
+      }
+    }
+
+    if (field === "inscricaoMunicipal" && tipo === "PJ") {
+      if (!value.trim()) {
+        newErrors.inscricaoMunicipal = "Campo obrigatório";
+      } else {
+        delete newErrors.inscricaoMunicipal;
       }
     }
 
@@ -258,6 +268,16 @@ export default function RegisterCustomerForm({
       !isValidCEP(form.cep)
     ) {
       newErrors.cep = "CEP incompleto";
+    }
+
+    if (!form.cep.trim()) {
+      newErrors.cep = "Campo obrigatório";
+    } else if (!isValidCEP(form.cep)) {
+      newErrors.cep = "CEP inválido";
+    }
+
+    if (tipo === "PJ" && !form.inscricaoMunicipal.trim()) {
+      newErrors.inscricaoMunicipal = "Campo obrigatório";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -475,7 +495,7 @@ export default function RegisterCustomerForm({
             htmlFor="cep"
             className="form-label"
           >
-            CEP
+            CEP*
           </label>
 
           <div className="form-input-wrapper">
@@ -502,6 +522,7 @@ export default function RegisterCustomerForm({
                 isSaving || loadingCep
               }
               maxLength={9}
+              required
             />
           </div>
 
@@ -733,25 +754,31 @@ export default function RegisterCustomerForm({
               htmlFor="inscricaoMunicipal"
               className="form-label"
             >
-              INSCRIÇÃO MUNICIPAL
+              INSCRIÇÃO MUNICIPAL *
             </label>
 
             <div className="form-input-wrapper">
               <input
                 id="inscricaoMunicipal"
-                className="form-input"
+                className={`form-input ${
+                  errors.inscricaoMunicipal ? "input-error" : ""
+                }`}
                 type="text"
                 placeholder="Número da inscrição"
                 value={form.inscricaoMunicipal}
                 onChange={(e) =>
-                  handleChange(
-                    "inscricaoMunicipal",
-                    e.target.value
-                  )
+                  handleChange("inscricaoMunicipal", e.target.value)
                 }
                 disabled={isSaving}
+                required={tipo === "PJ"}
               />
             </div>
+
+            {errors.inscricaoMunicipal && (
+              <span className="form-error-inline">
+                {errors.inscricaoMunicipal}
+              </span>
+            )}
           </div>
         </div>
       )}
