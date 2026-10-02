@@ -1,64 +1,42 @@
 import axios from "axios";
-
-const API_BASE_URL = (process.env.REACT_APP_API_URL || "").replace(/\/$/, "");
-const TOKEN_KEYS = ["token", "accessToken", "access_token", "jwt"];
-
-export function getAuthToken() {
-  for (const storage of [window.localStorage, window.sessionStorage]) {
-    for (const key of TOKEN_KEYS) {
-      const token = storage.getItem(key);
-      if (token) return token;
-    }
-
-    try {
-      const user = JSON.parse(storage.getItem("user") || "null");
-      const token = user?.token || user?.accessToken || user?.access_token || user?.jwt;
-      if (token) return token;
-    } catch {
-      // Ignora uma sessão inválida e continua procurando o token nas demais fontes.
-    }
-  }
-
-  return null;
-}
+import { clearSession } from "../auth/mockAuth";
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
+  baseURL:
+    process.env.REACT_APP_API_BASE_URL ||
+    "http://localhost:8080",
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Adiciona o JWT somente quando ele estiver disponível.
-// O backend ainda não exige token nesta etapa da integração.
-
-api.interceptors.request.use((config) => {
-  const token = getAuthToken();
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
-});
+/**
+ * A autenticação atual da aplicação ainda utiliza mockAuth
+ * e não fornece JWT.
+ *
+ * O envio de Authorization: Bearer será integrado junto
+ * com o fluxo real de autenticação.
+ *
+ * Não deve ser criado ou persistido token fictício.
+ */
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      window.location.assign("/login");
+    if (
+      error.response?.status === 401 &&
+      typeof window !== "undefined"
+    ) {
+      clearSession();
+
+      if (window.location.pathname !== "/login") {
+        window.location.assign("/login");
+      }
     }
 
-    const message =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.response?.data?.detail ||
-      error.message ||
-      "Não foi possível concluir a operação.";
-
-    const normalizedError = new Error(message);
-    normalizedError.status = error.response?.status || error.status;
-    normalizedError.data = error.response?.data;
-    return Promise.reject(normalizedError);
-  },
+    return Promise.reject(error);
+  }
 );
 
 export default api;
