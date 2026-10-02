@@ -7,6 +7,7 @@ import {
   Routes,
   useNavigate,
 } from "react-router-dom";
+import ProtectedRoute from "./home/components/protectedRoute.jsx";
 
 import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
@@ -118,7 +119,9 @@ function App() {
 
           <Route
             path={AppRoutes.RegisterClient}
-            element={<RegisterCustomer />}
+            element={<ProtectedRoute>
+                            <RegisterCustomer />
+                    </ProtectedRoute>}
           />
 
           <Route
@@ -152,7 +155,9 @@ function App() {
             {/* Listas principais */}
             <Route
               path={AppRoutes.Clientes}
-              element={<CustomersListPage />}
+              element={ <ProtectedRoute>
+                           <CustomersListPage />
+                       </ProtectedRoute>}
             />
 
             <Route
