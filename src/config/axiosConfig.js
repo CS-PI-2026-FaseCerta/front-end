@@ -41,6 +41,7 @@ const clearStoredAccessToken = () => {
 
   [window.localStorage, window.sessionStorage].filter(Boolean).forEach((storage) => {
     TOKEN_STORAGE_KEYS.forEach((key) => storage.removeItem(key));
+    storage.removeItem("user");
   });
 };
 
