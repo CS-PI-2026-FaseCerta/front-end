@@ -161,7 +161,7 @@ export default function useExpenseListController({
       }
       return { ...current, top, placement: nextPlacement };
     });
-  }, [menuRowId, menuPosition?.triggerBottom, menuPosition?.triggerTop]);
+  }, [menuRowId, menuPosition]);
 
   useEffect(() => {
     if (!calculator.open) return undefined;

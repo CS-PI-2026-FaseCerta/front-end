@@ -4,7 +4,6 @@ import {
   FaChevronRight,
   FaClipboardList,
   FaCog,
-  FaQuestionCircle,
   FaSignOutAlt,
   FaTimes,
   FaUserCircle,

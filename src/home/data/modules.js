@@ -5,7 +5,6 @@ import {
   FaWallet,
   FaWrench,
   FaFileAlt,
-  FaMoneyBillWave,
 } from "react-icons/fa";
 
 export const MODULES = [

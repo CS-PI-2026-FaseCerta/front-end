@@ -81,7 +81,9 @@ export function RegisterCityForm({
     { value: "to", label: "Tocantins" },
   ];
 
-  const [state, setState] = useState(states.find((s) => s.value === "pr"));
+  const [state, setState] = useState(
+    states.find((s) => s.value === "pr")
+  );
 
   const formatCep = (value) => {
     value = value.replace(/\D/g, "");
@@ -176,7 +178,6 @@ export function RegisterCityForm({
           </div>
         </div>
 
-        {/* MENSAGEM DE SUCESSO */}
         {successMessage && (
           <p
             style={{
@@ -200,6 +201,7 @@ export function RegisterCityForm({
               Cancelar
             </button>
           )}
+
           <button
             type="submit"
             className="city-form-submit-button"
