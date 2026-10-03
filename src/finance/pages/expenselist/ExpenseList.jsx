@@ -1,4 +1,5 @@
 import React from "react";
+import { FaExclamationTriangle } from "react-icons/fa";
 import FinancePage from "../../components/page/FinancePage.jsx";
 import FinanceTableFooter from "../../components/table/FinanceTableFooter.jsx";
 import ExpenseActionMenu from "./components/ExpenseActionMenu.jsx";
@@ -9,6 +10,7 @@ import ExpenseToolbar from "./components/ExpenseToolbar.jsx";
 import useExpenseListController from "./hooks/useExpenseListController.js";
 import ExpenseDialogs from "./modals/ExpenseDialogs.jsx";
 import LoadingOverlay from "../../../global/components/loading/LoadingOverlay.jsx";
+import EmptyState from "../../../global/components/lists/EmptyState.jsx";
 import { getCurrentRoles } from "../../services/despesasService.js";
 import { formatMonth } from "./utils/expenseList.utils.js";
 import "./ExpenseList.css";
@@ -26,7 +28,7 @@ const ExpenseList = (props) => {
         ariaLabel="Financeiro - Despesas"
         className="expense-list-page"
         panelClassName="expense-list"
-        footer={(
+        footer={state.error ? null : (
           <FinanceTableFooter
             visibleCount={state.visibleRows.length}
             totalCount={state.filteredRows.length}
@@ -40,26 +42,41 @@ const ExpenseList = (props) => {
           />
         )}
       >
-        <ExpenseToolbar
-          monthLabel={formatMonth(state.month)}
-          onPreviousMonth={() => state.changeMonth(-1)}
-          onNextMonth={() => state.changeMonth(1)}
-          onTabChange={props.onTabChange}
-          onOpenFilters={state.openAdvancedFilters}
-          hasFilters={state.hasFilters}
-        />
+        {state.error ? (
+          <EmptyState
+            icon={FaExclamationTriangle}
+            title={state.error.title ?? "Não foi possível carregar as despesas"}
+            description={
+              state.error.message ??
+              "Tente novamente em instantes ou revise a integração com a API."
+            }
+            actionLabel="Tentar novamente"
+            onAction={state.reload}
+          />
+        ) : (
+          <>
+            <ExpenseToolbar
+              monthLabel={formatMonth(state.month)}
+              onPreviousMonth={() => state.changeMonth(-1)}
+              onNextMonth={() => state.changeMonth(1)}
+              onTabChange={props.onTabChange}
+              onOpenFilters={state.openAdvancedFilters}
+              hasFilters={state.hasFilters}
+            />
 
-        <ExpenseTable
-          visibleRows={state.visibleRows}
-          month={state.month}
-          inlineFilters={state.inlineFilters}
-          onInlineFilterChange={state.updateInlineFilter}
-          onClearFilters={state.clearFilters}
-          hasFilters={state.hasFilters}
-          menuRowId={state.menuRowId}
-          onToggleRowMenu={state.toggleRowMenu}
-          onTogglePaid={state.togglePaid}
-        />
+            <ExpenseTable
+              visibleRows={state.visibleRows}
+              month={state.month}
+              inlineFilters={state.inlineFilters}
+              onInlineFilterChange={state.updateInlineFilter}
+              onClearFilters={state.clearFilters}
+              hasFilters={state.hasFilters}
+              menuRowId={state.menuRowId}
+              onToggleRowMenu={state.toggleRowMenu}
+              onTogglePaid={state.togglePaid}
+            />
+          </>
+        )}
       </FinancePage>
 
       <ExpenseCalculator
