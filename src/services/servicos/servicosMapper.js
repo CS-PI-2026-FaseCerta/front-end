@@ -1,6 +1,41 @@
 const firstValue = (...values) =>
   values.find((value) => value !== undefined && value !== null && value !== "") ?? "";
 
+const normalizeDecimalInput = (value) =>
+  String(value ?? "").trim().replace(",", ".");
+
+const canonicalizeDecimal = (value) => {
+  const normalized = normalizeDecimalInput(value);
+  const [rawIntegerPart, rawFractionPart = ""] = normalized.split(".");
+  const integerPart = rawIntegerPart.replace(/^0+(?=\d)/, "") || "0";
+  const fractionPart = rawFractionPart.replace(/0+$/, "");
+
+  return fractionPart ? `${integerPart}.${fractionPart}` : integerPart;
+};
+
+export const isServiceValueSafelyRepresentable = (value) => {
+  const normalized = normalizeDecimalInput(value);
+
+  if (!/^\d+(?:\.\d{1,2})?$/.test(normalized)) return false;
+
+  const numericValue = Number(normalized);
+  if (!Number.isFinite(numericValue)) return false;
+
+  return canonicalizeDecimal(String(numericValue)) === canonicalizeDecimal(normalized);
+};
+
+const toSafeServiceNumber = (value) => {
+  const normalized = normalizeDecimalInput(value);
+
+  if (!isServiceValueSafelyRepresentable(normalized)) {
+    throw new RangeError(
+      "O valor base não pode ser representado com segurança sem perda de precisão.",
+    );
+  }
+
+  return Number(normalized);
+};
+
 const formatCurrency = (value) => {
   const numericValue = Number(value);
 
@@ -74,5 +109,5 @@ export const mapServiceToApi = (form = {}) => ({
   descricao: String(form.descricao ?? "").trim() || null,
   categoria: String(form.categoria ?? "").trim(),
   tipo_cobranca: form.tipo_cobranca,
-  valor_base: Number(String(form.valor_base ?? "").trim().replace(",", ".")),
+  valor_base: toSafeServiceNumber(form.valor_base),
 });
