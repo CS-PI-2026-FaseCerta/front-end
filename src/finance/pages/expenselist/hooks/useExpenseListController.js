@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { deleteExpense, getExpense, listExpenses, updateExpense } from "../../../services/despesasService.js";
+import { getExpenseErrorMessage } from "../../../services/despesasErrors.js";
 import { labelFor, PAYMENT_MODES, PAYMENT_TYPES } from "../expenseList.constants.js";
 import { parseMonthYearFilter } from "../utils/expenseList.utils.js";
 
@@ -21,7 +22,7 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
   const [page, setPage] = useState(1); const [rowsPerPage, setRowsPerPage] = useState(pageSize);
   const [rowsPerPageInput, setRowsPerPageInput] = useState(String(pageSize)); const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1); const [loading, setLoading] = useState(false);
-  const [notice, setNotice] = useState(""); const [menuRowId, setMenuRowId] = useState(null); const [menuPosition, setMenuPosition] = useState(null);
+  const [error, setError] = useState(null); const [notice, setNotice] = useState(""); const [menuRowId, setMenuRowId] = useState(null); const [menuPosition, setMenuPosition] = useState(null);
   const [dialog, setDialog] = useState(null); const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [inlineFilters, setInlineFilters] = useState({ date:"", category:"", paymentType:"", paymentMode:"", paid:"" });
   const [advancedFilters, setAdvancedFilters] = useState({ dateFrom:"", dateTo:"" });
@@ -32,6 +33,7 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
     const requestId = ++latestListRequestRef.current;
     const [monthStart, monthEnd] = monthRange(month);
     setLoading(true);
+    setError(null);
     try {
       const data = await listExpenses({ page, limit: rowsPerPage, categoria:inlineFilters.category,
         pago:inlineFilters.paid === "paid" ? true : inlineFilters.paid === "pending" ? false : "",
@@ -45,7 +47,14 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
       setPage((current) => Math.min(current, nextTotalPages));
     } catch (error) {
       if (requestId !== latestListRequestRef.current) return;
-      setRows([]); setTotal(0); setTotalPages(1); setNotice(error.message);
+      setRows([]); setTotal(0); setTotalPages(1);
+      setError({
+        title: "Não foi possível carregar as despesas",
+        message: getExpenseErrorMessage(
+          error,
+          "Não foi possível conectar à API de despesas.",
+        ),
+      });
     } finally {
       if (requestId === latestListRequestRef.current) setLoading(false);
     }
@@ -66,6 +75,6 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
   const togglePaid = async (expense) => { try{const saved=toUiExpense(await updateExpense(expense.id,{pago:!expense.paid}));setRows(c=>c.map(r=>r.id===saved.id?saved:r));}catch(e){setNotice(e.message);} };
   const confirmDelete = async (expense) => { setLoading(true);try{await deleteExpense(expense.id);setDialog(null);setNotice("Despesa excluída.");await load();}catch(e){setNotice(e.status===403?"Você não tem autorização para excluir despesas.":e.message);}finally{setLoading(false);} };
   const outOfScope=()=>{closeMenu();setNotice("Ação fora do escopo desta integração.");};
-  return {month,page,totalPages,visibleRows:rows,filteredRows:{length:total},rowsPerPageInput,setRowsPerPageInput,commitRowsPerPage,setPage,inlineFilters,updateInlineFilter,clearFilters,hasFilters,calculator,openCalculator:()=>{},closeCalculator:()=>{},updateCalculatorExpression:()=>{},handleCalculatorKey:()=>{},useCalculatorValue:()=>{},menuRowId,menuPosition,toggleRowMenu,activeMenuExpense:getRow(menuRowId),generateReceiptAndClose:outOfScope,openExpenseDialog,duplicateExpense:outOfScope,togglePaid,notice,isAdvancedOpen,setIsAdvancedOpen,advancedFilters,updateAdvancedFilters,openAdvancedFilters:()=>setIsAdvancedOpen(true),dialog,activeExpense:getRow(dialog?.expenseId),setDialog,handleEditSubmit,handleAttachmentAdd:outOfScope,handleAttachmentRemove:outOfScope,submitMove:outOfScope,submitRecurring:outOfScope,submitInstallments:outOfScope,confirmDelete,changeMonth,loading,reload:load};
+  return {month,page,totalPages,visibleRows:rows,filteredRows:{length:total},rowsPerPageInput,setRowsPerPageInput,commitRowsPerPage,setPage,inlineFilters,updateInlineFilter,clearFilters,hasFilters,calculator,openCalculator:()=>{},closeCalculator:()=>{},updateCalculatorExpression:()=>{},handleCalculatorKey:()=>{},useCalculatorValue:()=>{},menuRowId,menuPosition,toggleRowMenu,activeMenuExpense:getRow(menuRowId),generateReceiptAndClose:outOfScope,openExpenseDialog,duplicateExpense:outOfScope,togglePaid,notice,isAdvancedOpen,setIsAdvancedOpen,advancedFilters,updateAdvancedFilters,openAdvancedFilters:()=>setIsAdvancedOpen(true),dialog,activeExpense:getRow(dialog?.expenseId),setDialog,handleEditSubmit,handleAttachmentAdd:outOfScope,handleAttachmentRemove:outOfScope,submitMove:outOfScope,submitRecurring:outOfScope,submitInstallments:outOfScope,confirmDelete,changeMonth,loading,error,reload:load};
   
 }
