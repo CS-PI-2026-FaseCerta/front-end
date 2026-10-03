@@ -261,7 +261,7 @@ function App() {
             <Route
               path={AppRoutes.FinanceiroDespesas}
               element={
-                <ProtectedRoute allowedProfiles={["gestor"]}>
+                <ProtectedRoute allowedProfiles={["gestor","admin"]}>
                   <FinanceListRoute type="expenses" />
                 </ProtectedRoute>
               }
@@ -275,7 +275,7 @@ function App() {
             <Route
               path={AppRoutes.FinanceiroDespesasNova}
               element={
-                <ProtectedRoute allowedProfiles={["gestor"]}>
+                <ProtectedRoute allowedProfiles={["gestor","admin"]}>
                   <NewExpense />
                 </ProtectedRoute>
               }
