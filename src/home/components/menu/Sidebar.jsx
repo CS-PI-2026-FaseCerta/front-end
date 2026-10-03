@@ -107,12 +107,6 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
 
   const secondaryItems = [
     {
-      id: "suporte",
-      label: "Suporte",
-      path: "/suporte",
-      icon: <FaQuestionCircle aria-hidden="true" />,
-    },
-    {
       id: "sair",
       label: "Sair",
       path: "/",
