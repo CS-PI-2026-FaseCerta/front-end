@@ -1,19 +1,17 @@
-
-
 export const customersColumns = [
   {
     key: "id",
     header: "ID",
     accessor: "id",
-    sortable: false,
-    sortType: "string",
+    sortable: true,
+    sortType: "number",
     width: "92px",
   },
   {
     key: "name",
     header: "Nome",
     accessor: "name",
-    sortable: false,
+    sortable: true,
     sortType: "string",
     searchable: true,
   },
@@ -21,7 +19,7 @@ export const customersColumns = [
     key: "cpf/cnpj",
     header: "CPF/CNPJ",
     accessor: "cpfCnpj",
-    sortable: false,
+    sortable: true,
     sortType: "string",
     searchable: true,
   },
@@ -29,7 +27,7 @@ export const customersColumns = [
     key: "telefone",
     header: "Telefone",
     accessor: "telefone",
-    sortable: false,
+    sortable: true,
     sortType: "string",
     searchable: true,
   },

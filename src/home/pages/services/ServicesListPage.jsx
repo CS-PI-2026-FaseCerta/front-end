@@ -12,8 +12,6 @@ import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 const ServicesListPage = () => {
   const items = servicesMockData;
 
-  const isEmpty = !items || items.length === 0;
-
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
 
   return (
