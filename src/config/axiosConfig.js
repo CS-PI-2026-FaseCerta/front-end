@@ -29,7 +29,7 @@ export const getStoredAccessToken = () => {
       );
       if (token) return token;
     } catch {
-    
+      // Sessão legada/mock sem JWT: não fabrica token.
     }
   }
 
