@@ -7,7 +7,6 @@ import {
   Routes,
   useNavigate,
 } from "react-router-dom";
-import ProtectedRoute from "./home/components/protectedRoute.jsx";
 
 import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
@@ -39,6 +38,7 @@ import ServicesListPage from "./home/pages/services/ServicesListPage.jsx";
 import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 
 import DashboardLayout from "./global/components/layout/DashboardLayout.jsx";
+import ProtectedRoute from "./home/components/protectedRoute.jsx";
 
 import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 
@@ -119,9 +119,7 @@ function App() {
 
           <Route
             path={AppRoutes.RegisterClient}
-            element={<ProtectedRoute>
-                            <RegisterCustomer />
-                    </ProtectedRoute>}
+            element={<RegisterCustomer />}
           />
 
           <Route
@@ -155,9 +153,7 @@ function App() {
             {/* Listas principais */}
             <Route
               path={AppRoutes.Clientes}
-              element={ <ProtectedRoute>
-                           <CustomersListPage />
-                       </ProtectedRoute>}
+              element={<CustomersListPage />}
             />
 
             <Route
@@ -167,7 +163,11 @@ function App() {
 
             <Route
               path={AppRoutes.Servicos}
-              element={<ServicesListPage />}
+              element={
+                <ProtectedRoute>
+                  <ServicesListPage />
+                </ProtectedRoute>
+              }
             />
 
             <Route
