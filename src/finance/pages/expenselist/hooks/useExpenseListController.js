@@ -7,12 +7,10 @@ import {
   formatCalculatorNumber,
   formatCurrency,
   formatDate,
-  formatMonth,
   includesNormalized,
   matchesCurrencyFilter,
   matchesMonthYear,
   matchesProgressiveMonthYear,
-  parseMonth,
   parseMonthYearFilter,
 } from "../utils/expenseList.utils.js";
 

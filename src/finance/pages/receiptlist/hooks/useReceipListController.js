@@ -13,7 +13,6 @@ import {
   matchesCurrencyFilter,
   matchesMonthYear,
   matchesProgressiveMonthYear,
-  parseMonth,
   parseMonthYearFilter,
 } from "../../expenselist/utils/expenseList.utils.js";
 

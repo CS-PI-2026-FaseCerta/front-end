@@ -43,14 +43,13 @@ export function RegisterCityForm({
   const [name, setName] = useState("");
   const [cep, setCep] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
 
   const isCepValid = (cep) => {
     const numbers = cep.replace(/\D/g, "");
     return numbers.length === 8;
   };
 
-  const isFormValid = name.trim() !== "" && isCepValid(cep) && !isSaving;
+  const isFormValid = name.trim() !== "" && isCepValid(cep);
 
   const states = [
     { value: "ac", label: "Acre" },

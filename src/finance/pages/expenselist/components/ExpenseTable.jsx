@@ -1,12 +1,10 @@
 import React from "react";
 import {
   FaCalculator,
-  FaCheck,
   FaCheckCircle,
   FaEllipsisV,
   FaMoneyBillWave,
   FaRegCircle,
-  FaTimes,
 } from "react-icons/fa";
 import FinanceSelect from "../../../components/form/FinanceSelect.jsx";
 import FinanceTable from "../../../components/table/FinanceTable.jsx";
