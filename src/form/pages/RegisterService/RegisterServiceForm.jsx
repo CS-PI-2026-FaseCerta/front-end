@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import servicosService from "../../../services/servicos/servicosService";
 import { getServiceErrorMessage } from "../../../services/servicos/servicosErrors";
+import {
+  isServiceValueSafelyRepresentable,
+} from "../../../services/servicos/servicosMapper";
 
 const EMPTY_FORM = {
   nome: "",
@@ -19,12 +22,13 @@ const validateValue = (value) => {
     return "Informe um valor numérico com no máximo duas casas decimais";
   }
 
-  const numericValue = Number(normalized);
-  if (!Number.isFinite(numericValue)) return "Informe um valor numérico válido";
-
   const [integerPart] = normalized.split(".");
   if (integerPart.length > 17) {
     return "O valor deve possuir no máximo 17 dígitos inteiros";
+  }
+
+  if (!isServiceValueSafelyRepresentable(normalized)) {
+    return "O valor informado excede a precisão numérica suportada";
   }
 
   return "";
