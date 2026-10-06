@@ -342,11 +342,50 @@ export default function useReceipListController({
   };
   const updateCalculatorExpression = (expression) =>
     setCalculator((current) => ({ ...current, expression }));
-  const handleCalculatorKey = (key) =>
-    setCalculator((current) => ({
-      ...current,
-      expression: key === "C" ? "" : `${current.expression}${key}`,
-    }));
+  const handleCalculatorKey = (key) => {
+    setCalculator((current) => {
+      if (key === "C") {
+        return {
+          ...current,
+          expression: "",
+          error: "",
+        };
+      }
+
+      if (key === "backspace") {
+        return {
+          ...current,
+          expression: current.expression.slice(0, -1),
+          error: "",
+        };
+      }
+
+      if (key === "=") {
+        try {
+          const result = formatCalculatorNumber(
+            evaluateCalculatorExpression(current.expression),
+          );
+
+          return {
+            ...current,
+            expression: result,
+            error: "",
+          };
+        } catch {
+          return {
+            ...current,
+            error: "Expressão inválida",
+          };
+        }
+      }
+
+      return {
+        ...current,
+        expression: `${current.expression}${key}`,
+        error: "",
+      };
+    });
+  };
   const openCalculator = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
     setCalculator({
