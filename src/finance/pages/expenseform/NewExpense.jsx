@@ -5,6 +5,7 @@ import FinanceField from "../../components/form/FinanceField.jsx";
 import LoadingOverlay from "../../../global/components/loading/LoadingOverlay.jsx";
 import { CATEGORIES, PAYMENT_MODES, PAYMENT_TYPES } from "../expenselist/expenseList.constants.js";
 import { createExpense } from "../../services/despesasService.js";
+import { getExpenseErrorMessage } from "../../services/despesasErrors.js";
 import "../../components/form/FinanceForm.css";
 
 export default function NewExpense() {
@@ -17,7 +18,7 @@ export default function NewExpense() {
       await createExpense({ data:f.get("data"), descricao:f.get("descricao"), pago_a:f.get("pago_a"), categoria:f.get("categoria"), valor,
         tipo_pagamento:f.get("tipo_pagamento"), modo_pagamento:f.get("modo_pagamento"), pago:f.get("pago") === "on" });
       navigate("/financeiro/despesas", { replace:true });
-    } catch (e) { setError(e.message); } finally { setLoading(false); }
+    } catch (e) { setError(getExpenseErrorMessage(e, "Não foi possível cadastrar a despesa.")); } finally { setLoading(false); }
   };
   return <>
     {loading ? <LoadingOverlay label="Salvando despesa" /> : null}
