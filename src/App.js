@@ -119,7 +119,11 @@ function App() {
 
           <Route
             path={AppRoutes.RegisterClient}
-            element={<RegisterCustomer />}
+element={
+  <ProtectedRoute>
+    <RegisterCustomer />
+  </ProtectedRoute>
+}
           />
 
           <Route
