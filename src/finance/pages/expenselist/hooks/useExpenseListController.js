@@ -10,6 +10,23 @@ const toUiExpense = (item) => ({
   paymentTypeValue: item.tipo_pagamento, paymentMode: labelFor(PAYMENT_MODES, item.modo_pagamento),
   paymentModeValue: item.modo_pagamento, paid: Boolean(item.pago), attachments: [],
 });
+const PAGE_SIZE_STORAGE_KEY = "finance_tables_page_size";
+
+const getStoredRowsPerPage = (fallback) => {
+  const normalizedFallback = Number.isSafeInteger(Number(fallback)) && Number(fallback) > 0
+    ? Math.floor(Number(fallback))
+    : 20;
+
+  if (typeof window === "undefined") return normalizedFallback;
+
+  try {
+    const stored = Number(window.localStorage.getItem(PAGE_SIZE_STORAGE_KEY));
+    return Number.isSafeInteger(stored) && stored > 0 ? stored : normalizedFallback;
+  } catch {
+    return normalizedFallback;
+  }
+};
+
 const monthRange = (date) => {
   const y = date.getFullYear(); const m = date.getMonth();
   const first = new Date(y, m, 1); const last = new Date(y, m + 1, 0);
@@ -19,8 +36,9 @@ const monthRange = (date) => {
 
 export default function useExpenseListController({ pageSize = 20, onMonthChange } = {}) {
   const [rows, setRows] = useState([]); const [month, setMonth] = useState(() => new Date());
-  const [page, setPage] = useState(1); const [rowsPerPage, setRowsPerPage] = useState(pageSize);
-  const [rowsPerPageInput, setRowsPerPageInput] = useState(String(pageSize)); const [total, setTotal] = useState(0);
+  const initialRowsPerPage = getStoredRowsPerPage(pageSize);
+  const [page, setPage] = useState(1); const [rowsPerPage, setRowsPerPage] = useState(initialRowsPerPage);
+  const [rowsPerPageInput, setRowsPerPageInput] = useState(String(initialRowsPerPage)); const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1); const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); const [notice, setNotice] = useState(""); const [menuRowId, setMenuRowId] = useState(null); const [menuPosition, setMenuPosition] = useState(null);
   const [dialog, setDialog] = useState(null); const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -35,10 +53,12 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
     setLoading(true);
     setError(null);
     try {
+      const hasAdvancedDateRange = Boolean(advancedFilters.dateFrom || advancedFilters.dateTo);
       const data = await listExpenses({ page, limit: rowsPerPage, categoria:inlineFilters.category,
         pago:inlineFilters.paid === "paid" ? true : inlineFilters.paid === "pending" ? false : "",
         tipo_pagamento:inlineFilters.paymentType, modo_pagamento:inlineFilters.paymentMode,
-        data_inicial:advancedFilters.dateFrom || monthStart, data_final:advancedFilters.dateTo || monthEnd });
+        data_inicial: hasAdvancedDateRange ? advancedFilters.dateFrom : monthStart,
+        data_final: hasAdvancedDateRange ? advancedFilters.dateTo : monthEnd });
       if (requestId !== latestListRequestRef.current) return;
       const nextTotalPages = Math.max(1, data.totalPages || 1);
       setRows((data.items || []).map(toUiExpense));
@@ -67,13 +87,13 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
   const updateAdvancedFilters = (updater) => { setAdvancedFilters(current => typeof updater === "function" ? updater(current) : updater); setPage(1); };
   const clearFilters = () => { setInlineFilters({date:"",category:"",paymentType:"",paymentMode:"",paid:""}); setAdvancedFilters({dateFrom:"",dateTo:""}); setPage(1); };
   const hasFilters = Boolean(inlineFilters.date || inlineFilters.category || inlineFilters.paid || inlineFilters.paymentType || inlineFilters.paymentMode || advancedFilters.dateFrom || advancedFilters.dateTo);
-  const commitRowsPerPage = () => { const n=Number(rowsPerPageInput); if(Number.isInteger(n)&&n>0){setRowsPerPage(n);setPage(1);}else setRowsPerPageInput(String(rowsPerPage)); };
+  const commitRowsPerPage = () => { const n=Number(rowsPerPageInput); if(Number.isInteger(n)&&n>0){setRowsPerPage(n);setRowsPerPageInput(String(n));setPage(1);try{window.localStorage.setItem(PAGE_SIZE_STORAGE_KEY,String(n));}catch{}}else setRowsPerPageInput(String(rowsPerPage)); };
   const toggleRowMenu = (event,id) => { if(menuRowId===id){setMenuRowId(null);return;} const r=event.currentTarget.getBoundingClientRect(); const menuHeight=Math.min(430,window.innerHeight-24); const left=Math.max(12,Math.min(r.right-276,window.innerWidth-12-276)); const top=Math.max(12,Math.min(r.bottom+8,window.innerHeight-12-menuHeight));setMenuRowId(id);setMenuPosition({left,top}); };
   const closeMenu=()=>{setMenuRowId(null);setMenuPosition(null)}; const getRow=(id)=>rows.find(r=>r.id===id);
-  const openExpenseDialog = async (type, expense) => { closeMenu(); if(type==="edit"){setLoading(true);try{const fresh=toUiExpense(await getExpense(expense.id));setRows(c=>c.map(r=>r.id===fresh.id?fresh:r));setDialog({type,expenseId:fresh.id});}catch(e){setNotice(e.status===404?"Despesa não encontrada.":e.message);}finally{setLoading(false);}}else setDialog({type,expenseId:expense.id}); };
-  const handleEditSubmit = async (event,expense) => { event.preventDefault();const f=new FormData(event.currentTarget);const value=Number(f.get("value"));if(!Number.isFinite(value)||value<=0){setNotice("O valor deve ser numérico e maior que zero.");return;} setLoading(true);try{const saved=toUiExpense(await updateExpense(expense.id,{data:f.get("date"),descricao:f.get("description"),pago_a:f.get("payee"),categoria:f.get("category"),valor:value,tipo_pagamento:f.get("paymentType"),modo_pagamento:f.get("paymentMode"),pago:f.get("paid")==="on"}));setRows(c=>c.map(r=>r.id===saved.id?saved:r));setDialog(null);setNotice("Despesa atualizada.");await load();}catch(e){setNotice(e.status===404?"Despesa não encontrada.":e.message);}finally{setLoading(false);} };
-  const togglePaid = async (expense) => { try{const saved=toUiExpense(await updateExpense(expense.id,{pago:!expense.paid}));setRows(c=>c.map(r=>r.id===saved.id?saved:r));}catch(e){setNotice(e.message);} };
-  const confirmDelete = async (expense) => { setLoading(true);try{await deleteExpense(expense.id);setDialog(null);setNotice("Despesa excluída.");await load();}catch(e){setNotice(e.status===403?"Você não tem autorização para excluir despesas.":e.message);}finally{setLoading(false);} };
+  const openExpenseDialog = async (type, expense) => { closeMenu(); if(type==="edit"){setLoading(true);try{const fresh=toUiExpense(await getExpense(expense.id));setRows(c=>c.map(r=>r.id===fresh.id?fresh:r));setDialog({type,expenseId:fresh.id});}catch(e){setNotice(getExpenseErrorMessage(e,"Não foi possível carregar a despesa."));}finally{setLoading(false);}}else setDialog({type,expenseId:expense.id}); };
+  const handleEditSubmit = async (event,expense) => { event.preventDefault();const f=new FormData(event.currentTarget);const value=Number(f.get("value"));if(!Number.isFinite(value)||value<=0){setNotice("O valor deve ser numérico e maior que zero.");return;} setLoading(true);try{const saved=toUiExpense(await updateExpense(expense.id,{data:f.get("date"),descricao:f.get("description"),pago_a:f.get("payee"),categoria:f.get("category"),valor:value,tipo_pagamento:f.get("paymentType"),modo_pagamento:f.get("paymentMode"),pago:f.get("paid")==="on"}));setRows(c=>c.map(r=>r.id===saved.id?saved:r));setDialog(null);setNotice("Despesa atualizada.");await load();}catch(e){setNotice(getExpenseErrorMessage(e,"Não foi possível atualizar a despesa."));}finally{setLoading(false);} };
+  const togglePaid = async (expense) => { try{const saved=toUiExpense(await updateExpense(expense.id,{pago:!expense.paid}));setRows(c=>c.map(r=>r.id===saved.id?saved:r));}catch(e){setNotice(getExpenseErrorMessage(e,"Não foi possível atualizar a situação de pagamento."));} };
+  const confirmDelete = async (expense) => { setLoading(true);try{await deleteExpense(expense.id);setDialog(null);setNotice("Despesa excluída.");await load();}catch(e){setNotice(getExpenseErrorMessage(e,"Não foi possível excluir a despesa."));}finally{setLoading(false);} };
   const outOfScope=()=>{closeMenu();setNotice("Ação fora do escopo desta integração.");};
   return {month,page,totalPages,visibleRows:rows,filteredRows:{length:total},rowsPerPageInput,setRowsPerPageInput,commitRowsPerPage,setPage,inlineFilters,updateInlineFilter,clearFilters,hasFilters,calculator,openCalculator:()=>{},closeCalculator:()=>{},updateCalculatorExpression:()=>{},handleCalculatorKey:()=>{},useCalculatorValue:()=>{},menuRowId,menuPosition,toggleRowMenu,activeMenuExpense:getRow(menuRowId),generateReceiptAndClose:outOfScope,openExpenseDialog,duplicateExpense:outOfScope,togglePaid,notice,isAdvancedOpen,setIsAdvancedOpen,advancedFilters,updateAdvancedFilters,openAdvancedFilters:()=>setIsAdvancedOpen(true),dialog,activeExpense:getRow(dialog?.expenseId),setDialog,handleEditSubmit,handleAttachmentAdd:outOfScope,handleAttachmentRemove:outOfScope,submitMove:outOfScope,submitRecurring:outOfScope,submitInstallments:outOfScope,confirmDelete,changeMonth,loading,error,reload:load};
   
