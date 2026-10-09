@@ -52,10 +52,27 @@
 .finance-table__sort-button span {
   color: var(--finance-muted);
   font-size: 0.78rem;
+  transition: color 0.2s ease;
 }
 
 .finance-table__sort-button span.is-sorted {
   color: var(--finance-primary);
+}
+
+[data-theme="dark"] .finance-table__sort-button span {
+  color: var(--finance-text);
+  opacity: 0.75;
+}
+
+[data-theme="dark"] .finance-table__sort-button span.is-sorted {
+  color: var(--finance-primary);
+  opacity: 1;
+}
+
+.finance-table__sort-button:focus-visible {
+  outline: 2px solid var(--finance-primary);
+  outline-offset: 3px;
+  border-radius: 3px;
 }
 
 .finance-table tbody tr {

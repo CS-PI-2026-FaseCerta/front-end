@@ -27,7 +27,7 @@ export const CATEGORIES = [
 export const RECEIP_TABLE_COLUMNS = [
   { key: "date", label: "Data", width: "8.5%" },
   { key: "description", label: "Descrição", width: "14%" },
-  { key: "payee", label: "recebido de", width: "13.5%" },
+  { key: "payee", label: "Recebido de", width: "13.5%" },
   { key: "category", label: "Categoria", width: "11.5%" },
   { key: "value", label: "Valor", width: "9.5%" },
   { key: "paymentType", label: "Tipo pagamento", width: "11%" },
