@@ -1,3 +1,4 @@
+
 import axios from "axios";
 import { clearSession } from "../auth/mockAuth";
 
@@ -29,12 +30,15 @@ export const getStoredAccessToken = () => {
       );
       if (token) return token;
     } catch {
-      // Sessão legada/mock sem JWT: não fabrica token.
+      // Dados de sessão legados/inválidos não devem gerar tokens fictícios.
     }
   }
 
   return "";
 };
+
+// Mantém a compatibilidade com despesasService.js.
+export const getAuthToken = getStoredAccessToken;
 
 const clearStoredAccessToken = () => {
   if (typeof window === "undefined") return;
@@ -46,7 +50,10 @@ const clearStoredAccessToken = () => {
 };
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || "http://localhost:8080",
+  baseURL:
+    process.env.REACT_APP_API_BASE_URL ||
+    process.env.REACT_APP_API_URL ||
+    "http://localhost:8080",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -54,7 +61,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = getStoredAccessToken();
+  const token = getAuthToken();
 
   if (token) {
     config.headers = config.headers ?? {};
@@ -74,6 +81,19 @@ api.interceptors.response.use(
       if (window.location.pathname !== "/login") {
         window.location.assign("/login");
       }
+    }
+
+    const apiMessage =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.response?.data?.detail;
+
+    if (apiMessage) {
+      error.message = apiMessage;
+    }
+
+    if (!error.status && error.response?.status) {
+      error.status = error.response.status;
     }
 
     return Promise.reject(error);
