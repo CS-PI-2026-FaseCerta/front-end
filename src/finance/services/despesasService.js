@@ -1,4 +1,5 @@
 import api, { getAuthToken } from "../../config/axiosConfig.js";
+import { getCurrentUser } from "../../auth/mockAuth.js";
 
 export async function listExpenses({
   page = 1,
@@ -51,7 +52,12 @@ export async function deleteExpense(id) {
 
 export function getCurrentRoles() {
   const token = getAuthToken();
-  if (!token) return [];
+
+  // O login mock persiste um perfil, mas não gera JWT.
+  if (!token) {
+    const profile = getCurrentUser()?.perfil;
+    return profile ? [String(profile).trim().toUpperCase()] : [];
+  }
 
   try {
     const payload = JSON.parse(
@@ -59,10 +65,14 @@ export function getCurrentRoles() {
     );
     const raw = payload.roles || payload.authorities || payload.role || [];
     return (Array.isArray(raw) ? raw : [raw]).map((role) =>
-      String(role).replace(/^ROLE_/, ""),
+      String(role).trim().toUpperCase().replace(/^ROLE_/, ""),
     );
   } catch {
+    // Um JWT inválido não deve conceder permissões via perfil local.
     return [];
   }
-  
+}
+
+export function canDeleteExpense() {
+  return getCurrentRoles().some((role) => role === "ADMIN" || role === "GESTOR");
 }

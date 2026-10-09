@@ -11,13 +11,13 @@ import useExpenseListController from "./hooks/useExpenseListController.js";
 import ExpenseDialogs from "./modals/ExpenseDialogs.jsx";
 import LoadingOverlay from "../../../global/components/loading/LoadingOverlay.jsx";
 import EmptyState from "../../../global/components/lists/EmptyState.jsx";
-import { getCurrentRoles } from "../../services/despesasService.js";
+import { canDeleteExpense } from "../../services/despesasService.js";
 import { formatMonth } from "./utils/expenseList.utils.js";
 import "./ExpenseList.css";
 
 const ExpenseList = (props) => {
   const state = useExpenseListController(props);
-  const canDelete = getCurrentRoles().includes("ADMIN");
+  const canDelete = canDeleteExpense();
 
   return (
     <>

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { deleteExpense, getExpense, listExpenses, updateExpense } from "../../../services/despesasService.js";
+import { canDeleteExpense, deleteExpense, getExpense, listExpenses, updateExpense } from "../../../services/despesasService.js";
 import { getExpenseErrorMessage } from "../../../services/despesasErrors.js";
 import { labelFor, PAYMENT_MODES, PAYMENT_TYPES } from "../expenseList.constants.js";
 import { parseMonthYearFilter } from "../utils/expenseList.utils.js";
@@ -90,10 +90,50 @@ export default function useExpenseListController({ pageSize = 20, onMonthChange 
   const commitRowsPerPage = () => { const n=Number(rowsPerPageInput); if(Number.isInteger(n)&&n>0){setRowsPerPage(n);setRowsPerPageInput(String(n));setPage(1);try{window.localStorage.setItem(PAGE_SIZE_STORAGE_KEY,String(n));}catch{}}else setRowsPerPageInput(String(rowsPerPage)); };
   const toggleRowMenu = (event,id) => { if(menuRowId===id){setMenuRowId(null);return;} const r=event.currentTarget.getBoundingClientRect(); const menuHeight=Math.min(430,window.innerHeight-24); const left=Math.max(12,Math.min(r.right-276,window.innerWidth-12-276)); const top=Math.max(12,Math.min(r.bottom+8,window.innerHeight-12-menuHeight));setMenuRowId(id);setMenuPosition({left,top}); };
   const closeMenu=()=>{setMenuRowId(null);setMenuPosition(null)}; const getRow=(id)=>rows.find(r=>r.id===id);
-  const openExpenseDialog = async (type, expense) => { closeMenu(); if(type==="edit"){setLoading(true);try{const fresh=toUiExpense(await getExpense(expense.id));setRows(c=>c.map(r=>r.id===fresh.id?fresh:r));setDialog({type,expenseId:fresh.id});}catch(e){setNotice(getExpenseErrorMessage(e,"Não foi possível carregar a despesa."));}finally{setLoading(false);}}else setDialog({type,expenseId:expense.id}); };
+  const openExpenseDialog = async (type, expense) => {
+    closeMenu();
+
+    if (type === "delete" && !canDeleteExpense()) {
+      setNotice("Você não tem permissão para excluir despesas.");
+      return;
+    }
+
+    if (type === "edit") {
+      setLoading(true);
+      try {
+        const fresh = toUiExpense(await getExpense(expense.id));
+        setRows((current) => current.map((row) => row.id === fresh.id ? fresh : row));
+        setDialog({ type, expenseId: fresh.id });
+      } catch (error) {
+        setNotice(getExpenseErrorMessage(error, "Não foi possível carregar a despesa."));
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      setDialog({ type, expenseId: expense.id });
+    }
+  };
   const handleEditSubmit = async (event,expense) => { event.preventDefault();const f=new FormData(event.currentTarget);const value=Number(f.get("value"));if(!Number.isFinite(value)||value<=0){setNotice("O valor deve ser numérico e maior que zero.");return;} setLoading(true);try{const saved=toUiExpense(await updateExpense(expense.id,{data:f.get("date"),descricao:f.get("description"),pago_a:f.get("payee"),categoria:f.get("category"),valor:value,tipo_pagamento:f.get("paymentType"),modo_pagamento:f.get("paymentMode"),pago:f.get("paid")==="on"}));setRows(c=>c.map(r=>r.id===saved.id?saved:r));setDialog(null);setNotice("Despesa atualizada.");await load();}catch(e){setNotice(getExpenseErrorMessage(e,"Não foi possível atualizar a despesa."));}finally{setLoading(false);} };
   const togglePaid = async (expense) => { try{const saved=toUiExpense(await updateExpense(expense.id,{pago:!expense.paid}));setRows(c=>c.map(r=>r.id===saved.id?saved:r));}catch(e){setNotice(getExpenseErrorMessage(e,"Não foi possível atualizar a situação de pagamento."));} };
-  const confirmDelete = async (expense) => { setLoading(true);try{await deleteExpense(expense.id);setDialog(null);setNotice("Despesa excluída.");await load();}catch(e){setNotice(getExpenseErrorMessage(e,"Não foi possível excluir a despesa."));}finally{setLoading(false);} };
+  const confirmDelete = async (expense) => {
+    if (!canDeleteExpense()) {
+      setDialog(null);
+      setNotice("Você não tem permissão para excluir despesas.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await deleteExpense(expense.id);
+      setDialog(null);
+      setNotice("Despesa excluída.");
+      await load();
+    } catch (error) {
+      setNotice(getExpenseErrorMessage(error, "Não foi possível excluir a despesa."));
+    } finally {
+      setLoading(false);
+    }
+  };
   const outOfScope=()=>{closeMenu();setNotice("Ação fora do escopo desta integração.");};
   return {month,page,totalPages,visibleRows:rows,filteredRows:{length:total},rowsPerPageInput,setRowsPerPageInput,commitRowsPerPage,setPage,inlineFilters,updateInlineFilter,clearFilters,hasFilters,calculator,openCalculator:()=>{},closeCalculator:()=>{},updateCalculatorExpression:()=>{},handleCalculatorKey:()=>{},useCalculatorValue:()=>{},menuRowId,menuPosition,toggleRowMenu,activeMenuExpense:getRow(menuRowId),generateReceiptAndClose:outOfScope,openExpenseDialog,duplicateExpense:outOfScope,togglePaid,notice,isAdvancedOpen,setIsAdvancedOpen,advancedFilters,updateAdvancedFilters,openAdvancedFilters:()=>setIsAdvancedOpen(true),dialog,activeExpense:getRow(dialog?.expenseId),setDialog,handleEditSubmit,handleAttachmentAdd:outOfScope,handleAttachmentRemove:outOfScope,submitMove:outOfScope,submitRecurring:outOfScope,submitInstallments:outOfScope,confirmDelete,changeMonth,loading,error,reload:load};
   
