@@ -7,6 +7,8 @@ import {
   Routes,
   useNavigate,
 } from "react-router-dom";
+import ProtectedRoute from "./home/components/protectedRoute.jsx";
+import AuthSessionMonitor from "./auth/AuthSessionMonitor.jsx";
 
 import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
@@ -40,7 +42,6 @@ import ServicesListPage from "./home/pages/services/ServicesListPage.jsx";
 import RegisterService from "./form/pages/RegisterService/RegisterService.jsx";
 
 import DashboardLayout from "./global/components/layout/DashboardLayout.jsx";
-import ProtectedRoute from "./home/components/protectedRoute.jsx";
 
 import OrdersListPage from "./home/pages/orders/OrdersListPage.jsx";
 
@@ -81,16 +82,17 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
+        <AuthSessionMonitor />
         <Routes>
           {/* Redirect raiz */}
-          <Route path="/" element={<Navigate to={AppRoutes.Login} />} />
+          <Route path="/" element={<Navigate to={AppRoutes.Dashboard} replace />} />
 
           {/* Auth */}
           <Route path={AppRoutes.Login} element={<Login />} />
 
           <Route
             path={AppRoutes.UserRegistration}
-            element={<UserRegistration />}
+            element={<ProtectedRoute allowedProfiles={["admin", "gestor"]}><UserRegistration /></ProtectedRoute>}
           />
 
           <Route
@@ -106,31 +108,29 @@ function App() {
           {/* Forms públicos/independentes */}
           <Route
             path={AppRoutes.RegisterService}
-            element={<RegisterService />}
+            element={<ProtectedRoute><RegisterService /></ProtectedRoute>}
           />
 
           <Route
             path={AppRoutes.RegisterProduct}
-            element={<RegisterProduct />}
+            element={<ProtectedRoute><RegisterProduct /></ProtectedRoute>}
           />
 
           <Route
             path={AppRoutes.ServiceInsert}
-            element={<ServiceInsert />}
+            element={<ProtectedRoute><ServiceInsert /></ProtectedRoute>}
           />
 
           <Route
             path={AppRoutes.RegisterClient}
-element={
-  <ProtectedRoute>
-    <RegisterCustomer />
-  </ProtectedRoute>
-}
+            element={<ProtectedRoute>
+                            <RegisterCustomer />
+                    </ProtectedRoute>}
           />
 
           <Route
             path={AppRoutes.RegisterCity}
-            element={<RegisterCity />}
+            element={<ProtectedRoute><RegisterCity /></ProtectedRoute>}
           />
 
           {/* Loading */}
@@ -140,7 +140,7 @@ element={
           />
 
           {/* Dashboard layout (rotas autenticadas) */}
-          <Route element={<DashboardLayout />}>
+          <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
             <Route
               path={AppRoutes.Dashboard}
               element={<Dashboard />}
@@ -159,7 +159,9 @@ element={
             {/* Listas principais */}
             <Route
               path={AppRoutes.Clientes}
-              element={<CustomersListPage />}
+              element={ <ProtectedRoute>
+                           <CustomersListPage />
+                       </ProtectedRoute>}
             />
 
             <Route
@@ -169,11 +171,7 @@ element={
 
             <Route
               path={AppRoutes.Servicos}
-              element={
-                <ProtectedRoute>
-                  <ServicesListPage />
-                </ProtectedRoute>
-              }
+              element={<ServicesListPage />}
             />
 
             <Route

@@ -14,8 +14,9 @@ import {
   FaCalendarAlt,
   FaPlus,
   FaBoxOpen,
+  FaUserPlus,
 } from "react-icons/fa";
-import { clearSession } from "../../../auth/mockAuth";
+import { clearSession } from "../../../auth/session";
 import "./Sidebar.css";
 
 const Sidebar = ({ isOpen, onClose, profile }) => {
@@ -49,56 +50,63 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
         label: "Dashboard",
         path: "/dashboard",
         icon: <FaCalendarAlt aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "clientes",
         label: "Clientes",
         path: "/clientes",
         icon: <FaUsers aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "ordens-servico",
         label: "Ordens de Serviço",
         path: "/ordens-servico",
         icon: <FaClipboardList aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "servicos",
         label: "Serviços",
         path: "/servicos",
         icon: <FaWrench aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "estoque",
         label: "Estoque",
         path: "/produtos-estoque",
         icon: <FaBoxOpen aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "financeiro",
         label: "Financeiro",
         path: "/financeiro",
         icon: <FaWallet aria-hidden="true" />,
-        allowedProfiles: ["gestor"],
+        allowedProfiles: ["admin", "gestor"],
+      },
+      {
+        id: "usuarios",
+        label: "Cadastrar usuário",
+        path: "/cadastroUsuario",
+        icon: <FaUserPlus aria-hidden="true" />,
+        allowedProfiles: ["admin", "gestor"],
       },
       {
         id: "calendario",
         label: "Calendário",
         path: "/calendario",
         icon: <FaCalendarAlt aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "configuracoes",
         label: "Configurações",
         path: "/configuracoes",
         icon: <FaCog aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
     ];
 

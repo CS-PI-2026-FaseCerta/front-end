@@ -1,103 +1,41 @@
-
 import axios from "axios";
-import { clearSession } from "../auth/mockAuth";
-
-const TOKEN_STORAGE_KEYS = ["accessToken", "access_token", "token", "jwt"];
-
-const normalizeToken = (value) => {
-  if (typeof value !== "string") return "";
-  return value.trim().replace(/^Bearer\s+/i, "");
-};
-
-export const getStoredAccessToken = () => {
-  if (typeof window === "undefined") return "";
-
-  const storages = [window.localStorage, window.sessionStorage].filter(Boolean);
-
-  for (const storage of storages) {
-    for (const key of TOKEN_STORAGE_KEYS) {
-      const token = normalizeToken(storage.getItem(key));
-      if (token) return token;
-    }
-
-    const rawUser = storage.getItem("user");
-    if (!rawUser) continue;
-
-    try {
-      const user = JSON.parse(rawUser);
-      const token = normalizeToken(
-        user?.accessToken ?? user?.access_token ?? user?.token ?? user?.jwt,
-      );
-      if (token) return token;
-    } catch {
-      // Dados de sessão legados/inválidos não devem gerar tokens fictícios.
-    }
-  }
-
-  return "";
-};
-
-// Mantém a compatibilidade com despesasService.js.
-export const getAuthToken = getStoredAccessToken;
-
-const clearStoredAccessToken = () => {
-  if (typeof window === "undefined") return;
-
-  [window.localStorage, window.sessionStorage].filter(Boolean).forEach((storage) => {
-    TOKEN_STORAGE_KEYS.forEach((key) => storage.removeItem(key));
-    storage.removeItem("user");
-  });
-};
+import { clearSession, getAuthToken } from "../auth/session";
 
 const api = axios.create({
-  baseURL:
-    process.env.REACT_APP_API_BASE_URL ||
-    process.env.REACT_APP_API_URL ||
-    "http://localhost:8080",
+  baseURL: process.env.REACT_APP_API_BASE_URL || process.env.REACT_APP_API_URL || "http://localhost:8080",
   timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: { "Content-Type": "application/json" },
 });
 
 api.interceptors.request.use((config) => {
-  const token = getAuthToken();
-
-  if (token) {
-    config.headers = config.headers ?? {};
-    config.headers.Authorization = `Bearer ${token}`;
+  // Login público não deve carregar Authorization de uma sessão anterior.
+  if (config.url !== "/api/auth/login") {
+    const token = getAuthToken();
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    else delete config.headers.Authorization;
   }
-
   return config;
 });
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && typeof window !== "undefined") {
-      clearStoredAccessToken();
+    const status = error.response?.status;
+    // Uma senha errada no login não deve invalidar/redirecionar a página pública.
+    if (status === 401 && error.config?.url !== "/api/auth/login") {
       clearSession();
-
-      if (window.location.pathname !== "/login") {
-        window.location.assign("/login");
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+        window.location.replace("/login");
       }
     }
 
-    const apiMessage =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      error.response?.data?.detail;
-
-    if (apiMessage) {
-      error.message = apiMessage;
-    }
-
-    if (!error.status && error.response?.status) {
-      error.status = error.response.status;
-    }
-
+    const apiMessage = error.response?.data?.message ||
+      error.response?.data?.error || error.response?.data?.detail;
+    if (typeof apiMessage === "string" && apiMessage) error.message = apiMessage;
+    if (status) error.status = status;
     return Promise.reject(error);
   },
 );
 
+export { getAuthToken } from "../auth/session";
 export default api;

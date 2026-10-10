@@ -4,10 +4,10 @@ const QUICK_ACTIONS_STORAGE_KEY = "quickActions";
 
 export const getQuickActionsByProfile = (perfil) =>
     QUICK_ACTIONS.filter((atalho) =>
-        atalho.allowedProfiles.includes(perfil),
+        atalho.allowedProfiles.includes(perfil === "admin" ? "gestor" : perfil),
     ).sort((a, b) => {
-        const orderA = a.order[perfil] ?? 99;
-        const orderB = b.order[perfil] ?? 99;
+        const orderA = a.order[perfil === "admin" ? "gestor" : perfil] ?? 99;
+        const orderB = b.order[perfil === "admin" ? "gestor" : perfil] ?? 99;
 
         return orderA - orderB;
     });

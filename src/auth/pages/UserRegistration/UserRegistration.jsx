@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from "../../authService.js";
+import { getCurrentUser } from "../../session.js";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa";
 import Header from "../../../global/components/header/Header.jsx";
@@ -12,12 +14,14 @@ import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 export default function CadastroUsuario() {
     const navigate = useNavigate();
+    const isAdmin = getCurrentUser()?.perfil === "admin";
 
     const [form, setForm] = useState({
         email: "",
         username: "",
         password: "",
         confirm: "",
+        perfil: isAdmin ? "GESTOR" : "TECNICO",
     });
 
     const [showPass, setShowPass] = useState(false);
@@ -27,6 +31,7 @@ export default function CadastroUsuario() {
 
     const [isLoading, setIsLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
+    const [submitError, setSubmitError] = useState("");
 
     const validateEmail = (value) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -42,6 +47,7 @@ export default function CadastroUsuario() {
         form.confirm &&
         isMatch &&
         !emailError &&
+        form.password.length >= 6 &&
         !isLoading;
 
     function updateField(e) {
@@ -58,29 +64,31 @@ export default function CadastroUsuario() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (allFilled) {
-            setIsLoading(true);
-            setSuccessMessage("");
-
-            console.log("Iniciando cadastro...", form);
-
-            // -- Simulação de chamada de API (1 segundos)
-            setTimeout(() => {
-                setIsLoading(false);
-                setSuccessMessage("Cadastro realizado com sucesso!");
-
-                setTimeout(() => {
-                    navigate(AppRoutes.Login, {
-                        state: {
-                            email: form.email,
-                            password: form.password
-                        }
-                    });
-                }, 2000);
-
-            }, 1000);
+        if (!allFilled) return;
+        setIsLoading(true);
+        setSubmitError("");
+        setSuccessMessage("");
+        try {
+            await registerUser({
+                username: form.username,
+                email: form.email,
+                password: form.password,
+                perfil: form.perfil,
+            });
+            setSuccessMessage("Usuário cadastrado com sucesso!");
+            setForm({ email: "", username: "", password: "", confirm: "", perfil: isAdmin ? "GESTOR" : "TECNICO" });
+        } catch (error) {
+            setSubmitError(error.status === 403
+                ? "Você não tem permissão para cadastrar esse perfil."
+                : error.status === 409
+                ? "Este e-mail já está cadastrado."
+                : error.response
+                ? error.message || "Não foi possível cadastrar o usuário."
+                : "Não foi possível conectar ao servidor.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -98,10 +106,10 @@ export default function CadastroUsuario() {
                         >
                             <FaArrowLeft size={18} />
                         </button>
-                        <h2 className="auth-title login-card__title">Crie sua conta</h2>
+                        <h2 className="auth-title login-card__title">Cadastrar usuário</h2>
                     </div>
                     <p className="auth-subtitle login-card__subtitle">
-                        Insira seus dados para começar
+                        Adicione um usuário ao sistema com o perfil permitido pela sua conta.
                     </p>
 
                     <form className="form" onSubmit={handleSubmit} noValidate>
@@ -193,6 +201,22 @@ export default function CadastroUsuario() {
                             )}
                         </div>
 
+                        <div className="input-group">
+                            <label className="form-label" htmlFor="perfil">Perfil de acesso</label>
+                            <select
+                                id="perfil"
+                                name="perfil"
+                                className="form-input"
+                                value={form.perfil}
+                                onChange={updateField}
+                                disabled={isLoading}
+                            >
+                                {isAdmin && <option value="GESTOR">Gestor</option>}
+                                <option value="TECNICO">Técnico</option>
+                            </select>
+                        </div>
+                        {submitError && <p className="form-error" role="alert">{submitError}</p>}
+                        <p className="form-text">A senha deve ter pelo menos 6 caracteres.</p>
                         {/* MENSAGEM DE SUCESSO */}
                         {successMessage && <p className="form-success">{successMessage}</p>}
 
@@ -201,14 +225,7 @@ export default function CadastroUsuario() {
                         </button>
 
                         <p className="auth-footer-text signup-link">
-                            Já tem conta?{" "}
-                            <Link
-                                to={AppRoutes.Login}
-                                className="auth-link"
-                                style={{ pointerEvents: isLoading ? "none" : "auto" }}
-                            >
-                                Entre Aqui
-                            </Link>
+                            <Link to={AppRoutes.Dashboard} className="auth-link">Voltar ao painel</Link>
                         </p>
                     </form>
                 </div>

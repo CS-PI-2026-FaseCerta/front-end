@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
-import {
-    getRememberMe,
-    login as authLogin,
-    saveRememberMe,
-} from "../../mockAuth.js";
+import { getCurrentUser, getRememberMe, saveRememberMe } from "../../session.js";
+import { loginWithEmail } from "../../authService.js";
 import "./Login.css";
 import "./../Auth.css";
 import "../../../global/components/form/Form.css";
@@ -18,13 +14,8 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Modificado apenas para verificar se existem dados vindos do cadastro primeiro
-    const [emailOrUsername, setEmailOrUsername] = useState(
-        location.state?.email || ""
-    );
-    const [password, setPassword] = useState(
-        location.state?.password || ""
-    );
+    const [emailOrUsername, setEmailOrUsername] = useState("");
+    const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -38,8 +29,8 @@ const Login = () => {
         !isLoading;
 
     useEffect(() => {
-        // Se veio dados do cadastro, ignora o preenchimento do "Lembre de mim" para não sobrescrever
-        if (location.state?.email) {
+        if (getCurrentUser()) {
+            navigate(AppRoutes.Dashboard, { replace: true });
             return;
         }
 
@@ -49,23 +40,12 @@ const Login = () => {
         }
 
         setEmailOrUsername(remembered.emailOrUsername || "");
-        setPassword(remembered.password || "");
         setRememberMe(true);
-    }, [location.state]);
+    }, [navigate]);
 
-    const validateEmailOrUsername = (value) => {
-        if (!value) return false;
-        // Validação para e-mail (contém '@') ou nome de usuário (não contém espaços)
-        const isEmailFormat = value.includes("@");
-        if (isEmailFormat) {
-            // Validação de e-mail um pouco mais robusta
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(value);
-        } else {
-            // Nome de usuário não pode ter espaços
-            return !value.includes(" ");
-        }
-    };
+    // O backend identifica usuários exclusivamente por e-mail.
+    const validateEmailOrUsername = (value) =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
     const handleEmailOrUsernameChange = (e) => {
         const value = e.target.value;
@@ -92,50 +72,40 @@ const Login = () => {
         setShowPassword(!showPassword);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (isLoading) return;
-
-        const isEmailOrUsernameValid = validateEmailOrUsername(emailOrUsername);
-
-        // 1. Valida o formato primeiro
-        if (!isEmailOrUsernameValid) {
+        if (!validateEmailOrUsername(emailOrUsername)) {
             setEmailOrUsernameError(true);
-            setLoginError("");
+            setLoginError("Informe um e-mail válido.");
+            return;
+        }
+        if (!password) {
+            setLoginError("Informe a senha.");
             return;
         }
 
-        // Formato correto: tira a borda vermelha (se houver) e tenta autenticar
         setEmailOrUsernameError(false);
-
-        // 2. Tentativa de Autenticação
-        if (password.length > 0) {
-            setLoginError("");
-            setIsLoading(true);
-            console.log("Credenciais:", { emailOrUsername, password, rememberMe });
-
-            // Simulação de chamada de API
-            setTimeout(() => {
-                const result = authLogin(emailOrUsername, password);
-
-                if (result.success) {
-                    saveRememberMe({
-                        rememberMe,
-                        emailOrUsername,
-                        password,
-                    });
-                    console.log("Usuário autenticado:", result.user);
-                    navigate(AppRoutes.Dashboard, { replace: true });
-                } else {
-                    setLoginError(
-                        result.message || "E-mail/Nome de Usuário ou senha incorretos",
-                    );
-                }
-                setIsLoading(false);
-            }, 1500);
-        } else {
-            // Se a senha estiver vazia, falha e exibe o erro geral
-            setLoginError("E-mail/Nome de Usuário ou senha incorretos");
+        setLoginError("");
+        setIsLoading(true);
+        try {
+            await loginWithEmail(emailOrUsername, password, rememberMe);
+            saveRememberMe({ rememberMe, emailOrUsername });
+            const from = location.state?.from;
+            // Volta à rota que o usuário pretendia acessar, sem aceitar URL externa.
+            const destination = from?.pathname?.startsWith("/") && !from.pathname.startsWith("//")
+                ? `${from.pathname}${from.search || ""}` : AppRoutes.Dashboard;
+            navigate(destination, { replace: true });
+        } catch (error) {
+            setLoginError(error.status === 401
+                ? "E-mail ou senha incorretos."
+                : error.status === 429
+                ? "Muitas tentativas. Aguarde um momento e tente novamente."
+                : error.response
+                ? error.message || "Não foi possível entrar."
+                : "Não foi possível conectar ao servidor. Verifique a conexão e tente novamente.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -153,13 +123,13 @@ const Login = () => {
                     <form className="form" onSubmit={handleSubmit} noValidate>
                         <div className="input-group">
                             <label className="form-label" htmlFor="emailOrUsername">
-                                E-mail ou Usuário
+                                E-mail
                             </label>
                             <input
                                 type="text"
                                 id="emailOrUsername"
                                 className={`form-input ${emailOrUsernameError ? "input-error" : ""}`}
-                                placeholder="seu@email.com ou seu_usuario"
+                                placeholder="seu@email.com"
                                 value={emailOrUsername}
                                 onChange={handleEmailOrUsernameChange}
                                 onBlur={handleEmailOrUsernameBlur}
@@ -190,11 +160,7 @@ const Login = () => {
                                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                                 </span>
                             </div>
-                            <div className="auth-align-right">
-                                <Link to={AppRoutes.RecoverPassword} className="auth-link link">
-                                    Esqueceu sua senha?
-                                </Link>
-                            </div>
+                            {/* Recuperação de senha ainda não implementada no backend. */}
                         </div>
 
                         <div className="form-options">
@@ -218,10 +184,7 @@ const Login = () => {
                         </button>
 
                         <p className="auth-footer-text signup-link">
-                            Ainda não tem uma conta?{" "}
-                            <Link className="auth-link" to={AppRoutes.UserRegistration}>
-                                Cadastre-se
-                            </Link>
+                            Precisa de uma conta? Solicite o cadastro ao administrador ou gestor.
                         </p>
                     </form>
                 </div>
