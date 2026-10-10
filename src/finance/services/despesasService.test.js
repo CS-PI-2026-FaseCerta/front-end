@@ -1,47 +1,28 @@
 import { canDeleteExpense, getCurrentRoles } from "./despesasService.js";
+import { saveSession } from "../../auth/session";
 
-const tokenWithClaims = (claims) => `header.${btoa(JSON.stringify(claims))}.signature`;
-
-const setMockUser = (perfil) => {
-  window.localStorage.setItem("user", JSON.stringify({
-    id: 1, nome: "Usuário de teste", email: "teste@example.com", perfil,
-  }));
+const token = (role) => {
+  const payload = {
+    sub: "5e0d9c1f-94c8-4db6-98d3-962f9a26f488", role,
+    iat: Math.floor(Date.now() / 1000) - 5, exp: Math.floor(Date.now() / 1000) + 3600,
+  };
+  return `header.${btoa(JSON.stringify(payload))}.signature`;
 };
 
-beforeEach(() => {
-  window.localStorage.clear();
-  window.sessionStorage.clear();
-});
+beforeEach(() => { window.localStorage.clear(); window.sessionStorage.clear(); });
 
-test("permite excluir despesas com perfil GESTOR no login mock sem JWT", () => {
-  setMockUser("gestor");
-  expect(getCurrentRoles()).toEqual(["GESTOR"]);
+test("somente ADMIN pode excluir despesas com a regra da API atual", () => {
+  saveSession(token("ADMIN"), "a@exemplo.com");
+  expect(getCurrentRoles()).toEqual(["ADMIN"]);
   expect(canDeleteExpense()).toBe(true);
-});
-
-test("não permite excluir despesas com perfil TÉCNICO ou sem sessão", () => {
-  setMockUser("tecnico");
+  saveSession(token("GESTOR"), "g@exemplo.com");
   expect(canDeleteExpense()).toBe(false);
-
-  window.localStorage.clear();
+  saveSession(token("TECNICO"), "t@exemplo.com");
   expect(canDeleteExpense()).toBe(false);
 });
 
-test.each([
-  [{ roles: ["ADMIN"] }, true],
-  [{ roles: ["GESTOR"] }, true],
-  [{ authorities: ["ROLE_GESTOR"] }, true],
-  [{ role: "gestor" }, true],
-  [{ roles: ["ROLE_ADMIN"] }, true],
-  [{ roles: ["TECNICO"] }, false],
-  [{ roles: ["VISUALIZADOR"] }, false],
-])("avalia as permissões do JWT %j", (claims, expected) => {
-  window.localStorage.setItem("token", tokenWithClaims(claims));
-  expect(canDeleteExpense()).toBe(expected);
-});
-
-test("JWT inválido não herda a permissão do perfil local", () => {
-  setMockUser("gestor");
-  window.localStorage.setItem("token", "invalido");
+test("usuário simulado, sem JWT, não pode excluir", () => {
+  window.localStorage.setItem("user", JSON.stringify({ id: 1, nome: "Admin", perfil: "admin" }));
   expect(canDeleteExpense()).toBe(false);
+  expect(getCurrentRoles()).toEqual([]);
 });

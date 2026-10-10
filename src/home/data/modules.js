@@ -95,10 +95,10 @@ export const MODULES = [
 
 export const getVisibleModulesByProfile = (profile) =>
   MODULES.filter((moduleItem) =>
-    moduleItem.allowedProfiles.includes(profile),
+    moduleItem.allowedProfiles.includes(profile === "admin" ? "gestor" : profile),
   ).sort((a, b) => {
-    const orderA = a.order[profile] ?? 99;
-    const orderB = b.order[profile] ?? 99;
+    const orderA = a.order[profile === "admin" ? "gestor" : profile] ?? 99;
+    const orderB = b.order[profile === "admin" ? "gestor" : profile] ?? 99;
 
     return orderA - orderB;
   });

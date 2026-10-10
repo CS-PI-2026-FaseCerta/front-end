@@ -7,7 +7,7 @@ import ModuleCard from "../components/cards/ModuleCard";
 import QuickActionsCarousel from "../components/actions/QuickActionsCarousel";
 import QuickActionsModal from "../components/actions/QuickActionsModal";
 
-import { PERFIL_LABELS, getCurrentUser } from "../../auth/mockAuth";
+import { PERFIL_LABELS, getCurrentUser } from "../../auth/session";
 import { getVisibleModulesByProfile } from "../data/modules";
 import {
   getQuickActionsByProfile,

@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import HeaderDashBoard from "../../../home/components/headerDashBoard/HeaderDashBoard";
 import Sidebar from "../../../home/components/menu/Sidebar";
 import Footer from "../Footer/Footer";
-import { getCurrentUser } from "../../../auth/mockAuth";
+import { getCurrentUser } from "../../../auth/session";
 import "./DashboardLayout.css";
 
 export const DashboardContext = createContext({
@@ -14,7 +14,7 @@ export const DashboardContext = createContext({
 const DashboardLayout = ({ children, hideFooter = false }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const currentUser = getCurrentUser();
-  const perfilAtual = currentUser?.perfil || "gestor";
+  const perfilAtual = currentUser?.perfil;
 
   const handleToggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const handleCloseSidebar = () => setIsSidebarOpen(false);
