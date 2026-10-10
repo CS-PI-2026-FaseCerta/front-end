@@ -7,7 +7,7 @@ import ModuleCard from "../components/cards/ModuleCard";
 import QuickActionsCarousel from "../components/actions/QuickActionsCarousel";
 import QuickActionsModal from "../components/actions/QuickActionsModal";
 
-import { PERFIL_LABELS, getCurrentUser } from "../../auth/mockAuth";
+import { getCurrentUser } from "../../auth/mockAuth";
 import { getVisibleModulesByProfile } from "../data/modules";
 import {
   getQuickActionsByProfile,
@@ -121,8 +121,6 @@ const Dashboard = () => {
   const handleSeeMoreQuickActions = () => {
     setIsSidebarOpen(true);
   };
-
-  const perfilLabel = PERFIL_LABELS[perfilAtual] || "Perfil não mapeado";
 
   if (!currentUser) {
     return <Navigate to="/login" replace />;

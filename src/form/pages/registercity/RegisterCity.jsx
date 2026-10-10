@@ -43,14 +43,13 @@ export function RegisterCityForm({
   const [name, setName] = useState("");
   const [cep, setCep] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
 
   const isCepValid = (cep) => {
     const numbers = cep.replace(/\D/g, "");
     return numbers.length === 8;
   };
 
-  const isFormValid = name.trim() !== "" && isCepValid(cep) && !isSaving;
+  const isFormValid = name.trim() !== "" && isCepValid(cep);
 
   const states = [
     { value: "ac", label: "Acre" },
@@ -82,7 +81,9 @@ export function RegisterCityForm({
     { value: "to", label: "Tocantins" },
   ];
 
-  const [state, setState] = useState(states.find((s) => s.value === "pr"));
+  const [state, setState] = useState(
+    states.find((s) => s.value === "pr")
+  );
 
   const formatCep = (value) => {
     value = value.replace(/\D/g, "");
@@ -177,7 +178,6 @@ export function RegisterCityForm({
           </div>
         </div>
 
-        {/* MENSAGEM DE SUCESSO */}
         {successMessage && (
           <p
             style={{
@@ -201,6 +201,7 @@ export function RegisterCityForm({
               Cancelar
             </button>
           )}
+
           <button
             type="submit"
             className="city-form-submit-button"

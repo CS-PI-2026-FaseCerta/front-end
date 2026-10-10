@@ -130,10 +130,99 @@ export const evaluateCalculatorExpression = (value) => {
     throw new Error("Expressão inválida");
   }
 
-  // A expressão é limitada pelo regex acima a números, parênteses e operadores aritméticos.
-  const result = Function(`"use strict"; return (${normalized});`)();
+  const tokens = normalized.match(/\d+(?:\.\d+)?|[()+\-*/]/g);
 
-  if (!Number.isFinite(result)) {
+  if (!tokens || tokens.join("") !== normalized.replace(/\s/g, "")) {
+    throw new Error("Expressão inválida");
+  }
+
+  const operators = {
+    "+": (a, b) => a + b,
+    "-": (a, b) => a - b,
+    "*": (a, b) => a * b,
+    "/": (a, b) => {
+      if (b === 0) {
+        throw new Error("Resultado inválido");
+      }
+
+      return a / b;
+    },
+  };
+
+  const values = [];
+  const operatorStack = [];
+
+  const precedence = {
+    "+": 1,
+    "-": 1,
+    "*": 2,
+    "/": 2,
+  };
+
+  const applyOperator = () => {
+    const operator = operatorStack.pop();
+    const right = values.pop();
+    const left = values.pop();
+
+    if (
+      left === undefined ||
+      right === undefined ||
+      !operators[operator]
+    ) {
+      throw new Error("Expressão inválida");
+    }
+
+    values.push(operators[operator](left, right));
+  };
+
+  tokens.forEach((token) => {
+    if (/^\d/.test(token)) {
+      values.push(Number(token));
+      return;
+    }
+
+    if (token === "(") {
+      operatorStack.push(token);
+      return;
+    }
+
+    if (token === ")") {
+      while (
+        operatorStack.length > 0 &&
+        operatorStack[operatorStack.length - 1] !== "("
+      ) {
+        applyOperator();
+      }
+
+      if (operatorStack.pop() !== "(") {
+        throw new Error("Expressão inválida");
+      }
+
+      return;
+    }
+
+    while (
+      operatorStack.length > 0 &&
+      operatorStack[operatorStack.length - 1] !== "(" &&
+      precedence[operatorStack[operatorStack.length - 1]] >= precedence[token]
+    ) {
+      applyOperator();
+    }
+
+    operatorStack.push(token);
+  });
+
+  while (operatorStack.length > 0) {
+    if (operatorStack[operatorStack.length - 1] === "(") {
+      throw new Error("Expressão inválida");
+    }
+
+    applyOperator();
+  }
+
+  const result = values[0];
+
+  if (values.length !== 1 || !Number.isFinite(result)) {
     throw new Error("Resultado inválido");
   }
 
