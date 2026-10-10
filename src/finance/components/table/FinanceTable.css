@@ -49,30 +49,30 @@
   cursor: pointer;
 }
 
+/* ÚNICA ALTERAÇÃO: setas com contraste máximo */
 .finance-table__sort-button span {
-  color: var(--finance-muted);
-  font-size: 0.78rem;
-  transition: color 0.2s ease;
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 900;
+  opacity: 1;
+  text-shadow: 0 0 1px #000000;
 }
 
 .finance-table__sort-button span.is-sorted {
-  color: var(--finance-primary);
+  color: #000000;
+  font-weight: 900;
 }
 
-[data-theme="dark"] .finance-table__sort-button span {
-  color: var(--finance-text);
-  opacity: 0.75;
+.finance-table__sort-button:hover span {
+  color: #000000;
 }
 
+[data-theme="dark"] .finance-table__sort-button span,
 [data-theme="dark"] .finance-table__sort-button span.is-sorted {
-  color: var(--finance-primary);
+  color: #ffffff;
+  font-weight: 900;
   opacity: 1;
-}
-
-.finance-table__sort-button:focus-visible {
-  outline: 2px solid var(--finance-primary);
-  outline-offset: 3px;
-  border-radius: 3px;
+  text-shadow: 0 0 1px #ffffff;
 }
 
 .finance-table tbody tr {

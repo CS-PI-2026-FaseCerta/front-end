@@ -24,8 +24,6 @@
   color: var(--finance-muted);
 }
 
-
-
 .expense-table__filter-row input:focus,
 .expense-table__filter-row select:focus {
   border-color: var(--finance-primary);
@@ -106,9 +104,13 @@
   position: relative;
   display: flex;
   align-items: center;
+  gap: 4px;
+  min-width: 0;
 }
 
 .expense-table__value-filter input {
+  width: 100%;
+  min-width: 0;
   padding-right: 2.65rem;
 }
 
@@ -131,6 +133,26 @@
 .expense-table__calculator-trigger.is-open {
   background: var(--finance-hover);
   color: var(--finance-primary);
+}
+
+.expense-table__value-filter button {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--finance-muted, currentColor);
+  cursor: pointer;
+}
+
+.expense-table__value-filter button:hover,
+.expense-table__value-filter button:focus-visible {
+  color: var(--finance-primary, currentColor);
+  background: var(--finance-hover, rgba(127, 127, 127, 0.12));
 }
 
 .expense-table__description {

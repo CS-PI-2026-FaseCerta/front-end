@@ -1,59 +1,105 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { DEMO_EXPENSES } from "../expenseList.constants.js";
+
 import {
-  createId,
-  escapeHtml,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  canDeleteExpense,
+  createExpense,
+  deleteExpense,
+  getExpense,
+  listExpenses,
+  updateExpense,
+} from "../../../services/despesasService.js";
+import { getExpenseErrorMessage } from "../../../services/despesasErrors.js";
+import {
+  labelFor,
+  PAYMENT_MODES,
+  PAYMENT_TYPES,
+} from "../expenseList.constants.js";
+import {
   evaluateCalculatorExpression,
   formatCalculatorNumber,
-  formatCurrency,
-  formatDate,
   includesNormalized,
   matchesCurrencyFilter,
-  matchesMonthYear,
   matchesProgressiveMonthYear,
   parseMonthYearFilter,
 } from "../utils/expenseList.utils.js";
 
+const PAGE_SIZE_STORAGE_KEY = "finance_tables_page_size";
+const API_FETCH_LIMIT = 100;
+
+const toUiExpense = (item) => ({
+  id: item.id,
+  date: item.data ?? "",
+  description: item.descricao ?? "",
+  payee: item.pago_a ?? "",
+  category: item.categoria ?? "",
+  value: Number(item.valor) || 0,
+  paymentType: labelFor(PAYMENT_TYPES, item.tipo_pagamento),
+  paymentTypeValue: item.tipo_pagamento ?? "",
+  paymentMode: labelFor(PAYMENT_MODES, item.modo_pagamento),
+  paymentModeValue: item.modo_pagamento ?? "",
+  paid: Boolean(item.pago),
+  attachments: Array.isArray(item.anexos) ? item.anexos : [],
+});
+
+const getStoredRowsPerPage = (fallback) => {
+  const defaultValue =
+    Number.isSafeInteger(Number(fallback)) && Number(fallback) > 0
+      ? Math.floor(Number(fallback))
+      : 20;
+
+  if (typeof window === "undefined") return defaultValue;
+
+  try {
+    const stored = Number(
+      window.localStorage.getItem(PAGE_SIZE_STORAGE_KEY),
+    );
+
+    return Number.isSafeInteger(stored) && stored > 0
+      ? stored
+      : defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+const toIsoDate = (date) =>
+  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+    date.getDate(),
+  ).padStart(2, "0")}`;
+
+const monthRange = (date) => [
+  toIsoDate(new Date(date.getFullYear(), date.getMonth(), 1)),
+  toIsoDate(new Date(date.getFullYear(), date.getMonth() + 1, 0)),
+];
+
 export default function useExpenseListController({
-  expenses = DEMO_EXPENSES,
-  initialMonth = "2026-05-01",
-  pageSize = 4,
+  pageSize = 20,
   onMonthChange,
-  onTabChange,
-  onOpenAdvancedFilters,
-  onGenerateReceipt,
-  onEditExpense,
-  onViewValueDetails,
-  onAttachmentsChange,
-  onDuplicateExpense,
-  onMoveExpense,
-  onRecurringExpense,
-  onInstallmentExpense,
-  onDeleteExpense,
-}) {
-  const [rows, setRows] = useState(() => expenses.map((item) => ({ ...item })));
+} = {}) {
+  const [rows, setRows] = useState([]);
   const [month, setMonth] = useState(() => new Date());
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(() => {
-    const saved = localStorage.getItem("finance_tables_page_size");
-    const parsedSaved = Number(saved);
-    if (Number.isFinite(parsedSaved) && parsedSaved > 0) {
-      return Math.floor(parsedSaved);
-    }
-    const parsedPageSize = Number(pageSize);
-    return Number.isFinite(parsedPageSize) && parsedPageSize > 0
-      ? Math.floor(parsedPageSize)
-      : 4;
-  });
-  const [rowsPerPageInput, setRowsPerPageInput] = useState(() =>
-    String(rowsPerPage),
+  const [rowsPerPage, setRowsPerPage] = useState(() =>
+    getStoredRowsPerPage(pageSize),
   );
-  const [sort, setSort] = useState({ key: "date", direction: "asc" });
+  const [rowsPerPageInput, setRowsPerPageInput] = useState(() =>
+    String(getStoredRowsPerPage(pageSize)),
+  );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [notice, setNotice] = useState("");
   const [menuRowId, setMenuRowId] = useState(null);
   const [menuPosition, setMenuPosition] = useState(null);
   const [dialog, setDialog] = useState(null);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-  const [notice, setNotice] = useState("");
+
   const [inlineFilters, setInlineFilters] = useState({
     date: "",
     description: "",
@@ -64,14 +110,7 @@ export default function useExpenseListController({
     paymentMode: "",
     paid: "",
   });
-  const [calculator, setCalculator] = useState({
-    open: false,
-    expression: "",
-    error: "",
-    left: 0,
-    top: 0,
-    placement: "below",
-  });
+
   const [advancedFilters, setAdvancedFilters] = useState({
     dateFrom: "",
     dateTo: "",
@@ -80,36 +119,136 @@ export default function useExpenseListController({
     onlyWithAttachments: false,
   });
 
-  useEffect(() => {
-    setRows(expenses.map((item) => ({ ...item })));
-  }, [expenses]);
+  const [calculator, setCalculator] = useState({
+    open: false,
+    expression: "",
+    error: "",
+    left: 0,
+    top: 0,
+    placement: "below",
+    anchorTop: null,
+    anchorBottom: null,
+  });
 
-  useEffect(() => {
-    const closeMenu = (event) => {
-      if (!event.target.closest("[data-expense-row-menu]")) {
-        setMenuRowId(null);
-        setMenuPosition(null);
+  const [sort, setSort] = useState({
+    key: "date",
+    direction: "desc",
+  });
+
+  const latestListRequestRef = useRef(0);
+
+  const load = useCallback(async () => {
+    const requestId = ++latestListRequestRef.current;
+    const [monthStart, monthEnd] = monthRange(month);
+    const hasAdvancedDateRange = Boolean(
+      advancedFilters.dateFrom || advancedFilters.dateTo,
+    );
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const query = {
+        categoria: inlineFilters.category,
+        pago:
+          inlineFilters.paid === "paid"
+            ? true
+            : inlineFilters.paid === "pending"
+              ? false
+              : "",
+        tipo_pagamento: inlineFilters.paymentType,
+        modo_pagamento: inlineFilters.paymentMode,
+        data_inicial: hasAdvancedDateRange
+          ? advancedFilters.dateFrom || undefined
+          : monthStart,
+        data_final: hasAdvancedDateRange
+          ? advancedFilters.dateTo || undefined
+          : monthEnd,
+      };
+
+      const firstPage = await listExpenses({
+        ...query,
+        page: 1,
+        limit: API_FETCH_LIMIT,
+      });
+
+      let allItems = Array.isArray(firstPage.items)
+        ? firstPage.items
+        : [];
+
+      const pageCount = Math.max(
+        1,
+        Number(firstPage.totalPages) || 1,
+      );
+
+      for (
+        let currentPage = 2;
+        currentPage <= pageCount;
+        currentPage += 1
+      ) {
+        const response = await listExpenses({
+          ...query,
+          page: currentPage,
+          limit: API_FETCH_LIMIT,
+        });
+
+        allItems = allItems.concat(
+          Array.isArray(response.items) ? response.items : [],
+        );
+
+        if (requestId !== latestListRequestRef.current) return;
       }
-    };
 
-    document.addEventListener("pointerdown", closeMenu);
-    return () => document.removeEventListener("pointerdown", closeMenu);
+      if (requestId !== latestListRequestRef.current) return;
+
+      setRows(allItems.map(toUiExpense));
+    } catch (requestError) {
+      if (requestId !== latestListRequestRef.current) return;
+
+      setRows([]);
+      setError({
+        title: "Não foi possível carregar as despesas",
+        message: getExpenseErrorMessage(
+          requestError,
+          "Não foi possível conectar à API de despesas.",
+        ),
+      });
+    } finally {
+      if (requestId === latestListRequestRef.current) {
+        setLoading(false);
+      }
+    }
+  }, [
+    month,
+    inlineFilters.category,
+    inlineFilters.paid,
+    inlineFilters.paymentType,
+    inlineFilters.paymentMode,
+    advancedFilters.dateFrom,
+    advancedFilters.dateTo,
+  ]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  useEffect(() => {
+    if (!notice) return undefined;
+
+    const timeout = window.setTimeout(() => setNotice(""), 4000);
+
+    return () => window.clearTimeout(timeout);
+  }, [notice]);
+
+  const closeMenu = useCallback(() => {
+    setMenuRowId(null);
+    setMenuPosition(null);
   }, []);
 
   useEffect(() => {
     if (!menuRowId) return undefined;
 
-    const closeFloatingMenu = (event) => {
-      if (
-        event?.target instanceof Element &&
-        event.target.closest("[data-expense-row-menu]")
-      ) {
-        return;
-      }
-
-      setMenuRowId(null);
-      setMenuPosition(null);
-    };
+    const closeFloatingMenu = () => closeMenu();
 
     window.addEventListener("resize", closeFloatingMenu);
     window.addEventListener("scroll", closeFloatingMenu, true);
@@ -118,351 +257,132 @@ export default function useExpenseListController({
       window.removeEventListener("resize", closeFloatingMenu);
       window.removeEventListener("scroll", closeFloatingMenu, true);
     };
-  }, [menuRowId]);
+  }, [menuRowId, closeMenu]);
 
   useLayoutEffect(() => {
-    if (!menuRowId || !menuPosition || typeof document === "undefined") return;
+    if (!menuRowId || !menuPosition || typeof document === "undefined") {
+      return;
+    }
 
-    const menuElement = document.querySelector(
+    const element = document.querySelector(
       ".expense-action-menu[data-expense-row-menu]",
     );
-    if (!menuElement) return;
 
-    const viewportPadding = 12;
+    if (!element) return;
+
+    const padding = 12;
     const gap = 8;
-    const menuRect = menuElement.getBoundingClientRect();
-    const menuHeight = Math.min(
-      menuRect.height,
-      window.innerHeight - viewportPadding * 2,
-    );
-    const availableBelow =
-      window.innerHeight - menuPosition.triggerBottom - gap - viewportPadding;
-    const availableAbove = menuPosition.triggerTop - gap - viewportPadding;
+    const rect = element.getBoundingClientRect();
+    const height = Math.min(rect.height, window.innerHeight - padding * 2);
+    const triggerTop = menuPosition.triggerTop;
+    const triggerBottom = menuPosition.triggerBottom;
+    const below = window.innerHeight - triggerBottom - gap - padding;
+    const above = triggerTop - gap - padding;
+
     const placeAbove =
-      availableAbove >= menuHeight ||
-      (availableAbove > availableBelow && availableBelow < menuHeight);
+      above >= height || (above > below && below < height);
 
     const idealTop = placeAbove
-      ? menuPosition.triggerTop - gap - menuHeight
-      : menuPosition.triggerBottom + gap;
+      ? triggerTop - gap - height
+      : triggerBottom + gap;
+
     const top = Math.max(
-      viewportPadding,
-      Math.min(idealTop, window.innerHeight - viewportPadding - menuHeight),
+      padding,
+      Math.min(idealTop, window.innerHeight - padding - height),
     );
 
     setMenuPosition((current) => {
       if (!current) return current;
-      const nextPlacement = placeAbove ? "above" : "below";
+
+      const placement = placeAbove ? "above" : "below";
+
       if (
         Math.abs(current.top - top) < 0.5 &&
-        current.placement === nextPlacement
+        current.placement === placement
       ) {
         return current;
       }
-      return { ...current, top, placement: nextPlacement };
+
+      return { ...current, top, placement };
     });
   }, [menuRowId, menuPosition]);
+
+  const closeCalculator = useCallback(() => {
+    setCalculator((current) => ({
+      ...current,
+      open: false,
+      error: "",
+    }));
+  }, []);
 
   useEffect(() => {
     if (!calculator.open) return undefined;
 
-    const closeOnPointerDown = (event) => {
+    const onPointerDown = (event) => {
       if (
-        event?.target instanceof Element &&
+        event.target instanceof Element &&
         event.target.closest("[data-expense-calculator]")
       ) {
         return;
       }
+
       closeCalculator();
     };
 
     const closeOnViewportChange = () => closeCalculator();
 
-    document.addEventListener("pointerdown", closeOnPointerDown);
+    document.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("resize", closeOnViewportChange);
     window.addEventListener("scroll", closeOnViewportChange, true);
 
     return () => {
-      document.removeEventListener("pointerdown", closeOnPointerDown);
+      document.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("resize", closeOnViewportChange);
       window.removeEventListener("scroll", closeOnViewportChange, true);
     };
-  }, [calculator.open]);
-
-  useEffect(() => {
-    if (!notice) return undefined;
-    const timeout = window.setTimeout(() => setNotice(""), 3200);
-    return () => window.clearTimeout(timeout);
-  }, [notice]);
+  }, [calculator.open, closeCalculator]);
 
   const updateInlineFilter = (key, value) => {
-    setInlineFilters((current) => ({ ...current, [key]: value }));
+    setInlineFilters((current) => ({
+      ...current,
+      [key]: value,
+    }));
+
     setPage(1);
 
     if (key === "date") {
       const parsed = parseMonthYearFilter(value);
+
       if (parsed) {
-        const newMonth = new Date(parsed.year, parsed.month - 1, 1);
-        setMonth(newMonth);
-        onMonthChange?.(newMonth);
+        const nextMonth = new Date(
+          parsed.year,
+          parsed.month - 1,
+          1,
+        );
+
+        setMonth(nextMonth);
+        onMonthChange?.(nextMonth);
       }
     }
   };
 
-  const filteredRows = useMemo(() => {
-    return rows
-      .filter((row) => {
-        const rowDate = new Date(`${row.date}T12:00:00`);
-        if (
-          rowDate.getFullYear() !== month.getFullYear() ||
-          rowDate.getMonth() !== month.getMonth()
-        ) {
-          return false;
-        }
-
-        if (inlineFilters.date) {
-          const parsed = parseMonthYearFilter(inlineFilters.date);
-          if (parsed) {
-            if (!matchesMonthYear(row.date, parsed.month, parsed.year)) {
-              return false;
-            }
-          } else {
-            if (!matchesProgressiveMonthYear(row.date, inlineFilters.date)) {
-              return false;
-            }
-          }
-        }
-        if (
-          inlineFilters.description &&
-          !includesNormalized(row.description, inlineFilters.description)
-        ) {
-          return false;
-        }
-        if (
-          inlineFilters.payee &&
-          !includesNormalized(row.payee, inlineFilters.payee)
-        ) {
-          return false;
-        }
-        if (inlineFilters.category && row.category !== inlineFilters.category) {
-          return false;
-        }
-        if (
-          inlineFilters.value &&
-          !matchesCurrencyFilter(row.value, inlineFilters.value)
-        ) {
-          return false;
-        }
-        if (
-          inlineFilters.paymentType &&
-          row.paymentType !== inlineFilters.paymentType
-        ) {
-          return false;
-        }
-        if (
-          inlineFilters.paymentMode &&
-          row.paymentMode !== inlineFilters.paymentMode
-        ) {
-          return false;
-        }
-        if (inlineFilters.paid === "paid" && !row.paid) {
-          return false;
-        }
-        if (inlineFilters.paid === "pending" && row.paid) {
-          return false;
-        }
-
-        if (advancedFilters.dateFrom && row.date < advancedFilters.dateFrom) {
-          return false;
-        }
-        if (advancedFilters.dateTo && row.date > advancedFilters.dateTo) {
-          return false;
-        }
-        if (
-          advancedFilters.minValue &&
-          Number(row.value) < Number(advancedFilters.minValue)
-        ) {
-          return false;
-        }
-        if (
-          advancedFilters.maxValue &&
-          Number(row.value) > Number(advancedFilters.maxValue)
-        ) {
-          return false;
-        }
-        if (
-          advancedFilters.onlyWithAttachments &&
-          !(row.attachments?.length > 0)
-        ) {
-          return false;
-        }
-
-        return true;
-      })
-      .sort((left, right) => {
-        const leftValue = left[sort.key];
-        const rightValue = right[sort.key];
-
-        if (leftValue == null && rightValue == null) return 0;
-        if (leftValue == null) return 1;
-        if (rightValue == null) return -1;
-
-        const comparison =
-          typeof leftValue === "number"
-            ? leftValue - rightValue
-            : String(leftValue).localeCompare(String(rightValue), "pt-BR", {
-                numeric: true,
-                sensitivity: "base",
-              });
-
-        return sort.direction === "asc" ? comparison : -comparison;
-      });
-  }, [advancedFilters, inlineFilters, month, rows, sort]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredRows.length / rowsPerPage));
-  const safePage = Math.min(page, totalPages);
-  const visibleRows = filteredRows.slice(
-    (safePage - 1) * rowsPerPage,
-    safePage * rowsPerPage,
-  );
-
-  const commitRowsPerPage = () => {
-    const normalizedInput = rowsPerPageInput.trim();
-
-    if (!/^\d+$/.test(normalizedInput)) {
-      setRowsPerPageInput(String(rowsPerPage));
-      return;
-    }
-
-    const parsedValue = Number(normalizedInput);
-    if (!Number.isSafeInteger(parsedValue) || parsedValue < 1) {
-      setRowsPerPageInput(String(rowsPerPage));
-      return;
-    }
-
-    setRowsPerPage(parsedValue);
-    setRowsPerPageInput(String(parsedValue));
-    setPage(1);
-    localStorage.setItem("finance_tables_page_size", String(parsedValue));
-  };
-
-  useEffect(() => {
-    if (page !== safePage) setPage(safePage);
-  }, [page, safePage]);
-
-  const hasFilters = useMemo(
-    () =>
-      Object.values(inlineFilters).some(Boolean) ||
-      Boolean(
-        advancedFilters.dateFrom ||
-        advancedFilters.dateTo ||
-        advancedFilters.minValue ||
-        advancedFilters.maxValue ||
-        advancedFilters.onlyWithAttachments,
-      ),
-    [advancedFilters, inlineFilters],
-  );
-
-  const openCalculator = (event) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const width = 320;
-    const estimatedHeight = 430;
-    const gap = 8;
-    const viewportPadding = 12;
-    const availableBelow = window.innerHeight - rect.bottom;
-    const placeAbove =
-      availableBelow < estimatedHeight && rect.top > availableBelow;
-    const left = Math.max(
-      viewportPadding,
-      Math.min(rect.right - width, window.innerWidth - width - viewportPadding),
-    );
-
-    setCalculator({
-      open: true,
-      expression: inlineFilters.value || "",
-      error: "",
-      left,
-      top: placeAbove ? rect.top - gap : rect.bottom + gap,
-      placement: placeAbove ? "above" : "below",
-    });
-  };
-
-  const closeCalculator = () => {
-    setCalculator((current) => ({ ...current, open: false, error: "" }));
-  };
-
-  const calculateExpression = (expression = calculator.expression) => {
-    try {
-      const result = evaluateCalculatorExpression(expression);
-      const formatted = formatCalculatorNumber(result);
-      setCalculator((current) => ({
-        ...current,
-        expression: formatted,
-        error: "",
-      }));
-      return formatted;
-    } catch (error) {
-      setCalculator((current) => ({ ...current, error: "Expressão inválida" }));
-      return null;
-    }
-  };
-
-  const handleCalculatorKey = (key) => {
-    if (key === "C") {
-      setCalculator((current) => ({ ...current, expression: "", error: "" }));
-      return;
-    }
-
-    if (key === "backspace") {
-      setCalculator((current) => ({
-        ...current,
-        expression: current.expression.slice(0, -1),
-        error: "",
-      }));
-      return;
-    }
-
-    if (key === "=") {
-      const result = calculateExpression();
-      if (result != null) {
-        updateInlineFilter("value", result);
-      }
-      return;
-    }
-
-    setCalculator((current) => ({
-      ...current,
-      expression: `${current.expression}${key}`,
-      error: "",
-    }));
-  };
-
-  const useCalculatorValue = () => {
-    const result = calculateExpression();
-    if (result == null) return;
-    updateInlineFilter("value", result);
-    closeCalculator();
-  };
-
-  const changeMonth = (direction) => {
+  const changeMonth = (delta) => {
     const nextMonth = new Date(
       month.getFullYear(),
-      month.getMonth() + direction,
+      month.getMonth() + delta,
       1,
     );
+
     setMonth(nextMonth);
     setPage(1);
-    setMenuRowId(null);
-    setMenuPosition(null);
     onMonthChange?.(nextMonth);
   };
 
-  const toggleSort = (key) => {
-    setSort((current) => ({
-      key,
-      direction:
-        current.key === key && current.direction === "asc" ? "desc" : "asc",
-    }));
+  const updateAdvancedFilters = (updater) => {
+    setAdvancedFilters((current) =>
+      typeof updater === "function" ? updater(current) : updater,
+    );
+
     setPage(1);
   };
 
@@ -477,6 +397,7 @@ export default function useExpenseListController({
       paymentMode: "",
       paid: "",
     });
+
     setAdvancedFilters({
       dateFrom: "",
       dateTo: "",
@@ -484,314 +405,670 @@ export default function useExpenseListController({
       maxValue: "",
       onlyWithAttachments: false,
     });
-    setCalculator((current) => ({
-      ...current,
-      open: false,
-      expression: "",
-      error: "",
-    }));
+
     setPage(1);
   };
 
-  const openAdvancedFilters = () => {
-    if (onOpenAdvancedFilters) {
-      onOpenAdvancedFilters({
-        values: advancedFilters,
-        onChange: setAdvancedFilters,
-        clear: clearFilters,
-      });
-      return;
-    }
-    setIsAdvancedOpen(true);
-  };
+  const commitRowsPerPage = () => {
+    const input = rowsPerPageInput.trim();
 
-  const getExpense = (id) => rows.find((item) => item.id === id);
-
-  const closeRowMenu = () => {
-    setMenuRowId(null);
-    setMenuPosition(null);
-  };
-
-  const toggleRowMenu = (event, expenseId) => {
-    if (menuRowId === expenseId) {
-      closeRowMenu();
+    if (
+      !/^\d+$/.test(input) ||
+      !Number.isSafeInteger(Number(input)) ||
+      Number(input) < 1
+    ) {
+      setRowsPerPageInput(String(rowsPerPage));
       return;
     }
 
-    const triggerRect = event.currentTarget.getBoundingClientRect();
-    const menuWidth = 276;
-    const viewportPadding = 12;
+    const nextSize = Number(input);
+
+    setRowsPerPage(nextSize);
+    setRowsPerPageInput(String(nextSize));
+    setPage(1);
+
+    try {
+      window.localStorage.setItem(
+        PAGE_SIZE_STORAGE_KEY,
+        String(nextSize),
+      );
+    } catch {
+      // O armazenamento local pode estar indisponível.
+    }
+  };
+
+  const hasFilters = useMemo(
+    () =>
+      Object.values(inlineFilters).some(Boolean) ||
+      Boolean(
+        advancedFilters.dateFrom ||
+        advancedFilters.dateTo ||
+        advancedFilters.minValue ||
+        advancedFilters.maxValue ||
+        advancedFilters.onlyWithAttachments,
+      ),
+    [inlineFilters, advancedFilters],
+  );
+
+  const filteredRows = useMemo(
+    () =>
+      rows
+        .filter((row) => {
+          if (
+            inlineFilters.date &&
+            !matchesProgressiveMonthYear(row.date, inlineFilters.date)
+          ) {
+            return false;
+          }
+
+          if (
+            inlineFilters.description &&
+            !includesNormalized(
+              row.description,
+              inlineFilters.description,
+            )
+          ) {
+            return false;
+          }
+
+          if (
+            inlineFilters.payee &&
+            !includesNormalized(row.payee, inlineFilters.payee)
+          ) {
+            return false;
+          }
+
+          if (
+            inlineFilters.category &&
+            row.category !== inlineFilters.category
+          ) {
+            return false;
+          }
+
+          if (
+            inlineFilters.value &&
+            !matchesCurrencyFilter(row.value, inlineFilters.value)
+          ) {
+            return false;
+          }
+
+          if (
+            inlineFilters.paymentType &&
+            row.paymentTypeValue !== inlineFilters.paymentType
+          ) {
+            return false;
+          }
+
+          if (
+            inlineFilters.paymentMode &&
+            row.paymentModeValue !== inlineFilters.paymentMode
+          ) {
+            return false;
+          }
+
+          if (inlineFilters.paid === "paid" && !row.paid) {
+            return false;
+          }
+
+          if (inlineFilters.paid === "pending" && row.paid) {
+            return false;
+          }
+
+          if (
+            advancedFilters.dateFrom &&
+            row.date < advancedFilters.dateFrom
+          ) {
+            return false;
+          }
+
+          if (
+            advancedFilters.dateTo &&
+            row.date > advancedFilters.dateTo
+          ) {
+            return false;
+          }
+
+          if (
+            advancedFilters.minValue !== "" &&
+            row.value < Number(advancedFilters.minValue)
+          ) {
+            return false;
+          }
+
+          if (
+            advancedFilters.maxValue !== "" &&
+            row.value > Number(advancedFilters.maxValue)
+          ) {
+            return false;
+          }
+
+          if (
+            advancedFilters.onlyWithAttachments &&
+            !row.attachments.length
+          ) {
+            return false;
+          }
+
+          return true;
+        })
+        .sort((a, b) => {
+          const left = a[sort.key];
+          const right = b[sort.key];
+          let comparison = 0;
+
+          if (left == null && right != null) {
+            comparison = 1;
+          } else if (right == null && left != null) {
+            comparison = -1;
+          } else if (
+            typeof left === "number" &&
+            typeof right === "number"
+          ) {
+            comparison = left - right;
+          } else if (
+            typeof left === "boolean" &&
+            typeof right === "boolean"
+          ) {
+            comparison = Number(left) - Number(right);
+          } else {
+            comparison = String(left ?? "").localeCompare(
+              String(right ?? ""),
+              "pt-BR",
+              {
+                numeric: true,
+                sensitivity: "base",
+              },
+            );
+          }
+
+          return sort.direction === "asc"
+            ? comparison
+            : -comparison;
+        }),
+    [rows, inlineFilters, advancedFilters, sort],
+  );
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredRows.length / rowsPerPage),
+  );
+
+  const safePage = Math.min(page, totalPages);
+
+  const visibleRows = filteredRows.slice(
+    (safePage - 1) * rowsPerPage,
+    safePage * rowsPerPage,
+  );
+
+  useEffect(() => {
+    if (page !== safePage) setPage(safePage);
+  }, [page, safePage]);
+
+  const openCalculator = (event) => {
+    const rect = event?.currentTarget?.getBoundingClientRect?.();
+
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const padding = 12;
     const gap = 8;
-    const availableBelow = window.innerHeight - triggerRect.bottom;
-    const availableAbove = triggerRect.top;
-    const placeAbove = availableBelow < 430 && availableAbove > availableBelow;
-    const left = Math.max(
-      viewportPadding,
-      Math.min(
-        triggerRect.right - menuWidth,
-        window.innerWidth - menuWidth - viewportPadding,
-      ),
-    );
 
-    const estimatedMenuHeight = Math.min(
-      430,
-      window.innerHeight - viewportPadding * 2,
-    );
-    const initialTop = placeAbove
-      ? triggerRect.top - gap - estimatedMenuHeight
-      : triggerRect.bottom + gap;
+    const width = Math.min(320, viewportWidth - padding * 2);
+    const estimatedHeight = Math.min(430, viewportHeight - padding * 2);
 
-    setMenuRowId(expenseId);
-    setMenuPosition({
-      left,
-      top: Math.max(
-        viewportPadding,
+    const left = rect
+      ? Math.max(
+        padding,
         Math.min(
-          initialTop,
-          window.innerHeight - viewportPadding - estimatedMenuHeight,
+          rect.right - width,
+          viewportWidth - width - padding,
         ),
+      )
+      : Math.max(padding, (viewportWidth - width) / 2);
+
+    const availableBelow = rect
+      ? viewportHeight - rect.bottom - gap - padding
+      : viewportHeight - 100 - gap - padding;
+
+    const availableAbove = rect
+      ? rect.top - gap - padding
+      : 0;
+
+    const placeAbove =
+      Boolean(rect) &&
+      availableBelow < estimatedHeight &&
+      availableAbove > availableBelow;
+
+    const proposedTop = placeAbove
+      ? rect.top - estimatedHeight - gap
+      : (rect?.bottom ?? 100) + gap;
+
+    const top = Math.max(
+      padding,
+      Math.min(
+        proposedTop,
+        viewportHeight - estimatedHeight - padding,
       ),
+    );
+
+    setCalculator({
+      open: true,
+      expression: inlineFilters.value || "",
+      error: "",
+      left,
+      top,
       placement: placeAbove ? "above" : "below",
-      triggerTop: triggerRect.top,
-      triggerBottom: triggerRect.bottom,
+      anchorTop: rect?.top ?? null,
+      anchorBottom: rect?.bottom ?? null,
     });
   };
 
-  const replaceExpense = (nextExpense) => {
-    setRows((current) =>
-      current.map((item) => (item.id === nextExpense.id ? nextExpense : item)),
+  useLayoutEffect(() => {
+    if (!calculator.open || typeof document === "undefined") return;
+
+    const element = document.querySelector("[data-expense-calculator]");
+    if (!element) return;
+
+    const padding = 12;
+    const gap = 8;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const rect = element.getBoundingClientRect();
+
+    const width = Math.min(rect.width, viewportWidth - padding * 2);
+    const height = Math.min(rect.height, viewportHeight - padding * 2);
+
+    const left = Math.max(
+      padding,
+      Math.min(calculator.left, viewportWidth - width - padding),
     );
+
+    const availableBelow =
+      calculator.anchorBottom == null
+        ? viewportHeight - calculator.top - padding
+        : viewportHeight - calculator.anchorBottom - gap - padding;
+
+    const availableAbove =
+      calculator.anchorTop == null
+        ? 0
+        : calculator.anchorTop - gap - padding;
+
+    const placeAbove =
+      calculator.anchorTop != null &&
+      height > availableBelow &&
+      availableAbove > availableBelow;
+
+    const proposedTop =
+      calculator.anchorTop == null
+        ? calculator.top
+        : placeAbove
+          ? calculator.anchorTop - height - gap
+          : calculator.anchorBottom + gap;
+
+    const top = Math.max(
+      padding,
+      Math.min(proposedTop, viewportHeight - height - padding),
+    );
+
+    const placement = placeAbove ? "above" : "below";
+
+    if (
+      Math.abs(calculator.left - left) > 0.5 ||
+      Math.abs(calculator.top - top) > 0.5 ||
+      calculator.placement !== placement
+    ) {
+      setCalculator((current) => ({
+        ...current,
+        left,
+        top,
+        placement,
+      }));
+    }
+  }, [
+    calculator.open,
+    calculator.left,
+    calculator.top,
+    calculator.placement,
+    calculator.anchorTop,
+    calculator.anchorBottom,
+  ]);
+
+  const updateCalculatorExpression = (expression) => {
+    setCalculator((current) => ({
+      ...current,
+      expression,
+      error: "",
+    }));
   };
 
-  const generateReceipt = (expense) => {
-    onGenerateReceipt?.(expense);
+  const calculateExpression = (expression = calculator.expression) => {
+    try {
+      const result = evaluateCalculatorExpression(expression);
 
-    if (onGenerateReceipt) {
-      setNotice("Solicitação de recibo enviada.");
+      if (!Number.isFinite(result)) {
+        throw new Error("Resultado inválido");
+      }
+
+      const formatted = formatCalculatorNumber(result);
+
+      setCalculator((current) => ({
+        ...current,
+        expression: formatted,
+        error: "",
+      }));
+
+      return formatted;
+    } catch (calculationError) {
+      setCalculator((current) => ({
+        ...current,
+        error: calculationError.message || "Expressão inválida",
+      }));
+
+      return null;
+    }
+  };
+
+  const handleCalculatorKey = (key) => {
+    if (key === "C") {
+      setCalculator((current) => ({
+        ...current,
+        expression: "",
+        error: "",
+      }));
       return;
     }
 
-    const receiptWindow = window.open("", "_blank", "width=760,height=820");
-    if (!receiptWindow) {
-      setNotice("O navegador bloqueou a abertura do recibo.");
+    if (key === "backspace") {
+      setCalculator((current) => ({
+        ...current,
+        expression: current.expression.slice(0, -1),
+        error: "",
+      }));
       return;
     }
 
-    receiptWindow.document.write(`
-      <!doctype html>
-      <html lang="pt-BR">
-        <head>
-          <meta charset="utf-8" />
-          <title>Recibo - ${escapeHtml(expense.description)}</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 48px; color: #202235; }
-            .card { border: 1px solid #dadce8; border-radius: 18px; padding: 28px; }
-            h1 { margin-top: 0; font-size: 24px; }
-            dl { display: grid; grid-template-columns: 180px 1fr; gap: 12px 24px; }
-            dt { color: #666b7d; font-weight: 700; }
-            dd { margin: 0; }
-            .amount { font-size: 28px; font-weight: 800; margin: 24px 0; }
-            .status { font-weight: 700; color: ${expense.paid ? "#5d7700" : "#7c5b14"}; }
-          </style>
-        </head>
-        <body>
-          <div class="card">
-            <h1>Comprovante de despesa</h1>
-            <p class="amount">${escapeHtml(formatCurrency(expense.value))}</p>
-            <dl>
-              <dt>Data</dt><dd>${escapeHtml(formatDate(expense.date))}</dd>
-              <dt>Descrição</dt><dd>${escapeHtml(expense.description)}</dd>
-              <dt>Pago a</dt><dd>${escapeHtml(expense.payee)}</dd>
-              <dt>Categoria</dt><dd>${escapeHtml(expense.category)}</dd>
-              <dt>Tipo de pagamento</dt><dd>${escapeHtml(expense.paymentType)}</dd>
-              <dt>Modo de pagamento</dt><dd>${escapeHtml(expense.paymentMode)}</dd>
-              <dt>Status</dt><dd class="status">${expense.paid ? "Pago" : "Pendente"}</dd>
-            </dl>
-          </div>
-          <script>window.onload = () => window.print();</script>
-        </body>
-      </html>
-    `);
-    receiptWindow.document.close();
+    if (key === "=") {
+      calculateExpression();
+      return;
+    }
+
+    setCalculator((current) => ({
+      ...current,
+      expression: current.expression + key,
+      error: "",
+    }));
   };
 
-  const handleEditSubmit = (event, expense) => {
+  const useCalculatorValue = () => {
+    const result = calculateExpression();
+
+    if (result == null) return;
+
+    updateInlineFilter("value", result);
+    closeCalculator();
+  };
+
+  const toggleSort = (key) => {
+    setSort((current) =>
+      current.key === key
+        ? {
+          key,
+          direction: current.direction === "asc" ? "desc" : "asc",
+        }
+        : { key, direction: "asc" },
+    );
+  };
+
+  const toggleRowMenu = (event, id) => {
+    if (menuRowId === id) {
+      closeMenu();
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const width = 276;
+    const left = Math.max(
+      12,
+      Math.min(rect.right - width, window.innerWidth - width - 12),
+    );
+
+    setMenuRowId(id);
+    setMenuPosition({
+      left,
+      top: rect.bottom + 8,
+      triggerTop: rect.top,
+      triggerBottom: rect.bottom,
+      placement: "below",
+    });
+  };
+
+  const getRow = (id) =>
+    rows.find((row) => String(row.id) === String(id));
+
+  const openExpenseDialog = async (type, expense) => {
+    closeMenu();
+
+    if (!expense) return;
+
+    if (type === "delete" && !canDeleteExpense()) {
+      setNotice("Você não tem permissão para excluir despesas.");
+      return;
+    }
+
+    if (type === "edit" || type === "details") {
+      setLoading(true);
+
+      try {
+        const fresh = toUiExpense(await getExpense(expense.id));
+
+        setRows((current) =>
+          current.map((row) =>
+            String(row.id) === String(fresh.id) ? fresh : row,
+          ),
+        );
+
+        setDialog({
+          type,
+          expenseId: fresh.id,
+        });
+      } catch (requestError) {
+        setNotice(
+          getExpenseErrorMessage(
+            requestError,
+            "Não foi possível carregar a despesa.",
+          ),
+        );
+      } finally {
+        setLoading(false);
+      }
+
+      return;
+    }
+
+    setDialog({
+      type,
+      expenseId: expense.id,
+    });
+  };
+
+  const handleEditSubmit = async (event, expense) => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const updated = {
-      ...expense,
-      date: formData.get("date"),
-      description: formData.get("description"),
-      payee: formData.get("payee"),
-      category: formData.get("category"),
-      value: Number(formData.get("value")),
-      paymentType: formData.get("paymentType"),
-      paymentMode: formData.get("paymentMode"),
-      paid: formData.get("paid") === "on",
+
+    const form = new FormData(event.currentTarget);
+    const value = Number(form.get("value"));
+
+    if (!Number.isFinite(value) || value <= 0) {
+      setNotice("O valor deve ser numérico e maior que zero.");
+      return;
+    }
+
+    const payload = {
+      data: form.get("date"),
+      descricao: String(form.get("description") ?? "").trim(),
+      pago_a: String(form.get("payee") ?? "").trim(),
+      categoria: form.get("category"),
+      valor: value,
+      tipo_pagamento: form.get("paymentType"),
+      modo_pagamento: form.get("paymentMode"),
+      pago: form.get("paid") === "on",
     };
 
-    replaceExpense(updated);
-    onEditExpense?.(updated);
-    setDialog(null);
-    setNotice("Despesa atualizada.");
-  };
+    setLoading(true);
 
-  const handleAttachmentAdd = (expense, files) => {
-    if (!files?.length) return;
-    const newAttachments = [...(expense.attachments ?? [])].concat(
-      [...files].map((file) => ({
-        id: createId(),
-        name: file.name,
-        size: file.size,
-        file,
-      })),
-    );
-    const updated = { ...expense, attachments: newAttachments };
-    replaceExpense(updated);
-    onAttachmentsChange?.(updated, newAttachments);
-    setDialog({ type: "attachments", expenseId: updated.id });
-  };
+    try {
+      const saved = toUiExpense(
+        await updateExpense(expense.id, payload),
+      );
 
-  const handleAttachmentRemove = (expense, attachment) => {
-    const nextAttachments = (expense.attachments ?? []).filter(
-      (item) => item !== attachment,
-    );
-    const updated = { ...expense, attachments: nextAttachments };
-    replaceExpense(updated);
-    onAttachmentsChange?.(updated, nextAttachments);
-    setDialog({ type: "attachments", expenseId: updated.id });
-  };
+      setRows((current) =>
+        current.map((row) =>
+          String(row.id) === String(saved.id) ? saved : row,
+        ),
+      );
 
-  const duplicateExpense = (expense) => {
-    const copy = {
-      ...expense,
-      id: createId(),
-      description: `${expense.description} (cópia)`,
-      paid: false,
-      attachments: [],
-    };
-    setRows((current) => [copy, ...current]);
-    onDuplicateExpense?.(copy, expense);
-    closeRowMenu();
-    setNotice("Despesa duplicada.");
-  };
+      setDialog(null);
+      setNotice("Despesa atualizada.");
 
-  const submitMove = (event, expense) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const destination = formData.get("destination");
-    const category = formData.get("category");
-
-    if (destination === "expenses") {
-      const updated = { ...expense, category };
-      replaceExpense(updated);
-      onMoveExpense?.({ expense: updated, destination, category });
-      setNotice("Despesa reclassificada.");
-    } else {
-      setRows((current) => current.filter((item) => item.id !== expense.id));
-      onMoveExpense?.({ expense, destination, category: null });
+      await load();
+    } catch (requestError) {
       setNotice(
-        destination === "receipts"
-          ? "Item movido para Recebimentos."
-          : "Item movido para Transferências.",
+        getExpenseErrorMessage(
+          requestError,
+          "Não foi possível atualizar a despesa.",
+        ),
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const togglePaid = async (expense) => {
+    try {
+      const saved = toUiExpense(
+        await updateExpense(expense.id, {
+          pago: !expense.paid,
+        }),
+      );
+
+      setRows((current) =>
+        current.map((row) =>
+          String(row.id) === String(saved.id) ? saved : row,
+        ),
+      );
+
+      setNotice(
+        saved.paid
+          ? "Despesa marcada como paga."
+          : "Despesa marcada como pendente.",
+      );
+    } catch (requestError) {
+      setNotice(
+        getExpenseErrorMessage(
+          requestError,
+          "Não foi possível atualizar a situação de pagamento.",
+        ),
       );
     }
-    setDialog(null);
   };
 
-  const submitRecurring = (event, expense) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const updated = {
-      ...expense,
-      paymentType: "Recorrente",
-      recurrence: {
-        frequency: formData.get("frequency"),
-        startDate: formData.get("startDate"),
-      },
-    };
-    replaceExpense(updated);
-    onRecurringExpense?.(updated);
-    setDialog(null);
-    setNotice("Despesa configurada como recorrente.");
+  const confirmDelete = async (expense) => {
+    if (!canDeleteExpense()) {
+      setDialog(null);
+      setNotice("Você não tem permissão para excluir despesas.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      await deleteExpense(expense.id);
+
+      setDialog(null);
+      setNotice("Despesa excluída.");
+
+      await load();
+    } catch (requestError) {
+      setNotice(
+        getExpenseErrorMessage(
+          requestError,
+          "Não foi possível excluir a despesa.",
+        ),
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const submitInstallments = (event, expense) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const installmentCount = Math.max(
-      2,
-      Number(formData.get("installments")) || 2,
-    );
-    const firstDate = new Date(`${formData.get("firstDate")}T12:00:00`);
-    const totalCents = Math.round(Number(expense.value) * 100);
-    const baseCents = Math.floor(totalCents / installmentCount);
-    const remainder = totalCents % installmentCount;
+  const duplicateExpense = async (expense) => {
+    closeMenu();
+    setLoading(true);
 
-    const installments = Array.from(
-      { length: installmentCount },
-      (_, index) => {
-        const dueDate = new Date(
-          firstDate.getFullYear(),
-          firstDate.getMonth() + index,
-          firstDate.getDate(),
-        );
-        const cents = baseCents + (index < remainder ? 1 : 0);
+    try {
+      await createExpense({
+        data: expense.date,
+        descricao: expense.description,
+        pago_a: expense.payee,
+        categoria: expense.category,
+        valor: expense.value,
+        tipo_pagamento: expense.paymentTypeValue,
+        modo_pagamento: expense.paymentModeValue,
+        pago: false,
+      });
 
-        return {
-          ...expense,
-          id: index === 0 ? expense.id : createId(),
-          date: dueDate.toISOString().slice(0, 10),
-          description: `${expense.description} (${index + 1}/${installmentCount})`,
-          value: cents / 100,
-          paymentType: "Parcelado",
-          paid: index === 0 ? expense.paid : false,
-          installment: {
-            current: index + 1,
-            total: installmentCount,
-          },
-        };
-      },
-    );
-
-    setRows((current) => [
-      ...current.filter((item) => item.id !== expense.id),
-      ...installments,
-    ]);
-    onInstallmentExpense?.(installments, expense);
-    setDialog(null);
-    setNotice(`Despesa dividida em ${installmentCount} parcelas.`);
+      setNotice("Despesa duplicada.");
+      await load();
+    } catch (requestError) {
+      setNotice(
+        getExpenseErrorMessage(
+          requestError,
+          "Não foi possível duplicar a despesa.",
+        ),
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const confirmDelete = (expense) => {
-    setRows((current) => current.filter((item) => item.id !== expense.id));
-    onDeleteExpense?.({ ...expense, deletedAt: new Date().toISOString() });
-    setDialog(null);
-    setNotice("Despesa excluída.");
-  };
-
-  const activeExpense = dialog?.expenseId ? getExpense(dialog.expenseId) : null;
-  const activeMenuExpense = menuRowId ? getExpense(menuRowId) : null;
-
-  const togglePaid = (expense) => {
-    const updated = { ...expense, paid: !expense.paid };
-    replaceExpense(updated);
-    onEditExpense?.(updated);
-  };
-
-  const openExpenseDialog = (type, expense) => {
-    if (type === "details") onViewValueDetails?.(expense);
-    setDialog({ type, expenseId: expense.id });
-    closeRowMenu();
+  const outOfScope = () => {
+    closeMenu();
+    setNotice("Esta ação ainda não está integrada à API de despesas.");
   };
 
   const generateReceiptAndClose = (expense) => {
-    generateReceipt(expense);
-    closeRowMenu();
-  };
+    closeMenu();
 
-  const updateCalculatorExpression = (expression) => {
-    setCalculator((current) => ({ ...current, expression, error: "" }));
+    const content = [
+      `Despesa: ${expense.description}`,
+      `Pago a: ${expense.payee}`,
+      `Data: ${expense.date}`,
+      `Valor: R$ ${Number(expense.value).toFixed(2)}`,
+      `Categoria: ${expense.category}`,
+    ].join("\n");
+
+    const printWindow = window.open(
+      "",
+      "_blank",
+      "width=600,height=500",
+    );
+
+    if (!printWindow) {
+      setNotice("Permita a abertura de janelas para gerar o recibo.");
+      return;
+    }
+
+    printWindow.opener = null;
+
+    const escapedContent = content
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+
+    printWindow.document.write(
+      `<pre style="font:16px Arial;white-space:pre-wrap;padding:24px">${escapedContent}</pre>`,
+    );
+
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
   };
 
   return {
@@ -804,8 +1081,6 @@ export default function useExpenseListController({
     setRowsPerPageInput,
     commitRowsPerPage,
     setPage,
-    sort,
-    toggleSort,
     inlineFilters,
     updateInlineFilter,
     clearFilters,
@@ -819,7 +1094,7 @@ export default function useExpenseListController({
     menuRowId,
     menuPosition,
     toggleRowMenu,
-    activeMenuExpense,
+    activeMenuExpense: getRow(menuRowId),
     generateReceiptAndClose,
     openExpenseDialog,
     duplicateExpense,
@@ -828,18 +1103,23 @@ export default function useExpenseListController({
     isAdvancedOpen,
     setIsAdvancedOpen,
     advancedFilters,
-    setAdvancedFilters,
-    openAdvancedFilters,
+    updateAdvancedFilters,
+    openAdvancedFilters: () => setIsAdvancedOpen(true),
     dialog,
-    activeExpense,
+    activeExpense: getRow(dialog?.expenseId),
     setDialog,
     handleEditSubmit,
-    handleAttachmentAdd,
-    handleAttachmentRemove,
-    submitMove,
-    submitRecurring,
-    submitInstallments,
+    handleAttachmentAdd: outOfScope,
+    handleAttachmentRemove: outOfScope,
+    submitMove: outOfScope,
+    submitRecurring: outOfScope,
+    submitInstallments: outOfScope,
     confirmDelete,
     changeMonth,
+    loading,
+    error,
+    reload: load,
+    sort,
+    toggleSort,
   };
 }
