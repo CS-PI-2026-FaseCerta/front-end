@@ -1,4 +1,3 @@
-
 import React from "react";
 import "./FinanceTable.css";
 
@@ -16,10 +15,10 @@ export default function FinanceTable({
   mobileMinWidth = "920px",
 }) {
   return (
-    <div className={`finance-table-shell ${className}`.trim()}>
+    <div className={`finance - table - shell ${ className } `.trim()}>
       <div className="finance-table-scroll">
         <table
-          className={`finance-table ${tableClassName}`.trim()}
+          className={`finance - table ${ tableClassName } `.trim()}
           aria-label={ariaLabel}
           style={{ "--finance-table-mobile-min-width": mobileMinWidth }}
         >
@@ -35,9 +34,7 @@ export default function FinanceTable({
                   <th
                     key={column.key ?? column.label}
                     scope="col"
-                    style={
-                      column.width ? { width: column.width } : undefined
-                    }
+                    style={column.width ? { width: column.width } : undefined}
                     aria-label={column.ariaLabel}
                     aria-sort={
                       isSortable
@@ -70,6 +67,7 @@ export default function FinanceTable({
                 );
               })}
             </tr>
+
             {filterRow}
           </thead>
 
