@@ -122,8 +122,6 @@ const Dashboard = () => {
     setIsSidebarOpen(true);
   };
 
-  const perfilLabel = PERFIL_LABELS[perfilAtual] || "Perfil não mapeado";
-
   if (!currentUser) {
     return <Navigate to="/login" replace />;
   }
