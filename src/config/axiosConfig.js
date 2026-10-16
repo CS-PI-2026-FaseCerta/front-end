@@ -2,7 +2,7 @@ import axios from "axios";
 import { clearSession, getAuthToken } from "../auth/session";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || process.env.REACT_APP_API_URL || "http://localhost:8080",
+  baseURL: process.env.REACT_APP_API_BASE_URL || process.env.REACT_APP_API_URL || "https://fasecerta-backend-latest.onrender.com",
   timeout: 10000,
   headers: { "Content-Type": "application/json" },
 });
