@@ -30,7 +30,6 @@ export const OrdensServicoNovo = "/os/novo";
 
 export const FinanceiroDespesasNova = "/financeiro/despesas/nova";
 export const Calendario = "/calendario";
-export const Suporte = "/suporte";
 
 export const PaymentMethods = "/os/:id/metodo-pagamento";
 export const PaymentTerms = "/os/:id/termos-pagamento";

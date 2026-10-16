@@ -1,18 +1,25 @@
+
 import React from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
+
 import FinancePage from "../../components/page/FinancePage.jsx";
 import FinanceTableFooter from "../../components/table/FinanceTableFooter.jsx";
+
 import ExpenseActionMenu from "./components/ExpenseActionMenu.jsx";
 import ExpenseAdvancedFilters from "./components/ExpenseAdvancedFilters.jsx";
 import ExpenseCalculator from "./components/ExpenseCalculator.jsx";
 import ExpenseTable from "./components/ExpenseTable.jsx";
 import ExpenseToolbar from "./components/ExpenseToolbar.jsx";
+
 import useExpenseListController from "./hooks/useExpenseListController.js";
 import ExpenseDialogs from "./modals/ExpenseDialogs.jsx";
+
 import LoadingOverlay from "../../../global/components/loading/LoadingOverlay.jsx";
 import EmptyState from "../../../global/components/lists/EmptyState.jsx";
+
 import { canDeleteExpense } from "../../services/despesasService.js";
 import { formatMonth } from "./utils/expenseList.utils.js";
+
 import "./ExpenseList.css";
 
 const ExpenseList = (props) => {
@@ -21,31 +28,42 @@ const ExpenseList = (props) => {
 
   return (
     <>
-      {state.loading ? <LoadingOverlay label="Carregando despesas" description="Aguarde a resposta da API." /> : null}
+      {state.loading && (
+        <LoadingOverlay
+          label="Carregando despesas"
+          description="Aguarde a resposta da API."
+        />
+      )}
+
       <FinancePage
         title="FINANCEIRO"
         eyebrow="Financeiro"
         ariaLabel="Financeiro - Despesas"
         className="expense-list-page"
         panelClassName="expense-list"
-        footer={state.error ? null : (
-          <FinanceTableFooter
-            visibleCount={state.visibleRows.length}
-            totalCount={state.filteredRows.length}
-            itemLabel="despesas"
-            rowsPerPageInput={state.rowsPerPageInput}
-            onRowsPerPageInputChange={state.setRowsPerPageInput}
-            onCommitRowsPerPage={state.commitRowsPerPage}
-            page={state.page}
-            totalPages={state.totalPages}
-            onPageChange={state.setPage}
-          />
-        )}
+        footer={
+          state.error ? null : (
+            <FinanceTableFooter
+              visibleCount={state.visibleRows.length}
+              totalCount={state.filteredRows.length}
+              itemLabel="despesas"
+              rowsPerPageInput={state.rowsPerPageInput}
+              onRowsPerPageInputChange={state.setRowsPerPageInput}
+              onCommitRowsPerPage={state.commitRowsPerPage}
+              page={state.page}
+              totalPages={state.totalPages}
+              onPageChange={state.setPage}
+            />
+          )
+        }
       >
         {state.error ? (
           <EmptyState
             icon={FaExclamationTriangle}
-            title={state.error.title ?? "Não foi possível carregar as despesas"}
+            title={
+              state.error.title ??
+              "Não foi possível carregar as despesas"
+            }
             description={
               state.error.message ??
               "Tente novamente em instantes ou revise a integração com a API."
@@ -74,6 +92,9 @@ const ExpenseList = (props) => {
               menuRowId={state.menuRowId}
               onToggleRowMenu={state.toggleRowMenu}
               onTogglePaid={state.togglePaid}
+              onOpenCalculator={state.openCalculator}
+              sort={state.sort}
+              onSort={state.toggleSort}
             />
           </>
         )}
@@ -91,22 +112,39 @@ const ExpenseList = (props) => {
         expense={state.activeMenuExpense}
         position={state.menuPosition}
         onGenerateReceipt={state.generateReceiptAndClose}
-        onEdit={(expense) => state.openExpenseDialog("edit", expense)}
-        onDetails={(expense) => state.openExpenseDialog("details", expense)}
-        onAttachments={(expense) => state.openExpenseDialog("attachments", expense)}
+        onEdit={(expense) =>
+          state.openExpenseDialog("edit", expense)
+        }
+        onDetails={(expense) =>
+          state.openExpenseDialog("details", expense)
+        }
+        onAttachments={(expense) =>
+          state.openExpenseDialog("attachments", expense)
+        }
         onDuplicate={state.duplicateExpense}
-        onMove={(expense) => state.openExpenseDialog("move", expense)}
-        onRecurring={(expense) => state.openExpenseDialog("recurring", expense)}
-        onInstallments={(expense) => state.openExpenseDialog("installments", expense)}
-        onDelete={(expense) => state.openExpenseDialog("delete", expense)}
+        onMove={(expense) =>
+          state.openExpenseDialog("move", expense)
+        }
+        onRecurring={(expense) =>
+          state.openExpenseDialog("recurring", expense)
+        }
+        onInstallments={(expense) =>
+          state.openExpenseDialog("installments", expense)
+        }
+        onDelete={(expense) =>
+          state.openExpenseDialog("delete", expense)
+        }
         canDelete={canDelete}
       />
 
-      {state.notice ? (
-        <div className="expense-list__toast finance-surface-theme" role="status">
+      {state.notice && (
+        <div
+          className="expense-list__toast finance-surface-theme"
+          role="status"
+        >
           {state.notice}
         </div>
-      ) : null}
+      )}
 
       <ExpenseAdvancedFilters
         isOpen={state.isAdvancedOpen}

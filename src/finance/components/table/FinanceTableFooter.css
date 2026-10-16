@@ -107,6 +107,33 @@
   color: var(--finance-muted);
 }
 
+/* Setas de ordenação: maior contraste no tema claro */
+.finance-table__sort-button span {
+  color: #374151;
+  font-size: 0.9rem;
+  font-weight: 800;
+  opacity: 1;
+  transition: color 0.2s ease;
+}
+
+.finance-table__sort-button span.is-sorted {
+  color: #1d4ed8;
+  opacity: 1;
+}
+
+.finance-table__sort-button:hover span {
+  color: #1e40af;
+}
+
+/* Mantém o contraste no tema escuro */
+[data-theme="dark"] .finance-table__sort-button span {
+  color: #d1d5db;
+}
+
+[data-theme="dark"] .finance-table__sort-button span.is-sorted {
+  color: #60a5fa;
+}
+
 @media (max-width: 720px) {
   .finance-table-footer {
     align-items: flex-start;
