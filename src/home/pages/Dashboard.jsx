@@ -7,7 +7,7 @@ import ModuleCard from "../components/cards/ModuleCard";
 import QuickActionsCarousel from "../components/actions/QuickActionsCarousel";
 import QuickActionsModal from "../components/actions/QuickActionsModal";
 
-import { getCurrentUser } from "../../auth/session";
+import { PERFIL_LABELS, getCurrentUser } from "../../auth/session";
 import { getVisibleModulesByProfile } from "../data/modules";
 import {
   getQuickActionsByProfile,
@@ -15,7 +15,7 @@ import {
   loadQuickActionSelection,
   saveQuickActionSelection,
   sanitizeQuickActionIdsByProfile,
-} from "../utils/quickActions.js";
+} from "../utils/quickActions";
 
 import "./Dashboard.css";
 
@@ -121,6 +121,8 @@ const Dashboard = () => {
   const handleSeeMoreQuickActions = () => {
     setIsSidebarOpen(true);
   };
+
+  const perfilLabel = PERFIL_LABELS[perfilAtual] || "Perfil não mapeado";
 
   if (!currentUser) {
     return <Navigate to="/login" replace />;

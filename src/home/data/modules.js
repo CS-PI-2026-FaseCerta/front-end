@@ -1,11 +1,4 @@
-import {
-  FaBoxOpen,
-  FaClipboardList,
-  FaUsers,
-  FaWallet,
-  FaWrench,
-  FaFileAlt,
-} from "react-icons/fa";
+import { FaBoxOpen, FaClipboardList, FaUsers, FaWallet, FaWrench, FaFileAlt } from "react-icons/fa";
 
 export const MODULES = [
   {
@@ -14,7 +7,7 @@ export const MODULES = [
     description: "Gerenciamento de clientes e histórico.",
     path: "/clientes",
     icon: <FaUsers />,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 1,
       tecnico: 1,
@@ -26,7 +19,7 @@ export const MODULES = [
     description: "Acompanhe solicitações e andamento das atividades em campo.",
     path: "/ordens-servico",
     icon: <FaClipboardList />,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 2,
       tecnico: 2,
@@ -38,7 +31,7 @@ export const MODULES = [
     description: "Catálogo de serviços oferecidos e tabelas de preço.",
     path: "/servicos",
     icon: <FaWrench />,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 3,
       tecnico: 3,
@@ -47,10 +40,11 @@ export const MODULES = [
   {
     id: "produtos-estoque",
     title: "Estoque",
-    description: "Gerencie e centralize produtos, materiais, custos de compra e venda, além de quantidade em estoque com visão integrada.",
+    description:
+      "Gerencie e centralize produtos, materiais, custos de compra e venda, além de quantidade em estoque com visão integrada.",
     path: "/produtos-estoque",
     icon: <FaBoxOpen />,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 3,
       tecnico: 3,
@@ -62,7 +56,7 @@ export const MODULES = [
     description: "Acompanhamento de pedidos comerciais.",
     path: "/pedidos",
     icon: <FaFileAlt />,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 4,
       tecnico: 4,
@@ -74,7 +68,7 @@ export const MODULES = [
     description: "Concentre recebimentos, cobranças e indicadores financeiros da operação.",
     path: "/financeiro",
     icon: <FaWallet />,
-    allowedProfiles: ["gestor"],
+    allowedProfiles: ["admin", "gestor"],
     order: {
       gestor: 6,
     },
@@ -84,20 +78,20 @@ export const MODULES = [
     title: "Aplicar Descontos (Provisório!)",
     description: "Aplicar descontos em pedidos.",
     icon: <FaBoxOpen />,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 7,
       tecnico: 5,
     },
-  },
+  }
 ];
 
 export const getVisibleModulesByProfile = (profile) =>
   MODULES.filter((moduleItem) =>
-    moduleItem.allowedProfiles.includes(profile === "admin" ? "gestor" : profile),
+    moduleItem.allowedProfiles.includes(profile),
   ).sort((a, b) => {
-    const orderA = a.order[profile === "admin" ? "gestor" : profile] ?? 99;
-    const orderB = b.order[profile === "admin" ? "gestor" : profile] ?? 99;
+    const orderA = a.order[profile] ?? 99;
+    const orderB = b.order[profile] ?? 99;
 
     return orderA - orderB;
   });

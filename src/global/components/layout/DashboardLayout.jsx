@@ -14,7 +14,7 @@ export const DashboardContext = createContext({
 const DashboardLayout = ({ children, hideFooter = false }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const currentUser = getCurrentUser();
-  const perfilAtual = currentUser?.perfil;
+  const perfilAtual = currentUser?.perfil || "gestor";
 
   const handleToggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const handleCloseSidebar = () => setIsSidebarOpen(false);

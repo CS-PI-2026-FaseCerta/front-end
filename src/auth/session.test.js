@@ -1,49 +1,67 @@
-import { clearSession, decodeToken, getAuthToken, getCurrentUser, getRememberMe, saveRememberMe, saveSession } from "./session";
+import {
+  clearSession,
+  getCurrentUser,
+  getRememberMe,
+  getToken,
+  saveRememberMe,
+  saveSession,
+} from "./session";
 
-const jwt = (claims) => {
-  const b64 = (obj) => btoa(JSON.stringify(obj)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-  return `${b64({ alg: "HS256", typ: "JWT" })}.${b64(claims)}.signature`;
-};
-const claims = (role = "GESTOR", diff = 3600) => ({
-  sub: "5e0d9c1f-94c8-4db6-98d3-962f9a26f488",
-  role,
-  iat: Math.floor(Date.now() / 1000) - 10,
-  exp: Math.floor(Date.now() / 1000) + diff,
+const tokenFor = (role = "GESTOR", exp = Math.floor(Date.now() / 1000) + 3600) =>
+  `${btoa(JSON.stringify({ alg: "HS256" }))}.${btoa(JSON.stringify({
+    sub: "123e4567-e89b-12d3-a456-426614174000",
+    role,
+    exp,
+  }))}.signature`;
+
+beforeEach(() => {
+  localStorage.clear();
+  sessionStorage.clear();
 });
 
-beforeEach(() => { window.localStorage.clear(); window.sessionStorage.clear(); });
+test("lê o perfil real do JWT após login", () => {
+  const token = tokenFor("ADMIN");
+  saveSession({ token, email: "admin@exemplo.com", rememberMe: false });
 
-test("login do backend: guarda JWT na aba sem lembrar e extrai perfil", () => {
-  const token = jwt(claims());
-  saveSession(token, "GESTOR@EXEMPLO.COM", false);
-  expect(window.sessionStorage.getItem("fasecerta.jwt")).toBe(token);
-  expect(window.localStorage.getItem("fasecerta.jwt")).toBeNull();
-  expect(getCurrentUser()).toMatchObject({ email: "gestor@exemplo.com", perfil: "gestor" });
+  expect(getCurrentUser()).toMatchObject({
+    email: "admin@exemplo.com",
+    perfil: "admin",
+  });
+  expect(getToken()).toBe(token);
+  expect(localStorage.getItem("fasecerta_session")).toBeNull();
+  expect(sessionStorage.getItem("fasecerta_session")).not.toBeNull();
 });
 
-test("lembrar mantém token entre abas; sair revoga sessão local", () => {
-  const token = jwt(claims("ADMIN"));
-  saveSession(token, "admin@exemplo.com", true);
-  expect(window.localStorage.getItem("fasecerta.jwt")).toBe(token);
-  clearSession();
-  expect(getAuthToken()).toBeNull();
-});
-
-test("token vencido ou sem role reconhecida não autentica", () => {
-  expect(decodeToken(jwt(claims("GESTOR", -1)))).toBeNull();
-  expect(decodeToken(jwt(claims("SUPORTE")))).toBeNull();
-  expect(() => saveSession(jwt(claims("SUPORTE")), "test@exemplo.com")).toThrow();
-});
-
-test("sessão mock antiga não dá acesso", () => {
-  window.localStorage.setItem("user", JSON.stringify({ id: 1, nome: "admin", perfil: "admin" }));
+test("não autentica token vencido", () => {
+  expect(() => saveSession({
+    token: tokenFor("GESTOR", Math.floor(Date.now() / 1000) - 1),
+    email: "gestor@exemplo.com",
+  })).toThrow("inválido ou expirado");
   expect(getCurrentUser()).toBeNull();
 });
 
-test("lembrar grava somente o email e descarta senha legada", () => {
-  window.localStorage.setItem("rememberMe", JSON.stringify({ password: "segredo" }));
-  saveRememberMe({ rememberMe: true, emailOrUsername: "teste@exemplo.com", password: "segredo" });
-  expect(getRememberMe()).toMatchObject({ emailOrUsername: "teste@exemplo.com" });
-  expect(window.localStorage.getItem("rememberMe")).toBeNull();
-  expect(window.localStorage.getItem("fasecerta.rememberedEmail")).not.toContain("segredo");
+test("não reaproveita usuário simulado antigo", () => {
+  localStorage.setItem("user", JSON.stringify({
+    id: 1, nome: "admin", email: "admin@fasecerta.com", perfil: "gestor",
+  }));
+  expect(getCurrentUser()).toBeNull();
+});
+
+test("o lembre de mim não persiste senhas e limpa valor legado", () => {
+  localStorage.setItem("rememberMe", JSON.stringify({
+    emailOrUsername: "usuario@exemplo.com", password: "senhaSecreta",
+  }));
+  expect(getRememberMe()).toEqual({ emailOrUsername: "usuario@exemplo.com" });
+  expect(localStorage.getItem("rememberMe")).toBeNull();
+  expect(localStorage.getItem("fasecerta_remember_email")).toBe("usuario@exemplo.com");
+  saveRememberMe({ rememberMe: false, emailOrUsername: "usuario@exemplo.com" });
+  expect(getRememberMe()).toBeNull();
+});
+
+test("logout remove token da sessão", () => {
+  saveSession({ token: tokenFor(), email: "gestor@exemplo.com", rememberMe: true });
+  expect(getCurrentUser()).not.toBeNull();
+  clearSession();
+  expect(getCurrentUser()).toBeNull();
+  expect(getToken()).toBeNull();
 });

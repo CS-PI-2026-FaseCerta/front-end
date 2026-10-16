@@ -1,21 +1,37 @@
-import api from "../config/axiosConfig";
-import { saveSession } from "./session";
+// Em desenvolvimento, /api é encaminhado ao backend pelo proxy do React.
+// Para deploy em origens diferentes, configure REACT_APP_API_URL no build.
+const API_BASE_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "");
 
-export async function loginWithEmail(email, password, rememberMe = false) {
-  const normalizedEmail = email.trim().toLowerCase();
-  const { data } = await api.post("/api/auth/login", { email: normalizedEmail, password });
-  if (!data || typeof data.token !== "string") {
-    throw new Error("Resposta de autenticação inválida.");
+export const loginWithApi = async (email, password) => {
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim(), password }),
+    });
+  } catch {
+    throw new Error("Não foi possível conectar ao servidor. Verifique sua conexão e a API.");
   }
-  return saveSession(data.token, normalizedEmail, rememberMe);
-}
 
-export async function registerUser({ username, email, password, perfil }) {
-  const { data } = await api.post("/api/usuarios", {
-    username: username.trim(),
-    email: email.trim().toLowerCase(),
-    password,
-    perfil: perfil.toUpperCase(),
-  });
-  return data;
-}
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("E-mail ou senha incorretos.");
+    }
+    if (response.status === 429) {
+      throw new Error("Muitas tentativas de login. Aguarde um pouco e tente novamente.");
+    }
+    if (response.status >= 500) {
+      throw new Error("O servidor não conseguiu concluir o login. Tente novamente mais tarde.");
+    }
+    throw new Error(data?.message || "Não foi possível realizar o login.");
+  }
+
+  if (!data || typeof data.token !== "string" || !data.token.trim()) {
+    throw new Error("O servidor respondeu sem um token de autenticação válido.");
+  }
+
+  return data.token;
+};

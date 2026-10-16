@@ -1,113 +1,128 @@
-// Sessão JWT emitida pelo backend. Claims são usadas apenas para UX; a API
-// valida assinatura, expiração e autorização em todas as requisições.
-const TOKEN_KEY = "fasecerta.jwt";
-const USER_KEY = "fasecerta.user";
-const REMEMBER_KEY = "fasecerta.rememberedEmail";
-const LEGACY_TOKEN_KEYS = ["token", "accessToken", "access_token", "jwt"];
-const PROFILE_SET = new Set(["ADMIN", "GESTOR", "TECNICO"]);
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
+// Sessão baseada no JWT emitido pelo backend. O token contém sub, role e exp.
+// A leitura do payload aqui serve apenas à interface; a autorização real é do backend.
 export const PERFIL_LABELS = {
   admin: "Administrador",
   gestor: "Administrativo / Gestor",
   tecnico: "Técnico em Campo",
 };
 
-export const SESSION_CHANGE_EVENT = "fasecerta:auth-change";
+const SESSION_KEY = "fasecerta_session";
+const REMEMBER_EMAIL_KEY = "fasecerta_remember_email";
+const LEGACY_REMEMBER_KEY = "rememberMe";
+const LEGACY_USER_KEY = "user";
 
-const announceAuthChange = () => {
-  if (typeof window !== "undefined") window.dispatchEvent(new Event(SESSION_CHANGE_EVENT));
-};
+const getStorages = () =>
+  typeof window === "undefined"
+    ? []
+    : [window.sessionStorage, window.localStorage];
 
-const storages = () =>
-  typeof window === "undefined" ? [] : [window.sessionStorage, window.localStorage];
+const parseClaims = (token) => {
+  if (typeof token !== "string" || token.split(".").length !== 3) return null;
 
-export function decodeToken(token) {
-  if (typeof token !== "string" || !/^[\w-]+\.[\w-]+\.[\w-]+$/.test(token)) return null;
   try {
-    const encoded = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    const payload = JSON.parse(atob(encoded.padEnd(Math.ceil(encoded.length / 4) * 4, "=")));
-    const now = Math.floor(Date.now() / 1000);
-    if (!payload || !UUID_RE.test(payload.sub) || !PROFILE_SET.has(payload.role) ||
-        !Number.isFinite(payload.exp) || payload.exp <= now ||
-        !Number.isFinite(payload.iat) || payload.iat > now + 60 || payload.exp <= payload.iat) {
+    const payload = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    const claims = JSON.parse(window.atob(payload));
+    const perfil = typeof claims.role === "string" ? claims.role.toLowerCase() : "";
+
+    if (
+      typeof claims.sub !== "string" ||
+      !claims.sub ||
+      !Object.prototype.hasOwnProperty.call(PERFIL_LABELS, perfil) ||
+      typeof claims.exp !== "number" ||
+      claims.exp * 1000 <= Date.now()
+    ) {
       return null;
     }
-    return { id: payload.sub, role: payload.role, exp: payload.exp };
+
+    return { id: claims.sub, perfil };
   } catch {
     return null;
   }
-}
+};
 
-export function clearSession(announce = true) {
-  for (const storage of storages()) {
-    storage.removeItem(TOKEN_KEY);
-    storage.removeItem(USER_KEY);
-    storage.removeItem("user"); // sessão mock anterior não é confiável
-    storage.removeItem("mockAuthUsers");
-    storage.removeItem("rememberMe"); // versões antigas guardavam senhas em texto puro
-    LEGACY_TOKEN_KEYS.forEach((key) => storage.removeItem(key));
-  }
-  if (announce) announceAuthChange();
-}
+const readSession = () => {
+  for (const storage of getStorages()) {
+    const raw = storage.getItem(SESSION_KEY);
+    if (!raw) continue;
 
-export function getAuthToken() {
-  for (const storage of storages()) {
-    const token = storage.getItem(TOKEN_KEY);
-    if (token) {
-      if (decodeToken(token)) return token;
-      clearSession(false);
-      return null;
+    try {
+      const session = JSON.parse(raw);
+      const claims = parseClaims(session?.token);
+      if (claims) return { ...claims, token: session.token, email: session.email || "" };
+    } catch {
+      // Dados locais antigos ou inválidos não devem autenticar o usuário.
     }
+    storage.removeItem(SESSION_KEY);
   }
   return null;
-}
+};
 
-export function saveSession(token, email, rememberMe = false) {
-  const claims = decodeToken(token);
-  if (!claims) throw new Error("O servidor retornou um token de acesso inválido.");
-  clearSession(false);
-  const storage = rememberMe ? window.localStorage : window.sessionStorage;
-  storage.setItem(TOKEN_KEY, token);
-  storage.setItem(USER_KEY, JSON.stringify({ email: String(email).trim().toLowerCase() }));
-  announceAuthChange();
-  return getCurrentUser();
-}
+export const getCurrentUser = () => {
+  const session = readSession();
+  if (!session) return null;
 
-export function getCurrentUser() {
-  const token = getAuthToken();
-  if (!token) return null;
-  const claims = decodeToken(token);
-  const storage = storages().find((item) => item.getItem(TOKEN_KEY) === token);
-  let email = "";
-  try {
-    email = JSON.parse(storage?.getItem(USER_KEY) || "null")?.email || "";
-  } catch { /* dados de exibição opcionais */ }
-  const perfil = claims.role.toLowerCase();
   return {
-    id: claims.id,
-    nome: email ? email.split("@")[0] : "Usuário",
-    email,
-    perfil,
-    profileLabel: PERFIL_LABELS[perfil],
-    hasAccess: (profiles) => profiles.some((profile) => profile.toLowerCase() === perfil),
+    id: session.id,
+    email: session.email,
+    nome: session.email.split("@")[0] || "Usuário",
+    perfil: session.perfil,
   };
-}
+};
 
-export function saveRememberMe({ rememberMe, emailOrUsername }) {
-  if (typeof window === "undefined") return;
-  window.localStorage.removeItem("rememberMe"); // removemos dados legados que incluíam senha
-  if (rememberMe) {
-    window.localStorage.setItem(REMEMBER_KEY, String(emailOrUsername).trim().toLowerCase());
-  } else {
-    window.localStorage.removeItem(REMEMBER_KEY);
+export const getToken = () => readSession()?.token || null;
+
+export const saveSession = ({ token, email, rememberMe = false }) => {
+  if (!parseClaims(token)) {
+    throw new Error("O servidor retornou um token de autenticação inválido ou expirado.");
   }
-}
 
-export function getRememberMe() {
+  const storages = getStorages();
+  if (!storages.length) throw new Error("Não foi possível armazenar a sessão.");
+
+  storages.forEach((storage) => storage.removeItem(SESSION_KEY));
+  const targetStorage = rememberMe ? window.localStorage : window.sessionStorage;
+  targetStorage.setItem(SESSION_KEY, JSON.stringify({ token, email }));
+  // Não permitir que sessões simuladas anteriores mantenham acesso à interface.
+  window.localStorage.removeItem(LEGACY_USER_KEY);
+};
+
+export const clearSession = () => {
+  getStorages().forEach((storage) => storage.removeItem(SESSION_KEY));
+  if (typeof window !== "undefined") {
+    window.localStorage.removeItem(LEGACY_USER_KEY);
+  }
+};
+
+export const saveRememberMe = ({ rememberMe, emailOrUsername }) => {
+  if (typeof window === "undefined") return;
+
+  // Versões anteriores gravavam a senha em texto puro neste item.
+  window.localStorage.removeItem(LEGACY_REMEMBER_KEY);
+  if (rememberMe) {
+    window.localStorage.setItem(REMEMBER_EMAIL_KEY, emailOrUsername.trim());
+  } else {
+    window.localStorage.removeItem(REMEMBER_EMAIL_KEY);
+  }
+};
+
+export const getRememberMe = () => {
   if (typeof window === "undefined") return null;
-  // Nunca manter senhas de versões antigas nem em localStorage nem em estado de formulário.
-  window.localStorage.removeItem("rememberMe");
-  const emailOrUsername = window.localStorage.getItem(REMEMBER_KEY);
-  return emailOrUsername ? { emailOrUsername, rememberMe: true } : null;
-}
+
+  const oldValue = window.localStorage.getItem(LEGACY_REMEMBER_KEY);
+  // Elimina imediatamente eventual senha antiga em texto puro.
+  window.localStorage.removeItem(LEGACY_REMEMBER_KEY);
+
+  let rememberedEmail = window.localStorage.getItem(REMEMBER_EMAIL_KEY);
+  if (!rememberedEmail && oldValue) {
+    try {
+      rememberedEmail = JSON.parse(oldValue)?.emailOrUsername || "";
+      if (rememberedEmail) {
+        window.localStorage.setItem(REMEMBER_EMAIL_KEY, rememberedEmail);
+      }
+    } catch {
+      // Ignora dados inválidos da sessão simulada antiga.
+    }
+  }
+
+  return rememberedEmail ? { emailOrUsername: rememberedEmail } : null;
+};
