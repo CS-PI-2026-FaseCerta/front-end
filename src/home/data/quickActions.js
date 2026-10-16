@@ -17,7 +17,7 @@ export const QUICK_ACTIONS = [
     nome: "Criar OS",
     rota: "/os/novo",
     icon: FaClipboardList,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 1,
       tecnico: 1,
@@ -28,7 +28,7 @@ export const QUICK_ACTIONS = [
     nome: "Inserir Serviço",
     rota: "/inserirServico",
     icon: PiToolboxBold,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 1,
       tecnico: 1,
@@ -39,7 +39,7 @@ export const QUICK_ACTIONS = [
     nome: "Cadastrar Cliente",
     rota: "/cadastroCliente",
     icon: FaUserPlus,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 2,
       tecnico: 2,
@@ -50,7 +50,7 @@ export const QUICK_ACTIONS = [
     nome: "Cadastrar Despesa",
     rota: "/financeiro/despesas/nova",
     icon: FaMoneyBillWave,
-    allowedProfiles: ["gestor"],
+    allowedProfiles: ["admin", "gestor"],
     order: {
       gestor: 3,
     },
@@ -60,7 +60,7 @@ export const QUICK_ACTIONS = [
     nome: "Novo Serviço",
     rota: "/cadastroServico",
     icon: FaTools,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 5,
       tecnico: 4,
@@ -71,7 +71,7 @@ export const QUICK_ACTIONS = [
     nome: "Cadastrar Cidade",
     rota: "/cadastroCidade",
     icon: FaCity,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 6,
       tecnico: 5,
@@ -82,7 +82,7 @@ export const QUICK_ACTIONS = [
     nome: "Cadastrar Produto",
     rota: "/cadastroProduto",
     icon: FaBoxOpen,
-    allowedProfiles: ["gestor", "tecnico"],
+    allowedProfiles: ["admin", "gestor", "tecnico"],
     order: {
       gestor: 7,
       tecnico: 6,

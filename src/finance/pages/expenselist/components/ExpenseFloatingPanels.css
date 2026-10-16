@@ -1,14 +1,30 @@
 .expense-calculator {
   position: fixed;
-  z-index: 1350;
-  width: 20rem;
+  z-index: 9999;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  width: min(320px, calc(100vw - 24px));
   max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
+  max-height: calc(100dvh - 24px);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 0.75rem;
   border: 1px solid var(--finance-border);
   border-radius: 18px;
   background: var(--finance-surface-solid);
   color: var(--finance-text);
   box-shadow: var(--finance-shadow-elevated);
+}
+
+.expense-calculator *,
+.expense-calculator *::before,
+.expense-calculator *::after {
+  box-sizing: border-box;
 }
 
 .expense-calculator__header {
@@ -19,9 +35,10 @@
   padding: 0.15rem 0.15rem 0.7rem;
 }
 
-.expense-calculator__header > div {
+.expense-calculator__header>div {
   display: grid;
   gap: 0.1rem;
+  min-width: 0;
 }
 
 .expense-calculator__header span {
@@ -34,10 +51,12 @@
 
 .expense-calculator__header strong {
   font-size: 0.96rem;
+  overflow-wrap: anywhere;
 }
 
-.expense-calculator__header > button {
+.expense-calculator__header>button {
   display: grid;
+  flex: 0 0 auto;
   width: 2.25rem;
   height: 2.25rem;
   place-items: center;
@@ -48,14 +67,15 @@
   cursor: pointer;
 }
 
-.expense-calculator__header > button:hover,
-.expense-calculator__header > button:focus-visible {
+.expense-calculator__header>button:hover,
+.expense-calculator__header>button:focus-visible {
   background: var(--finance-hover);
   color: var(--finance-primary);
 }
 
 .expense-calculator__display {
   display: grid;
+  min-width: 0;
   gap: 0.28rem;
   margin-bottom: 0.7rem;
   padding: 0.65rem 0.75rem;
@@ -74,7 +94,9 @@
 }
 
 .expense-calculator__display input {
+  min-width: 0;
   width: 100%;
+  padding: 0;
   border: 0;
   outline: 0;
   background: transparent;
@@ -90,6 +112,7 @@
   color: var(--finance-muted);
   font-size: 0.68rem;
   text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .expense-calculator__display.has-error span {
@@ -104,6 +127,7 @@
 
 .expense-calculator__key {
   display: grid;
+  min-width: 0;
   min-height: 3rem;
   place-items: center;
   border: 1px solid var(--finance-border);
@@ -114,7 +138,10 @@
   font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
-  transition: transform 120ms ease, background-color 120ms ease, color 120ms ease;
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease,
+    color 120ms ease;
 }
 
 .expense-calculator__key:hover,
@@ -152,12 +179,14 @@
   width: 100%;
   min-height: 2.75rem;
   margin-top: 0.7rem;
+  padding: 0.5rem;
   border: 0;
   border-radius: 11px;
   background: var(--finance-primary);
   color: var(--finance-on-strong);
   font: inherit;
   font-weight: 800;
+  text-align: center;
   cursor: pointer;
 }
 
@@ -169,8 +198,11 @@
 .expense-action-menu {
   position: fixed;
   z-index: 1200;
-  width: 17.25rem;
+  box-sizing: border-box;
+  width: min(17.25rem, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
   max-height: calc(100dvh - 24px);
+  overflow-x: hidden;
   overflow-y: auto;
   margin: 0;
   padding: 0.45rem;
@@ -238,8 +270,20 @@
   background: var(--finance-border);
 }
 
-@media (max-width: 420px) {
+@media (max-width: 480px) {
   .expense-calculator {
-    width: calc(100vw - 16px);
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    padding: 0.65rem;
+  }
+
+  .expense-calculator__grid {
+    gap: 0.4rem;
+  }
+
+  .expense-calculator__key {
+    min-height: 2.75rem;
   }
 }

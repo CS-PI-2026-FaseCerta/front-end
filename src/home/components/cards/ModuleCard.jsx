@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaArrowRight } from "react-icons/fa";
 import "./ModuleCard.css";
 
 const ModuleCard = ({

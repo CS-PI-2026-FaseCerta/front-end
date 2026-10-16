@@ -7,6 +7,8 @@ import {
   Routes,
   useNavigate,
 } from "react-router-dom";
+import ProtectedRoute from "./home/components/protectedRoute.jsx";
+import AuthSessionMonitor from "./auth/AuthSessionMonitor.jsx";
 
 import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
@@ -14,12 +16,15 @@ import Dashboard from "./home/pages/Dashboard.jsx";
 import Login from "./auth/pages/login/Login.jsx";
 import ChangePassword from "./auth/pages/changepassword/ChangePassword.jsx";
 import RecoverPassword from "./auth/pages/recoverpassword/RecoverPassword.jsx";
+import PaymentMethods from "./auth/pages/paymentMethods/PaymentMethods.jsx";
+import PaymentTerms from "./auth/pages/paymentTerms/PaymentTerms.jsx";
+import OrderSummaryPage from "./home/pages/orders/OrderSummaryPage.jsx";
 
 import RegisterCity from "./form/pages/registercity/RegisterCity.jsx";
 import ServiceInsert from "./form/pages/ServiceInsert/ServiceInsert.jsx";
 
 import SectionPage from "./home/pages/SectionPage.jsx";
-import ProtectedRoute from "./home/components/ProtectedRoute.jsx";
+
 
 import UserRegistration from "./auth/pages/UserRegistration/UserRegistration.jsx";
 import LoadingOverlay from "./global/components/loading/LoadingOverlay.jsx";
@@ -29,6 +34,7 @@ import RegisterCustomer from "./form/pages/registercustomer/RegisterCustomer.jsx
 import ProductsListPage from "./home/pages/products/ProductsListPage";
 
 import ExpenseList from "./finance/pages/expenselist/ExpenseList.jsx";
+import NewExpense from "./finance/pages/expenseform/NewExpense.jsx";
 import TransfersList from "./finance/pages/transfersList/TransfersList.jsx";
 import ReceipList from "./finance/pages/receiptlist/ReceipList.jsx";
 
@@ -76,16 +82,17 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
+        <AuthSessionMonitor />
         <Routes>
           {/* Redirect raiz */}
-          <Route path="/" element={<Navigate to={AppRoutes.Login} />} />
+          <Route path="/" element={<Navigate to={AppRoutes.Dashboard} replace />} />
 
           {/* Auth */}
           <Route path={AppRoutes.Login} element={<Login />} />
 
           <Route
             path={AppRoutes.UserRegistration}
-            element={<UserRegistration />}
+            element={<ProtectedRoute allowedProfiles={["admin", "gestor"]}><UserRegistration /></ProtectedRoute>}
           />
 
           <Route
@@ -101,27 +108,29 @@ function App() {
           {/* Forms públicos/independentes */}
           <Route
             path={AppRoutes.RegisterService}
-            element={<RegisterService />}
+            element={<ProtectedRoute><RegisterService /></ProtectedRoute>}
           />
 
           <Route
             path={AppRoutes.RegisterProduct}
-            element={<RegisterProduct />}
+            element={<ProtectedRoute><RegisterProduct /></ProtectedRoute>}
           />
 
           <Route
             path={AppRoutes.ServiceInsert}
-            element={<ServiceInsert />}
+            element={<ProtectedRoute><ServiceInsert /></ProtectedRoute>}
           />
 
           <Route
             path={AppRoutes.RegisterClient}
-            element={<RegisterCustomer />}
+            element={<ProtectedRoute>
+                            <RegisterCustomer />
+                    </ProtectedRoute>}
           />
 
           <Route
             path={AppRoutes.RegisterCity}
-            element={<RegisterCity />}
+            element={<ProtectedRoute><RegisterCity /></ProtectedRoute>}
           />
 
           {/* Loading */}
@@ -131,16 +140,28 @@ function App() {
           />
 
           {/* Dashboard layout (rotas autenticadas) */}
-          <Route element={<DashboardLayout />}>
+          <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
             <Route
               path={AppRoutes.Dashboard}
               element={<Dashboard />}
             />
 
+            <Route
+              path={AppRoutes.PaymentTerms}
+              element={<PaymentTerms />}
+            />
+
+            <Route
+              path={AppRoutes.PaymentMethods}
+              element={<PaymentMethods />}
+            />
+
             {/* Listas principais */}
             <Route
               path={AppRoutes.Clientes}
-              element={<CustomersListPage />}
+              element={ <ProtectedRoute>
+                           <CustomersListPage />
+                       </ProtectedRoute>}
             />
 
             <Route
@@ -156,6 +177,11 @@ function App() {
             <Route
               path={AppRoutes.Pedidos}
               element={<OrdersListPage />}
+            />
+
+            <Route
+              path={AppRoutes.OrderSummary}
+              element={<OrderSummaryPage />}
             />
 
             <Route
@@ -236,7 +262,11 @@ function App() {
 
             <Route
               path={AppRoutes.FinanceiroDespesas}
-              element={<FinanceListRoute type="expenses" />}
+              element={
+                <ProtectedRoute allowedProfiles={["gestor","admin"]}>
+                  <FinanceListRoute type="expenses" />
+                </ProtectedRoute>
+              }
             />
 
             <Route
@@ -247,13 +277,9 @@ function App() {
             <Route
               path={AppRoutes.FinanceiroDespesasNova}
               element={
-                <SectionPage
-                  eyebrow="Despesas"
-                  title="Cadastrar Despesa"
-                  description="Fallback temporário."
-                  ctaLabel="Voltar ao painel"
-                  ctaPath="/dashboard"
-                />
+                <ProtectedRoute allowedProfiles={["gestor","admin"]}>
+                  <NewExpense />
+                </ProtectedRoute>
               }
             />
           </Route>

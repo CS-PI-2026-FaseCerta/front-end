@@ -1,43 +1,86 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "../../../global/components/modal/Modal.jsx";
 import RegisterCustomerForm from "./RegisterCustomerForm.jsx";
 
 import "./RegisterCustomer.css";
 
-export default function RegisterCustomerModal({ isOpen, onClose, onSuccessCallback }) {
-  const [successMessage, setSuccessMessage] = useState("");
+export default function RegisterCustomerModal({
+  isOpen,
+  onClose,
+  onSuccessCallback,
+  initialData,
+  mode = "create",
+  loading = false,
+  errorMessage = "",
+}) {
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSuccess = (data) => {
-    setSuccessMessage(data.tipo === "PF" ? "Cliente (PF) cadastrado com sucesso!" : "Empresa (PJ) cadastrada com sucesso!");
-    // Tempo para mostrar o feedback antes de fechar e notificar a lista
-    setTimeout(() => {
-      setSuccessMessage("");
-      if (onSuccessCallback) {
-        onSuccessCallback(data);
-      }
-      if (onClose) {
-        onClose();
-      }
-    }, 1500);
+  useEffect(() => {
+    if (!isOpen) {
+      setIsSaving(false);
+    }
+  }, [isOpen]);
+
+  const handleSuccess = (data = {}) => {
+    // A requisição já terminou com sucesso neste ponto.
+    setIsSaving(false);
+
+    if (onSuccessCallback) {
+      onSuccessCallback(data);
+    }
+
+    if (onClose) {
+      onClose();
+    }
   };
 
   const handleCancel = () => {
-    setSuccessMessage("");
+    if (isSaving) {
+      return;
+    }
+
     if (onClose) {
       onClose();
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCancel}>
+    <Modal
+      isOpen={isOpen}
+      onClose={isSaving ? undefined : handleCancel}
+    >
       <div className="register-customer-modal-container">
-        <h2>Cadastrar Cliente</h2>
-        {successMessage && (
-          <div className="form-success register-customer-success-margin">
-            {successMessage}
+        <h2>
+          {mode === "edit"
+            ? "Editar Cliente"
+            : "Cadastrar Cliente"}
+        </h2>
+
+        {loading ? (
+          <p>Carregando dados do cliente...</p>
+        ) : errorMessage ? (
+          <div>
+            <div className="form-error-inline">
+              {errorMessage}
+            </div>
+
+            <button
+              type="button"
+              className="form-button form-button-secondary"
+              onClick={handleCancel}
+            >
+              Fechar
+            </button>
           </div>
+        ) : (
+          <RegisterCustomerForm
+            onSuccess={handleSuccess}
+            onCancel={handleCancel}
+            onSavingChange={setIsSaving}
+            initialData={initialData}
+            mode={mode}
+          />
         )}
-        <RegisterCustomerForm onSuccess={handleSuccess} onCancel={handleCancel} />
       </div>
     </Modal>
   );

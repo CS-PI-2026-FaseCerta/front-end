@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getAddressByCep } from "../../../services/addressService";
+import customersService from "../../../services/customers/customersService";
+import { getCustomerErrorMessage } from "../../../services/customers/customerErrors";
 import {
   formatCPF,
   formatCNPJ,
@@ -12,57 +14,161 @@ import {
 } from "../../../utils/maskUtils";
 
 const ESTADOS_BR = [
-  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG",
-  "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO",
+  "AC",
+  "AL",
+  "AP",
+  "AM",
+  "BA",
+  "CE",
+  "DF",
+  "ES",
+  "GO",
+  "MA",
+  "MT",
+  "MS",
+  "MG",
+  "PA",
+  "PB",
+  "PR",
+  "PE",
+  "PI",
+  "RJ",
+  "RN",
+  "RS",
+  "RO",
+  "RR",
+  "SC",
+  "SP",
+  "SE",
+  "TO",
 ];
 
-export default function RegisterCustomerForm({ onSuccess, onCancel }) {
-  const [tipo, setTipo] = useState("PF"); // "PF" ou "PJ"
-  
+const EMPTY_FORM = {
+  nomeOuRazao: "",
+  documento: "",
+  telefone: "",
+  cep: "",
+  endereco: "",
+  numero: "",
+  complemento: "",
+  bairro: "",
+  cidade: "",
+  estado: "",
+  inscricaoEstadual: "",
+  inscricaoMunicipal: "",
+  anotacoes: "",
+};
+
+export default function RegisterCustomerForm({
+  onSuccess,
+  onCancel,
+  onSavingChange,
+  initialData,
+  mode = "create",
+}) {
+  const [tipo, setTipo] = useState(initialData?.tipo || "PF");
+
   const [form, setForm] = useState({
-    nomeOuRazao: "",
-    documento: "", // CPF ou CNPJ
-    telefone: "",
-    cep: "",
-    endereco: "",
-    numero: "",
-    complemento: "",
-    bairro: "",
-    cidade: "",
-    estado: "",
-    inscricaoEstadual: "", // Apenas PJ
-    inscricaoMunicipal: "", // Apenas PJ
-    anotacoes: "",
+    ...EMPTY_FORM,
+    ...initialData,
   });
 
   const [errors, setErrors] = useState({});
   const [loadingCep, setLoadingCep] = useState(false);
   const [cepMessage, setCepMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+    useEffect(() => {
+    onSavingChange?.(isSaving);
+    }, [isSaving, onSavingChange]);
+  const [formError, setFormError] = useState("");
+
+  useEffect(() => {
+    if (initialData) {
+      setTipo(initialData.tipo || "PF");
+
+      setForm({
+        ...EMPTY_FORM,
+        ...initialData,
+      });
+    } else {
+      setTipo("PF");
+      setForm(EMPTY_FORM);
+    }
+
+    setErrors({});
+    setFormError("");
+    setCepMessage("");
+  }, [initialData]);
 
   const handleChange = (field, value) => {
     let newValue = value;
-    
-    // Aplicação de máscaras
+
     if (field === "documento") {
-      newValue = tipo === "PF" ? formatCPF(value) : formatCNPJ(value);
+      newValue =
+        tipo === "PF"
+          ? formatCPF(value)
+          : formatCNPJ(value);
     } else if (field === "telefone") {
       newValue = formatPhone(value);
     } else if (field === "cep") {
       newValue = formatCEP(value);
     }
-    
-    setForm((prev) => ({ ...prev, [field]: newValue }));
-    
-    // Limpa o erro ao digitar
+
+    setForm((prev) => ({
+      ...prev,
+      [field]: newValue,
+    }));
+
+    setFormError("");
+
     if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: null }));
+      setErrors((prev) => ({
+        ...prev,
+        [field]: null,
+      }));
+    }
+  };
+
+  const fetchAddress = async (cep) => {
+    setLoadingCep(true);
+    setCepMessage("Buscando CEP...");
+
+    try {
+      const address = await getAddressByCep(cep);
+
+      setForm((prev) => ({
+        ...prev,
+        endereco: address.logradouro || prev.endereco,
+        bairro: address.bairro || prev.bairro,
+        cidade: address.localidade || prev.cidade,
+        estado: address.uf || prev.estado,
+      }));
+
+      setCepMessage("");
+    } catch (error) {
+      setCepMessage(
+        error.message ||
+          "Não foi possível buscar o CEP. Por favor, preencha manualmente."
+      );
+    } finally {
+      setLoadingCep(false);
     }
   };
 
   const handleBlur = (field) => {
     const value = form[field];
-    let newErrors = { ...errors };
+    const newErrors = { ...errors };
+
+    if (field === "nomeOuRazao") {
+      if (!value.trim()) {
+        newErrors.nomeOuRazao =
+          tipo === "PF"
+            ? "Nome é obrigatório"
+            : "Razão Social é obrigatória";
+      } else {
+        delete newErrors.nomeOuRazao;
+      }
+    }
 
     if (field === "documento") {
       if (tipo === "PF" && value && !isValidCPF(value)) {
@@ -82,88 +188,167 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
       }
     }
 
-    if (field === "cep" && value) {
-      if (!isValidCEP(value)) {
-        newErrors.cep = "CEP incompleto";
+    if (field === "cep") {
+      if (!value) {
+        newErrors.cep = "Campo obrigatório";
+      } else if (!isValidCEP(value)) {
+        newErrors.cep = "CEP inválido";
       } else {
         delete newErrors.cep;
         fetchAddress(value);
       }
     }
 
-    if (field === "nomeOuRazao" && !value.trim()) {
-      newErrors.nomeOuRazao = tipo === "PF" ? "Nome é obrigatório" : "Razão Social é obrigatória";
+    if (field === "inscricaoMunicipal" && tipo === "PJ") {
+      if (!value.trim()) {
+        newErrors.inscricaoMunicipal = "Campo obrigatório";
+      } else {
+        delete newErrors.inscricaoMunicipal;
+      }
     }
 
     setErrors(newErrors);
   };
 
-  const fetchAddress = async (cep) => {
-    setLoadingCep(true);
-    setCepMessage("Buscando CEP...");
-    try {
-      const address = await getAddressByCep(cep);
-      setForm((prev) => ({
-        ...prev,
-        endereco: address.logradouro || prev.endereco,
-        bairro: address.bairro || prev.bairro,
-        cidade: address.localidade || prev.cidade,
-        estado: address.uf || prev.estado,
-      }));
-      setCepMessage("");
-    } catch (error) {
-      setCepMessage(error.message || "Não foi possível buscar o CEP. Por favor, preencha manualmente.");
-    } finally {
-      setLoadingCep(false);
-    }
-  };
-
   const toggleTipo = (novoTipo) => {
-    if (novoTipo === tipo) return;
+    if (novoTipo === tipo) {
+      return;
+    }
+
     setTipo(novoTipo);
-    setForm((prev) => ({ ...prev, documento: "", inscricaoEstadual: "", inscricaoMunicipal: "" }));
-    setErrors((prev) => ({ ...prev, documento: null, nomeOuRazao: null }));
+
+    setForm((prev) => ({
+      ...prev,
+      documento: "",
+      inscricaoEstadual: "",
+      inscricaoMunicipal: "",
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      documento: null,
+      nomeOuRazao: null,
+    }));
+
+    setFormError("");
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    // Validate before submit
-    let newErrors = {};
-    if (!form.nomeOuRazao.trim()) newErrors.nomeOuRazao = "Campo obrigatório";
-    if (!form.documento.trim()) newErrors.documento = "Campo obrigatório";
-    else if (tipo === "PF" && !isValidCPF(form.documento)) newErrors.documento = "CPF inválido";
-    else if (tipo === "PJ" && !isValidCNPJ(form.documento)) newErrors.documento = "CNPJ inválido";
-    
-    if (form.telefone && !isValidPhone(form.telefone)) newErrors.telefone = "Telefone inválido";
+    const newErrors = {};
+
+    if (!form.nomeOuRazao.trim()) {
+      newErrors.nomeOuRazao = "Campo obrigatório";
+    }
+
+    if (!form.documento.trim()) {
+      newErrors.documento = "Campo obrigatório";
+    } else if (
+      tipo === "PF" &&
+      !isValidCPF(form.documento)
+    ) {
+      newErrors.documento = "CPF inválido";
+    } else if (
+      tipo === "PJ" &&
+      !isValidCNPJ(form.documento)
+    ) {
+      newErrors.documento = "CNPJ inválido";
+    }
+
+    if (
+      form.telefone &&
+      !isValidPhone(form.telefone)
+    ) {
+      newErrors.telefone = "Telefone inválido";
+    }
+
+    if (
+      form.cep &&
+      !isValidCEP(form.cep)
+    ) {
+      newErrors.cep = "CEP incompleto";
+    }
+
+    if (!form.cep.trim()) {
+      newErrors.cep = "Campo obrigatório";
+    } else if (!isValidCEP(form.cep)) {
+      newErrors.cep = "CEP inválido";
+    }
+
+    if (tipo === "PJ" && !form.inscricaoMunicipal.trim()) {
+      newErrors.inscricaoMunicipal = "Campo obrigatório";
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
+    if (mode === "edit" && !initialData?.id) {
+      setFormError(
+        "Não foi possível identificar o cliente para edição."
+      );
+      return;
+    }
+
+    setErrors({});
     setIsSaving(true);
-    // Simular chamada backend
-    setTimeout(() => {
+    setFormError("");
+
+    try {
+      const payload = {
+        ...form,
+        tipo,
+      };
+
+      const savedCustomer =
+        mode === "edit"
+          ? await customersService.updateCustomer(
+              initialData.id,
+              payload
+            )
+          : await customersService.createCustomer(payload);
+
+      if (onSuccess) {
+        onSuccess(savedCustomer);
+      }
+    } catch (error) {
+      setFormError(
+        getCustomerErrorMessage(
+          error,
+          "Não foi possível salvar o cliente."
+        )
+      );
+    } finally {
       setIsSaving(false);
-      if (onSuccess) onSuccess({ tipo, ...form });
-    }, 1000);
+    }
   };
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
+    <form
+      className="form"
+      onSubmit={handleSubmit}
+    >
       <div className="toggle-group">
         <button
           type="button"
-          className={`toggle-btn ${tipo === "PF" ? "active" : ""}`}
+          className={`toggle-btn ${
+            tipo === "PF" ? "active" : ""
+          }`}
           onClick={() => toggleTipo("PF")}
+          disabled={isSaving}
         >
           Pessoa Física
         </button>
+
         <button
           type="button"
-          className={`toggle-btn ${tipo === "PJ" ? "active" : ""}`}
+          className={`toggle-btn ${
+            tipo === "PJ" ? "active" : ""
+          }`}
           onClick={() => toggleTipo("PJ")}
+          disabled={isSaving}
         >
           Pessoa Jurídica
         </button>
@@ -171,97 +356,206 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
 
       <div className="form-row">
         <div className="input-group">
-          <label htmlFor="nomeOuRazao" className="form-label">
-            {tipo === "PF" ? "NOME COMPLETO" : "RAZÃO SOCIAL"}
+          <label
+            htmlFor="nomeOuRazao"
+            className="form-label"
+          >
+            {tipo === "PF"
+              ? "NOME COMPLETO"
+              : "RAZÃO SOCIAL"}
           </label>
+
           <div className="form-input-wrapper">
             <input
               id="nomeOuRazao"
-              className={`form-input ${errors.nomeOuRazao ? "input-error" : ""}`}
+              className={`form-input ${
+                errors.nomeOuRazao
+                  ? "input-error"
+                  : ""
+              }`}
               type="text"
-              placeholder={tipo === "PF" ? "Ex: João da Silva" : "Ex: Empresa Fictícia LTDA"}
+              placeholder={
+                tipo === "PF"
+                  ? "Ex: João da Silva"
+                  : "Ex: Empresa Fictícia LTDA"
+              }
               value={form.nomeOuRazao}
-              onChange={(e) => handleChange("nomeOuRazao", e.target.value)}
-              onBlur={() => handleBlur("nomeOuRazao")}
+              onChange={(e) =>
+                handleChange(
+                  "nomeOuRazao",
+                  e.target.value
+                )
+              }
+              onBlur={() =>
+                handleBlur("nomeOuRazao")
+              }
               disabled={isSaving}
             />
           </div>
-          {errors.nomeOuRazao && <span className="form-error-inline">{errors.nomeOuRazao}</span>}
+
+          {errors.nomeOuRazao && (
+            <span className="form-error-inline">
+              {errors.nomeOuRazao}
+            </span>
+          )}
         </div>
       </div>
 
       <div className="form-row">
         <div className="input-group">
-          <label htmlFor="documento" className="form-label">
+          <label
+            htmlFor="documento"
+            className="form-label"
+          >
             {tipo === "PF" ? "CPF" : "CNPJ"}
           </label>
+
           <div className="form-input-wrapper">
             <input
               id="documento"
-              className={`form-input ${errors.documento ? "input-error" : ""}`}
+              className={`form-input ${
+                errors.documento
+                  ? "input-error"
+                  : ""
+              }`}
               type="text"
-              placeholder={tipo === "PF" ? "000.000.000-00" : "00.000.000/0000-00"}
+              placeholder={
+                tipo === "PF"
+                  ? "000.000.000-00"
+                  : "00.000.000/0000-00"
+              }
               value={form.documento}
-              onChange={(e) => handleChange("documento", e.target.value)}
-              onBlur={() => handleBlur("documento")}
+              onChange={(e) =>
+                handleChange(
+                  "documento",
+                  e.target.value
+                )
+              }
+              onBlur={() =>
+                handleBlur("documento")
+              }
               disabled={isSaving}
-              maxLength={tipo === "PF" ? 14 : 18}
+              maxLength={
+                tipo === "PF" ? 14 : 18
+              }
             />
           </div>
-          {errors.documento && <span className="form-error-inline">{errors.documento}</span>}
+
+          {errors.documento && (
+            <span className="form-error-inline">
+              {errors.documento}
+            </span>
+          )}
         </div>
 
         <div className="input-group">
-          <label htmlFor="telefone" className="form-label">
+          <label
+            htmlFor="telefone"
+            className="form-label"
+          >
             TELEFONE / WHATSAPP
           </label>
+
           <div className="form-input-wrapper">
             <input
               id="telefone"
-              className={`form-input ${errors.telefone ? "input-error" : ""}`}
+              className={`form-input ${
+                errors.telefone
+                  ? "input-error"
+                  : ""
+              }`}
               type="text"
               placeholder="(00) 00000-0000"
               value={form.telefone}
-              onChange={(e) => handleChange("telefone", e.target.value)}
-              onBlur={() => handleBlur("telefone")}
+              onChange={(e) =>
+                handleChange(
+                  "telefone",
+                  e.target.value
+                )
+              }
+              onBlur={() =>
+                handleBlur("telefone")
+              }
               disabled={isSaving}
               maxLength={15}
             />
           </div>
-          {errors.telefone && <span className="form-error-inline">{errors.telefone}</span>}
+
+          {errors.telefone && (
+            <span className="form-error-inline">
+              {errors.telefone}
+            </span>
+          )}
         </div>
       </div>
 
       <div className="form-row">
         <div className="input-group">
-          <label htmlFor="cep" className="form-label">
-            CEP
+          <label
+            htmlFor="cep"
+            className="form-label"
+          >
+            CEP*
           </label>
+
           <div className="form-input-wrapper">
             <input
               id="cep"
-              className={`form-input ${errors.cep ? "input-error" : ""}`}
+              className={`form-input ${
+                errors.cep
+                  ? "input-error"
+                  : ""
+              }`}
               type="text"
               placeholder="00000-000"
               value={form.cep}
-              onChange={(e) => handleChange("cep", e.target.value)}
-              onBlur={() => handleBlur("cep")}
-              disabled={isSaving || loadingCep}
+              onChange={(e) =>
+                handleChange(
+                  "cep",
+                  e.target.value
+                )
+              }
+              onBlur={() =>
+                handleBlur("cep")
+              }
+              disabled={
+                isSaving || loadingCep
+              }
               maxLength={9}
+              required
             />
           </div>
-          {errors.cep && <span className="form-error-inline">{errors.cep}</span>}
+
+          {errors.cep && (
+            <span className="form-error-inline">
+              {errors.cep}
+            </span>
+          )}
+
           {cepMessage && (
-            <span className={loadingCep ? "form-text" : "form-error-inline"}>
+            <span
+              className={
+                loadingCep
+                  ? "form-text"
+                  : "form-error-inline"
+              }
+            >
               {cepMessage}
             </span>
           )}
         </div>
 
-        <div className="input-group" style={{ flex: 2 }}>
-          <label htmlFor="endereco" className="form-label">
+        <div
+          className="input-group"
+          style={{ flex: 2 }}
+        >
+          <label
+            htmlFor="endereco"
+            className="form-label"
+          >
             ENDEREÇO (RUA)
           </label>
+
           <div className="form-input-wrapper">
             <input
               id="endereco"
@@ -269,7 +563,12 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
               type="text"
               placeholder="Nome da rua ou avenida"
               value={form.endereco}
-              onChange={(e) => handleChange("endereco", e.target.value)}
+              onChange={(e) =>
+                handleChange(
+                  "endereco",
+                  e.target.value
+                )
+              }
               disabled={isSaving}
             />
           </div>
@@ -278,9 +577,13 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
 
       <div className="form-row">
         <div className="input-group">
-          <label htmlFor="numero" className="form-label">
+          <label
+            htmlFor="numero"
+            className="form-label"
+          >
             NÚMERO
           </label>
+
           <div className="form-input-wrapper">
             <input
               id="numero"
@@ -288,16 +591,28 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
               type="text"
               placeholder="123"
               value={form.numero}
-              onChange={(e) => handleChange("numero", e.target.value)}
+              onChange={(e) =>
+                handleChange(
+                  "numero",
+                  e.target.value
+                )
+              }
               disabled={isSaving}
             />
           </div>
         </div>
 
-        <div className="input-group" style={{ flex: 2 }}>
-          <label htmlFor="complemento" className="form-label">
+        <div
+          className="input-group"
+          style={{ flex: 2 }}
+        >
+          <label
+            htmlFor="complemento"
+            className="form-label"
+          >
             COMPLEMENTO
           </label>
+
           <div className="form-input-wrapper">
             <input
               id="complemento"
@@ -305,7 +620,12 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
               type="text"
               placeholder="Apto, Bloco, etc."
               value={form.complemento}
-              onChange={(e) => handleChange("complemento", e.target.value)}
+              onChange={(e) =>
+                handleChange(
+                  "complemento",
+                  e.target.value
+                )
+              }
               disabled={isSaving}
             />
           </div>
@@ -314,9 +634,13 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
 
       <div className="form-row">
         <div className="input-group">
-          <label htmlFor="bairro" className="form-label">
+          <label
+            htmlFor="bairro"
+            className="form-label"
+          >
             BAIRRO
           </label>
+
           <div className="form-input-wrapper">
             <input
               id="bairro"
@@ -324,16 +648,25 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
               type="text"
               placeholder="Nome do bairro"
               value={form.bairro}
-              onChange={(e) => handleChange("bairro", e.target.value)}
+              onChange={(e) =>
+                handleChange(
+                  "bairro",
+                  e.target.value
+                )
+              }
               disabled={isSaving}
             />
           </div>
         </div>
 
         <div className="input-group">
-          <label htmlFor="cidade" className="form-label">
+          <label
+            htmlFor="cidade"
+            className="form-label"
+          >
             CIDADE
           </label>
+
           <div className="form-input-wrapper">
             <input
               id="cidade"
@@ -341,27 +674,45 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
               type="text"
               placeholder="Ex: São Paulo"
               value={form.cidade}
-              onChange={(e) => handleChange("cidade", e.target.value)}
+              onChange={(e) =>
+                handleChange(
+                  "cidade",
+                  e.target.value
+                )
+              }
               disabled={isSaving}
             />
           </div>
         </div>
 
         <div className="input-group">
-          <label htmlFor="estado" className="form-label">
+          <label
+            htmlFor="estado"
+            className="form-label"
+          >
             ESTADO
           </label>
+
           <div className="form-input-wrapper">
             <select
               id="estado"
               className="form-input"
               value={form.estado}
-              onChange={(e) => handleChange("estado", e.target.value)}
+              onChange={(e) =>
+                handleChange(
+                  "estado",
+                  e.target.value
+                )
+              }
               disabled={isSaving}
             >
               <option value="">UF</option>
+
               {ESTADOS_BR.map((uf) => (
-                <option key={uf} value={uf}>
+                <option
+                  key={uf}
+                  value={uf}
+                >
                   {uf}
                 </option>
               ))}
@@ -373,9 +724,13 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
       {tipo === "PJ" && (
         <div className="form-row">
           <div className="input-group">
-            <label htmlFor="inscricaoEstadual" className="form-label">
+            <label
+              htmlFor="inscricaoEstadual"
+              className="form-label"
+            >
               INSCRIÇÃO ESTADUAL
             </label>
+
             <div className="form-input-wrapper">
               <input
                 id="inscricaoEstadual"
@@ -383,41 +738,77 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
                 type="text"
                 placeholder="Isento ou Número"
                 value={form.inscricaoEstadual}
-                onChange={(e) => handleChange("inscricaoEstadual", e.target.value)}
+                onChange={(e) =>
+                  handleChange(
+                    "inscricaoEstadual",
+                    e.target.value
+                  )
+                }
                 disabled={isSaving}
               />
             </div>
           </div>
+
           <div className="input-group">
-            <label htmlFor="inscricaoMunicipal" className="form-label">
-              INSCRIÇÃO MUNICIPAL
+            <label
+              htmlFor="inscricaoMunicipal"
+              className="form-label"
+            >
+              INSCRIÇÃO MUNICIPAL *
             </label>
+
             <div className="form-input-wrapper">
               <input
                 id="inscricaoMunicipal"
-                className="form-input"
+                className={`form-input ${
+                  errors.inscricaoMunicipal ? "input-error" : ""
+                }`}
                 type="text"
                 placeholder="Número da inscrição"
                 value={form.inscricaoMunicipal}
-                onChange={(e) => handleChange("inscricaoMunicipal", e.target.value)}
+                onChange={(e) =>
+                  handleChange("inscricaoMunicipal", e.target.value)
+                }
                 disabled={isSaving}
+                required={tipo === "PJ"}
               />
             </div>
+
+            {errors.inscricaoMunicipal && (
+              <span className="form-error-inline">
+                {errors.inscricaoMunicipal}
+              </span>
+            )}
           </div>
         </div>
       )}
 
+      {formError && (
+        <div className="form-error-inline">
+          {formError}
+        </div>
+      )}
+
       <div className="input-group">
-        <label htmlFor="anotacoes" className="form-label">
+        <label
+          htmlFor="anotacoes"
+          className="form-label"
+        >
           ANOTAÇÕES
         </label>
+
         <div className="form-input-wrapper">
           <textarea
             id="anotacoes"
             className="form-textarea"
             placeholder="Informações adicionais relevantes..."
             value={form.anotacoes}
-            onChange={(e) => handleChange("anotacoes", e.target.value)}
+            onChange={(e) =>
+              handleChange(
+                "anotacoes",
+                e.target.value
+              )
+            }
             disabled={isSaving}
             rows={3}
           />
@@ -435,12 +826,19 @@ export default function RegisterCustomerForm({ onSuccess, onCancel }) {
             Cancelar
           </button>
         )}
+
         <button
           type="submit"
           className="form-button"
           disabled={isSaving}
         >
-          {isSaving ? "SALVANDO..." : (tipo === "PF" ? "CADASTRAR CLIENTE" : "CADASTRAR EMPRESA")}
+          {isSaving
+            ? "SALVANDO..."
+            : mode === "edit"
+              ? "SALVAR ALTERAÇÕES"
+              : tipo === "PF"
+                ? "CADASTRAR CLIENTE"
+                : "CADASTRAR EMPRESA"}
         </button>
       </div>
     </form>

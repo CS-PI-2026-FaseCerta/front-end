@@ -1,18 +1,8 @@
-const parseCurrencyValue = (value) => {
-  const text = String(value ?? "")
-    .replace(/\s/g, "")
-    .replace(/[^\d,.-]/g, "")
-    .replace(/\./g, "")
-    .replace(/,/g, ".");
-
-  return Number(text) || 0;
-};
-
 export const customersColumns = [
   {
     key: "id",
     header: "ID",
-    accessor: "id", 
+    accessor: "id",
     sortable: true,
     sortType: "number",
     width: "92px",

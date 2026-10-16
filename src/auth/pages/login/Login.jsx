@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
 import {
   getRememberMe,
-  login as authLogin,
   saveRememberMe,
-} from "../../mockAuth.js";
+  saveSession,
+} from "../../session.js";
+import { loginWithApi } from "../../authService.js";
 import "./Login.css";
 import "./../Auth.css";
 import "../../../global/components/form/Form.css";
@@ -22,9 +22,7 @@ const Login = () => {
   const [emailOrUsername, setEmailOrUsername] = useState(
     location.state?.email || ""
   );
-  const [password, setPassword] = useState(
-    location.state?.password || ""
-  );
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -38,34 +36,18 @@ const Login = () => {
     !isLoading;
 
   useEffect(() => {
-    // Se veio dados do cadastro, ignora o preenchimento do "Lembre de mim" para não sobrescrever
-    if (location.state?.email) {
-      return;
-    }
-
     const remembered = getRememberMe();
     if (!remembered) {
       return;
     }
 
-    setEmailOrUsername(remembered.emailOrUsername || "");
-    setPassword(remembered.password || "");
+    if (!location.state?.email) setEmailOrUsername(remembered.emailOrUsername || "");
     setRememberMe(true);
   }, [location.state]);
 
-  const validateEmailOrUsername = (value) => {
-    if (!value) return false;
-    // Validação para e-mail (contém '@') ou nome de usuário (não contém espaços)
-    const isEmailFormat = value.includes("@");
-    if (isEmailFormat) {
-      // Validação de e-mail um pouco mais robusta
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(value);
-    } else {
-      // Nome de usuário não pode ter espaços
-      return !value.includes(" ");
-    }
-  };
+  // O endpoint /api/auth/login aceita somente e-mail, não nome de usuário.
+  const validateEmailOrUsername = (value) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
   const handleEmailOrUsernameChange = (e) => {
     const value = e.target.value;
@@ -92,50 +74,34 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (isLoading) return;
 
-    const isEmailOrUsernameValid = validateEmailOrUsername(emailOrUsername);
-
-    // 1. Valida o formato primeiro
-    if (!isEmailOrUsernameValid) {
+    if (!validateEmailOrUsername(emailOrUsername)) {
       setEmailOrUsernameError(true);
-      setLoginError("");
+      setLoginError("Informe um e-mail válido.");
+      return;
+    }
+    if (!password) {
+      setLoginError("Informe sua senha.");
       return;
     }
 
-    // Formato correto: tira a borda vermelha (se houver) e tenta autenticar
     setEmailOrUsernameError(false);
+    setLoginError("");
+    setIsLoading(true);
 
-    // 2. Tentativa de Autenticação
-    if (password.length > 0) {
-      setLoginError("");
-      setIsLoading(true);
-      console.log("Credenciais:", { emailOrUsername, password, rememberMe });
-
-      // Simulação de chamada de API
-      setTimeout(() => {
-        const result = authLogin(emailOrUsername, password);
-
-        if (result.success) {
-          saveRememberMe({
-            rememberMe,
-            emailOrUsername,
-            password,
-          });
-          console.log("Usuário autenticado:", result.user);
-          navigate(AppRoutes.Dashboard, { replace: true });
-        } else {
-          setLoginError(
-            result.message || "E-mail/Nome de Usuário ou senha incorretos",
-          );
-        }
-        setIsLoading(false);
-      }, 1500);
-    } else {
-      // Se a senha estiver vazia, falha e exibe o erro geral
-      setLoginError("E-mail/Nome de Usuário ou senha incorretos");
+    try {
+      const email = emailOrUsername.trim();
+      const token = await loginWithApi(email, password);
+      saveSession({ token, email, rememberMe });
+      saveRememberMe({ rememberMe, emailOrUsername: email });
+      navigate(AppRoutes.Dashboard, { replace: true });
+    } catch (error) {
+      setLoginError(error.message || "Não foi possível entrar. Tente novamente.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -153,13 +119,13 @@ const Login = () => {
           <form className="form" onSubmit={handleSubmit} noValidate>
             <div className="input-group">
               <label className="form-label" htmlFor="emailOrUsername">
-                E-mail ou Usuário
+                E-mail
               </label>
               <input
                 type="text"
                 id="emailOrUsername"
                 className={`form-input ${emailOrUsernameError ? "input-error" : ""}`}
-                placeholder="seu@email.com ou seu_usuario"
+                placeholder="seu@email.com"
                 value={emailOrUsername}
                 onChange={handleEmailOrUsernameChange}
                 onBlur={handleEmailOrUsernameBlur}

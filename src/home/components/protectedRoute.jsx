@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { getCurrentUser } from "../../auth/mockAuth";
+import { getCurrentUser } from "../../auth/session";
 
 const ProtectedRoute = ({
   allowedProfiles = [],

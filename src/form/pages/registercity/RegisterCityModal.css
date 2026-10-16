@@ -1,66 +1,66 @@
 .modal-overlay .city-form-card {
-  box-shadow: none;
-  border: none;
-  background: transparent;
-  padding: 0;
-  border-radius: 0;
-  width: 100%;
+    box-shadow: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    width: 100%;
 }
 
 .modal-overlay .card-header {
-  margin-bottom: 2rem;
-  padding-right: 2.5rem;
+    margin-bottom: 2rem;
+    padding-right: 2.5rem;
 }
 
 .modal-overlay .card-header h1 {
-  text-align: left;
-  padding-right: 0;
-  font-size: 1.5rem;
+    text-align: left;
+    padding-right: 0;
+    font-size: 1.5rem;
 }
 
 .city-form-actions {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1.5rem;
-  width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    width: 100%;
 }
 
 .city-form-cancel-button {
-  padding: 16px 28px;
-  border: 1px solid var(--panel-border-color);
-  background-color: var(--color-surface-muted);
-  color: var(--color-text-secondary);
-  border-radius: 999px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
+    padding: 16px 28px;
+    border: 1px solid var(--panel-border-color);
+    background-color: var(--color-surface-muted);
+    color: var(--color-text-secondary);
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .city-form-cancel-button:hover {
-  background-color: var(--color-surface);
-  color: var(--color-text-primary);
-  border-color: var(--color-primary);
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border-color: var(--color-primary);
 }
 
 .modal-overlay .city-form-submit-button {
-  margin-top: 0;
-  flex: 1;
-  max-width: 200px;
+    margin-top: 0;
+    flex: 1;
+    max-width: 200px;
 }
 
 @media (max-width: 480px) {
-  .city-form-actions {
-    flex-direction: column-reverse;
-    gap: 0.75rem;
-  }
+    .city-form-actions {
+        flex-direction: column-reverse;
+        gap: 0.75rem;
+    }
 
-  .city-form-cancel-button,
-  .modal-overlay .city-form-submit-button {
-    width: 100%;
-    max-width: 100%;
-  }
+    .city-form-cancel-button,
+    .modal-overlay .city-form-submit-button {
+        width: 100%;
+        max-width: 100%;
+    }
 }

@@ -15,18 +15,21 @@ export default function FinanceTable({
   mobileMinWidth = "920px",
 }) {
   return (
-    <div className={`finance-table-shell ${className}`.trim()}>
+    <div className={`finance - table - shell ${ className } `.trim()}>
       <div className="finance-table-scroll">
         <table
-          className={`finance-table ${tableClassName}`.trim()}
+          className={`finance - table ${ tableClassName } `.trim()}
           aria-label={ariaLabel}
           style={{ "--finance-table-mobile-min-width": mobileMinWidth }}
         >
           <thead>
             <tr className="finance-table__header-row">
               {columns.map((column) => {
-                const isSortable = column.sortable !== false && Boolean(column.key);
-                const isSorted = isSortable && sort?.key === column.key;
+                const isSortable =
+                  column.sortable !== false && Boolean(column.key);
+                const isSorted =
+                  isSortable && sort?.key === column.key;
+
                 return (
                   <th
                     key={column.key ?? column.label}
@@ -50,7 +53,12 @@ export default function FinanceTable({
                         onClick={() => onSort?.(column.key)}
                       >
                         {column.label}
-                        <span className={isSorted ? "is-sorted" : ""} aria-hidden="true">↕</span>
+                        <span
+                          className={isSorted ? "is-sorted" : ""}
+                          aria-hidden="true"
+                        >
+                          ↕
+                        </span>
                       </button>
                     ) : (
                       column.label ?? null
@@ -59,12 +67,19 @@ export default function FinanceTable({
                 );
               })}
             </tr>
+
             {filterRow}
           </thead>
+
           <tbody>
-            {hasRows ? children : (
+            {hasRows ? (
+              children
+            ) : (
               <tr>
-                <td colSpan={columns.length} className="finance-table__empty-cell">
+                <td
+                  colSpan={columns.length}
+                  className="finance-table__empty-cell"
+                >
                   {emptyState}
                 </td>
               </tr>
