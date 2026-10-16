@@ -8,50 +8,50 @@ import Footer from "../../../global/components/Footer/Footer.jsx";
 import { useNavigate } from "react-router-dom";
 import { PiToolboxBold } from "react-icons/pi";
 
+const mockServicos = [
+    {
+        id: 1,
+        descricao: "Troca de Óleo",
+        preco: 120,
+        obs: "Óleo sintético 5W30",
+        qntd: 1,
+    },
+    {
+        id: 2,
+        descricao: "Alinhamento",
+        preco: 80,
+        obs: "Alinhamento computadorizado",
+        qntd: 2,
+    },
+    {
+        id: 3,
+        descricao: "Balanceamento",
+        preco: 60,
+        obs: "4 rodas",
+        qntd: 1,
+    },
+    {
+        id: 4,
+        descricao: "Troca de Pastilhas de Freio",
+        preco: 250,
+        obs: "Eixo dianteiro",
+        qntd: 1,
+    },
+    {
+        id: 5,
+        descricao: "Higienização do Ar Condicionado",
+        preco: 150,
+        obs: "Inclui troca do filtro",
+        qntd: 1,
+    },
+];
+
 export default function ServiceInsert() {
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
     };
-
-    const mockServicos = [
-        {
-            id: 1,
-            descricao: "Troca de Óleo",
-            preco: 120,
-            obs: "Óleo sintético 5W30",
-            qntd: 1,
-        },
-        {
-            id: 2,
-            descricao: "Alinhamento",
-            preco: 80,
-            obs: "Alinhamento computadorizado",
-            qntd: 2,
-        },
-        {
-            id: 3,
-            descricao: "Balanceamento",
-            preco: 60,
-            obs: "4 rodas",
-            qntd: 1,
-        },
-        {
-            id: 4,
-            descricao: "Troca de Pastilhas de Freio",
-            preco: 250,
-            obs: "Eixo dianteiro",
-            qntd: 1,
-        },
-        {
-            id: 5,
-            descricao: "Higienização do Ar Condicionado",
-            preco: 150,
-            obs: "Inclui troca do filtro",
-            qntd: 1,
-        },
-    ];
 
     const [servicos, setServicos] = useState(() => {
         const stored = JSON.parse(localStorage.getItem("servicosSelecionados"));
@@ -197,7 +197,6 @@ export default function ServiceInsert() {
 
     const searchRef = useRef(null);
 
-
     return (
         <div className="service-insert-page">
             <Header />
@@ -280,11 +279,13 @@ export default function ServiceInsert() {
                             </button>
                         </div>
 
-                        <form className="edit-form" onSubmit={(e) => {
-                            e.preventDefault();
-                            handleSaveEdit();
-                        }}>
-
+                        <form
+                            className="edit-form"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                handleSaveEdit();
+                            }}
+                        >
                             <label>Descrição</label>
 
                             <input
@@ -329,7 +330,6 @@ export default function ServiceInsert() {
                             >
                                 Salvar Alterações
                             </button>
-
                         </form>
                     </div>
                 </div>
@@ -338,14 +338,19 @@ export default function ServiceInsert() {
             <Footer />
 
             {isModalOpen && (
-                <div className="modal-overlay" onClick={() => setIsModalOpen(false)}>
+                <div
+                    className="modal-overlay"
+                    onClick={() => setIsModalOpen(false)}
+                >
                     <div
                         className="modal-content"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <div className="modal-header">
                             <h2>Selecionar Serviço</h2>
-                            <button onClick={() => setIsModalOpen(false)}>✕</button>
+                            <button onClick={() => setIsModalOpen(false)}>
+                                ✕
+                            </button>
                         </div>
 
                         <div className="modal-search">
@@ -361,7 +366,10 @@ export default function ServiceInsert() {
                         <div className="modal-list">
                             {servicosFiltrados.length === 0 ? (
                                 <div className="modal-empty-state">
-                                    <PiToolboxBold size={42} color="var(--color-primary)" />
+                                    <PiToolboxBold
+                                        size={42}
+                                        color="var(--color-primary)"
+                                    />
 
                                     <p className="title">
                                         Nenhum serviço encontrado
@@ -387,12 +395,19 @@ export default function ServiceInsert() {
                                             }}
                                             onKeyDown={(e) => {
                                                 if (isDisabled) return;
-                                                if (e.key === "Enter" || e.key === " ") {
+
+                                                if (
+                                                    e.key === "Enter" ||
+                                                    e.key === " "
+                                                ) {
                                                     handleAddService(servico);
                                                 }
                                             }}
                                         >
-                                            <Card servico={servico} hideActions />
+                                            <Card
+                                                servico={servico}
+                                                hideActions
+                                            />
                                         </div>
                                     );
                                 })
@@ -426,8 +441,6 @@ function Card({
     updateQuantidade,
     handleEdit,
 }) {
-    const navigate = useNavigate();
-
     if (!servico) return null;
 
     return (
@@ -459,7 +472,11 @@ function Card({
                             min="1"
                             value={servico.qntd || 1}
                             onChange={(e) =>
-                                updateQuantidade(servico.id, Number(e.target.value) - (servico.qntd || 1))
+                                updateQuantidade(
+                                    servico.id,
+                                    Number(e.target.value) -
+                                    (servico.qntd || 1)
+                                )
                             }
                         />
 
@@ -479,19 +496,23 @@ function Card({
                             type="button"
                             onClick={() => handleEdit(servico)}
                         >
-                            <HiOutlinePencil size={20} color="var(--color-primary)" />
+                            <HiOutlinePencil
+                                size={20}
+                                color="var(--color-primary)"
+                            />
                         </button>
 
-                        <button onClick={() => handleDelete(servico.id)}>
-                            <FaRegTrashCan size={20} color="red" />
+                        <button
+                            onClick={() => handleDelete(servico.id)}
+                        >
+                            <FaRegTrashCan
+                                size={20}
+                                color="red"
+                            />
                         </button>
                     </div>
                 )}
             </div>
-
-
-
-
         </div>
     );
 }

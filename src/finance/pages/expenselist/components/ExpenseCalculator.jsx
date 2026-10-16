@@ -23,7 +23,12 @@ export default function ExpenseCalculator({
   return createPortal(
     <section
       className={`expense-calculator finance-surface-theme ${calculator.placement === "above" ? "is-above" : "is-below"}`.trim()}
-      style={{ left: `${calculator.left}px`, top: `${calculator.top}px` }}
+      style={{
+        position: "fixed",
+        left: "50%",
+        top: "50%",
+        transform: "translate(-50%, -50%)",
+      }}
       data-expense-calculator
       role="dialog"
       aria-label="Calculadora de valor"
@@ -33,12 +38,18 @@ export default function ExpenseCalculator({
           <span>Calculadora</span>
           <strong>Valor da despesa</strong>
         </div>
-        <button type="button" onClick={onClose} aria-label="Fechar calculadora">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Fechar calculadora"
+        >
           <FaTimes aria-hidden="true" />
         </button>
       </header>
 
-      <div className={`expense-calculator__display ${calculator.error ? "has-error" : ""}`.trim()}>
+      <div
+        className={`expense-calculator__display ${calculator.error ? "has-error" : ""}`.trim()}
+      >
         <input
           value={calculator.expression}
           onChange={(event) => onExpressionChange(event.target.value)}
@@ -65,12 +76,20 @@ export default function ExpenseCalculator({
             onClick={() => onKey(key)}
             aria-label={key === "backspace" ? "Apagar último caractere" : key}
           >
-            {key === "backspace" ? <FaBackspace aria-hidden="true" /> : key}
+            {key === "backspace" ? (
+              <FaBackspace aria-hidden="true" />
+            ) : (
+              key
+            )}
           </button>
         ))}
       </div>
 
-      <button type="button" className="expense-calculator__use" onClick={onUseValue}>
+      <button
+        type="button"
+        className="expense-calculator__use"
+        onClick={onUseValue}
+      >
         <FaCheck aria-hidden="true" />
         <span>Usar valor no filtro</span>
       </button>
