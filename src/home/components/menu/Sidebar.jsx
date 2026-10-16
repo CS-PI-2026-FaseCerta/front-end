@@ -4,6 +4,7 @@ import {
   FaChevronRight,
   FaClipboardList,
   FaCog,
+  FaQuestionCircle,
   FaSignOutAlt,
   FaTimes,
   FaUserCircle,
@@ -14,7 +15,7 @@ import {
   FaPlus,
   FaBoxOpen,
 } from "react-icons/fa";
-import { clearSession } from "../../../auth/mockAuth";
+import { clearSession } from "../../../auth/session";
 import "./Sidebar.css";
 
 const Sidebar = ({ isOpen, onClose, profile }) => {
@@ -48,57 +49,56 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
         label: "Dashboard",
         path: "/dashboard",
         icon: <FaCalendarAlt aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "clientes",
         label: "Clientes",
         path: "/clientes",
         icon: <FaUsers aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "ordens-servico",
         label: "Ordens de Serviço",
         path: "/ordens-servico",
         icon: <FaClipboardList aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "servicos",
         label: "Serviços",
         path: "/servicos",
         icon: <FaWrench aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "estoque",
         label: "Estoque",
         path: "/produtos-estoque",
         icon: <FaBoxOpen aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "financeiro",
         label: "Financeiro",
         path: "/financeiro",
         icon: <FaWallet aria-hidden="true" />,
-        allowedProfiles: ["gestor"],
+        allowedProfiles: ["admin", "gestor"],
       },
       {
         id: "calendario",
         label: "Calendário",
         path: "/calendario",
         icon: <FaCalendarAlt aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
-        disabled: true,
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
       {
         id: "configuracoes",
         label: "Configurações",
         path: "/configuracoes",
         icon: <FaCog aria-hidden="true" />,
-        allowedProfiles: ["gestor", "tecnico"],
+        allowedProfiles: ["admin", "gestor", "tecnico"],
       },
     ];
 
@@ -106,6 +106,12 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
   }, [profile]);
 
   const secondaryItems = [
+    {
+      id: "suporte",
+      label: "Suporte",
+      path: "/suporte",
+      icon: <FaQuestionCircle aria-hidden="true" />,
+    },
     {
       id: "sair",
       label: "Sair",
@@ -149,11 +155,7 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
           </button>
         </header>
 
-        <button
-          type="button"
-          className="sidebar-drawer__profile-action"
-          title="Adicionar dados"
-        >
+        <button type="button" className="sidebar-drawer__profile-action" title="Adicionar dados">
           <FaPlus aria-hidden="true" />
           <span className="sidebar-drawer__label">Adicionar dados</span>
           <span className="sidebar-drawer__tooltip">Adicionar dados</span>
@@ -163,54 +165,22 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
           <h2>Preferências</h2>
 
           <nav>
-            {preferenceItems.map((item) => {
-              const content = (
-                <>
-                  <span className="sidebar-drawer__link-main">
-                    {item.icon}
-                    <span className="sidebar-drawer__label">
-                      {item.label}
-                    </span>
-                  </span>
-
-                  <span className="sidebar-drawer__tooltip">
-                    {item.label}
-                  </span>
-
-                  <FaChevronRight
-                    aria-hidden="true"
-                    className="sidebar-drawer__chevron"
-                  />
-                </>
-              );
-
-              if (item.disabled) {
-                return (
-                  <span
-                    key={item.id}
-                    className="sidebar-drawer__link sidebar-drawer__link--disabled"
-                    aria-disabled="true"
-                    title={`${item.label} (indisponível)`}
-                  >
-                    {content}
-                  </span>
-                );
-              }
-
-              return (
-                <Link
-                  key={item.id}
-                  to={item.path}
-                  className="sidebar-drawer__link"
-                  onClick={
-                    window.innerWidth < 1024 ? onClose : undefined
-                  }
-                  title={item.label}
-                >
-                  {content}
-                </Link>
-              );
-            })}
+            {preferenceItems.map((item) => (
+              <Link
+                key={item.id}
+                to={item.path}
+                className="sidebar-drawer__link"
+                onClick={window.innerWidth < 1024 ? onClose : undefined}
+                title={item.label}
+              >
+                <span className="sidebar-drawer__link-main">
+                  {item.icon}
+                  <span className="sidebar-drawer__label">{item.label}</span>
+                </span>
+                <span className="sidebar-drawer__tooltip">{item.label}</span>
+                <FaChevronRight aria-hidden="true" className="sidebar-drawer__chevron" />
+              </Link>
+            ))}
           </nav>
         </section>
 
@@ -229,13 +199,9 @@ const Sidebar = ({ isOpen, onClose, profile }) => {
               >
                 <span className="sidebar-drawer__link-main">
                   {item.icon}
-                  <span className="sidebar-drawer__label">
-                    {item.label}
-                  </span>
+                  <span className="sidebar-drawer__label">{item.label}</span>
                 </span>
-                <span className="sidebar-drawer__tooltip">
-                  {item.label}
-                </span>
+                <span className="sidebar-drawer__tooltip">{item.label}</span>
               </Link>
             ))}
           </nav>

@@ -1,8 +1,6 @@
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import Modal from "../../../global/components/modal/Modal.jsx";
 import RegisterServiceForm from "./RegisterServiceForm.jsx";
-
 import "./RegisterService.css";
 import "../../../global/components/form/Form.css";
 
@@ -10,54 +8,55 @@ export default function RegisterServiceModal({
   isOpen,
   onClose,
   onSuccessCallback,
-  serviceId,
+  initialData,
+  mode = "create",
+  loading = false,
+  errorMessage = "",
 }) {
-  const [successMessage, setSuccessMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) setIsSaving(false);
+  }, [isOpen]);
 
   const handleSuccess = (data) => {
-    setSuccessMessage(
-      data.isEdit
-        ? "Serviço atualizado com sucesso!"
-        : "Serviço cadastrado com sucesso!"
-    );
-
-    setTimeout(() => {
-      setSuccessMessage("");
-
-      if (onSuccessCallback) {
-        onSuccessCallback(data);
-      }
-
-      if (onClose) {
-        onClose();
-      }
-    }, 1500);
+    setIsSaving(false);
+    onSuccessCallback?.(data);
+    onClose?.();
   };
 
   const handleCancel = () => {
-    setSuccessMessage("");
-
-    if (onClose) {
-      onClose();
-    }
+    if (isSaving) return;
+    onClose?.();
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCancel}>
+    <Modal isOpen={isOpen} onClose={isSaving ? undefined : handleCancel}>
       <div className="register-service-modal-container">
-        <h2>Salvar Serviço</h2>
+        <h2>{mode === "edit" ? "Editar Serviço" : "Cadastrar Serviço"}</h2>
 
-        {successMessage && (
-          <div className="form-success register-service-success-margin">
-            {successMessage}
+        {loading ? (
+          <p>Carregando dados do serviço...</p>
+        ) : errorMessage ? (
+          <div>
+            <div className="form-error-inline">{errorMessage}</div>
+            <button
+              type="button"
+              className="form-button form-button-secondary"
+              onClick={handleCancel}
+            >
+              Fechar
+            </button>
           </div>
+        ) : (
+          <RegisterServiceForm
+            onSuccess={handleSuccess}
+            onCancel={handleCancel}
+            onSavingChange={setIsSaving}
+            initialData={initialData}
+            mode={mode}
+          />
         )}
-
-        <RegisterServiceForm
-          serviceId={serviceId}
-          onSuccess={handleSuccess}
-          onCancel={handleCancel}
-        />
       </div>
     </Modal>
   );

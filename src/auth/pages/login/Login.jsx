@@ -1,234 +1,200 @@
 import React, { useEffect, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate, useLocation } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Header from "../../../global/components/header/Header.jsx";
 import Footer from "../../../global/components/Footer/Footer.jsx";
 import {
-    getRememberMe,
-    login as authLogin,
-    saveRememberMe,
-} from "../../mockAuth.js";
+  getRememberMe,
+  saveRememberMe,
+  saveSession,
+} from "../../session.js";
+import { loginWithApi } from "../../authService.js";
 import "./Login.css";
 import "./../Auth.css";
 import "../../../global/components/form/Form.css";
 import * as AppRoutes from "../../../routes/AppRoutes.jsx";
 
 const Login = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    // Modificado apenas para verificar se existem dados vindos do cadastro primeiro
-    const [emailOrUsername, setEmailOrUsername] = useState(
-        location.state?.email || ""
-    );
-    const [password, setPassword] = useState(
-        location.state?.password || ""
-    );
-    const [rememberMe, setRememberMe] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [loginError, setLoginError] = useState("");
-    const [emailOrUsernameError, setEmailOrUsernameError] = useState(false);
+  // Modificado apenas para verificar se existem dados vindos do cadastro primeiro
+  const [emailOrUsername, setEmailOrUsername] = useState(
+    location.state?.email || ""
+  );
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [emailOrUsernameError, setEmailOrUsernameError] = useState(false);
 
-    const allFilled =
-        emailOrUsername &&
-        password &&
-        !emailOrUsernameError &&
-        !isLoading;
+  const allFilled =
+    emailOrUsername &&
+    password &&
+    !emailOrUsernameError &&
+    !isLoading;
 
-    useEffect(() => {
-        // Se veio dados do cadastro, ignora o preenchimento do "Lembre de mim" para não sobrescrever
-        if (location.state?.email) {
-            return;
-        }
+  useEffect(() => {
+    const remembered = getRememberMe();
+    if (!remembered) {
+      return;
+    }
 
-        const remembered = getRememberMe();
-        if (!remembered) {
-            return;
-        }
+    if (!location.state?.email) setEmailOrUsername(remembered.emailOrUsername || "");
+    setRememberMe(true);
+  }, [location.state]);
 
-        setEmailOrUsername(remembered.emailOrUsername || "");
-        setPassword(remembered.password || "");
-        setRememberMe(true);
-    }, [location.state]);
+  // O endpoint /api/auth/login aceita somente e-mail, não nome de usuário.
+  const validateEmailOrUsername = (value) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
-    const validateEmailOrUsername = (value) => {
-        if (!value) return false;
-        // Validação para e-mail (contém '@') ou nome de usuário (não contém espaços)
-        const isEmailFormat = value.includes("@");
-        if (isEmailFormat) {
-            // Validação de e-mail um pouco mais robusta
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(value);
-        } else {
-            // Nome de usuário não pode ter espaços
-            return !value.includes(" ");
-        }
-    };
+  const handleEmailOrUsernameChange = (e) => {
+    const value = e.target.value;
+    setEmailOrUsername(value);
+    // Remove a borda vermelha assim que o usuário corrigir o formato
+    if (emailOrUsernameError) {
+      setEmailOrUsernameError(!validateEmailOrUsername(value));
+    }
+  };
 
-    const handleEmailOrUsernameChange = (e) => {
-        const value = e.target.value;
-        setEmailOrUsername(value);
-        // Remove a borda vermelha assim que o usuário corrigir o formato
-        if (emailOrUsernameError) {
-            setEmailOrUsernameError(!validateEmailOrUsername(value));
-        }
-    };
+  const handleEmailOrUsernameBlur = () => {
+    setEmailOrUsernameError(!validateEmailOrUsername(emailOrUsername));
+  };
 
-    const handleEmailOrUsernameBlur = () => {
-        setEmailOrUsernameError(!validateEmailOrUsername(emailOrUsername));
-    };
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
 
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-    };
+  const handleRememberMeChange = (e) => {
+    setRememberMe(e.target.checked);
+  };
 
-    const handleRememberMeChange = (e) => {
-        setRememberMe(e.target.checked);
-    };
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isLoading) return;
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (isLoading) return;
+    if (!validateEmailOrUsername(emailOrUsername)) {
+      setEmailOrUsernameError(true);
+      setLoginError("Informe um e-mail válido.");
+      return;
+    }
+    if (!password) {
+      setLoginError("Informe sua senha.");
+      return;
+    }
 
-        const isEmailOrUsernameValid = validateEmailOrUsername(emailOrUsername);
+    setEmailOrUsernameError(false);
+    setLoginError("");
+    setIsLoading(true);
 
-        // 1. Valida o formato primeiro
-        if (!isEmailOrUsernameValid) {
-            setEmailOrUsernameError(true);
-            setLoginError("");
-            return;
-        }
+    try {
+      const email = emailOrUsername.trim();
+      const token = await loginWithApi(email, password);
+      saveSession({ token, email, rememberMe });
+      saveRememberMe({ rememberMe, emailOrUsername: email });
+      navigate(AppRoutes.Dashboard, { replace: true });
+    } catch (error) {
+      setLoginError(error.message || "Não foi possível entrar. Tente novamente.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        // Formato correto: tira a borda vermelha (se houver) e tenta autenticar
-        setEmailOrUsernameError(false);
+  return (
+    <div className="auth-page page-container">
+      <Header />
 
-        // 2. Tentativa de Autenticação
-        if (password.length > 0) {
-            setLoginError("");
-            setIsLoading(true);
-            console.log("Credenciais:", { emailOrUsername, password, rememberMe });
+      <main className="auth-container login-container">
+        <div className="auth-card login-card">
+          <h2 className="auth-title login-card__title">Acesse sua conta</h2>
+          <p className="auth-subtitle login-card__subtitle">
+            Insira seus dados para entrar
+          </p>
 
-            // Simulação de chamada de API
-            setTimeout(() => {
-                const result = authLogin(emailOrUsername, password);
+          <form className="form" onSubmit={handleSubmit} noValidate>
+            <div className="input-group">
+              <label className="form-label" htmlFor="emailOrUsername">
+                E-mail
+              </label>
+              <input
+                type="text"
+                id="emailOrUsername"
+                className={`form-input ${emailOrUsernameError ? "input-error" : ""}`}
+                placeholder="seu@email.com"
+                value={emailOrUsername}
+                onChange={handleEmailOrUsernameChange}
+                onBlur={handleEmailOrUsernameBlur}
+              />
+            </div>
 
-                if (result.success) {
-                    saveRememberMe({
-                        rememberMe,
-                        emailOrUsername,
-                        password,
-                    });
-                    console.log("Usuário autenticado:", result.user);
-                    navigate(AppRoutes.Dashboard, { replace: true });
-                } else {
-                    setLoginError(
-                        result.message || "E-mail/Nome de Usuário ou senha incorretos",
-                    );
-                }
-                setIsLoading(false);
-            }, 1500);
-        } else {
-            // Se a senha estiver vazia, falha e exibe o erro geral
-            setLoginError("E-mail/Nome de Usuário ou senha incorretos");
-        }
-    };
+            <div className="input-group">
+              <div className="label-group">
+                <label className="form-label" htmlFor="password">
+                  Senha
+                </label>
+              </div>
+              <div className="form-input-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className="form-input"
+                  placeholder="••••••••••"
+                  value={password}
+                  onChange={handlePasswordChange}
+                />
+                <span
+                  className="form-password-toggle"
+                  onClick={togglePasswordVisibility}
+                  role="button"
+                  aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
+              <div className="auth-align-right">
+                <Link to={AppRoutes.RecoverPassword} className="auth-link link">
+                  Esqueceu sua senha?
+                </Link>
+              </div>
+            </div>
 
-    return (
-        <div className="auth-page page-container">
-            <Header />
+            <div className="form-options">
+              <div className="form-checkbox-group">
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  checked={rememberMe}
+                  onChange={handleRememberMeChange}
+                />
+                <label className="form-label" htmlFor="rememberMe">
+                  Lembre de mim
+                </label>
+              </div>
+            </div>
 
-            <main className="auth-container login-container">
-                <div className="auth-card login-card">
-                    <h2 className="auth-title login-card__title">Acesse sua conta</h2>
-                    <p className="auth-subtitle login-card__subtitle">
-                        Insira seus dados para entrar
-                    </p>
+            {loginError && <p className="form-error">{loginError}</p>}
 
-                    <form className="form" onSubmit={handleSubmit} noValidate>
-                        <div className="input-group">
-                            <label className="form-label" htmlFor="emailOrUsername">
-                                E-mail ou Usuário
-                            </label>
-                            <input
-                                type="text"
-                                id="emailOrUsername"
-                                className={`form-input ${emailOrUsernameError ? "input-error" : ""}`}
-                                placeholder="seu@email.com ou seu_usuario"
-                                value={emailOrUsername}
-                                onChange={handleEmailOrUsernameChange}
-                                onBlur={handleEmailOrUsernameBlur}
-                            />
-                        </div>
+            <button type="submit" className="form-button" disabled={!allFilled}>
+              {isLoading ? "Entrando..." : "Entrar"}
+            </button>
 
-                        <div className="input-group">
-                            <div className="label-group">
-                                <label className="form-label" htmlFor="password">
-                                    Senha
-                                </label>
-                            </div>
-                            <div className="form-input-wrapper">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    id="password"
-                                    className="form-input"
-                                    placeholder="••••••••••"
-                                    value={password}
-                                    onChange={handlePasswordChange}
-                                />
-                                <span
-                                    className="form-password-toggle"
-                                    onClick={togglePasswordVisibility}
-                                    role="button"
-                                    aria-label={showPassword ? "Esconder senha" : "Mostrar senha"}
-                                >
-                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                                </span>
-                            </div>
-                            <div className="auth-align-right">
-                                <Link to={AppRoutes.RecoverPassword} className="auth-link link">
-                                    Esqueceu sua senha?
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="form-options">
-                            <div className="form-checkbox-group">
-                                <input
-                                    type="checkbox"
-                                    id="rememberMe"
-                                    checked={rememberMe}
-                                    onChange={handleRememberMeChange}
-                                />
-                                <label className="form-label" htmlFor="rememberMe">
-                                    Lembre de mim
-                                </label>
-                            </div>
-                        </div>
-
-                        {loginError && <p className="form-error">{loginError}</p>}
-
-                        <button type="submit" className="form-button" disabled={!allFilled}>
-                            {isLoading ? "Entrando..." : "Entrar"}
-                        </button>
-
-                        <p className="auth-footer-text signup-link">
-                            Ainda não tem uma conta?{" "}
-                            <Link className="auth-link" to={AppRoutes.UserRegistration}>
-                                Cadastre-se
-                            </Link>
-                        </p>
-                    </form>
-                </div>
-            </main>
-            <Footer />
+            <p className="auth-footer-text signup-link">
+              Ainda não tem uma conta?{" "}
+              <Link className="auth-link" to={AppRoutes.UserRegistration}>
+                Cadastre-se
+              </Link>
+            </p>
+          </form>
         </div>
-    );
+      </main>
+      <Footer />
+    </div>
+  );
 };
 
 export default Login;

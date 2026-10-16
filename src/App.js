@@ -8,6 +8,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import ProtectedRoute from "./home/components/protectedRoute.jsx";
+import AuthSessionMonitor from "./auth/AuthSessionMonitor.jsx";
 
 import RegisterProduct from "./form/pages//RegisterProduct/RegisterProduct.jsx";
 import Dashboard from "./home/pages/Dashboard.jsx";
@@ -81,16 +82,17 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
+        <AuthSessionMonitor />
         <Routes>
           {/* Redirect raiz */}
-          <Route path="/" element={<Navigate to={AppRoutes.Login} />} />
+          <Route path="/" element={<Navigate to={AppRoutes.Dashboard} replace />} />
 
           {/* Auth */}
           <Route path={AppRoutes.Login} element={<Login />} />
 
           <Route
             path={AppRoutes.UserRegistration}
-            element={<UserRegistration />}
+            element={<ProtectedRoute allowedProfiles={["admin", "gestor"]}><UserRegistration /></ProtectedRoute>}
           />
 
           <Route
@@ -106,17 +108,17 @@ function App() {
           {/* Forms públicos/independentes */}
           <Route
             path={AppRoutes.RegisterService}
-            element={<RegisterService />}
+            element={<ProtectedRoute><RegisterService /></ProtectedRoute>}
           />
 
           <Route
             path={AppRoutes.RegisterProduct}
-            element={<RegisterProduct />}
+            element={<ProtectedRoute><RegisterProduct /></ProtectedRoute>}
           />
 
           <Route
             path={AppRoutes.ServiceInsert}
-            element={<ServiceInsert />}
+            element={<ProtectedRoute><ServiceInsert /></ProtectedRoute>}
           />
 
           <Route
@@ -128,7 +130,7 @@ function App() {
 
           <Route
             path={AppRoutes.RegisterCity}
-            element={<RegisterCity />}
+            element={<ProtectedRoute><RegisterCity /></ProtectedRoute>}
           />
 
           {/* Loading */}
@@ -138,7 +140,7 @@ function App() {
           />
 
           {/* Dashboard layout (rotas autenticadas) */}
-          <Route element={<DashboardLayout />}>
+          <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
             <Route
               path={AppRoutes.Dashboard}
               element={<Dashboard />}

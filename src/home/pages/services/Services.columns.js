@@ -1,51 +1,29 @@
-const parseCurrencyValue = (value) => {
-  const text = String(value ?? "")
-    .replace(/\s/g, "")
-    .replace(/[^\d,.-]/g, "")
-    .replace(/\./g, "")
-    .replace(/,/g, ".");
-
-  return Number(text) || 0;
-};
-
 export const servicesColumns = [
-  {
-    key: "id",
-    header: "ID",
-    accessor: "id",
-    sortable: true,
-    sortType: "number",
-    width: "92px",
-  },
   {
     key: "nome",
     header: "Nome do Serviço",
-    accessor: "nome", 
-    sortable: true,
-    sortType: "string",
+    accessor: "nome",
+    sortable: false,
     searchable: true,
-    width: "33.33%",
+    width: "40%",
   },
   {
-    key: "tipoCobranca",
+    key: "tipo_cobranca",
     header: "Tipo de Cobrança",
-    accessor: "tipoCobranca",
+    accessor: "tipo_cobranca",
     type: "badge",
     defaultBadgeVariant: "neutral",
-    sortable: true,
-    sortType: "string",
-    searchable: true,
-    width: "33.33%",
+    sortable: false,
+    searchable: false,
+    width: "30%",
   },
   {
-    key: "valor",
+    key: "valor_base",
     header: "Valor (R$)",
-    accessor: "valor",
+    accessor: "valor_base",
     align: "left",
-    sortable: true,
-    sortType: "number",
-    sortAccessor: (row) => parseCurrencyValue(row.valor),
+    sortable: false,
     searchable: false,
-    width: "33.33%",
+    width: "30%",
   },
 ];
