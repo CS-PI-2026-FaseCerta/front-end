@@ -182,13 +182,6 @@ const Login = () => {
             <button type="submit" className="form-button" disabled={!allFilled}>
               {isLoading ? "Entrando..." : "Entrar"}
             </button>
-
-            <p className="auth-footer-text signup-link">
-              Ainda não tem uma conta?{" "}
-              <Link className="auth-link" to={AppRoutes.UserRegistration}>
-                Cadastre-se
-              </Link>
-            </p>
           </form>
         </div>
       </main>
