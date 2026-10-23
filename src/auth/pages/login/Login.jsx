@@ -18,7 +18,6 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Modificado apenas para verificar se existem dados vindos do cadastro primeiro
   const [emailOrUsername, setEmailOrUsername] = useState(
     location.state?.email || ""
   );
@@ -45,14 +44,12 @@ const Login = () => {
     setRememberMe(true);
   }, [location.state]);
 
-  // O endpoint /api/auth/login aceita somente e-mail, não nome de usuário.
   const validateEmailOrUsername = (value) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 
   const handleEmailOrUsernameChange = (e) => {
     const value = e.target.value;
     setEmailOrUsername(value);
-    // Remove a borda vermelha assim que o usuário corrigir o formato
     if (emailOrUsernameError) {
       setEmailOrUsernameError(!validateEmailOrUsername(value));
     }
@@ -182,13 +179,6 @@ const Login = () => {
             <button type="submit" className="form-button" disabled={!allFilled}>
               {isLoading ? "Entrando..." : "Entrar"}
             </button>
-
-            <p className="auth-footer-text signup-link">
-              Ainda não tem uma conta?{" "}
-              <Link className="auth-link" to={AppRoutes.UserRegistration}>
-                Cadastre-se
-              </Link>
-            </p>
           </form>
         </div>
       </main>
